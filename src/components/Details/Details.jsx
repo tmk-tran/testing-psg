@@ -146,27 +146,27 @@ export default function Details({
   ]);
 
   // Create a map to store organization details and associated groups
-  const orgMap = new Map();
+  // const orgMap = new Map();
 
   // Populate the map with unique organizations and associated groups
-  detailsOrg.forEach((info) => {
-    const orgId = info.organization_id;
+  // detailsOrg.forEach((info) => {
+  //   const orgId = info.organization_id;
 
-    if (!orgMap.has(orgId)) {
-      orgMap.set(orgId, { orgDetails: info, groups: [] });
-    }
+  //   if (!orgMap.has(orgId)) {
+  //     orgMap.set(orgId, { orgDetails: info, groups: [] });
+  //   }
 
-    // Add group details to the associated organization
-    orgMap.get(orgId).groups.push({
-      group_id: info.group_id,
-      department: info.department,
-      sub_department: info.sub_department,
-      group_nickname: info.group_nickname,
-      group_photo: info.group_photo,
-      group_description: info.group_description,
-      goal: info.sum,
-    });
-  });
+  //   // Add group details to the associated organization
+  //   orgMap.get(orgId).groups.push({
+  //     group_id: info.group_id,
+  //     department: info.department,
+  //     sub_department: info.sub_department,
+  //     group_nickname: info.group_nickname,
+  //     group_photo: info.group_photo,
+  //     group_description: info.group_description,
+  //     goal: info.sum,
+  //   });
+  // });
 
   // const handleCaseTypeChange = (newCaseType) => {
   //   setAlertCaseType(newCaseType);
@@ -197,7 +197,7 @@ export default function Details({
       <div className="details-card" style={{ marginTop: 40 }}>
         <div className="detailsView-container">
           {[...orgMap.values()].map(({ orgDetails, groups }) => (
-            <React.Fragment key={orgDetails.organization_id}>
+            <React.Fragment key={orgDetails.id}>
               {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
                 <NotesDisplay notes={notes} orgDetails={orgDetails} />
               )}
@@ -268,7 +268,7 @@ export default function Details({
                       groups.some((group) => group.group_id !== null) ? (
                         groups.map((groupInfo, i) => (
                           <OrgGroupInfo
-                            key={groupInfo.group_id}
+                            key={groupInfo.id}
                             groupInfo={groupInfo}
                             groupNumber={i + 1}
                           />
