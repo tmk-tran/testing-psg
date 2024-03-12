@@ -21,6 +21,7 @@ import TaskDropdown from "./TaskDropdown";
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { mComments } from "../../hooks/reduxStore";
+import { useSelector } from "react-redux";
 
 export default function TaskCard({
   id,
@@ -49,6 +50,7 @@ export default function TaskCard({
   console.log(completedTask);
   const history = historyHook();
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
 
   // Comments
   const merchantComments = mComments(mId) || [];
@@ -88,6 +90,7 @@ export default function TaskCard({
       payload: {
         id: task.id,
         task_status: selectedTask,
+        auth: auth,
       },
     });
     // Notify the parent component about the task update
@@ -110,6 +113,7 @@ export default function TaskCard({
       type: archiveActionType,
       payload: {
         id: task.id,
+        auth: auth
       },
     });
     onTaskUpdate();

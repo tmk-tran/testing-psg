@@ -13,6 +13,7 @@ import { mTasks, mComments, oTasks } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { capitalizeWords, formatDate } from "../Utils/helpers";
 import { disabledColor, dueDateHighlight } from "../Utils/colors";
+import { useSelector } from "react-redux";
 
 export default function TableTaskDetails({ mId, caseType }) {
   console.log(mId);
@@ -23,6 +24,7 @@ export default function TableTaskDetails({ mId, caseType }) {
   const comments = mComments();
   const orgTasks = oTasks();
   console.log(orgTasks);
+  const auth = useSelector((store) => store.auth)
 
   const toDoTasks = merchantTasks.filter(
     (task) => task.task_status !== "Complete"
@@ -44,11 +46,12 @@ export default function TableTaskDetails({ mId, caseType }) {
   };
 
   useEffect(() => {
-    dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: mId });
+    dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: {id: mId, auth: auth} });
 
     dispatch({
       type: "FETCH_MERCHANT_TASKS",
-      payload: mId,
+      payload: {id: mId,
+        auth: auth}
     });
   }, [mId]); // Deleted dispatch from dependencies
 
