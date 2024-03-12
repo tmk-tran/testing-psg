@@ -1,6 +1,6 @@
 //Imports used for function
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { TableCell, TableRow, Typography, Button } from "@mui/material";
 import "./ClosedFundraiserItem.css";
@@ -8,6 +8,7 @@ import "./ClosedFundraiserItem.css";
 export default function ClosedFundraiserItem({ fundraiser }) {
   //Instanciates dispatch for use
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
   //Function to format the data without the timestamp
   const formatDate = (dateString) => {
     if (!dateString) {
@@ -25,6 +26,7 @@ export default function ClosedFundraiserItem({ fundraiser }) {
       payload: {
         id: Number(fundraiser.id),
         group_id: Number(fundraiser.group_id),
+        auth: auth
       },
     });
   };

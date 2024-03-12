@@ -8,13 +8,14 @@ import {
   Typography,
   InputAdornment,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import "./ActiveFundraiserItem.css";
 //Function for the component
 export default function ActiveFundraiserItem({ fundraiser }) {
   //Instanciates dispatch for use in component
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
   //State used to update fundraiser information
   let [booksSold, setBooksSold] = useState(fundraiser.books_sold);
   let [booksCheckedOut, setBooksCheckedOut] = useState(
@@ -58,7 +59,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
       "The fundraiser amounts have been updated.",
       "success"
     );
-    dispatch({ type: "UPDATE_FUNDRAISER_AMOUNTS", payload: updatedAmount });
+    dispatch({ type: "UPDATE_FUNDRAISER_AMOUNTS", payload: {updatedAmount: updatedAmount, auth: auth} });
     setEditMode(false);
   };
   //Function that runs on click of close button. A sweetalert will pop up prompting the user to confirm that the fundraiser is to be closed. Will then send the dispatch and payload to update a fundraiser to closed.
@@ -76,6 +77,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
           payload: {
             id: Number(fundraiser.id),
             group_id: Number(fundraiser.group_id),
+            auth: auth
           },
         });
       }

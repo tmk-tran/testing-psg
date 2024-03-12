@@ -10,6 +10,7 @@ function ArchivedOrganizationCard({ organization }) {
   const history = useHistory();
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
+  const auth = useSelector((store) => store.auth);
 
   // function to re activate organization and dispatch the data
   // sweet alert to confirm
@@ -23,9 +24,9 @@ function ArchivedOrganizationCard({ organization }) {
       confirmButtonText: "Yes, restore it",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch({ type: "RESET_ORGANIZATION", payload: organizationId });
-        dispatch({ type: "FETCH_ORGANIZATIONS" });
-        dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS" });
+        dispatch({ type: "RESET_ORGANIZATION", payload: {id: organizationId, auth: auth} });
+        dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
+        dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS", payload: auth });
         Swal.fire("Organization successfully restored!");
       }
     });

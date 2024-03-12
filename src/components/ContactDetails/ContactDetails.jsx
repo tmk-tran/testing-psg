@@ -19,6 +19,7 @@ import { capitalizeWords, formatPhoneNumber } from "../Utils/helpers";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
 import { border } from "../Utils/colors";
+import { useSelector } from "react-redux";
 
 export default function ContactDetails({
   info,
@@ -29,6 +30,7 @@ export default function ContactDetails({
   console.log(isMerchantTaskPage);
   console.log(isOrgAdminPage);
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth);
   const contactPhone = isMerchantTaskPage
     ? formatPhoneNumber(info.contact_phone_number)
     : formatPhoneNumber(info.primary_contact_phone);
@@ -48,16 +50,16 @@ export default function ContactDetails({
   const handleSaveContact = (editedItem) => {
     console.log("New Contact Info:", editedItem);
     isMerchantTaskPage
-      ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: editedItem })
-      : dispatch({ type: "EDIT_ORG_DETAILS", payload: editedItem });
+      ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedItem: editedItem, auth: auth} })
+      : dispatch({ type: "EDIT_ORG_DETAILS", payload: {editedItem: editedItem, auth: auth} });
     setIsEditing(false);
   };
 
   const handleSaveOrgDetails = (editedDetails) => {
     console.log("New Details:", editedDetails);
     isMerchantTaskPage
-      ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: editedDetails })
-      : dispatch({ type: "EDIT_ORG_DETAILS", payload: editedDetails });
+      ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedItem: editedDetails, auth: auth} })
+      : dispatch({ type: "EDIT_ORG_DETAILS", payload: {editedItem: editedDetails, auth: auth} });
   };
 
   return (
