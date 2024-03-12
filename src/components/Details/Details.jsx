@@ -196,7 +196,7 @@ export default function Details({
       {/* ~~~~~~~~~~~~~~~~~ Main Container ~~~~~~~~~~~~~~~~~~~ */}
       <div className="details-card" style={{ marginTop: 40 }}>
         <div className="detailsView-container">
-          {[...orgMap.values()].map(({ orgDetails, groups }) => (
+          {detailsOrg.map(({ orgDetails }) => (
             <React.Fragment key={orgDetails.id}>
               {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
                 <NotesDisplay notes={notes} orgDetails={orgDetails} />

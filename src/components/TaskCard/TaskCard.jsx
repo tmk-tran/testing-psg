@@ -31,23 +31,23 @@ export default function TaskCard({
   onTaskUpdate,
   handleCaseTypeChange,
 }) {
-  console.log(id);
-  console.log(taskType);
+  // console.log(id);
+  // console.log(taskType);
   const [selectedTask, setSelectedTask] = useState(null);
-  console.log(task);
-  console.log(task.id);
-  console.log(task.merchant_id);
-  console.log(task.organization_id);
+  // console.log(task);
+  // console.log(task.id);
+  // console.log(task.merchant_id);
+  // console.log(task.organization_id);
   const oId = task.organization_id;
   const mId = task.merchant_id;
-  console.log(mId);
-  console.log(oId);
-  console.log(index);
-  console.log(task.task_status);
+  // console.log(mId);
+  // console.log(oId);
+  // console.log(index);
+  // console.log(task.task_status);
   const complete = task.task_status;
-  console.log(complete);
+  // console.log(complete);
   const [completedTask, setCompletedTask] = useState(complete === "Complete");
-  console.log(completedTask);
+  // console.log(completedTask);
   const history = historyHook();
   const dispatch = dispatchHook();
   const auth = useSelector((store) => store.auth)

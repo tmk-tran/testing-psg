@@ -90,7 +90,7 @@ export default function NotesDisplay({
 
   const handleSave = () => {
     // Format the date as "mm/dd/yyyy"
-    const formattedDate = noteDate.toLocaleDateString("en-US");
+    const formattedDate = noteDate.toISOString().split('T')[0];
 
     const sendNote = {
       organization_id: !isMerchantTaskPage ? orgId : null,
