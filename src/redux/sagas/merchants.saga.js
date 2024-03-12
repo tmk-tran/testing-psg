@@ -3,25 +3,98 @@ import { put, takeEvery } from "redux-saga/effects";
 
 function* merchantDetails(action) {
   try {
-    const items = yield axios.get(`/api/merchants/${action.payload}`);
-    console.log("FETCH request from merchants.saga, ITEMS = ", items);
-    yield put({ type: "SET_MERCHANT_DETAILS", payload: items.data });
-  } catch (error) {
-    console.log("Error in merchantsSaga", error);
-    yield put({ type: "SET_ERROR", payload: error.message });
+    console.log(action.payload)
+    const auth_response = action.payload.auth
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{   merchant (filter: "id = ${action.payload.id}"){
+          id
+          business_id
+          address
+          city
+          state
+          zip
+          primary_contact_first_name
+          primary_contact_last_name
+          contact_phone_number
+          contact_email
+          is_deleted
+          region_id
+          busines{
+            business_name
+          }
+          region{
+            region_name
+          }
+        }
+      }`;
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "SET_MERCHANT_DETAILS", payload: response.data.merchant })
+  } catch (err) {
+    console.log("Error fetching merchant details", err)
   }
 }
 
-function* allMerchants() {
+function* allMerchants(action) {
   try {
-    const items = yield axios.get("/api/merchants");
-    console.log("FETCH request from merchants.saga, ITEMS = ", items);
-    yield put({ type: "SET_MERCHANTS", payload: items.data });
-  } catch (error) {
-    console.log("Error in merchantsSaga", error);
-    yield put({ type: "SET_ERROR", payload: error.message });
+    const auth_response = action.payload
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{  merchant{
+      id
+      business_id
+      address
+      city
+      state
+      zip
+      primary_contact_first_name
+      primary_contact_last_name
+      contact_phone_number
+      contact_email
+      is_deleted
+      region_id
+      busines{
+        business_name
+      }
+      region{
+        region_name
+      }
+    }
+  }`;
+
+    const queryConfig = {
+      headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+  };
+
+  const data = new FormData();
+  data.append("query", query);
+  data.append("variables", `{}`);
+
+  const response = yield axios.post(QUERY_URL, data, queryConfig);
+  console.log(response)
+
+    yield put({ type: "SET_MERCHANTS", payload: response.data.merchant });
+  } catch (error){
+    console.log("error in fetchAllMerchantsSaga", error);
   }
 }
+
 
 function* merchantCouponNumber() {
   try {

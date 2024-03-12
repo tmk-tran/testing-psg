@@ -1,22 +1,40 @@
 import axios from "axios";
 import { takeEvery, put } from "redux-saga/effects";
 
-function* fetchAllUsers() {
+function* fetchAllUsers(action) {
     try {
-        const response = yield axios.get("/api/allUsers");
+        const auth_response = action.payload
+        const ACCESS_TOKEN = auth_response.data.access_token;
+        const QUERY_URL = auth_response.data.routes.query;
+        console.log(auth_response)
+        const query = `{\r\n    users{ \r\n id\r\n username\r\n password\r\n is_admin\r\n is_deleted\r\n}\r\n}`
+
+        const queryConfig = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${ACCESS_TOKEN}`,
+            },
+        };
+
+        const data = new FormData();
+        data.append("query", query);
+        data.append("variables", `{}`);
+
+        const response = yield axios.post(QUERY_URL, data, queryConfig);
+        console.log(response)
         console.log("FETCH request fetchAllUsers");
-        yield put({ type: "SET_ALL_USERS", payload: response.data });
+        yield put({ type: "SET_ALL_USERS", payload: response.data.users });
     } catch (err) {
         console.log("error in fetching coupon books", err);
     }
 }
 
-function* editAdminStatus(action){
+function* editAdminStatus(action) {
     try {
         const response = yield axios.put("api/allUsers", action.payload);
         console.log("EDIT ADMIN STATUS");
-        yield put ({type: "FETCH_ALL_USERS"});
-    } catch (err){
+        yield put({ type: "FETCH_ALL_USERS" });
+    } catch (err) {
         console.log("error in editing admin status", err);
     }
 
