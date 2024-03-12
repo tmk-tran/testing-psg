@@ -47,12 +47,17 @@ export default function ActiveFundraiserItem({ fundraiser }) {
     const updatedAmount = {
       id: Number(fundraiser.id),
       title: editTitle,
+      description: fundraiser.description,
+      requested_book_quantity: fundraiser.requested_book_quantity,
       newBooksSold: Number(booksSold),
       newBooksCheckedOut: Number(booksCheckedOut),
       newBooksCheckedIn: Number(booksCheckedIn),
       newMoneyReceived: Number(moneyReceived),
       newGoal: Number(goal),
       group_id: Number(fundraiser.group_id),
+      coupon_book_id: fundraiser.coupon_book_id,
+      start_date: fundraiser.start_date,
+      end_date: fundraiser.end_date
     };
     Swal.fire(
       "Updated!",
@@ -64,6 +69,20 @@ export default function ActiveFundraiserItem({ fundraiser }) {
   };
   //Function that runs on click of close button. A sweetalert will pop up prompting the user to confirm that the fundraiser is to be closed. Will then send the dispatch and payload to update a fundraiser to closed.
   const handleCloseFundraiser = () => {
+    const closedFundraiser = {id: Number(fundraiser.id),
+      group_id: Number(fundraiser.group_id),
+      title: fundraiser.title,
+      description: fundraiser.description,
+      requested_book_quantity: fundraiser.requested_book_quantity,
+      book_quantity_checked_out: fundraiser.book_quantity_checked_out,
+      book_quantity_checked_in: fundraiser.book_quantity_checked_in,
+      books_sold: fundraiser.books_sold,
+      money_received: fundraiser.money_received,
+      start_date: fundraiser.start_date,
+      end_date: fundraiser.end_date,
+      coupon_book_id: fundraiser.coupon_book_id,
+      goal: fundraiser.goal,
+      closed: true}
     Swal.fire({
       title: "Are you sure?",
       text: "This fundraiser will be closed.",
@@ -74,11 +93,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
         Swal.fire("Closed!", "The fundraiser has been closed.", "success");
         dispatch({
           type: "CLOSE_FUNDRAISER",
-          payload: {
-            id: Number(fundraiser.id),
-            group_id: Number(fundraiser.group_id),
-            auth: auth
-          },
+          payload: {closedFundraiser: closedFundraiser, auth: auth},
         });
       }
     });
@@ -258,7 +273,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                     padding: "0",
                   }}
                 >
-                  ${fundraiser.books_sold * 10}
+                  ${fundraiser.books_sold * fundraiser.organization_earnings}
                 </Typography>
               </TableCell>
 
@@ -275,8 +290,8 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                   }}
                 >
                   $
-                  {fundraiser.books_sold * 25 -
-                    fundraiser.books_sold * fundraiser.organization_earnings}
+                  {(fundraiser.books_sold * 25) -
+                    (fundraiser.books_sold * fundraiser.organization_earnings)}
                 </Typography>
               </TableCell>
               <TableCell style={{ width: "50px", border: "2px solid black" }}>
@@ -299,7 +314,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                     padding: "0",
                   }}
                 >
-                  {fundraiser.year}
+                  {fundraiser.coupon_book.year}
                 </Typography>
               </TableCell>
               <TableCell
@@ -485,7 +500,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                     padding: "0",
                   }}
                 >
-                  ${fundraiser.books_sold * 10}
+                  ${fundraiser.books_sold * fundraiser.organization_earnings}
                 </Typography>
               </TableCell>
 
@@ -502,8 +517,8 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                   }}
                 >
                   $
-                  {fundraiser.books_sold * 25 -
-                    fundraiser.books_sold * fundraiser.organization_earnings}
+                  {(fundraiser.books_sold * 25) -
+                    (fundraiser.books_sold * fundraiser.organization_earnings)}
                 </Typography>
               </TableCell>
               <TableCell style={{ width: "50px", border: "2px solid black" }}>
