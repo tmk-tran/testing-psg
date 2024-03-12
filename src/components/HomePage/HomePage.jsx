@@ -32,6 +32,7 @@ function HomePage({ isOrgAdmin }) {
   console.log(organizationsList);
   const merchants = allMerchants() || [];
   console.log(merchants);
+  const auth = useSelector((store) => store.auth)
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isMerchantList, setIsMerchantList] = useState(false);
@@ -53,14 +54,14 @@ function HomePage({ isOrgAdmin }) {
     const fetchDataAction = isMerchantList
       ? "FETCH_MERCHANTS"
       : "FETCH_ORGANIZATIONS";
-    dispatch({ type: fetchDataAction });
+    dispatch({ type: fetchDataAction, payload: auth });
 
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
-    dispatch({ type: dispatchAction });
+    dispatch({ type: dispatchAction, payload: auth });
 
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
-      dispatch({ type: fetchDataAction });
+      dispatch({ type: fetchDataAction, payload: auth });
       setEditComplete(false);
     }
   }, [isMerchantList, editComplete]);

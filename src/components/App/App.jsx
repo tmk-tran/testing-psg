@@ -37,6 +37,7 @@ import "./App.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
 import { User } from "../../hooks/reduxStore";
+import { useSelector } from "react-redux";
 
 // ~~~~~ Theme establishing global color for MUI ~~~~~
 const theme = createTheme({
@@ -60,6 +61,7 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
+  const auth = useSelector((store) => store.auth)
   console.log(user);
 
   // useEffect(() => {
@@ -67,7 +69,7 @@ function App() {
   // }, [dispatch]);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_USER" });
+    dispatch({ type: "FETCH_USER", payload: auth });
     // dispatch({ type: "FETCH_COUPON_BOOKS" });
   }, []);
 

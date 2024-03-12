@@ -4,10 +4,12 @@ import "./TaskList.css";
 import TaskCard from "../TaskCard/TaskCard";
 import { mTasks, oTasks } from "../../hooks/reduxStore" // Assuming you have organization tasks in your redux store
 import { dispatchHook } from "../../hooks/useDispatch";
+import { useSelector } from "react-redux";
 
 export default function TaskList({ taskType }) {
   console.log(taskType);
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   const [selectedTasks, setSelectedTasks] = useState({
     newTask: "",
     inProgressTask: "",
@@ -37,7 +39,7 @@ export default function TaskList({ taskType }) {
       taskType === "organization"
         ? "FETCH_ALL_ORGANIZATION_TASKS"
         : "FETCH_ALL_MERCHANT_TASKS";
-    dispatch({ type: actionType });
+    dispatch({ type: actionType, payload: auth });
   }, [taskType]);
 
   return (
