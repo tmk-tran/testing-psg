@@ -33,6 +33,7 @@ import {
 } from "../../hooks/reduxStore";
 import { border } from "../Utils/colors";
 import { useCaseType } from "../Utils/useCaseType";
+import { useSelector } from "react-redux";
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 export default function Details({
@@ -78,12 +79,14 @@ export default function Details({
   console.log(groupAdded);
   const [locationAdded, setLocationAdded] = useState(false);
   console.log(locationAdded);
+  const auth = useSelector((store) => store.auth);
 
   useEffect(() => {
     console.log("Dispatching FETCH_ORG_DETAILS");
     dispatch({
       type: "FETCH_ORG_DETAILS",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     });
 
     console.log("Dispatching FETCH_MERCHANT_DETAILS or FETCH_ORG_FUNDRAISERS");
@@ -91,7 +94,8 @@ export default function Details({
       type: isMerchantTaskPage
         ? "FETCH_MERCHANT_DETAILS"
         : "FETCH_ORG_FUNDRAISERS",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     });
 
     const actionType = isMerchantTaskPage
@@ -100,7 +104,8 @@ export default function Details({
     console.log("Dispatching:", actionType);
     dispatch({
       type: actionType,
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     });
 
     // Fetch locations if MerchantTaskPage is true
@@ -108,7 +113,8 @@ export default function Details({
       console.log("Dispatching FETCH_MERCHANT_LOCATION");
       dispatch({
         type: "FETCH_MERCHANT_LOCATION",
-        payload: paramsObject.id,
+        payload: {id: paramsObject.id,
+          auth: auth}
       });
     }
 
@@ -116,14 +122,16 @@ export default function Details({
       console.log("Dispatching FETCH_ORG_GROUPS");
       dispatch({
         type: "FETCH_ORG_GROUPS",
-        payload: paramsObject.id,
+        payload: {id: paramsObject.id,
+          auth: auth}
       });
     }
 
     console.log("Dispatching FETCH_ORGANIZATIONS");
     dispatch({
       type: "FETCH_ORGANIZATIONS",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     });
 
     setGroupAdded(false);

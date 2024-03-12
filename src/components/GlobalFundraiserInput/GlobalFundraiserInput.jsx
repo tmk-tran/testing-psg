@@ -12,15 +12,18 @@ export default function GlobalFundraiserInput() {
   const organizations = useSelector((store) => store.organizations);
   const groupList = useSelector((store) => store.allGroups);
   const couponBooks = useSelector((store) => store.couponBooks);
+  const auth = useSelector((store) => store.auth)
   console.log(couponBooks);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
     dispatch({
       type: "FETCH_ALL_GROUPS",
+      payload: auth
     });
     dispatch({
       type: "FETCH_COUPON_BOOKS",
+      payload: auth
     });
   }, []);
 
@@ -128,7 +131,7 @@ export default function GlobalFundraiserInput() {
         end_date: endDate,
         coupon_book_id: couponBookId,
       };
-      dispatch({ type: "ADD_FUNDRAISER", payload: newFundraiser });
+      dispatch({ type: "ADD_FUNDRAISER", payload: {newFundraiser: newFundraiser, auth: auth} });
       Swal.fire({
         title: "Fundraiser Added!",
         text: "Your fundraiser has been successfully added.",

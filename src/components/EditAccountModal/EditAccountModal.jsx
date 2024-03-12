@@ -28,6 +28,7 @@ import ModalButtons from "../Modals/ModalButtons";
 
 const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
   const [editedAccount, setEditedAccount] = useState(data);
   console.log(editedAccount);
 
@@ -57,13 +58,13 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
       // const payload = { editedAccount };
       const payload = editedAccount;
       console.log(payload);
-      dispatch({ type: "EDIT_ORGANIZATION", payload: editedAccount });
-      dispatch({ type: "FETCH_ORGANIZATIONS" });
+      dispatch({ type: "EDIT_ORGANIZATION", payload: {editedAccount: editedAccount, auth: auth} });
+      dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
     } else {
       const payload = editedAccount;
       console.log(payload);
-      dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: editedAccount });
-      dispatch({ type: "FETCH_MERCHANTS" });
+      dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedAccount: editedAccount, auth: auth} });
+      dispatch({ type: "FETCH_MERCHANTS", payload: auth });
     }
     Swal.fire({
       icon: "success",
