@@ -25,6 +25,7 @@ import DatePicker from "../DatePicker/DatePicker";
 import SearchableSelect from "../NewTaskModal/SearchableSelect";
 import CloseButton from "../Buttons/CloseButton";
 import ModalButtons from "../Modals/ModalButtons";
+import { useSelector } from "react-redux";
 
 const style = {
   position: "absolute",
@@ -64,6 +65,7 @@ export default function BasicModal({
   console.log(tabs);
   console.log(merchantTab);
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   // ~~~~~~~~~~ All Merchants from store ~~~~~~~~~~
   const merchants = allMerchants();
   // ~~~~~~~~~~ All Organizations from store ~~~~~~~~~~
@@ -89,10 +91,10 @@ export default function BasicModal({
     // Conditional logic based on merchantTab
     merchantTab
       ? /* Logic for merchantTab being true */
-        (dispatch({ type: "FETCH_MERCHANTS" }),
+        (dispatch({ type: "FETCH_MERCHANTS", payload: auth }),
         console.log("Merchant Tab is true"))
       : /* Logic for merchantTab being false */
-        (dispatch({ type: "FETCH_ORGANIZATIONS" }),
+        (dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth }),
         console.log("Merchant Tab is false"));
 
     // Cleanup function or dependencies for useEffect
@@ -210,7 +212,8 @@ export default function BasicModal({
 
     dispatch({
       type: actionType,
-      payload: payload,
+      payload: {newTask: payload,
+        auth: auth}
     });
 
     handleClose();

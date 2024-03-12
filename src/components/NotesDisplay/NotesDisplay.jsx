@@ -25,6 +25,7 @@ import { showToast } from "../Utils/toasts";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { border, disabledColor } from "../Utils/colors";
+import { useSelector } from "react-redux";
 
 export default function NotesDisplay({
   notes,
@@ -39,6 +40,7 @@ export default function NotesDisplay({
   console.log(notes);
 
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   const paramsObject = useParams();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -78,7 +80,8 @@ export default function NotesDisplay({
     // Fetch notes based on the determined action type
     dispatch({
       type: fetchNotesActionType,
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth }
     });
 
     // Reset noteAdded after fetching data
@@ -105,7 +108,7 @@ export default function NotesDisplay({
       const actionType = isMerchantTaskPage
         ? "ADD_MERCHANT_NOTES"
         : "ADD_ORG_NOTES";
-      dispatch({ type: actionType, payload: sendNote });
+      dispatch({ type: actionType, payload: {sendNote: sendNote, auth: auth} });
       console.log(sendNote);
       setNoteAdded(true);
     };
@@ -138,6 +141,7 @@ export default function NotesDisplay({
       payload: {
         noteId,
         entityId,
+        auth: auth
       },
     });
 

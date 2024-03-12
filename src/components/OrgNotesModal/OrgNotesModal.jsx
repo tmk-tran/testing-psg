@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 // Style
 import {
@@ -21,6 +21,7 @@ import { flexRowSpace } from "../Utils/pageStyles";
 
 export default function NotesPopover({ info }) {
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth)
   const paramsObject = useParams();
   // state for the popover
   const [anchorEl, setAnchorEl] = useState(null);
@@ -38,7 +39,8 @@ export default function NotesPopover({ info }) {
     // Fetch org notes whenever noteAdded changes
     dispatch({
       type: "FETCH_ORG_NOTES",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     });
 
     // Reset noteAdded after fetching data
@@ -56,7 +58,7 @@ export default function NotesPopover({ info }) {
     };
 
     const saveCall = () => {
-      dispatch({ type: "ADD_ORG_NOTES", payload: sendNote });
+      dispatch({ type: "ADD_ORG_NOTES", payload: {sendNote: sendNote, auth: auth} });
       setNoteAdded(true);
     };
 

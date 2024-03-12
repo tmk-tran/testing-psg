@@ -18,6 +18,7 @@ import { useAlert } from "../SuccessAlert/useAlert";
 import SuccessAlert from "../SuccessAlert/SuccessAlert";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { tabWidth } from "../Utils/helpers";
+import { useSelector } from "react-redux";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -51,6 +52,7 @@ function a11yProps(index) {
 export default function BasicTabs() {
   const dispatch = dispatchHook();
   const history = historyHook();
+  const auth = useSelector((store) => store.auth)
   const [value, setValue] = useState(0);
   const [merchantTab, setMerchantTab] = useState(false);
   console.log(merchantTab);
@@ -63,9 +65,9 @@ export default function BasicTabs() {
   useEffect(() => {
     // Dispatch actions based on the active tab
     if (activeTab === "organization") {
-      dispatch({ type: "FETCH_ALL_ORGANIZATION_TASKS" });
+      dispatch({ type: "FETCH_ALL_ORGANIZATION_TASKS", payload: auth });
     } else if (activeTab === "merchant") {
-      dispatch({ type: "FETCH_ALL_MERCHANT_TASKS" });
+      dispatch({ type: "FETCH_ALL_MERCHANT_TASKS", payload: auth });
     }
     dispatch({ type: "SET_ACTIVE_TAB" });
     // Add more conditions if needed...
