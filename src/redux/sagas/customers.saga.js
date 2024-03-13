@@ -3,11 +3,37 @@ import { put, takeEvery } from "redux-saga/effects";
 
 function* fetchCustomers() {
   try {
-    const items = yield axios.get(`/api/customers/`);
-    console.log("FETCH request from customers.saga, ITEMS = ", items.data);
-    yield put({ type: "SET_CUSTOMERS", payload: items.data });
-  } catch (error) {
-    console.log("error in customers Saga", error);
+    console.log(action.payload)
+    const auth_response = action.payload.auth
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{
+      customers (ordering: "last_name ASC"){
+        id
+        refId
+        last_name
+        first_name
+        phone
+        created
+      }
+  }`;
+
+    const queryConfig = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "SET_LOCATIONS", payload: response.data.customers })
+  } catch (err) {
+      console.log("error in locations Saga", err)
   }
 }
 
