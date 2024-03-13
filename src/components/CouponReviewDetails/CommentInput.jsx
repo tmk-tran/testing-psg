@@ -7,6 +7,7 @@ import { User } from "../../hooks/reduxStore";
 import { border } from "../Utils/colors";
 import FilePreview from "./FilePreview";
 import { capitalizeFirstWord } from "../Utils/helpers";
+import { useSelector } from "react-redux";
 
 export default function CommentInput({
   merchantId,
@@ -16,17 +17,17 @@ export default function CommentInput({
   files,
   onUploadFile,
 }) {
-  console.log(merchantId);
-  console.log(taskId);
-  console.log(files);
+  // console.log(merchantId);
+  // console.log(taskId);
+  // console.log(files);
   const [comment, setComment] = useState("");
   const [commentAdded, setCommentAdded] = useState(false);
   const [addedFileName, setAddedFileName] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  console.log(selectedFile);
-  console.log(addedFileName);
-  console.log(commentAdded);
-  console.log(comment);
+  // console.log(selectedFile);
+  // console.log(addedFileName);
+  // console.log(commentAdded);
+  // console.log(comment);
   const user = User() || [];
   console.log(user.username);
   const currentUsername = user.username;
@@ -36,6 +37,7 @@ export default function CommentInput({
   console.log(fileInputRef);
 
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
 
   const newComment = {
     merchant_id: merchantId,
@@ -79,7 +81,7 @@ export default function CommentInput({
   const handleSubmit = () => {
     // Handle comment submission logic
     console.log("Comment submitted:", newComment);
-    dispatch({ type: "ADD_MERCHANT_COMMENT", payload: newComment });
+    dispatch({ type: "ADD_MERCHANT_COMMENT", payload: {newComment: newComment, auth: auth} });
     setCommentAdded(true);
     setComment("");
     onSubmit();

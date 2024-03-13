@@ -75,19 +75,53 @@ function* merchantComments(action) {
     console.log("FETCH request to merchantComments");
     yield put({ type: "SET_MERCHANT_COMMENTS", payload: response.data.merchant_comments });
   } catch (err) {
-    console.log("error in merchantComments Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
+    console.log("error in merchantComments Saga", err);
   }
 }
 
 function* addComments(action) {
   try {
-    console.log(action.payload);
-    yield axios.post(`/api/merchantComments/`, action.payload);
-    yield put({ type: "FETCH_MERCHANT_COMMENTS", payload: action.payload });
-  } catch (error) {
-    console.log("error in addComments Merchant Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
+    const newComment = action.payload.newComment;
+    const auth_response = action.payload.auth;
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    console.log(auth_response)
+    const query = `mutation ($input: merchant_commentsInput) {
+      create_merchant_comments(input: $input){
+        id
+        merchant_id
+        comment_content
+        is_deleted
+        user
+        task_id
+        created_at
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", JSON.stringify({
+      "input": {
+        "merchant_id": Number(newComment.merchant_id),
+        "comment_content": newComment.comment_content,
+        "user": newComment.user,
+        "task_id": Number(newComment.task_id)
+      }
+  }));
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    console.log("FETCH request to merchantComments");
+    yield put({ type: "FETCH_MERCHANT_COMMENTS", payload: {id: newComment.merchant_id, auth: auth_response} });
+  } catch (err) {
+    console.log("error in addComments Merchant Saga", err);
   }
 }
 

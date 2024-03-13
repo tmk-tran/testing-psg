@@ -138,23 +138,26 @@ export default function SellersTable() {
     showSaveSweetAlert();
   };
 
+//FIGURE OUT WHERE EDITEDSELLER IS LOCATED------
+
   const handleEditSeller = (editedSeller) => {
     const editAction = {
       type: "EDIT_SELLER",
-      payload: {updatedSeller: editedSeller, auth: auth}
+      payload: {editedSeller: editedSeller, auth: auth}
     };
     console.log("Dispatching action:", editAction);
     dispatch(editAction);
     showSaveSweetAlert();
   };
 
+  //REWRITE THIS TO WORK WITH DEVII-------
   const handleArchive = (sellerId) => {
     const orgId = paramsObject.id;
     // Use showDeleteSweetAlert and pass a callback function to execute upon confirmation
     showDeleteSweetAlert(() => {
       const archiveAction = {
         type: "ARCHIVE_SELLER",
-        payload: { sellerId, orgId },
+        payload: { archivedSeller: archivedSeller, auth: auth },
       };
       console.log("Dispatching action:", archiveAction);
       dispatch(archiveAction);

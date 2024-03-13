@@ -7,7 +7,14 @@ function* orgNotes(action) {
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `{\r\n    organization_notes(filter: "organization_id = ${action.payload.id}") {\r\n id\r\n organization_id\r\n note_date\r\n note_content\r\n is_deleted\r\n}\r\n}`
+    const query = `{organization_notes(filter: "organization_id = ${action.payload.id}") {
+       id
+       organization_id
+       note_date
+       note_content
+       is_deleted
+    }
+  }`
 
     const queryConfig = {
       headers: {
