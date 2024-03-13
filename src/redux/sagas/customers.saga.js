@@ -38,12 +38,45 @@ function* fetchCustomers() {
 }
 
 function* addCustomer(action) {
-  console.log(action.payload);
-
   try {
-    yield axios.post(`/api/customers/`, action.payload);
+    const newCustomer = action.payload.newCustomer;
+    const auth_response = action.payload.auth;
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `mutation ($input: customersInput) {
+      create_customers(input: $input ){
+        id
+         refId
+        last_name
+        first_name
+        phone
+      }
+    }`;
+
+    const queryConfig = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+    };
+    const data = new FormData();
+    data.append("query", query);
+
+    data.append("variables", JSON.stringify({
+      "input": {
+        "refId": newCustomer.refId,
+         "last_name": newCustomer.last_name,
+         "first_name": newCustomer.first_name,
+         "phone": Number(newCustomer.phone)
+       }
+    }));
+
+    console.log(data);
+
+    yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_CUSTOMERS",
+      payload: auth_response
     });
   } catch (error) {
     console.log("error in addCustomer Saga", error);

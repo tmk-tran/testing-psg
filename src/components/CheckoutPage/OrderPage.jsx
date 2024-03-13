@@ -14,6 +14,7 @@ import Typography from "../Typography/Typography";
 import OrderTable from "./OrderTable";
 import CustomerNameInfo from "../SellerPage/CustomerNameInfo";
 import RefIdDisplay from "../SellerPage/RefIdDisplay";
+import { useSelector } from "react-redux";
 
 export default function OrderPage({ caseType }) {
   console.log(caseType);
@@ -21,6 +22,7 @@ export default function OrderPage({ caseType }) {
   console.log(seller);
   const dispatch = dispatchHook();
   const history = historyHook();
+  const auth = useSelector((store) => store.auth)
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [customDonation, setCustomDonation] = useState(0);
@@ -120,7 +122,7 @@ export default function OrderPage({ caseType }) {
 
     const dispatchAction = {
       type: "ADD_CUSTOMER",
-      payload: incomingData,
+      payload: {newCustomer: incomingData, auth: auth}
     };
     console.log("Dispatching action:", dispatchAction);
     dispatch(dispatchAction);

@@ -137,15 +137,15 @@ function* addGroupSaga(action) {
     }
 }
 //Saga used to update group details
-function* updateGroupSaga(action) {
-    try {
-        console.log(action.payload)
-        yield axios.post(`/api/group/${action.payload}`, action.payload)
-        yield put({ type: "FETCH_GROUP_DETAILS", payload: action.payload.organization_id })
-    } catch (err) {
-        console.log("Error updating group details", err)
-    }
-}
+// function* updateGroupSaga(action) {
+//     try {
+//         console.log(action.payload)
+//         yield axios.post(`/api/group/${action.payload}`, action.payload)
+//         yield put({ type: "FETCH_GROUP_DETAILS", payload: action.payload.organization_id })
+//     } catch (err) {
+//         console.log("Error updating group details", err)
+//     }
+// }
 
 
 
@@ -154,5 +154,5 @@ export default function* groupSaga() {
     yield takeEvery("FETCH_GROUP_DETAILS", fetchGroupSaga)
     yield takeEvery("FETCH_ORG_GROUPS", fetchOrgGroupsSaga)
     yield takeEvery("ADD_GROUP", addGroupSaga)
-    yield takeEvery("UPDATE_GROUP", updateGroupSaga)
+    // yield takeEvery("UPDATE_GROUP", updateGroupSaga)
 }
