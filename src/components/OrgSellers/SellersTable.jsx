@@ -131,7 +131,7 @@ export default function SellersTable() {
 
     const action = {
       type: "ADD_SELLER",
-      payload: formDataWithId,
+      payload: {newSeller: formDataWithId, auth:auth}
     };
     console.log("Dispatching action:", action);
     dispatch(action);
@@ -141,7 +141,7 @@ export default function SellersTable() {
   const handleEditSeller = (editedSeller) => {
     const editAction = {
       type: "EDIT_SELLER",
-      payload: editedSeller,
+      payload: {updatedSeller: editedSeller, auth: auth}
     };
     console.log("Dispatching action:", editAction);
     dispatch(editAction);
