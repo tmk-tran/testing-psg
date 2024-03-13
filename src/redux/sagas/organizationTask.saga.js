@@ -8,7 +8,7 @@ function* organizationTask(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
-      organization_task (filter: "organization_id = ${action.payload.id}" ordering: "due_date ASC"){
+      organization_tasks (filter: "organization_id = ${action.payload.id}" ordering: "due_date ASC"){
         id
         category
         task
@@ -47,7 +47,7 @@ function* fetchAllOrganizationTasks(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
-      organization_task  (ordering: "due_date ASC"){
+      organization_tasks  (ordering: "due_date ASC"){
         id
         category
         task
@@ -86,7 +86,7 @@ function* addOrganizationTask(action) {
       const ACCESS_TOKEN = auth_response.data.access_token;
       const QUERY_URL = auth_response.data.routes.query;
       const query = `mutation($input: organization_taskInput){
-        create_organization_task (input: $input){
+        create_organization_tasks (input: $input){
           id
           category
           task
@@ -136,7 +136,7 @@ function* editOrganizationTask(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = ` mutation($input: organization_taskInput, $id: ID!){
-      update_organization_task (input: $input id: $id){
+      update_organization_tasks (input: $input id: $id){
         id
         category
         task

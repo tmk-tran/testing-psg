@@ -8,7 +8,7 @@ function* merchantTask(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `query {
-      merchant_task (filter: "merchant_id = ${action.payload.id}" ordering: "due_date ASC"){
+      merchant_tasks (filter: "merchant_id = ${action.payload.id}" ordering: "due_date ASC"){
         id
         category
         task
@@ -47,7 +47,7 @@ function* fetchAllMerchantTasks(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `query {
-      merchant_task (ordering: "due_date ASC"){
+      merchant_tasks (ordering: "due_date ASC"){
         id
         category
         task
@@ -86,7 +86,7 @@ function* addMerchantTask(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation($input: merchant_taskInput){
-      create_merchant_task (input: $input){
+      create_merchant_tasks (input: $input){
         id
         category
         task
@@ -135,8 +135,8 @@ function* editMerchantTask(action) {
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = ` mutation($input: merchant_taskInput, $id: ID!){
-      update_merchant_task (input: $input id: $id){
+    const query = ` mutation ($input: merchant_taskInput, $id: ID!){
+      update_merchant_tasks (input: $input id: $id){
         id
         category
         task
