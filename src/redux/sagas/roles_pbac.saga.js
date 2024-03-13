@@ -5,7 +5,12 @@ function* fetchRoles(action){
     const auth_response = action.payload
     const ACCESS_TOKEN = auth_response.access_token;
 const ROLES_PBAC = auth_response.routes.roles_pbac;
-const query = "{\r\n  role {\r\n    roleid\r\n    name\r\n  }\r\n}";
+const query = `{
+    role {
+      roleid
+      name
+  }
+}`;
 
 const queryConfig = {
   headers: {

@@ -7,7 +7,15 @@ function* fetchAllUsers(action) {
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         console.log(auth_response)
-        const query = `{\r\n    users{ \r\n id\r\n username\r\n password\r\n is_admin\r\n is_deleted\r\n}\r\n}`
+        const query = `{
+                users{ 
+             id
+             username
+             password
+             is_admin
+             is_deleted
+        }
+    }`
 
         const queryConfig = {
             headers: {

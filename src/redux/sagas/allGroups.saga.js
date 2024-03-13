@@ -6,7 +6,18 @@ function* fetchAllGroupsSaga(action) {
       const auth_response = action.payload
       const ACCESS_TOKEN = auth_response.data.access_token;
       const QUERY_URL = auth_response.data.routes.query;
-      const query = "{\r\n  group{\r\n id\r\n organization_id\r\n department\r\n sub_department\r\n group_nickname\r\n group_photo\r\n group_description\r\n is_deleted\r\n }\r\n}";
+      const query = `{
+          group{
+         id
+         organization_id
+         department
+         sub_department
+         group_nickname
+         group_photo
+         group_description
+         is_deleted
+       }
+    }`;
 
       const queryConfig = {
         headers: {

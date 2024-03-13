@@ -12,7 +12,15 @@ function* fetchUser(action) {
     // from the server session (req.user)
     const ACCESS_TOKEN = auth_response.access_token;
 const QUERY_URL = auth_response.routes.query;
-const query = "{\r\n    user{ \r\n id\r\n username\r\n password\r\n is_admin\r\n is_deleted\r\n}\r\n}";
+const query = `{
+      user{ 
+    id
+    username
+    password
+    is_admin
+    is_deleted
+  }
+}`;
 
 const queryConfig = {
   headers: {

@@ -9,7 +9,54 @@ function* fetchFundraisersSaga(action) {
         const auth_response = action.payload.auth
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
-        const query = `{\r\n   fundraiser (filter: "group_id = ${action.payload.id}"){\r\n id\r\n group_id\r\n title\r\n description\r\n requested_book_quantity\r\n book_quantity_checked_out\r\n book_checked_out_total_value\r\n book_quantity_checked_in\r\n books_sold\r\n money_received\r\n start_date\r\n end_date\r\n coupon_book_id\r\n outstanding_balance\r\n is_deleted\r\n closed\r\n goal\r\n group {\r\n organization_id\r\n department\r\n sub_department\r\n group_nickname\r\n group_photo\r\n group_description\r\n is_deleted\r\n organization{\r\n organization_name\r\n type\r\n address\r\n city\r\n state\r\n zip\r\n primary_contact_first_name\r\n primary_contact_last_name\r\n primary_contact_phone\r\n primary_contact_email\r\n organization_logo\r\n is_deleted\r\n organization_earnings\r\n}\r\n}coupon_book {\r\n id\r\n year\r\n}\r\n}\r\n}`
+        const query = `{
+               fundraiser (filter: "group_id = ${action.payload.id}"){
+             id
+             group_id
+             title
+             description
+             requested_book_quantity
+             book_quantity_checked_out
+             book_checked_out_total_value
+             book_quantity_checked_in
+             books_sold
+             money_received
+             start_date
+             end_date
+             coupon_book_id
+             outstanding_balance
+             is_deleted
+             closed
+             goal
+             group {
+             organization_id
+             department
+             sub_department
+             group_nickname
+             group_photo
+             group_description
+             is_deleted
+             organization{
+             organization_name
+             type
+             address
+             city
+             state
+             zip
+             primary_contact_first_name
+             primary_contact_last_name
+             primary_contact_phone
+             primary_contact_email
+             organization_logo
+             is_deleted
+             organization_earnings
+        }
+    }coupon_book {
+             id
+             year
+        }
+    }
+}`
 
         const queryConfig = {
             headers: {

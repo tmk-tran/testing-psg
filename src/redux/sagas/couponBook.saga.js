@@ -7,7 +7,12 @@ function* fetchCouponBooksSaga(action) {
         console.log(auth_response)
         const ACCESS_TOKEN = auth_response.access_token;
         const QUERY_URL = auth_response.routes.query;
-        const query = "{\r\n coupon_book{\r\n id\r\n year\r\n}\r\n}";
+        const query = `{
+             coupon_book{
+             id
+             year
+        }
+    }`;
         
         const queryConfig = {
             headers: {

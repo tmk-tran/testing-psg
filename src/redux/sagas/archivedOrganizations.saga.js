@@ -7,7 +7,56 @@ function* fetchArchivedOrganizationsSaga(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     console.log(auth_response)
-    const query = `{\r\n organization(ordering: "group_collection.organization_id" filter: "is_deleted = true"){\r\n id\r\n organization_name\r\n type\r\n address\r\n city\r\n state\r\n zip\r\n primary_contact_first_name\r\n primary_contact_last_name\r\n primary_contact_phone\r\n primary_contact_email\r\n organization_logo\r\n is_deleted\r\n organization_earnings\r\n organization_notes_collection {\r\n organization_id\r\n note_date\r\n note_content\r\n is_deleted\r\n}\r\n group_collection {\r\n organization_id\r\n department\r\n sub_department\r\n group_nickname\r\n group_description\r\n is_deleted\r\n fundraiser_collection{\r\n id\r\n group_id\r\n title\r\n description\r\n requested_book_quantity\r\n book_quantity_checked_out\r\n book_checked_out_total_value\r\n book_quantity_checked_in\r\n books_sold\r\n money_received\r\n start_date\r\n end_date\r\n coupon_book_id\r\n outstanding_balance\r\n is_deleted\r\n closed\r\n goal\r\n}\r\n}\r\n} Aggregates {
+    const query = `{
+       organization(ordering: "group_collection.organization_id" filter: "is_deleted = true"){
+       id
+       organization_name
+       type
+       address
+       city
+       state
+       zip
+       primary_contact_first_name
+       primary_contact_last_name
+       primary_contact_phone
+       primary_contact_email
+       organization_logo
+       is_deleted
+       organization_earnings
+       organization_notes_collection {
+       organization_id
+       note_date
+       note_content
+       is_deleted
+    }
+     group_collection {
+       organization_id
+       department
+       sub_department
+       group_nickname
+       group_description
+       is_deleted
+       fundraiser_collection{
+       id
+       group_id
+       title
+       description
+       requested_book_quantity
+       book_quantity_checked_out
+       book_checked_out_total_value
+       book_quantity_checked_in
+       books_sold
+       money_received
+       start_date
+       end_date
+       coupon_book_id
+       outstanding_balance
+       is_deleted
+       closed
+       goal
+    }
+  }
+  } Aggregates {
       total_books_sold: sum(
         subquery: "query{fundraiser{books_sold group{organization_id}}}"
         ordering: "group_organization_id ASC"
@@ -38,7 +87,8 @@ function* fetchArchivedOrganizationsSaga(action) {
         subquery: "query{fundraiser {book_quantity_checked_in group{organization_id}}}" 
         filter: "closed=false" 
         ordering: "group_organization_id ASC")
-    }\r\n}`;
+    }
+  }`;
 
     const queryConfig = {
       headers: {
