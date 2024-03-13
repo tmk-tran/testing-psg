@@ -34,6 +34,7 @@ import SellerLink from "../SellerPage/SellerLink";
 import ActionButton from "./ActionButton";
 import SellersTableHeader from "./SellersTableHeader";
 import BooksSoldForm from "./BooksSoldForm";
+import { useSelector } from "react-redux";
 
 const evenRowColor = {
   backgroundColor: "#fbfbfb",
@@ -67,6 +68,7 @@ console.log(refId);
 export default function SellersTable() {
   const dispatch = dispatchHook();
   const paramsObject = useParams();
+  const auth = useSelector((store) => store.auth);
   const orgId = paramsObject.id;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -88,7 +90,7 @@ export default function SellersTable() {
   console.log(editingRefId);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_SELLERS", payload: paramsObject.id });
+    dispatch({ type: "FETCH_SELLERS", payload: {id: orgId, auth: auth} });
   }, []);
 
   const sellers = oSellers() || [];

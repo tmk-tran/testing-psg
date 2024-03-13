@@ -3,27 +3,86 @@ import { put, takeEvery } from "redux-saga/effects";
 
 function* fetchLocations(action) {
   try {
-    const items = yield axios.get(`/api/locations`);
-    console.log("FETCH request from locations.saga, ITEMS = ", items.data);
-    yield put({ type: "SET_LOCATIONS", payload: items.data });
-  } catch (error) {
-    console.log("error in locations Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
+    console.log(action.payload)
+    const auth_response = action.payload.auth
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{
+      location(ordering: "id ASC"){
+        id
+        location_name
+        phone_number
+        address
+        city
+        state
+        zip
+        coordinates
+        region_id
+        is_deleted
+        merchant_id
+        additional_details
+      }
+  }`;
+
+    const queryConfig = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "SET_LOCATIONS", payload: result.data.location })
+  } catch (err) {
+      console.log("error in locations Saga", err)
   }
 }
 
 function* fetchMerchantLocation(action) {
   try {
-    console.log(action.payload);
-    const items = yield axios.get(`/api/locations/${action.payload}`);
-    console.log(
-      "FETCH request from merchantLocation.saga, ITEMS = ",
-      items.data
-    );
-    yield put({ type: "SET_LOCATIONS", payload: items.data });
-  } catch (error) {
-    console.log("error in merchantLocation Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
+    console.log(action.payload)
+    const id = action.payload.id;
+    const auth_response = action.payload.auth;
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{
+      location (ordering: "id ASC" filter: "merchant_id = ${id}"){
+        id
+        location_name
+        phone_number
+        address
+        city
+        state
+        zip
+        coordinates
+        region_id
+        is_deleted
+        merchant_id
+        additional_details
+        }
+  }`;
+
+    const queryConfig = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "SET_LOCATIONS", payload: result.data.location })
+  } catch (err) {
+      console.log("error in locations Saga", err)
   }
 }
 

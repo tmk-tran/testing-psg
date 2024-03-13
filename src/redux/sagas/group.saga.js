@@ -40,8 +40,6 @@ function* fetchGroupSaga(action) {
     }
     }`;
 
-
-
         const queryConfig = {
             headers: {
                 "Content-Type": "application/json",
