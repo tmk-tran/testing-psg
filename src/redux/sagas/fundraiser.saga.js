@@ -88,7 +88,7 @@ function* fetchOrgFundraisersSaga(action) {
         console.log(auth_response)
         console.log(action.payload)
         const query = `{
-              fundraiser (filter: "group_id = ${orgId}"){
+              fundraiser (filter: "group.organization_id = ${orgId}"){
             id
             group_id
             title
@@ -125,7 +125,6 @@ function* fetchOrgFundraisersSaga(action) {
             primary_contact_last_name
             primary_contact_phone
             primary_contact_email
-            organization_logo
             is_deleted
             organization_earnings
         }

@@ -65,7 +65,7 @@ export default function TableGroupDetails({
                   key={fundraiser.fundraiser_id}
                   sx={{ fontWeight: "bold" }}
                 >
-                  {formatDate(fundraiser.fundraiser_end_date)}
+                  {formatDate(fundraiser.end_date)}
                 </Typography>
               ) : null
             )}

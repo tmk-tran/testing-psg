@@ -64,6 +64,7 @@ export default function Details({
   // ~~~~~~~~~~ Hooks ~~~~~~~~~~
   const dispatch = dispatchHook();
   const detailsOrg = oDetails();
+  console.log(detailsOrg)
   const groups = oGroups();
   console.log(groups);
   // const notes = !isMerchantTaskPage ? oNotes() : mNotes();
@@ -130,8 +131,7 @@ export default function Details({
     console.log("Dispatching FETCH_ORGANIZATIONS");
     dispatch({
       type: "FETCH_ORGANIZATIONS",
-      payload: {id: paramsObject.id,
-        auth: auth}
+      payload: auth
     });
 
     setGroupAdded(false);
@@ -197,7 +197,7 @@ export default function Details({
       <div className="details-card" style={{ marginTop: 40 }}>
         <div className="detailsView-container">
           {detailsOrg.map(({ orgDetails }) => (
-            <React.Fragment key={orgDetails.id}>
+            <React.Fragment key={orgDetails?.id}>
               {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
                 <NotesDisplay notes={notes} orgDetails={orgDetails} />
               )}
@@ -239,7 +239,7 @@ export default function Details({
                 ) : (
                   // <OrgContactDetails info={orgDetails} isMerchantTaskPage={isMerchantTaskPage} />
                   <ContactDetails
-                    info={orgDetails}
+                    info={detailsOrg}
                     isOrgAdminPage={isOrgAdminPage}
                   />
                 )}
@@ -257,7 +257,7 @@ export default function Details({
               {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
                 <>
                   <OrgDetailsGoalView
-                    info={orgDetails}
+                    info={detailsOrg}
                     groups={groups}
                     handleAddGroup={handleAddGroup}
                   />

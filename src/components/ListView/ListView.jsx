@@ -24,11 +24,11 @@ function ListView({
   isOrgAdmin,
   numCoupons,
 }) {
-  console.log(data);
-  console.log(data.organization_logo_base64);
-  console.log(data.merchant_logo_base64);
-  console.log(isMerchantList);
-  console.log(numCoupons);
+  // console.log(data);
+  // console.log(data.organization_logo_base64);
+  // console.log(data.merchant_logo_base64);
+  // console.log(isMerchantList);
+  // console.log(numCoupons);
   
   const user = User() || {};
   console.log(user);

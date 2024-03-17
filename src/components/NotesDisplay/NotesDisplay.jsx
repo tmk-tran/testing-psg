@@ -50,7 +50,7 @@ export default function NotesDisplay({
   // State from popover
   // const [orgId, setOrgId] = useState(orgDetails.organization_id);
   const [orgId, setOrgId] = useState(
-    !isMerchantTaskPage ? orgDetails.organization_id : orgDetails.id
+    !isMerchantTaskPage ? orgDetails?.id : orgDetails?.id
   );
   console.log(orgId);
   const [noteDate, setNoteDate] = useState(new Date());
