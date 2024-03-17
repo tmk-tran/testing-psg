@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Card, CardContent, Typography } from "@mui/material";
 import "./ListView.css";
@@ -29,12 +29,17 @@ function ListView({
   console.log(data.merchant_logo_base64);
   console.log(isMerchantList);
   console.log(numCoupons);
+  
   const user = User() || {};
   console.log(user);
   const history = useHistory();
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
+  const aggs = useSelector((store) => store.organizations.
+    aggs);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   console.log(editComplete);
+  console.log(aggs)
 
   const handleEdit = () => {
     setEditModalOpen(true);
@@ -122,17 +127,43 @@ function ListView({
     );
   }
 
-  const totalOrgEarnings =
-    data.total_org_earnings !== undefined
-      ? parseFloat(data.total_org_earnings)
-      : 0;
+  // formats the money amount to have a comma over $1000
+  const totalOrgEarnings = parseFloat(data.total_org_earnings);
   const formattedEarnings = totalOrgEarnings.toLocaleString();
 
-  const totalCheckedOutBooks = data.total_checked_out_books;
-  const totalCheckedInBooks = data.total_checked_in_books;
-  const totalBooksSold = data.total_books_sold;
+  // variables for the book amounts to be able to do the quick math here
+  const totalCheckedOutBooks = aggs.total_books_checked_out;
+  const totalCheckedInBooks = aggs.total_books_checked_in;
+  const totalBooksSold = aggs.total_books_sold;
   const totalStandingBooks =
     totalCheckedOutBooks - totalCheckedInBooks - totalBooksSold;
+  console.log(totalCheckedOutBooks)
+
+
+  function calculateBooksDifference(checkedOut, checkedIn, sold) {
+    const result = [];
+
+    for (const bookCheckedOut of checkedOut) {
+      for (const bookCheckedIn of checkedIn) {
+        for (const bookSold of sold) {
+          if (bookCheckedOut.group_organization_id === bookCheckedIn.group_organization_id &&
+            bookCheckedOut.group_organization_id === bookSold.group_organization_id) {
+
+            const difference = bookCheckedOut.sum - bookCheckedIn.sum - bookSold.sum;
+            result.push({
+              group_organization_id: bookCheckedOut.group_organization_id,
+              difference: difference
+            });
+
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  const result = calculateBooksDifference(totalCheckedOutBooks, totalCheckedInBooks, totalBooksSold);
 
   return (
     <>
@@ -155,12 +186,17 @@ function ListView({
 
                 {!isMerchantList ? (
                   <div style={{ display: "flex" }}>
+                       {aggs.total_books_sold.map((totalBooksSold) => {
+                    if (totalBooksSold.group_organization_id == data.id) {
+                      return (
+                        <>
                     <div className="column">
                       {/* ///////////////////////////////////////// */}
                       {/* ///////////// ORG INFORMATION /////////// */}
                       {/* ///////////////////////////////////////// */}
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
+                   
                       <Typography variant="body2">
                         {!user.org_admin
                           ? `Organization Fee: $${data.organization_earnings}`
@@ -169,44 +205,62 @@ function ListView({
 
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Books Sold: {data.total_books_sold}
-                      </Typography>
+                      <Typography key={totalBooksSold.id} variant="body2">
+                              Total Books Sold: {totalBooksSold.sum}
+                            </Typography>
 
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
                       <Typography variant="body2">
-                        Organization Earnings: ${formattedEarnings}
+                        Organization Earnings: ${(data.organization_earnings * totalBooksSold.sum).toLocaleString()}
                       </Typography>
                     </div>
 
                     <div className="column">
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Groups: {data.total_groups}
-                      </Typography>
-
+                      {aggs.total_groups.map((total_groups) => {
+                              if (total_groups.organization_id == data.id) {
+                                return (
+                                  <Typography variant="body2">
+                                    Total Groups: {total_groups.count}
+                                  </Typography>
+                                );
+                              }
+                            })}
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Outstanding Books: {totalStandingBooks}
-                      </Typography>
+                      {result.map((totalStandingBooks) => {
+                              if (totalStandingBooks.group_organization_id == data.id) {
+                                return (
+                                  <>
+                                    <Typography variant="body2">
+                                      Total Outstanding Books: {totalStandingBooks.difference}
+                                    </Typography>
 
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
                       <Typography variant="body2">
                         {!user.org_admin
-                          ? `PSG Earnings: $${(
-                              data.total_books_sold * 25 -
-                              (data.total_org_earnings !== undefined
-                                ? parseFloat(data.total_org_earnings)
-                                : 0)
-                            ).toLocaleString()}`
+                          ? `PSG Earnings: ${(
+                            (totalBooksSold.sum * 25) -
+                            (data.organization_earnings * totalBooksSold.sum)
+                          ).toLocaleString()}`
                           : null}
                       </Typography>
-                    </div>
-                  </div>
+                      </>
+                                )
+                              }
+                            })}
+                          </div>
+                        </>
+                      );
+                      
+                     
+                    }
+                  })}
+                </div>
+                  
                 ) : (
                   <div
                     style={{
@@ -244,18 +298,21 @@ function ListView({
                 Edit
               </Button>
             )}
-
-            {data.total_active_fundraisers <= 0 && !isOrgAdmin && (
-              <Button
+            {aggs.total_open_fundraisers.map((total_active_fundraisers, index) => { 
+    if (total_active_fundraisers.group_organization_id == data.id  && !isOrgAdmin)  {
+        return (
+            <Button
+                key={index}
                 onClick={(e) => {
-                  e.stopPropagation();
-                  handleArchive(data.id);
+                    e.stopPropagation();
+                    handleArchive(data.id);
                 }}
-              >
+            >
                 Archive
-              </Button>
-            )}
-
+            </Button>
+        );
+    }
+})}
             {isMerchantList && (
               <Button
                 onClick={(e) => {

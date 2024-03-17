@@ -89,14 +89,6 @@ function App() {
             <Switch>
               <Redirect exact from="/" to="/home" />
 
-              <ProtectedRoute exact path="/user">
-                {!user.org_admin ? (
-                  <HomePage isOrgAdmin={false} />
-                ) : (
-                  <HomePage isOrgAdmin={true} />
-                )}
-                {!user.is_admin && !user.org_admin && <Redirect to="/coupon" />}
-              </ProtectedRoute>
 
               <ProtectedRoute exact path="/userProfile/:id">
                 <UserProfile />
@@ -224,6 +216,16 @@ function App() {
               <Route exact path="/seller/:refId/complete">
                 <OrderComplete />
               </Route>
+
+
+              <ProtectedRoute exact path="/user">
+                {!user.org_admin ? (
+                  <HomePage isOrgAdmin={false} />
+                ) : (
+                  <HomePage isOrgAdmin={true} />
+                )}
+                {!user.is_admin && !user.org_admin && <Redirect to="/coupon" />}
+              </ProtectedRoute>
 
               <Route exact path="/login">
                 {user.id ? (

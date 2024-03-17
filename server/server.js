@@ -79,7 +79,7 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 const path = require("path");
 // const fetch = require("node-fetch");
-
+const axios = require('axios');
 const app = express();
 
 const sessionMiddleware = require("./modules/session-middleware");
@@ -128,7 +128,7 @@ app.use("/api/group", groupRouter);
 app.use("/api/orgnotes", orgNotesRouter);
 app.use("/api/orgdetails", orgDetailsRouter);
 app.use("/api/organizations", organizationsRouter);
-app.use("/api/fundraisers", fundraisersRouter);
+// app.use("/api/fundraisers", fundraisersRouter);
 app.use("/api/archivedOrganizations", archivedOrganizationsRouter);
 app.use("/api/allGroups", allGroupsRouter);
 app.use("/api/archivedOrganizations", archivedOrganizationsRouter);
@@ -264,6 +264,32 @@ app.post("/api/orders/:orderID/capture", async (req, res) => {
     res.status(500).json({ error: "Failed to capture order." });
   }
 });
+
+
+
+app.post(`/api/newContact`, async (req, res) => {
+    try {
+        const apiKey = process.env.AC_API_KEY; 
+        const data = req.body 
+
+        const response = await axios.post(
+            `https://${process.env.ac_address}/api/${process.env.version}/contacts`,
+            JSON.stringify(data),
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Api-Token': apiKey
+                }
+            }
+        );
+        console.log('Response:', response);
+        res.sendStatus(200)
+    } catch (error) {
+        console.error('Error sending contact to Active Campaign', error);
+        res.sendStatus(500);
+    }
+});
+
 
 // Serve index.html //
 app.get("/", (req, res) => {

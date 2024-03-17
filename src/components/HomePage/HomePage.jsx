@@ -28,16 +28,22 @@ function HomePage({ isOrgAdmin }) {
   const dispatch = useDispatch();
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~ Store ~~~~~~~~~~~~~~~~~~~~
-  const organizationsList = useSelector((store) => store.organizations);
-  console.log(organizationsList);
-  const merchants = allMerchants() || [];
-  console.log(merchants);
+
   const auth = useSelector((store) => store.auth)
+  const user = useSelector((store) => store.user)
+  useEffect(() => {
+    console.log('Dispatching data fetch action...');
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth})
+    // dispatch({ type: "FETCH_MERCHANTS", payload: auth})
+  }, []);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isMerchantList, setIsMerchantList] = useState(false);
   console.log(isMerchantList);
-
+  const organizationsList = useSelector((store) => store.organizations.organization);
+  console.log(organizationsList);
+  const merchants = allMerchants() || [];
+  console.log(merchants);
   // state for the search and modal and pagination
   const [query, setQuery] = useState(" ");
   console.log(query);
@@ -49,16 +55,18 @@ function HomePage({ isOrgAdmin }) {
   console.log(editComplete);
   const itemsPerPage = 12;
 
-  useEffect(() => {
-    // Initial data fetch based on isMerchantList
-    const fetchDataAction = isMerchantList
-      ? "FETCH_MERCHANTS"
-      : "FETCH_ORGANIZATIONS";
-    dispatch({ type: fetchDataAction, payload: auth });
+  
+  //   // Initial data fetch based on isMerchantList
+  //   const fetchDataAction = isMerchantList
+  //     ? "FETCH_MERCHANTS"
+  //     : "FETCH_ORGANIZATIONS";
+  //   dispatch({ type: fetchDataAction, payload: auth });
+  // };
 
+      useEffect(() => {
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
     dispatch({ type: dispatchAction, payload: auth });
-
+  
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
       dispatch({ type: fetchDataAction, payload: auth });
@@ -116,20 +124,21 @@ function HomePage({ isOrgAdmin }) {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   const currentItems =
-    searchResult.length > 0
-      ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
-      : isMerchantList
-      ? merchants.slice(indexOfFirstItem, indexOfLastItem)
-      : organizationsList.slice(indexOfFirstItem, indexOfLastItem);
+  searchResult.length > 0
+    ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
+    : isMerchantList
+    ? merchants.slice(indexOfFirstItem, indexOfLastItem)
+    : organizationsList?.slice(indexOfFirstItem, indexOfLastItem) || [];
+
 
   console.log(currentItems);
 
   const totalItems =
-    searchResult.length > 0
-      ? searchResult.length
-      : !isMerchantList
-      ? organizationsList.length
-      : merchants.length;
+  searchResult.length > 0
+    ? searchResult.length
+    : !isMerchantList
+    ? organizationsList?.organization?.length || 0
+    : merchants.length;
   const pageCount = Math.ceil(totalItems / itemsPerPage);
 
   const handlePageChange = (event, value) => {
@@ -140,6 +149,7 @@ function HomePage({ isOrgAdmin }) {
     setEditComplete(true);
   };
 
+  
   return (
     <div className="organizationsContainer">
       <Paper elevation={3} style={{ width: "90%", margin: "0 auto" }}>
