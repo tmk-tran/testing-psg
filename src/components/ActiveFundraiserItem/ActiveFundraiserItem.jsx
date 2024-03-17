@@ -14,7 +14,6 @@ import "./ActiveFundraiserItem.css";
 //Function for the component
 export default function ActiveFundraiserItem({ fundraiser }) {
   //Instanciates dispatch for use in component
-  console.log(fundraiser.group.organization.organization_earnings)
   const dispatch = useDispatch();
   const auth = useSelector((store) => store.auth);
   //State used to update fundraiser information
