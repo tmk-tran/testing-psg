@@ -14,6 +14,7 @@ import "./ActiveFundraiserItem.css";
 //Function for the component
 export default function ActiveFundraiserItem({ fundraiser }) {
   //Instanciates dispatch for use in component
+  console.log(fundraiser.group.organization.organization_earnings)
   const dispatch = useDispatch();
   const auth = useSelector((store) => store.auth);
   //State used to update fundraiser information
@@ -273,7 +274,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                     padding: "0",
                   }}
                 >
-                  ${fundraiser.books_sold * fundraiser.organization_earnings}
+                  ${fundraiser.books_sold * fundraiser.group.organization.organization_earnings}
                 </Typography>
               </TableCell>
 
@@ -500,7 +501,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                     padding: "0",
                   }}
                 >
-                  ${fundraiser.books_sold * fundraiser.organization_earnings}
+                  ${fundraiser.books_sold * fundraiser.group.organization.organization_earnings}
                 </Typography>
               </TableCell>
 
@@ -518,7 +519,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                 >
                   $
                   {(fundraiser.books_sold * 25) -
-                    (fundraiser.books_sold * fundraiser.organization_earnings)}
+                    (fundraiser.books_sold * fundraiser.group.organization.organization_earnings)}
                 </Typography>
               </TableCell>
               <TableCell style={{ width: "50px", border: "2px solid black" }}>
@@ -544,7 +545,7 @@ export default function ActiveFundraiserItem({ fundraiser }) {
                     padding: "0",
                   }}
                 >
-                  {fundraiser.year}
+                  {fundraiser.coupon_book.year}
                 </Typography>
               </TableCell>
               <TableCell
