@@ -90,13 +90,39 @@ function* allMerchants(action) {
 }
 
 
-function* merchantCouponNumber() {
+function* merchantCouponNumber(action) {
   try {
-    const items = yield axios.get("/api/merchants/number");
-    console.log("FETCH request from merchants.saga, ITEMS = ", items);
-    yield put({ type: "SET_COUPON_NUMBER", payload: items.data });
-  } catch (error) {
-    console.log("Error in fetching coupon numbers, merchants saga: ", error);
+    const auth_response = action.payload
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    console.log(auth_response)
+    const query = `{
+      Aggregates{
+        coupon_count: count(subquery: 
+        "query{coupon{id  merchant{id}}}" 
+        ordering: "merchant_id")
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response.data.Aggrigates)
+    console.log("FETCH request to merchantCouponCount");
+
+    yield put({  type: "SET_COUPON_NUMBER",  payload: response.data.Aggrigates});
+
+  } catch (err) {
+    console.log("error in merchantCouponCount Saga", err);
   }
 }
 
@@ -148,7 +174,7 @@ function* addMerchantSaga(action) {
 
     console.log("RESPONSE IS", response);
 
-    yield put({ type: "FETCH_MERCHANTS", payload: action.payload });
+    yield put({ type: "FETCH_MERCHANTS", payload: action.payload.auth });
   } catch (error) {
     console.log("error in merchant POST", error);
   }

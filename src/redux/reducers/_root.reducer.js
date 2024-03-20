@@ -58,8 +58,8 @@ const rootReducer = combineReducers({
   sellerPage,
   customers,
   auth,
-  rolesReducer
-  paypal,
+  rolesReducer,
+  paypal
 });
 
 export default rootReducer;

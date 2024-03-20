@@ -7,6 +7,7 @@ import { capitalizeWords } from "../Utils/helpers.js";
 import UserTable from "../UserTable/UserTable.jsx";
 
 function UserProfile() {
+  const dispatch = useDispatch();
   const auth = useSelector((store) => store.auth)
   useEffect(() => {
     dispatch({ type: "FETCH_GROUP_ADMIN", payload: auth });

@@ -54,6 +54,6 @@ export default function* rootSaga() {
     customersSaga(),
     transactionsSaga(),
     redeemSaga(),
-    paypalSaga(),
+    paypalSaga()
   ]);
 }

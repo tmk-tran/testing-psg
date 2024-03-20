@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Button,
@@ -30,7 +30,7 @@ export default function AddOrganizationModal({
 }) {
   console.log(isMerchantList);
   const dispatch = useDispatch();
-
+  const auth = useSelector((store) => store.auth) 
   // Set state for the add organization form
   const [organizationName, setOrganizationName] = useState("");
   const [organizationType, setOrganizationType] = useState("");
@@ -73,6 +73,7 @@ export default function AddOrganizationModal({
             primary_contact_email: contactEmail,
             organization_logo: logoFile,
             organization_earnings: orgEarnings,
+            auth
           },
         })
       : dispatch({
@@ -89,6 +90,7 @@ export default function AddOrganizationModal({
             contact_email: contactEmail,
             merchant_logo: logoFile,
             website: merchantWebsite,
+            auth
           },
         });
     // clear input fields
