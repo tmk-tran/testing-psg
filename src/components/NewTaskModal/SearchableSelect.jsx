@@ -37,6 +37,7 @@ export default function YourComponent({
   console.log(merchantTab);
   console.log(merchants);
   console.log(organizations);
+  const organization = organizations.organization
   return (
     <Autocomplete
       value={thirdMenuChoice !== "" ? thirdMenuChoice : null}
@@ -58,7 +59,7 @@ export default function YourComponent({
           console.error("Selected value is null or undefined");
         }
       }}
-      options={merchantTab ? merchants : organizations}
+      options={merchantTab ? merchants : organization}
       getOptionLabel={(option) => {
         // console.log(
         //   "Option Label:",

@@ -26,6 +26,8 @@ import SearchableSelect from "../NewTaskModal/SearchableSelect";
 import CloseButton from "../Buttons/CloseButton";
 import ModalButtons from "../Modals/ModalButtons";
 import { useSelector } from "react-redux";
+import { formatDate } from "../Utils/helpers";
+
 
 const style = {
   position: "absolute",
@@ -158,7 +160,7 @@ export default function BasicModal({
     } else {
       // Logic for merchantTab being false (organizations logic)
       const selectedId =
-        organizations.find(
+        organizations.organization.find(
           (organization) => organization.organization_name === selectedName
         )?.id || "";
 
@@ -170,14 +172,11 @@ export default function BasicModal({
   };
 
   const handleDateChange = (date) => {
-    const formattedDate = date.$d.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-
+    const formattedDate = date.$d.toISOString().split('T')[0];
+  
     setDueDate(formattedDate);
   };
+  
 
   const addNewTask = () => {
     const actionType = merchantTab
@@ -185,7 +184,7 @@ export default function BasicModal({
       : "ADD_ORGANIZATION_TASK";
 
     const payload = merchantTab
-      ? {
+      ?  {
           category: firstMenuChoice,
           task: secondMenuChoice,
           merchant_id: merchantId,
@@ -194,9 +193,10 @@ export default function BasicModal({
           due_date: dueDate,
           description: additionalDetails,
           task_status: "New",
-          coupon_details: couponDetails,
+          coupon_details: couponDetails
+      
         }
-      : {
+      :   {
           // Adjust the payload properties for organization logic
           // Example:
           category: firstMenuChoice,
@@ -206,7 +206,7 @@ export default function BasicModal({
           assign: fourthMenuChoice,
           due_date: dueDate,
           description: additionalDetails,
-          task_status: "New",
+          task_status: "New"
           // Adjust other properties as needed
         };
 
@@ -338,7 +338,7 @@ export default function BasicModal({
             {/* ~~~~~~~~~~~~~ DATE SECTION ~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             <div>
-              <DatePicker initialDate={dueDate} onChange={handleDateChange} />
+              <DatePicker value={dueDate} initialDate={dueDate} onChange={handleDateChange} />
             </div>
             {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
           </div>

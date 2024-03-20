@@ -118,8 +118,8 @@ function* addMerchantTask(action) {
       "input": {
         "category": newTask.category,
         "task": newTask.task,
-        "organization_id": Number(newTask.merchant_id),
-        "organization_name": newTask.merchant_name,
+        "merchant_id": Number(newTask.merchant_id),
+        "merchant_name": newTask.merchant_name,
         "assign": newTask.assign,
         "due_date": newTask.due_date,
         "description": newTask.description,
