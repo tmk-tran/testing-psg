@@ -14,8 +14,7 @@ import couponBooks from "./couponBook.reducer";
 import orgNotes from "./orgNotes.reducer.js";
 import allUsers from "./allUsers.reducer.js";
 import groupAdmin from "./groupAdmin.reducer";
-import coupon from "./coupon.reducer";
-import pdf from "./couponPDF.reducer";
+import coupons from "./coupons.reducer";
 import merchantDetails from "./merchantDetails.reducer";
 import merchantNotes from "./merchantNotes.reducer";
 import merchantTasks from "./merchantTask.reducer";
@@ -28,6 +27,7 @@ import sellers from "./sellers.reducer";
 import sellerPage from "./sellerPage.reducer";
 import customers from "./customers.reducer";
 import rolesReducer from "./roles.reducer";
+import paypal from "./paypal.reducer";
 
 // This is what we get when we use 'state' inside of 'mapStateToProps'
 const rootReducer = combineReducers({
@@ -45,8 +45,7 @@ const rootReducer = combineReducers({
   groupAdmin,
   orgNotes,
   allUsers,
-  coupon,
-  pdf,
+  coupons,
   merchantNotes,
   merchantDetails,
   merchantTasks,
@@ -60,6 +59,7 @@ const rootReducer = combineReducers({
   customers,
   auth,
   rolesReducer
+  paypal,
 });
 
 export default rootReducer;

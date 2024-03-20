@@ -60,19 +60,73 @@ const states = [
   { name: "Wyoming", abbreviation: "WY" },
 ];
 
+// export default function StateSelector({
+//   onChange,
+//   stateSelected,
+//   isSubmitted,
+//   error,
+//   helperText,
+// }) {
+//   console.log(stateSelected);
+//   console.log(isSubmitted);
+//   const [state, setState] = useState("");
+//   const [error, setError] = useState(false);
+
+//   // useEffect(() => {
+//   //   setError(!stateSelected); // Set error to true if stateSelected is false
+//   // }, [stateSelected]);
+
+//   useEffect(() => {
+//     if (isSubmitted && !stateSelected) {
+//       setError(true);
+//     } else {
+//       setError(false);
+//     }
+//   }, [isSubmitted, stateSelected]);
+
+//   const handleChange = (event) => {
+//     const selectedAbbreviation = event.target.value;
+//     console.log(selectedAbbreviation);
+//     const newState = states.find(
+//       (state) => state.abbreviation === selectedAbbreviation
+//     );
+//     console.log(newState);
+//     setState(newState);
+//     onChange(newState, newState.abbreviation);
+//     setError(false);
+//   };
+
+//   return (
+//     <FormControl fullWidth error={error}>
+//       <InputLabel id="state-label">State</InputLabel>
+//       <Select
+//         labelId="state-label"
+//         id="state"
+//         // value={state}
+//         value={state ? state.abbreviation : ""}
+//         label="State"
+//         onChange={handleChange}
+//       >
+//         {states.map((state) => (
+//           <MenuItem key={state.abbreviation} value={state.abbreviation}>
+//             {state.abbreviation}
+//           </MenuItem>
+//         ))}
+//       </Select>
+//       {error && <FormHelperText>Please select a state</FormHelperText>}
+//     </FormControl>
+//   );
+// }
+
 export default function StateSelector({
   onChange,
   stateSelected,
   isSubmitted,
+  // setError,
+  // error,
 }) {
-  console.log(stateSelected);
-  console.log(isSubmitted);
   const [state, setState] = useState("");
   const [error, setError] = useState(false);
-
-  // useEffect(() => {
-  //   setError(!stateSelected); // Set error to true if stateSelected is false
-  // }, [stateSelected]);
 
   useEffect(() => {
     if (isSubmitted && !stateSelected) {
@@ -80,18 +134,15 @@ export default function StateSelector({
     } else {
       setError(false);
     }
-  }, [isSubmitted, stateSelected]);
+  }, [isSubmitted, stateSelected, setError]);
 
   const handleChange = (event) => {
     const selectedAbbreviation = event.target.value;
-    console.log(selectedAbbreviation);
     const newState = states.find(
       (state) => state.abbreviation === selectedAbbreviation
     );
-    console.log(newState);
     setState(newState);
     onChange(newState, newState.abbreviation);
-    setError(false);
   };
 
   return (
@@ -100,7 +151,6 @@ export default function StateSelector({
       <Select
         labelId="state-label"
         id="state"
-        // value={state}
         value={state ? state.abbreviation : ""}
         label="State"
         onChange={handleChange}

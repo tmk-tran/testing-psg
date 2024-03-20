@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
-import { Button, Card, CardContent, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import { border, borderPrimaryColor } from "../Utils/colors";
 // ~~~~~~~~~~ Component ~~~~~~~~~~ //
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
@@ -14,9 +14,9 @@ import { dispatchHook } from "../../hooks/useDispatch";
 import { mComments } from "../../hooks/reduxStore";
 import { flexCenter, textCenter } from "../Utils/pageStyles";
 import { grayBackground } from "../Utils/colors";
-import { pdfFile } from "../../hooks/reduxStore";
+import { couponsData } from "../../hooks/reduxStore";
 import { thumbnailSize } from "../CouponReviewDetails/FilePreview";
-import { capitalizeFirstWord } from "../Utils/helpers";
+import { capitalizeFirstWord, capitalizeWords } from "../Utils/helpers";
 
 const thumbnailHeaderStyle = {
   ...grayBackground,
@@ -52,7 +52,7 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
       });
   }, []);
 
-  const files = pdfFile() || [];
+  const files = couponsData() || [];
   console.log(files);
   const merchantComments = mComments(merchantId);
   console.log(merchantComments);
@@ -172,13 +172,13 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 <div style={borderPrimaryColor}>
                   <Typography variant="body2" sx={thumbnailHeaderStyle}>
-                    Offer:
+                    Offer: 
                   </Typography>
                   <div style={{ ...thumbnailSize, ...flexCenter }}>
                     {file.offer ? (
-                      <Typography variant="body2" sx={{ p: 1, ...textCenter }}>
+                      <Typography variant="body2" sx={{ fontWeight: "bold", p: 1, ...textCenter }}>
                         {/* Details of Coupon */}
-                        {capitalizeFirstWord(file.offer)}
+                        {capitalizeWords(file.offer)}
                       </Typography>
                     ) : (
                       <Typography variant="caption">No offer set</Typography>
@@ -188,9 +188,9 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~ COMMENTS ~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                <div style={{ padding: "5%" }}>
+                <Box sx={{ mt: 5, p: .5, mr: 1 }}>
                   <CommentDisplay comment={mostRecentComment} />
-                </div>
+                </Box>
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               </div>
             </CardContent>

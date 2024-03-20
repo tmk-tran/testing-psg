@@ -24,7 +24,9 @@ import { allMerchants, mCoupons } from "../../hooks/reduxStore.js";
 import { border } from "../Utils/colors.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 
-function HomePage({ isOrgAdmin }) {
+function HomePage({ isOrgAdmin, isGraphicDesigner }) {
+  console.log(isOrgAdmin);
+  console.log(isGraphicDesigner);
   const dispatch = useDispatch();
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~ Store ~~~~~~~~~~~~~~~~~~~~
@@ -38,7 +40,9 @@ function HomePage({ isOrgAdmin }) {
   }, []);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  const [isMerchantList, setIsMerchantList] = useState(false);
+  const [isMerchantList, setIsMerchantList] = useState(
+    isGraphicDesigner ? true : false
+  );
   console.log(isMerchantList);
   const organizationsList = useSelector((store) => store.organizations);
   console.log(organizationsList);
@@ -157,37 +161,17 @@ function HomePage({ isOrgAdmin }) {
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~ TOGGLE VIEWS ~~~~~~~~~~ */}
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-          {!isOrgAdmin && (
+          {!isOrgAdmin && !isGraphicDesigner && (
             <ToggleButton
               sxButton={{ margin: 2 }}
               sxIcon={{ mr: 1 }}
-              onClick={() => setIsMerchantList(!isMerchantList)}
+              // onClick={() => setIsMerchantList(!isMerchantList)}
+              onClick={() => setIsMerchantList((prevState) => !prevState)}
               label1="Merchants"
               label2="Organizations"
               toggleState={isMerchantList}
             />
           )}
-
-          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-          {/* ~~~~~~~~~~ SEARCH BAR ~~~~~~~~~~~ */}
-          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-          {/* <div style={{ margin: 16 }}>
-            {!isMerchantList ? (
-              <SearchBar
-                isOrganization={true}
-                query={query}
-                onChange={handleOnSearch}
-                clearInput={clearInput}
-              />
-            ) : (
-              <SearchBar
-                isOrganization={false}
-                query={query}
-                onChange={handleOnSearch}
-                clearInput={clearInput}
-              />
-            )}
-          </div> */}
         </div>
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~ PAGE HEADER ~~~~~~~~~~~ */}
@@ -197,7 +181,7 @@ function HomePage({ isOrgAdmin }) {
           sx={{
             fontWeight: "bold",
             textAlign: "center",
-            mt: isOrgAdmin ? 3 : 0,
+            mt: isOrgAdmin ? 3 : isGraphicDesigner ? 3 : 0,
           }}
         >
           {!isMerchantList ? "Organization List" : "Merchant List"}
@@ -269,7 +253,11 @@ function HomePage({ isOrgAdmin }) {
                     onChange={handleEdit}
                     editComplete={editComplete}
                     setEditComplete={setEditComplete}
-                    numCoupons={couponNumbers.find(coupon => coupon.merchant_id === merchant.id)?.num_coupons || 0}
+                    numCoupons={
+                      couponNumbers.find(
+                        (coupon) => coupon.merchant_id === merchant.id
+                      )?.num_coupons || 0
+                    }
                   />
                 ))
               : currentItems.map((organization, index) => (

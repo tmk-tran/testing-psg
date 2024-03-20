@@ -31,6 +31,7 @@ import SellerPage from "../SellerPage/SellerPage";
 import ConsumerCouponView from "../ConsumerCouponView/ConsumerCouponView";
 import SellerLandingPage from "../SellerPage/SellerLandingPage";
 import OrderComplete from "../CheckoutPage/OrderComplete";
+import Transactions from "../Transactions/Transactions";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
@@ -64,10 +65,6 @@ function App() {
   const auth = useSelector((store) => store.auth)
   console.log(user);
 
-  // useEffect(() => {
-  //   dispatch({ type: "FETCH_USER" });
-  // }, [dispatch]);
-
   useEffect(() => {
     dispatch({ type: "FETCH_USER", payload: auth });
     // dispatch({ type: "FETCH_COUPON_BOOKS" });
@@ -89,6 +86,16 @@ function App() {
             <Switch>
               <Redirect exact from="/" to="/home" />
 
+              <ProtectedRoute exact path="/user">
+                {user.org_admin && <HomePage isOrgAdmin={true} />}
+                {!user.org_admin && !user.graphic_designer && (
+                  <HomePage isOrgAdmin={false} />
+                )}
+                {user.graphic_designer && <HomePage isGraphicDesigner={true} />}
+                {!user.is_admin &&
+                  !user.org_admin &&
+                  !user.graphic_designer && <Redirect to="/coupon" />}
+              </ProtectedRoute>
 
               <ProtectedRoute exact path="/userProfile/:id">
                 <UserProfile />
@@ -114,9 +121,15 @@ function App() {
                 <ConsumerCouponView />
               </ProtectedRoute>
 
-              {user.is_admin && (
+              {(user.is_admin || user.graphic_designer) && (
                 <ProtectedRoute exact path="/tasks">
                   <TaskTabs />
+                </ProtectedRoute>
+              )}
+
+              {user.is_admin && (
+                <ProtectedRoute exact path="/transactions">
+                  <Transactions />
                 </ProtectedRoute>
               )}
 

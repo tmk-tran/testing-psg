@@ -8,6 +8,7 @@ const SearchBar = ({ isOrganization, isCoupon, query, onChange, clearInput }) =>
   
   const handleChange = (event) => {
     const { value } = event.target;
+    console.log(value);
     onChange(value); // Call the onChange function passed from the parent
   };
 
@@ -44,7 +45,7 @@ const SearchBar = ({ isOrganization, isCoupon, query, onChange, clearInput }) =>
         />
       ) : (
         <TextField
-          label={isCoupon ? "Search Coupons" : "Search Merchants"}
+          label={isCoupon ? "Search by Merchant" : "Search Merchants"}
           variant="outlined"
           size="small"
           value={query}

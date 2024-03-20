@@ -30,10 +30,10 @@ const FilePreview = ({
   console.log(showBackViewFiles);
   console.log(caseType);
   const dispatch = dispatchHook();
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdf, setPdf] = useState(null);
   console.log(pdfBlob);
   console.log(directFile);
-  console.log(pdfUrl);
+  console.log(pdf);
   const [isUploading, setIsUploading] = useState(false);
   console.log(isUploading);
   const [frontViewUrl, setFrontViewUrl] = useState(null);
@@ -76,7 +76,7 @@ const FilePreview = ({
               <>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <PdfThumbnail
-                    pdfUrl={directFile.frontViewBlob}
+                    pdf={directFile.frontViewBlob}
                     style={thumbnailSize}
                   />
                 </div>
@@ -95,7 +95,7 @@ const FilePreview = ({
               <>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <PdfThumbnail
-                    pdfUrl={directFile.backViewBlob}
+                    pdf={directFile.backViewBlob}
                     style={thumbnailSize}
                   />
                 </div>

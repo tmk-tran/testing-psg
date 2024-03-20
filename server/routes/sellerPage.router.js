@@ -45,6 +45,7 @@ router.get("/:refId", (req, res) => {
 router.put("/:id", (req, res) => {
   const sellerId = req.params.id;
   const sellerInfo = req.body;
+  console.log("FROM SELLERPAGE....SELLER INFO = ", sellerInfo);
   const updateType = sellerInfo.updateType;
   const refId = sellerInfo.refId;
 
@@ -83,7 +84,7 @@ router.put("/:id", (req, res) => {
           UPDATE 
             "sellers"
           SET
-            "donations" = "donations" + $1
+            "digital_donations" = "digital_donations" + $1
           WHERE 
             "id" = $2
           AND
@@ -96,19 +97,13 @@ router.put("/:id", (req, res) => {
         UPDATE
           "sellers"
         SET
-          "digital" = "digital" + $1,
-          "digital_donations" = "digital_donations" + $2
+          "digital" = "digital" + $1
         WHERE
-          "id" = $3
+          "id" = $2
         AND
-          "refId" = $4
+          "refId" = $3
         ;`;
-      values = [
-        sellerInfo.digital,
-        sellerInfo.digital_donations,
-        sellerId,
-        refId,
-      ];
+      values = [sellerInfo.digital, sellerId, refId];
       break;
     default:
       res.status(400).json({ error: "Invalid update type" });

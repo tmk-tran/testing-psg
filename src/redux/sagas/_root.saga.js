@@ -24,14 +24,9 @@ import sellersSaga from "./sellers.saga";
 import sellerPageSaga from "./sellerPage.saga";
 import customersSaga from "./customers.saga";
 import transactionsSaga from "./transactions.saga";
+import redeemSaga from "./couponRedeem.saga";
+import paypalSaga from "./paypal.saga";
 
-// rootSaga is the primary saga.
-// It bundles up all of the other sagas so our project can use them.
-// This is imported in index.js as rootSaga
-
-// some sagas trigger other sagas, as an example
-// the registration triggers a login
-// and login triggers setting the user
 export default function* rootSaga() {
   yield all([
     loginSaga(), // login saga is now registered
@@ -57,6 +52,8 @@ export default function* rootSaga() {
     sellersSaga(),
     sellerPageSaga(),
     customersSaga(),
-    transactionsSaga(),    
+    transactionsSaga(),
+    redeemSaga(),
+    paypalSaga(),
   ]);
 }

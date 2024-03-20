@@ -6,18 +6,13 @@ import {
   Box,
   Typography,
   TextField,
-  Button,
   Divider,
 } from "@mui/material";
-// ~~~~~~~~~~ Utils ~~~~~~~~~~
-import { showToast } from "../Utils/toasts";
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
-import {
-  capitalizeStateAbbr,
-  capitalizeWords,
-  saveBtnWidth,
-} from "../Utils/helpers";
+import { capitalizeStateAbbr, capitalizeWords } from "../Utils/helpers";
+// ~~~~~~~~~~~ Components ~~~~~~~~~~~ //
 import ModalButtons from "../Modals/ModalButtons";
 
 export default function DetailsEdit({
@@ -111,11 +106,8 @@ export default function DetailsEdit({
           id: merchantId,
         };
 
-    // from Utils
-    // showToast();
-
     // Sweet Alert
-    showSaveSweetAlert();
+    showSaveSweetAlert({ label: "Details Updated" });
 
     setZipError(false);
 
@@ -215,11 +207,7 @@ export default function DetailsEdit({
           helperText={zipError ? "Invalid zip code" : ""}
         />
         {/* </div> */}
-        <ModalButtons
-          label="Save"
-          onSave={handleSave}
-          onCancel={handleClose}
-        />
+        <ModalButtons label="Save" onSave={handleSave} onCancel={handleClose} />
       </Box>
     </Modal>
   );

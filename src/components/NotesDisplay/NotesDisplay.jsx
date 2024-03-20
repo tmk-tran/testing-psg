@@ -112,9 +112,10 @@ export default function NotesDisplay({
       console.log(sendNote);
       setNoteAdded(true);
     };
+    saveCall();
 
     // Sweet Alert
-    showSaveSweetAlert(saveCall);
+    showSaveSweetAlert({ label: "Note Added" });
 
     setInputValue("");
   };

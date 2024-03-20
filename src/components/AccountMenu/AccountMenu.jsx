@@ -47,16 +47,20 @@ const AccountMenu = () => {
       )}
     >
       {[
-        <MenuItem
-          key="profile"
-          value="profile"
-          onClick={() => {
-            history.push(`/userProfile/${user.id}`);
-          }}
-        >
-          Profile
-        </MenuItem>,
-        <hr key="divider" style={{ width: "90%" }} />,
+        (user.is_admin || user.org_admin) && (
+          <MenuItem
+            key="profile"
+            value="profile"
+            onClick={() => {
+              history.push(`/userProfile/${user.id}`);
+            }}
+          >
+            Profile
+          </MenuItem>
+        ),
+        (user.is_admin || user.org_admin) && (
+          <hr key="divider" style={{ width: "90%" }} />
+        ),
         user.is_admin && (
           <MenuItem
             key="tasks"
@@ -68,6 +72,7 @@ const AccountMenu = () => {
             Tasks
           </MenuItem>
         ),
+        // user.is_admin && <hr key="divider2" style={{ width: "90%" }} />,
         user.is_admin && (
           <MenuItem
             key="organizations"
@@ -79,7 +84,7 @@ const AccountMenu = () => {
             Accounts
           </MenuItem>
         ),
-        <hr key="divider2" style={{ width: "90%" }} />,
+        user.is_admin && <hr key="divider2" style={{ width: "90%" }} />,
         <MenuItem
           key="logout"
           value="logout"

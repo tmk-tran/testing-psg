@@ -84,6 +84,7 @@ function* fetchAllMerchantTasks(action) {
 }
 
 function* addMerchantTask(action) {
+  console.log(action.payload);
   try {
     const newTask = action.payload.newTask
     const auth_response = action.payload.auth

@@ -25,6 +25,7 @@ import DatePicker from "../DatePicker/DatePicker";
 import SearchableSelect from "../NewTaskModal/SearchableSelect";
 import CloseButton from "../Buttons/CloseButton";
 import ModalButtons from "../Modals/ModalButtons";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { useSelector } from "react-redux";
 import { formatDate } from "../Utils/helpers";
 
@@ -62,16 +63,18 @@ export default function BasicModal({
   customIcon,
   customText,
   caseType,
-  onChange,
 }) {
   console.log(tabs);
   console.log(merchantTab);
+  console.log(caseType);
   const dispatch = dispatchHook();
   const auth = useSelector((store) => store.auth)
   // ~~~~~~~~~~ All Merchants from store ~~~~~~~~~~
   const merchants = allMerchants();
+  console.log(merchants);
   // ~~~~~~~~~~ All Organizations from store ~~~~~~~~~~
   const organizations = allOrganizations();
+  console.log(organizations);
   // ~~~~~~~~~~ Modal State ~~~~~~~~~~
   const [open, setOpen] = useState(false);
   // ~~~~~~~~~~ Menu State ~~~~~~~~~~
@@ -183,32 +186,47 @@ export default function BasicModal({
       ? "ADD_MERCHANT_TASK"
       : "ADD_ORGANIZATION_TASK";
 
-    const payload = merchantTab
-      ?  {
-          category: firstMenuChoice,
-          task: secondMenuChoice,
-          merchant_id: merchantId,
-          merchant_name: thirdMenuChoice,
-          assign: fourthMenuChoice,
-          due_date: dueDate,
-          description: additionalDetails,
-          task_status: "New",
-          coupon_details: couponDetails
+    const payload =
+      caseType === "merchantView"
+        ? {
+            // Include properties specific to the 'merchantView' case
+            fetchType: "FETCH_MERCHANT_TASKS",
+            category: firstMenuChoice,
+            task: secondMenuChoice,
+            merchant_id: merchantId,
+            merchant_name: thirdMenuChoice,
+            assign: fourthMenuChoice,
+            due_date: dueDate,
+            description: additionalDetails,
+            task_status: "New",
+            coupon_details: couponDetails,
+          }
+        : merchantTab
+        ?  {
+            category: firstMenuChoice,
+            task: secondMenuChoice,
+            merchant_id: merchantId,
+            merchant_name: thirdMenuChoice,
+            assign: fourthMenuChoice,
+            due_date: dueDate,
+            description: additionalDetails,
+            task_status: "New",
+            coupon_details: couponDetails
       
-        }
-      :   {
-          // Adjust the payload properties for organization logic
-          // Example:
-          category: firstMenuChoice,
-          task: secondMenuChoice,
-          organization_id: organizationId,
-          organization_name: thirdMenuChoice,
-          assign: fourthMenuChoice,
-          due_date: dueDate,
-          description: additionalDetails,
-          task_status: "New"
-          // Adjust other properties as needed
-        };
+          }
+        :   {
+            // Adjust the payload properties for organization logic
+            // Example:
+            category: firstMenuChoice,
+            task: secondMenuChoice,
+            organization_id: organizationId,
+            organization_name: thirdMenuChoice,
+            assign: fourthMenuChoice,
+            due_date: dueDate,
+            description: additionalDetails,
+            task_status: "New"
+            // Adjust other properties as needed
+          };
 
     dispatch({
       type: actionType,
@@ -216,13 +234,18 @@ export default function BasicModal({
         auth: auth}
     });
 
+    showSaveSweetAlert({ label: "Task Added" });
     handleClose();
-    onChange();
   };
 
   return (
     <div>
-      <Button variant={tabs ? "text" : "contained"} sx={{ mt: 1 }} onClick={handleOpen} fullWidth>
+      <Button
+        variant={tabs ? "text" : "contained"}
+        sx={{ mt: 1 }}
+        onClick={handleOpen}
+        fullWidth
+      >
         {customIcon ? (
           customIcon // Render the custom icon if provided
         ) : (
@@ -308,13 +331,21 @@ export default function BasicModal({
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~ SEARCHABLE FIELD ~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            <SearchableSelect
-              thirdMenuChoice={thirdMenuChoice}
-              handleAccountChange={handleAccountChange}
-              merchantTab={merchantTab}
-              merchants={merchants}
-              organizations={organizations}
-            />
+            {merchantTab ? (
+              <SearchableSelect
+                thirdMenuChoice={thirdMenuChoice}
+                handleAccountChange={handleAccountChange}
+                merchantTab={true}
+                merchants={merchants}
+              />
+            ) : (
+              <SearchableSelect
+                thirdMenuChoice={thirdMenuChoice}
+                handleAccountChange={handleAccountChange}
+                merchantTab={false}
+                organizations={organizations}
+              />
+            )}
             {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
 
             <InputLabel>Assign To:</InputLabel>

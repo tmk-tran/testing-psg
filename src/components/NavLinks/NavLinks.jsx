@@ -46,23 +46,25 @@ export default function NavLinks() {
     <ThemeProvider theme={theme}>
       <div className="NavLinks-container">
         {/* If no user is logged in or user is an org admin, show these links */}
-        {!user.id || user.org_admin ? (
+        {!user.id || user.org_admin || user.graphic_designer ? (
           <>
-            <Typography
-              sx={{
-                textAlign: !user.id ? "center" : "inherit",
-                flexGrow: !user.id ? 1 : "inherit",
-              }}
-            >
-              <MuiLink
-                component={Link}
-                className="main-navlink"
-                to="/login"
-                underline="hover"
+            {(!user.graphic_designer || !user.id) && (
+              <Typography
+                sx={{
+                  textAlign: !user.id ? "center" : "inherit",
+                  flexGrow: !user.id ? 1 : "inherit",
+                }}
               >
-                Login / Register
-              </MuiLink>
-            </Typography>
+                <MuiLink
+                  component={Link}
+                  className="main-navlink"
+                  to="/login"
+                  underline="hover"
+                >
+                  Login / Register
+                </MuiLink>
+              </Typography>
+            )}
             {/* Add the /home link for org admins */}
             {user.org_admin && (
               <Typography>
@@ -75,6 +77,43 @@ export default function NavLinks() {
                   Organizations
                 </MuiLink>
               </Typography>
+            )}
+            {/* Links for graphic designer */}
+            {user.graphic_designer && (
+              <>
+                <Typography>
+                  <MuiLink
+                    component={Link}
+                    className="main-navlink"
+                    to="/home"
+                    underline="hover"
+                  >
+                    Merchants
+                  </MuiLink>
+                </Typography>
+
+                <Typography>
+                  <MuiLink
+                    component={Link}
+                    className="main-navlink"
+                    to="/coupon"
+                    underline="hover"
+                  >
+                    Coupons
+                  </MuiLink>
+                </Typography>
+
+                <Typography>
+                  <MuiLink
+                    component={Link}
+                    className="main-navlink"
+                    to="/tasks"
+                    underline="hover"
+                  >
+                    Tasks
+                  </MuiLink>
+                </Typography>
+              </>
             )}
           </>
         ) : (
@@ -121,7 +160,7 @@ export default function NavLinks() {
                   to="/coupon"
                   underline="hover"
                 >
-                  Coupon
+                  Coupons
                 </MuiLink>
               </Typography>
 
@@ -133,6 +172,17 @@ export default function NavLinks() {
                   underline="hover"
                 >
                   Tasks
+                </MuiLink>
+              </Typography>
+
+              <Typography>
+                <MuiLink
+                  component={Link}
+                  className="main-navlink"
+                  to="/transactions"
+                  underline="hover"
+                >
+                  Transactions
                 </MuiLink>
               </Typography>
 

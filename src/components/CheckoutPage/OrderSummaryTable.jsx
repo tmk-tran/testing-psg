@@ -9,8 +9,6 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import TotalUpdate from "./TotalUpdate";
-import { border } from "../Utils/colors";
 
 export default function OrderSummaryTable({
   selectedProducts,

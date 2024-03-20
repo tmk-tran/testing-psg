@@ -62,7 +62,6 @@ export default function CouponReviewComments({ merchantId, onSubmit, files, hand
       {merchantComments.map((comment, i) => (
         <div className="comment-display-row" key={i}>
           <CommentDisplay
-            backgroundColor=""
             comment={comment}
             showAllComments={true}
           />

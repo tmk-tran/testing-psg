@@ -50,7 +50,7 @@ export default function BooksSoldForm({
     console.log("Dispatching action:", updateAction);
     dispatch(updateAction);
     handleClose();
-    showSaveSweetAlert();
+    showSaveSweetAlert({ label: "Updated" });
   };
 
   return (
@@ -67,11 +67,11 @@ export default function BooksSoldForm({
           </Typography>
           <Divider sx={lineDivider} />
           <Typography id="modal-modal-description" sx={{ mb: 2 }}>
-            Please provide the total amount sold, through <strong>cash</strong>{" "}
-            and/or <strong>check</strong> sales
+            Please provide the <strong>total</strong> amount sold, through{" "}
+            <strong>cash</strong> and/or <strong>check</strong> sales
           </Typography>
           <TextField
-            label="Total"
+            label="Total # books sold"
             type="number"
             fullWidth
             onChange={handleAmountChange}

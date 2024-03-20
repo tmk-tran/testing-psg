@@ -4,9 +4,11 @@ import { Box, Typography, Modal, TextField, Divider } from "@mui/material";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~~~~~~~~~~
 import AddBox from "../AddBoxIcon/AddBoxIcon";
 import ModalButtons from "../Modals/ModalButtons";
+import PhoneInput from "./PhoneInput";
+import StateSelector from "../StateSelector/StateSelector";
 import CloseButton from "../Buttons/CloseButton";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~
-import { leftSpace } from "../Details/styleDetails";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { dispatchHook } from "../../hooks/useDispatch";
 
@@ -30,8 +32,6 @@ const style = {
 };
 
 export default function AddLocationModal({
-  onLocationAdd,
-  handleCaseTypeChange,
   handleAddLocation,
   isEditing,
   handleCloseModal,
@@ -52,7 +52,7 @@ export default function AddLocationModal({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [locationAddress, setLocationAddress] = useState("");
   const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const [stateSelected, setStateSelected] = useState(false);
   const [zip, setZip] = useState("");
   const [merchantId, setMerchantId] = useState(paramsObject.id);
   const [additionalDetails, setAdditionalDetails] = useState("");
@@ -61,10 +61,20 @@ export default function AddLocationModal({
   console.log(phoneNumber);
   console.log(locationAddress);
   console.log(city);
-  console.log(state);
+  console.log(stateSelected);
   console.log(zip);
   console.log(merchantId);
   console.log(additionalDetails);
+  // ~~~~~~~~~~ Error State ~~~~~~~~~~~~~~~~~~~~ //
+  const [nameError, setNameError] = useState(false);
+  const [addressError, setAddressError] = useState(false);
+  const [cityError, setCityError] = useState(false);
+  const [stateError, setStateError] = useState(false);
+  const [zipError, setZipError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  console.log(isSubmitted);
 
   useEffect(() => {
     if (locationToEdit) {
@@ -93,9 +103,16 @@ export default function AddLocationModal({
     setPhoneNumber("");
     setLocationAddress("");
     setCity("");
-    setState("");
+    setStateSelected(false);
     setZip("");
     setAdditionalDetails("");
+    setNameError(false);
+    setAddressError(false);
+    setCityError(false);
+    setStateError(false);
+    setZipError(false);
+    setPhoneError(false);
+
     handleClose();
   };
 
@@ -105,7 +122,7 @@ export default function AddLocationModal({
     phone_number: phoneNumber,
     address: locationAddress,
     city: city,
-    state: state,
+    state: stateSelected,
     zip: zip,
     merchant_id: merchantId,
     additional_details: additionalDetails,
@@ -113,14 +130,47 @@ export default function AddLocationModal({
   };
 
   const addLocation = () => {
-    console.log("Clicked addLocation");
-    dispatch({
-      type: "ADD_LOCATION",
-      payload: {newLocation: newLocationPayload, auth: auth}
-    });
+    if (!locationName) {
+      setNameError(true);
+      return;
+    }
+    if (!locationAddress) {
+      setAddressError(true);
+      return;
+    }
+    if (!city) {
+      setCityError(true);
+      return;
+    }
+    if (!stateSelected) {
+      setIsSubmitted(true);
+      return;
+    }
+    if (!zip) {
+      setZipError(true);
+      return;
+    }
+    if (!phoneNumber) {
+      setPhoneError(true);
+      return;
+    }
+    // Only dispatch if all required fields are filled
+    if (
+      locationName &&
+      locationAddress &&
+      city &&
+      stateSelected &&
+      zip &&
+      phoneNumber
+    ) {
+      dispatch({
+        type: "ADD_LOCATION",
+        payload: {newLocation: newLocationPayload, auth: auth}
+      });
+    }
 
-    handleCaseTypeChange("New Location");
-    onLocationAdd();
+    isSubmitted(true);
+    showSaveSweetAlert({ label: "Location Added" });
     handleAddLocation();
     resetForm();
   };
@@ -133,20 +183,24 @@ export default function AddLocationModal({
     console.log("Dispatching action:", action);
     dispatch(action);
 
-    handleCaseTypeChange("Edit Location");
-    onLocationAdd();
+    showSaveSweetAlert({ label: "Changes Saved" });
     resetForm();
+  };
+
+  const handleStateChange = (state, value) => {
+    // Handle the state change in the parent component
+    console.log(state, value);
+    !state
+      ? alert("Please select a state.")
+      : console.log("READY FOR SUBMIT LOGIC HERE");
+    setStateSelected(value);
   };
 
   return (
     <div>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ ADD BUTTON ~~~~~~~~~~ */}
-      <AddBox
-        label="Location"
-        buttonStyle={{ mb: 2 }}
-        onClick={handleOpen}
-      />
+      <AddBox label="Location" buttonStyle={{ mb: 2 }} onClick={handleOpen} />
       <Modal
         open={open}
         // onClose={handleClose}
@@ -168,39 +222,57 @@ export default function AddLocationModal({
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ NAME ~~~~~~~~~~~~~ */}
           <TextField
-            label="Location Name*"
-            value={locationName}
-            onChange={(e) => setLocationName(e.target.value)}
+            label="Location Name"
+            value={capitalizeWords(locationName)}
+            onChange={(e) => {
+              setLocationName(e.target.value);
+              setNameError(false);
+            }}
             fullWidth
             sx={{ mb: 2 }}
+            required
+            error={nameError}
+            helperText={nameError ? "Please enter location name" : ""}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ ADDRESS ~~~~~~~~~~ */}
           <TextField
-            label="Location Address*"
-            value={locationAddress}
-            onChange={(e) => setLocationAddress(e.target.value)}
+            label="Location Address"
+            value={capitalizeWords(locationAddress)}
+            onChange={(e) => {
+              setLocationAddress(e.target.value);
+              setAddressError(false);
+            }}
             fullWidth
             sx={{ mb: 2 }}
+            required
+            error={addressError}
+            helperText={addressError ? "Please enter location address" : ""}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ CITY ~~~~~~~~~~~~~ */}
           <TextField
             label="City"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            value={capitalizeWords(city)}
+            onChange={(e) => {
+              setCity(e.target.value);
+              setCityError(false);
+            }}
             fullWidth
             sx={{ mb: 2 }}
+            required
+            error={cityError}
+            helperText={cityError ? "Please enter city" : ""}
           />
           <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~ STATE ~~~~~~~~~~~~ */}
-            <TextField
-              label="State"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              // fullWidth
-              sx={{ mb: 2 }}
+            <StateSelector
+              onChange={handleStateChange}
+              stateSelected={stateSelected}
+              isSubmitted={isSubmitted}
+              // setError={setStateError}
+              // error={stateError}
             />
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~ ZIP ~~~~~~~~~~~~~~ */}
@@ -211,20 +283,26 @@ export default function AddLocationModal({
               inputProps={{
                 inputMode: "numeric",
               }}
-              onChange={(e) => setZip(e.target.value)}
+              onChange={(e) => {
+                setZip(e.target.value);
+                setZipError(false);
+              }}
               fullWidth
               sx={{ mb: 2 }}
+              required
+              error={zipError}
+              helperText={zipError ? "Please enter zip code" : ""}
             />
           </div>
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~ PHONE NUMBER ~~~~~~~~ */}
-          <TextField
-            label="Phone Number"
-            value={phoneNumber}
-            type="number"
-            onChange={(e) => setPhoneNumber(Number(e.target.value))}
-            fullWidth
+          <PhoneInput
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
             sx={{ mb: 2 }}
+            setPhoneError={setPhoneError}
+            error={phoneError}
+            helperText={phoneError ? "Please enter phone number" : ""}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~ ADDITIONAL DETAILS ~~~~~~~~ */}

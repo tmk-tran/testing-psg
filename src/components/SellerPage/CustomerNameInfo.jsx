@@ -5,7 +5,7 @@ import { border } from "../Utils/colors";
 import { flexCenter, flexEnd, flexRowSpace } from "../Utils/pageStyles";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
-export default function CustomerNameInfo({ onSubmit }) {
+export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad, setPageLoad }) {
   const seller = useParams();
   const refId = seller.refId;
   console.log(refId);
@@ -16,6 +16,7 @@ export default function CustomerNameInfo({ onSubmit }) {
   const [firstNameError, setFirstNameError] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [showSaveButton, setShowSaveButton] = useState(false);
+  const [showSkip, setShowSkip] = useState(true);
 
   // useEffect(() => {
   //   onFormChange({
@@ -37,6 +38,7 @@ export default function CustomerNameInfo({ onSubmit }) {
   //     setCustomerPhoneNumber(value);
   //   }
   // };
+
   const handleLastName = (e) => {
     setCustomerLastName(e.target.value);
     setShowSaveButton(
@@ -108,15 +110,31 @@ export default function CustomerNameInfo({ onSubmit }) {
       phone: customerPhoneNumber,
     });
     resetForm();
-    showSaveSweetAlert();
+    showSaveSweetAlert({ label: null });
+  };
+
+  const skipClick = () => {
+    setShowOrderTable(true);
+    setShowSkip(false);
+    setPageLoad(false);
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Box sx={{ display: "flex", gap: 2 }}>
+      <Typography sx={{ textAlign: pageLoad ? "center" : "flex-start" }}>Customer information (optional):</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          flexDirection: pageLoad ? "column" : "row",
+          justifyContent: pageLoad ? "center" : "flex-start",
+          alignItems: pageLoad ? "center" : "flex-start",
+        }}
+      >
         <TextField
           value={customerLastName}
           fullWidth
+          sx={{ width: pageLoad ? "50%" : "100%" }}
           label="Last Name"
           onChange={handleLastName}
           error={!!lastNameError}
@@ -125,6 +143,7 @@ export default function CustomerNameInfo({ onSubmit }) {
         <TextField
           value={customerFirstName}
           fullWidth
+          sx={{ width: pageLoad ? "50%" : "100%" }}
           label="First Name"
           onChange={handleFirstName}
           error={!!firstNameError}
@@ -133,14 +152,17 @@ export default function CustomerNameInfo({ onSubmit }) {
         <TextField
           value={customerPhoneNumber}
           fullWidth
+          sx={{ width: pageLoad ? "50%" : "100%" }}
           label="Phone Number"
           type="number"
           error={!!phoneNumberError}
           helperText={phoneNumberError}
           onChange={handlePhoneNumber}
         />
+
       </Box>
-      <Box sx={flexEnd}>
+      <Box sx={pageLoad ? flexCenter : flexEnd}>
+        {showSkip ? <Button onClick={skipClick}>Skip</Button> : null}
         {showSaveButton && (
           <Button variant="contained" color="secondary" type="submit">
             Save Customer Info

@@ -10,7 +10,6 @@ import {
   capitalizeFirstWord,
   capitalizeStateAbbr,
   capitalizeWords,
-  formatPhoneNumber,
 } from "../Utils/helpers";
 
 export default function LocationSelect({

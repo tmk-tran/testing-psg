@@ -25,7 +25,24 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 
   const queryText = `
   SELECT
-      s.*,
+      s.id,
+      s."refId",
+      s.lastname,
+      s.firstname,
+      s.level,
+      s.teacher,
+      s.initial_books,
+      s.additional_books,
+      s.books_returned,
+      ROUND(s.cash::numeric, 2) AS cash,
+      ROUND(s.checks::numeric, 2) AS checks,
+      ROUND(s.digital::numeric, 2) AS digital,
+      ROUND(s.donations::numeric, 2) AS donations,
+      ROUND(s.digital_donations::numeric, 2) AS digital_donations,
+      s.notes,
+      s.organization_id,
+      s.is_deleted,
+      s.books_due,
       o.organization_name,
       o.address,
       o.city,
@@ -34,7 +51,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
       t.physical_book_cash,
       t.physical_book_digital,
       t.digital_book_credit,
-      t.seller_earnings
+      ROUND(t.seller_earnings::numeric, 2) AS seller_earnings
   FROM
       sellers s
   INNER JOIN

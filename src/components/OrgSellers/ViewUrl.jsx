@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Modal, Divider, Typography as Typo } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~
-import { orderUrl, transactionsUrl } from "../SellerPage/sellerUtils";
+import { orderUrl, transactionsUrl } from "../SellerPage/sellerUrl";
 import { lineDivider } from "../Utils/modalStyles";
 // ~~~~~~~~~~ Components ~~~~~~~~~~~~~~
 import CopySnackBar from "./CopySnackbar";

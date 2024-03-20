@@ -1,19 +1,25 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { capitalizeFirstWord, formatDate } from "../Utils/helpers";
 import { border } from "../Utils/colors";
-export default function CommentDisplay({
-  backgroundColor = "rgba(96, 96, 96, 0.1)",
-  comment,
-  showAllComments,
-}) {
+
+const commentBoxStyle = {
+  borderRadius: "5px",
+  p: 1,
+  mr: 1,
+  width: "100%",
+};
+
+export default function CommentDisplay({ comment, showAllComments }) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Check if the comment is null or undefined
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (!comment || comment.length === 0) {
     return (
-      <div style={border}>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", ...commentBoxStyle }}
+      >
         <Typography>No Comments Available</Typography>
-      </div>
+      </Box>
     );
   }
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,21 +44,15 @@ export default function CommentDisplay({
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <div
-      style={{
-        // height: "10vh",
-        // backgroundColor: "rgba(96, 96, 96, 0.1)",
-        backgroundColor: backgroundColor,
-      }}
-    >
+    <Box sx={commentBoxStyle}>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div>
-          <Typography variant="body2" sx={{ ml: 1, fontWeight: "bold" }}>
+          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
             {user}
           </Typography>
         </div>
         <div>
-          <Typography variant="caption" sx={{ ml: 3, mt: 0.4 }}>
+          <Typography variant="caption" sx={{ ml: 2, mt: 0.4 }}>
             {date} - {time}
           </Typography>
         </div>
@@ -81,9 +81,9 @@ export default function CommentDisplay({
             {capitalizeFirstWord(content)}
           </Typography>
         ) : (
-          <Typography>No Comments Available</Typography>
+          <Typography variant="caption">No Comments Available</Typography>
         )}
       </div>
-    </div>
+    </Box>
   );
 }

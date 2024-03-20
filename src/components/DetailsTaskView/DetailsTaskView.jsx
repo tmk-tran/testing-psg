@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { Typography, Card, CardContent } from "@mui/material";
@@ -23,15 +23,6 @@ export default function DetailsTaskView({ caseType }) {
   console.log(mId);
   const auth = useSelector((store) => store.auth);
 
-  // useEffect(() => {
-  //   dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: mId });
-
-  //   dispatch({
-  //     type: "FETCH_MERCHANT_TASKS",
-  //     payload: mId,
-  //   });
-  // }, [dispatch, mId]);
-
   useEffect(() => {
     if (caseType === "orgTaskView") {
       dispatch({
@@ -43,7 +34,7 @@ export default function DetailsTaskView({ caseType }) {
       dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: {id: mId, auth: auth} });
       dispatch({ type: "FETCH_MERCHANT_TASKS", payload: {id: mId, auth: auth} });
     }
-  }, [mId, caseType]); // Deleted dispatch from dependencies
+  }, [mId, caseType]);
 
   return (
     <div className={`details-container ${isSmallScreen ? "small-screen" : ""}`}>
@@ -71,6 +62,7 @@ export default function DetailsTaskView({ caseType }) {
                 tabs={false}
                 customIcon={<AddBoxIcon />}
                 customText="Task"
+                merchantTab={true}
                 caseType={"merchantView"}
               />
             ) : (

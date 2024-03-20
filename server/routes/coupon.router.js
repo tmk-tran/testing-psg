@@ -7,17 +7,46 @@ const {
 const { upload } = require("../modules/upload");
 
 router.get("/", (req, res) => {
-  const filename = req.params.filename;
-  console.log("filename = ", filename);
-  // Assuming you have the PDF data stored in some way
-  const pdfData = req.params.pdf_data;
-  const frontViewPdf = req.params.front_view_pdf;
-  const backViewPdf = req.params.back_view_pdf;
-  console.log("pdfData = ", pdfData);
-  console.log("frontViewPdf = ", frontViewPdf);
-  console.log("backViewPdf = ", backViewPdf);
+  // can add
+  // ARRAY_AGG(l.coordinates) AS coordinates,
+  // ARRAY_AGG(l.region_id) AS region_id,
+  const queryText = `
+              SELECT
+                c.*,
+                cl.coupon_id AS coupon_id,
+                ARRAY_AGG(l.id) AS location_id,
+                ARRAY_AGG(l.location_name) AS location_name,
+                ARRAY_AGG(l.phone_number) AS phone_number,
+                ARRAY_AGG(l.address) AS address,
+                ARRAY_AGG(l.city) AS city,
+                ARRAY_AGG(l.state) AS state,
+                ARRAY_AGG(l.zip) AS zip,
+                ARRAY_AGG(l.merchant_id) AS location_merchant_id,
+                ARRAY_AGG(l.additional_details) AS location_additional_details,
+                m.merchant_name,
+                cl.is_redeemed
+              FROM
+                coupon_location cl
+              JOIN
+                coupon c ON cl.coupon_id = c.id
+              JOIN
+                location l ON cl.location_id = l.id
+              JOIN
+                merchant m ON c.merchant_id = m.id
+              LEFT JOIN
+                coupon_redemption cr ON cl.id = cr.location_id
+              WHERE
+                NOT EXISTS (
+                    SELECT 1
+                    FROM coupon_redemption cr
+                  WHERE cr.coupon_id = cl.coupon_id AND cl.is_redeemed = true
+                )
+              GROUP BY
+                c.id, m.merchant_name, cl.coupon_id, cl.is_redeemed
+              ORDER BY
+                m.merchant_name ASC;
 
-  const queryText = "SELECT * FROM coupon";
+        `;
 
   pool
     .query(queryText)
@@ -42,15 +71,12 @@ router.get("/:id", (req, res) => {
   console.log("frontViewPdf = ", frontViewPdf);
   console.log("backViewPdf = ", backViewPdf);
 
-  // const queryText =
-  //   "SELECT pdf_data, filename, front_view_pdf, back_view_pdf FROM coupon WHERE merchant_id = $1";
-
   const queryText = "SELECT * FROM coupon WHERE merchant_id = $1";
 
   pool
     .query(queryText, [merchantId])
     .then((result) => {
-      console.log("FROM couponPDFs.router: ", result.rows);
+      console.log("FROM coupon.router GET /:id route: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -92,7 +118,7 @@ router.get("/details/:id", (req, res) => {
   pool
     .query(queryText, [couponId])
     .then((result) => {
-      console.log("FROM coupon.router: ", result.rows);
+      console.log("FROM coupon.router GET /details/:id : ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -155,46 +181,24 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
   }
 });
 
-// EDIT route for updating coupon details
-router.put("/:merchantId/:couponId", rejectUnauthenticated, async (req, res) => {
-  console.log("COUPON EDIT req.body = ", req.body);
-  const coupon = req.body;
-  const couponId = req.params.couponId;
-  console.log("couponId = ", couponId);
-
-  const offer = coupon.offer;
-  const value = coupon.value;
-  const exclusions = coupon.exclusions;
-  const expiration = coupon.expiration;
-  const additionalInfo = coupon.additional_info;
+// PUT route for redeeming a coupon
+router.put("/redeem/:id", (req, res) => {
+  const couponId = req.params.id;
 
   const queryText = `
-      UPDATE 
-        coupon
-      SET 
-        offer = $1,
-        value = $2,
-        exclusions = $3,
-        expiration = $4,
-        additional_info = $5
-      WHERE id = $6;
+    UPDATE coupon
+    SET is_redeemed = true
+    WHERE id = $1;
   `;
 
   pool
-    .query(queryText, [
-      offer,
-      value,
-      exclusions,
-      expiration,
-      additionalInfo,
-      couponId,
-    ])
+    .query(queryText, [couponId])
     .then((response) => {
-      console.log("FROM coupon.router EDIT: ", response.rows);
+      console.log("Coupon redeemed:", response.rows);
       res.sendStatus(200);
     })
     .catch((error) => {
-      console.error("Error in EDIT coupon PUT route", error);
+      console.error("Error redeeming coupon:", error);
       res.sendStatus(500);
     });
 });
@@ -209,10 +213,6 @@ router.put("/front/:id", upload.single("pdf"), (req, res) => {
 
   // Insert the filename and merchantId into the database
   pool
-    // .query(
-    //   "INSERT INTO coupon (filename_front, front_view_pdf, merchant_id) VALUES ($1, $2, $3)",
-    //   [filename, frontViewPdf, merchantId]
-    // )
     .query(
       "UPDATE coupon SET filename_front = $1, front_view_pdf = $2 WHERE id = $3",
       [filename, frontViewPdf, couponId]
@@ -248,5 +248,53 @@ router.put("/back/:id", upload.single("pdf"), (req, res) => {
       res.status(500).send("Error uploading back view PDF");
     });
 });
+
+// EDIT route for updating coupon details
+router.put(
+  "/:merchantId/:couponId",
+  rejectUnauthenticated,
+  async (req, res) => {
+    console.log("COUPON EDIT req.body = ", req.body);
+    const coupon = req.body;
+    const couponId = req.params.couponId;
+    console.log("couponId = ", couponId);
+
+    const offer = coupon.offer;
+    const value = coupon.value;
+    const exclusions = coupon.exclusions;
+    const expiration = coupon.expiration;
+    const additionalInfo = coupon.additional_info;
+
+    const queryText = `
+      UPDATE 
+        coupon
+      SET 
+        offer = $1,
+        value = $2,
+        exclusions = $3,
+        expiration = $4,
+        additional_info = $5
+      WHERE id = $6;
+  `;
+
+    pool
+      .query(queryText, [
+        offer,
+        value,
+        exclusions,
+        expiration,
+        additionalInfo,
+        couponId,
+      ])
+      .then((response) => {
+        console.log("FROM coupon.router EDIT: ", response.rows);
+        res.sendStatus(200);
+      })
+      .catch((error) => {
+        console.error("Error in EDIT coupon PUT route", error);
+        res.sendStatus(500);
+      });
+  }
+);
 
 module.exports = router;

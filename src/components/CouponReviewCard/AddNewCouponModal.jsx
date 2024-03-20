@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
-  Button,
   Typography,
   Modal,
   TextField,
@@ -16,10 +15,11 @@ import SelectMenu from "./SelectMenu";
 import AddFileButton from "../AddFileButton/AddFileButton";
 import ModalButtons from "../Modals/ModalButtons";
 import AllLocationsButton from "./AllLocationsButton";
+import PhoneInput from "../LocationsCard/PhoneInput";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~ //
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { validateWebsiteFormat } from "../Utils/helpers";
+import { capitalizeWords, validateWebsiteFormat } from "../Utils/helpers";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
 const style = {
@@ -42,6 +42,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
 
   const [open, setOpen] = useState(false);
   const [merchantId, setMerchantId] = useState(paramsObject.id);
+  // ~~~~~~~~~~ Form State ~~~~~~~~~~~~~~~~~~~ //
   const [couponOffer, setCouponOffer] = useState("");
   const [couponValue, setCouponValue] = useState("");
   const [exclusions, setExclusions] = useState("");
@@ -50,22 +51,19 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   console.log(selectedLocations);
   const [selectAllLocations, setSelectAllLocations] = useState(false);
   const [address, setAddress] = useState("");
-  // const [city, setCity] = useState("");
-  // const [state, setState] = useState("");
-  // const [zip, setZip] = useState("");
   const [phone, setPhone] = useState("");
+  // ~~~~~~~~~~ Errors ~~~~~~~~~~~~~~~~~~~~~~~ //
   const [locationsError, setLocationsError] = useState(false);
   const [website, setWebsite] = useState("");
   const [websiteError, setWebsiteError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
-  console.log(phoneError);
   const [offerError, setOfferError] = useState(false);
 
+  console.log(phoneError);
   console.log(couponOffer);
   console.log(couponValue);
   console.log(exclusions);
   console.log(address);
-
   console.log(phone);
   console.log(website);
   console.log(additionalInfo);
@@ -87,19 +85,25 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
 
   const addCoupon = () => {
     // Check if required fields are filled
-    if (!couponOffer || !phone || !website) {
-      // If any required field is empty, set error state or display error message
-      // You can set an error state for each required field and display error messages accordingly
-      setLocationsError(!locationsError);
-      setOfferError(!offerError);
-      setPhoneError(!phone);
-      setWebsiteError(!website);
-      // You can set error states for other required fields in a similar manner
-      return; // Prevent further execution of form submission
+    if (!selectedLocations.length) {
+      setLocationsError(true);
+      return; // Stop if condition met, resolve to continue
+    }
+    if (!couponOffer) {
+      setOfferError(true);
+      return;
+    }
+    if (!phone) {
+      setPhoneError(true);
+      return;
+    }
+    if (!website) {
+      setWebsiteError(true);
+      return;
     }
 
     // Validate phone number before saving
-    if (!/^[0-9]*$/.test(phone) || phone.length !== 10) {
+    if (!/^\d{10}$/.test(phone)) {
       setPhoneError(true);
       return;
     }
@@ -117,7 +121,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
     dispatch(dispatchAction);
 
     handleCaseTypeChange("New Coupon");
-    showSaveSweetAlert();
+    showSaveSweetAlert({ label: "Coupon Added" });
     resetForm();
   };
 
@@ -198,7 +202,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
               {/* ~~~~~~~~~~ OFFER ~~~~~~~~~~~~ */}
               <TextField
                 label="Coupon Offer"
-                value={couponOffer}
+                value={capitalizeWords(couponOffer)}
                 onChange={(e) => {
                   setCouponOffer(e.target.value);
                   setOfferError(false);
@@ -235,29 +239,15 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
 
             <Grid item xs={6}>
               {/* <Divider sx={{ mt: 2, mb: 2, ...lineDivider}} /> */}
-
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~~ PHONE ~~~~~~~~~~~~ */}
-              <TextField
-                label="Phone Number"
-                type="number"
-                inputProps={{
-                  minLength: 10,
-                  maxLength: 10,
-                  pattern: "[0-9]*",
-                  inputMode: "numeric",
-                  required: true,
-                }}
-                value={phone}
-                onChange={(e) => {
-                  setPhone(Number(e.target.value));
-                  setPhoneError(false);
-                }}
+              <PhoneInput
+                phoneNumber={phone}
+                setPhoneNumber={setPhone}
+                sx={{ mb: 2 }}
+                setPhoneError={setPhoneError}
                 error={phoneError}
                 helperText={phoneError ? "Invalid phone number" : ""}
-                fullWidth
-                sx={{ mb: 2 }}
-                required
               />
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~~ WEBSITE ~~~~~~~~~~~~ */}

@@ -389,6 +389,70 @@ CREATE TABLE coupon (
 ------- Table to tie locations to coupons ----------------
 CREATE TABLE coupon_location (
     id SERIAL PRIMARY KEY,
-    coupon_id INTEGER REFERENCES coupon(id),
-    location_id INTEGER REFERENCES location(id)
+    coupon_id integer REFERENCES coupon(id),
+    location_id integer REFERENCES location(id),
+    is_redeemed boolean DEFAULT false,
+    CONSTRAINT unique_coupon_location UNIQUE (coupon_id, location_id)
 );
+
+-----------------------------------------------------------
+-------- Coupon Redemption --------------------------------
+CREATE TABLE coupon_redemption (
+    id SERIAL PRIMARY KEY,
+    coupon_id integer REFERENCES coupon(id),
+    location_id integer REFERENCES location(id),
+    redeemed_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    redeemed_by integer REFERENCES "user"(id)
+);
+
+---------------- Function for coupon redemption ------------
+CREATE OR REPLACE FUNCTION update_coupon_location_redeemed()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE coupon_location
+    SET is_redeemed = true
+    WHERE coupon_id = NEW.coupon_id AND location_id = NEW.location_id;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+--------------------------------------------------------------
+
+----- Trigger for updating redemption --------
+CREATE TRIGGER update_coupon_location_redeemed_trigger
+AFTER INSERT ON coupon_redemption
+FOR EACH ROW
+EXECUTE FUNCTION update_coupon_location_redeemed();
+-----------------------------------------------
+
+---------- Paypal transactions table ---------------
+CREATE TABLE paypal_transactions (
+    id SERIAL PRIMARY KEY,
+    status character varying(50),
+    payment_source_email character varying(255),
+    payment_source_account_id character varying(255),
+    payment_source_account_status character varying(50),
+    payment_source_name_given_name character varying(255),
+    payment_source_name_surname character varying(255),
+    purchase_units_reference_id character varying(255),
+    purchase_units_shipping_name_full_name character varying(255),
+    purchase_units_shipping_address_address_line_1 character varying(255),
+    purchase_units_shipping_address_admin_area_2 character varying(255),
+    purchase_units_shipping_address_admin_area_1 character varying(255),
+    purchase_units_shipping_address_postal_code character varying(20),
+    purchase_units_payments_captures_id character varying(255),
+    purchase_units_payments_captures_status character varying(50),
+    purchase_units_payments_captures_amount_value numeric(10,2),
+    purchase_units_payments_captures_create_time timestamp without time zone,
+    purchase_units_payments_captures_update_time timestamp without time zone,
+    payer_name_given_name character varying(255),
+    payer_name_surname character varying(255),
+    payer_email_address character varying(255),
+    payer_payer_id character varying(255),
+    links_href character varying(255),
+    links_rel character varying(50),
+    links_method character varying(10),
+    seller_receivable_gross_amount_value numeric(10,2),
+    seller_receivable_paypal_fee_value numeric(10,2),
+    seller_receivable_net_amount_value numeric(10,2)
+);
+----------------------------------------------------

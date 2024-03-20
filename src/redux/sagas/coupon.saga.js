@@ -12,10 +12,7 @@ function* couponFiles(action) {
 
   try {
     const response = yield axios.get(`/api/coupon`);
-    console.log(
-      "FETCH request from coupon.saga, RESPONSE = ",
-      response.data
-    );
+    console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store
     const files = response.data;
@@ -23,24 +20,37 @@ function* couponFiles(action) {
     // Map the data received from the server
     const formattedFiles = files.map((coupon) => {
       const formattedFile = {
-        pdfBlob: null,
-        filename: coupon.filename,
+        id: coupon.id,
+        merchantId: coupon.merchant_id,
+        is_deleted: coupon.is_deleted,
         frontViewBlob: null,
         backViewBlob: null,
         offer: coupon.offer,
         value: coupon.value,
         exclusions: coupon.exclusions,
-        details: coupon.details,
         expiration: coupon.expiration,
         additionalInfo: coupon.additional_info,
+        locationId: coupon.location_id,
+        locationName: coupon.location_name,
+        phoneNumber: coupon.phone_number,
+        address: coupon.address,
+        city: coupon.city,
+        state: coupon.state,
+        zip: coupon.zip,
+        // coordinates: coupon.coordinates,
+        // regionId: coupon.region_id,
+        locationMerchantId: coupon.location_merchant_id,
+        additionalDetails: coupon.location_additional_details,
+        merchantName: coupon.merchant_name,
+        is_redeemed: coupon.is_redeemed,
       };
 
-      if (coupon.pdf_data && coupon.pdf_data.data) {
-        formattedFile.pdfBlob = new Blob(
-          [Uint8Array.from(coupon.pdf_data.data)],
-          { type: "application/pdf" }
-        );
-      }
+      // if (coupon.pdf_data && coupon.pdf_data.data) {
+      //   formattedFile.pdfBlob = new Blob(
+      //     [Uint8Array.from(coupon.pdf_data.data)],
+      //     { type: "application/pdf" }
+      //   );
+      // }
 
       if (coupon.front_view_pdf && coupon.front_view_pdf.data) {
         formattedFile.frontViewBlob = new Blob(
@@ -145,28 +155,6 @@ function* pdfFile(action) {
   }
 }
 
-function* pdfUpload(action) {
-  const { selectedFile } = action.payload;
-  console.log(selectedFile);
-
-  try {
-    const formData = new FormData();
-    formData.append("pdf", selectedFile);
-
-    const response = yield axios.post(`/api/coupon`, formData);
-    console.log("RESPONSE from uploadPdf = ", response.data);
-
-    const uploadedPdfInfo = response.data;
-
-    // Dispatch a success action if needed
-    yield put({ type: "UPLOAD_PDF_SUCCESS", payload: uploadedPdfInfo });
-  } catch (error) {
-    console.log("Error uploading PDF:", error);
-    // Dispatch a failure action if needed
-    yield put({ type: "UPLOAD_PDF_FAILURE", payload: "Error uploading PDF" });
-  }
-}
-
 function* addCoupon(action) {
   const coupon = action.payload;
   console.log(coupon);
@@ -234,13 +222,29 @@ function* backViewUpload(action) {
   }
 }
 
+function* updateCoupon(action) {
+  const coupon = action.payload;
+  console.log(coupon);
+  const couponId = coupon.couponId;
+  console.log(couponId);
+  const merchantId = coupon.merchantId;
+
+  try {
+    yield axios.put(`/api/coupon/${merchantId}/${couponId}`, action.payload);
+    yield put({ type: "FETCH_PDF_FILE", payload: { merchantId, couponId } });
+  } catch (error) {
+    console.log("error in updateCoupon Saga", error);
+    yield put({ type: "SET_ERROR", payload: error });
+  }
+}
+
 export default function* couponSaga() {
   yield takeEvery("FETCH_COUPON_FILES", couponFiles); // this call will come from Coupon component
   yield takeEvery("FETCH_PDF_FILE", pdfFile); // place this call in the component that is viewed after clicking on the file (with its id)
-  yield takeEvery("UPLOAD_PDF_REQUEST", pdfUpload);
   yield takeEvery("ADD_COUPON", addCoupon);
   yield takeEvery("UPLOAD_FRONT_VIEW_PDF", frontViewUpload);
   yield takeEvery("UPLOAD_BACK_VIEW_PDF", backViewUpload);
+  yield takeEvery("UPDATE_COUPON", updateCoupon);
 }
 
 export { fetchPdfRequest };

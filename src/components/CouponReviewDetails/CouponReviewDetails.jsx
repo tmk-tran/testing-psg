@@ -15,12 +15,14 @@ import FilePreview from "./FilePreview";
 import UploadFileButton from "./UploadFileButton";
 import CouponLocations from "../CouponLocations/CouponLocations";
 import ToggleButton from "../ToggleButton/ToggleButton";
+import EditButton from "../Buttons/EditButton";
+import EditCouponModal from "./EditCouponModal";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import { pdfFile } from "../../hooks/reduxStore";
-import { centeredStyle, flexCenter } from "../Utils/pageStyles";
+import { couponsData } from "../../hooks/reduxStore";
+import { centeredStyle, flexCenter, flexRowSpace } from "../Utils/pageStyles";
 import { grayBackground } from "../Utils/colors";
-import { capitalizeWords, formatDate } from "../Utils/helpers";
+import { capitalizeFirstWord, capitalizeWords, formatDate } from "../Utils/helpers";
 
 const uploadBoxStyle = {
   width: "100%",
@@ -92,9 +94,6 @@ export default function CouponReviewDetails() {
     setUploadedFiles(true);
   };
 
-  // const couponId = 6;
-  // console.log(couponId);
-
   useEffect(() => {
     // Ensure that merchantId is available before dispatching the action
     if (merchantId) {
@@ -108,7 +107,7 @@ export default function CouponReviewDetails() {
     setFrontViewFile(null);
   }, [merchantId, commentAdded, uploadedFiles]); //Deleted dispatch from dependencies
 
-  const files = pdfFile() || [];
+  const files = couponsData() || [];
   console.log(files);
   const file = files[0];
   console.log(file);
@@ -362,12 +361,21 @@ export default function CouponReviewDetails() {
                         {/* ~~~~~~~~~~ Coupon Details ~~~~~~~~~~  */}
                         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                         <Box sx={{ mt: 2, p: 1 }}>
-                          <ToggleButton
-                            onClick={handleToggleLocations}
-                            toggleState={showLocations}
-                            label1="Locations"
-                            label2="Details"
-                          />
+                          <Box sx={flexRowSpace}>
+                            <ToggleButton
+                              onClick={handleToggleLocations}
+                              toggleState={showLocations}
+                              label1="Locations"
+                              label2="Details"
+                            />
+                            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                            {/* ~~~~~~~~~~ Edit Button ~~~~~~~~~~~ */}
+                            <EditCouponModal file={file} />
+                            {/* {files.map((file, index) => (
+                              <EditCouponModal key={index} file={file} />
+                            ))} */}
+                            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                          </Box>
                           {!showLocations && (
                             <>
                               <RenderValue label="Coupon #" value={couponId} />
@@ -375,7 +383,7 @@ export default function CouponReviewDetails() {
                                 label="Offer"
                                 value={
                                   file.offer !== null
-                                    ? capitalizeWords(file.offer)
+                                    ? capitalizeFirstWord(file.offer)
                                     : "No offer set"
                                 }
                               />

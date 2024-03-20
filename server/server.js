@@ -75,6 +75,7 @@
 // });
 
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 const path = require("path");
@@ -110,6 +111,30 @@ const sellersRouter = require("./routes/sellers.router");
 const sellerPageRouter = require("./routes/sellerPage.router");
 const customersRouter = require("./routes/customers.router");
 const transactionsRouter = require("./routes/transactions.router");
+const redemptionRouter = require("./routes/couponRedemption.router");
+const paypalRouter = require("./routes/paypal.router");
+
+// // Add this middleware to set the CORS headers
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader(
+//     'Access-Control-Allow-Methods',
+//     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+//   );
+//   res.setHeader(
+//     'Access-Control-Allow-Headers',
+//     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+//   );
+//   next();
+// });
+
+app.use(
+  cors({
+    origin: "https://www.paypal.com",
+    methods: "GET,POST",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 // Body parser middleware //
 app.use(bodyParser.json());
@@ -148,6 +173,8 @@ app.use("/api/sellers", sellersRouter);
 app.use("/api/seller", sellerPageRouter);
 app.use("/api/customers", customersRouter);
 app.use("/api/transactions", transactionsRouter);
+app.use("/api/redeem", redemptionRouter);
+app.use("/api/paypal", paypalRouter);
 
 // Serve static files //
 app.use(express.static("build"));
@@ -156,38 +183,49 @@ app.use(express.static("build"));
 const PORT = process.env.PORT || 5000;
 
 // PayPal integration //
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+const { REACT_APP_PAYPAL_CLIENT_ID, REACT_APP_PAYPAL_CLIENT_SECRET } =
+  process.env;
+
+  // console.log("server: client id = ",REACT_APP_PAYPAL_CLIENT_ID);
+
 const base = "https://api-m.sandbox.paypal.com";
 
-// Generate an OAuth 2.0 access token for authenticating with PayPal REST APIs //
+// Generate an OAuth 2.0 access token for authenticating with PayPal REST APIs
 const generateAccessToken = async () => {
   try {
-    if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+    if (!REACT_APP_PAYPAL_CLIENT_ID || !REACT_APP_PAYPAL_CLIENT_SECRET) {
       throw new Error("MISSING_API_CREDENTIALS");
     }
+
     const auth = Buffer.from(
-      PAYPAL_CLIENT_ID + ":" + PAYPAL_CLIENT_SECRET
+      `${REACT_APP_PAYPAL_CLIENT_ID}:${REACT_APP_PAYPAL_CLIENT_SECRET}`
     ).toString("base64");
-    // ADDED FOR FETCH, since 'import' and 'require' didn't work, --> ECMA script confict?? //
-    const fetch = (await import("node-fetch")).default; // Dynamic import for node-fetch
 
-    const response = await fetch(`${base}/v1/oauth2/token`, {
-      method: "POST",
-      body: "grant_type=client_credentials",
-      headers: {
-        Authorization: `Basic ${auth}`,
-      },
-    });
+    const response = await axios.post(
+      `${base}/v1/oauth2/token`,
+      "grant_type=client_credentials",
+      {
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
 
-    const data = await response.json();
-    return data.access_token;
+    return response.data.access_token;
   } catch (error) {
     console.error("Failed to generate Access Token:", error);
+    throw error;
   }
 };
 
-// Create an order to start the transaction //
+// Create an order to start the transaction
 const createOrder = async (cart) => {
+  // Calculate total amount based on the cart items
+  const totalAmount = cart.reduce((acc, item) => {
+    return acc + item.price * item.quantity;
+  }, 0).toFixed(2);
+
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders`;
   const payload = {
@@ -196,58 +234,45 @@ const createOrder = async (cart) => {
       {
         amount: {
           currency_code: "USD",
-          value: "100.00",
+          value: totalAmount,
         },
       },
     ],
   };
 
-  const response = await fetch(url, {
+  const response = await axios.post(url, payload, {
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
     },
-    method: "POST",
-    body: JSON.stringify(payload),
   });
 
-  return handleResponse(response);
+  console.log("RESPONSE FROM SERVER, createOrder: ", response.data);
+  return response.data;
 };
 
-// Capture payment for the created order to complete the transaction //
+// Capture payment for the created order to complete the transaction
 const captureOrder = async (orderID) => {
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders/${orderID}/capture`;
 
-  const response = await fetch(url, {
-    method: "POST",
+  const response = await axios.post(url, null, {
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
     },
   });
 
-  return handleResponse(response);
+  return response.data;
 };
 
-async function handleResponse(response) {
-  try {
-    const jsonResponse = await response.json();
-    return {
-      jsonResponse,
-      httpStatusCode: response.status,
-    };
-  } catch (err) {
-    const errorMessage = await response.text();
-    throw new Error(errorMessage);
-  }
-}
-
+// API routes for handling PayPal checkout
 app.post("/api/orders", async (req, res) => {
   try {
     const { cart } = req.body;
-    const { jsonResponse, httpStatusCode } = await createOrder(cart);
-    res.status(httpStatusCode).json(jsonResponse);
+    console.log("From server, request from CART: ", cart);
+    const order = await createOrder(cart);
+    res.json(order);
   } catch (error) {
     console.error("Failed to create order:", error);
     res.status(500).json({ error: "Failed to create order." });
@@ -257,8 +282,8 @@ app.post("/api/orders", async (req, res) => {
 app.post("/api/orders/:orderID/capture", async (req, res) => {
   try {
     const { orderID } = req.params;
-    const { jsonResponse, httpStatusCode } = await captureOrder(orderID);
-    res.status(httpStatusCode).json(jsonResponse);
+    const capturedOrder = await captureOrder(orderID);
+    res.json(capturedOrder);
   } catch (error) {
     console.error("Failed to capture order:", error);
     res.status(500).json({ error: "Failed to capture order." });
@@ -385,7 +410,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
 
-// Listen //
+// Listen
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });

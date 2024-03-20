@@ -67,7 +67,7 @@ export default function BasicPopover({ info, groups, onChange }) {
     setSubDepartment("");
     setDescription("");
     onChange();
-    showSaveSweetAlert();
+    showSaveSweetAlert({ label: "Group Added" });
     handleClose();
   };
 

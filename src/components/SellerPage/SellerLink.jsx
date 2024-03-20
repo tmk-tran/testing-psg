@@ -1,5 +1,5 @@
 import React from 'react';
-import { transactionsUrl } from './sellerUtils';
+import { transactionsUrl } from './sellerUrl';
 
 const SellerLink = ({ seller }) => {
     console.log(seller);

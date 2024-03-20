@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { historyHook } from "../../hooks/useHistory";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { containerStyle } from "../Utils/pageStyles";
+import { flexCenter, containerStyle } from "../Utils/pageStyles";
 import { navButtonStyle } from "./checkoutStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
 import { border } from "../Utils/colors";
@@ -15,6 +15,7 @@ import OrderTable from "./OrderTable";
 import CustomerNameInfo from "../SellerPage/CustomerNameInfo";
 import RefIdDisplay from "../SellerPage/RefIdDisplay";
 import { useSelector } from "react-redux";
+import { lineDivider } from "../Utils/modalStyles";
 
 export default function OrderPage({ caseType }) {
   console.log(caseType);
@@ -37,6 +38,8 @@ export default function OrderPage({ caseType }) {
   const [firstSeller] = sellerData;
   const sellerId = firstSeller ? firstSeller.id : null;
   console.log(sellerId);
+  const [showOrderTable, setShowOrderTable] = useState(false);
+  const [pageLoad, setPageLoad] = useState(true);
 
   // UPDATE WITH ACTUAL STORE DATA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [rows, setRows] = useState([
@@ -171,31 +174,77 @@ export default function OrderPage({ caseType }) {
       />
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Referral ID displayed here ~~~~~~~~~~ */}
-      <Box sx={{ mb: 1 }}>
-        <RefIdDisplay seller={seller} />
+      <Box sx={{ mb: pageLoad ? 3 : 1 }}>
+        <RefIdDisplay seller={seller} pageLoad={pageLoad} />
       </Box>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Customer info fields ~~~~~~~~~~ */}
       {caseType === "cash" && (
         <Box sx={{ mb: 2 }}>
-          <CustomerNameInfo onSubmit={handleFormChange} />
+          <CustomerNameInfo
+            onSubmit={handleFormChange}
+            setShowOrderTable={setShowOrderTable}
+            pageLoad={pageLoad}
+            setPageLoad={setPageLoad}
+          />
+          <Divider sx={{ mt: 2, ...lineDivider }} />
         </Box>
       )}
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Order Table ~~~~~~~~~~ */}
-      <OrderTable
-        rows={rows}
-        selectedRows={selectedRows}
-        handleRowSelect={handleRowSelect}
-        handleQuantityChange={handleQuantityChange}
-        handlePayment={handlePayment}
-        customDonation={customDonation}
-        setCustomDonation={setCustomDonation}
-        clearDonation={clearDonation}
-      />
+      {caseType === "cash" && showOrderTable && (
+        <>
+          <OrderTable
+            rows={rows}
+            selectedRows={selectedRows}
+            handleRowSelect={handleRowSelect}
+            handleQuantityChange={handleQuantityChange}
+            handlePayment={handlePayment}
+            customDonation={customDonation}
+            setCustomDonation={setCustomDonation}
+            clearDonation={clearDonation}
+          />
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~~~~~~ Buttons ~~~~~~~~~~ */}
+          <Box sx={navButtonStyle}>
+            <CustomButton label="Clear" onClick={clearTotal} />
+            <CustomButton
+              label="Add to Cart"
+              // onClick={addToCart}
+              onClick={addToCart}
+              variant="contained"
+            />
+          </Box>
+        </>
+      )}
+      {(!caseType || (caseType !== "cash" && !showOrderTable)) && (
+        <>
+          <OrderTable
+            rows={rows}
+            selectedRows={selectedRows}
+            handleRowSelect={handleRowSelect}
+            handleQuantityChange={handleQuantityChange}
+            handlePayment={handlePayment}
+            customDonation={customDonation}
+            setCustomDonation={setCustomDonation}
+            clearDonation={clearDonation}
+          />
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~~~~~~ Buttons ~~~~~~~~~~ */}
+          <Box sx={navButtonStyle}>
+            <CustomButton label="Clear" onClick={clearTotal} />
+            <CustomButton
+              label="Add to Cart"
+              // onClick={addToCart}
+              onClick={addToCart}
+              variant="contained"
+            />
+          </Box>
+        </>
+      )}
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Buttons ~~~~~~~~~~ */}
-      <Box sx={navButtonStyle}>
+      {/* <Box sx={navButtonStyle}>
         <CustomButton label="Clear" onClick={clearTotal} />
         <CustomButton
           label="Add to Cart"
@@ -203,7 +252,7 @@ export default function OrderPage({ caseType }) {
           onClick={addToCart}
           variant="contained"
         />
-      </Box>
+      </Box> */}
     </div>
   );
 }

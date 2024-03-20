@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import { Card, CardContent, Divider, Typography } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
+import { capitalizeWords } from "../Utils/helpers";
+import { lineDivider } from "../Utils/modalStyles";
 // ~~~~~~~~~~ Components ~~~~~~~~~~~~~~~~~~~~
 import AddLocationModal from "./AddLocationModal";
 import LocationsCardTable from "./LocationsCardTable";
 import ActionsSpeedDial from "./ActionsSpeedDial";
-import { capitalizeWords } from "../Utils/helpers";
-import { border } from "../Utils/colors";
-import { lineDivider } from "../Utils/modalStyles";
 import NoDetailsCard from "../NoDetailsCard/NoDetailsCard";
 
 export const locationsCardWidth = {
@@ -52,8 +51,6 @@ export default function LocationsCard({
         merchantId,
       },
     });
-    handleTaskUpdate();
-    handleCaseTypeChange("Delete Location");
   };
 
   const handleOpenModal = () => {
@@ -91,7 +88,7 @@ export default function LocationsCard({
         locations
           .filter((location) => !location.is_deleted)
           .map((location, i) => (
-            <Card key={i} elevation={3} sx={{ ...locationsCardWidth, mb: 1}}>
+            <Card key={i} elevation={3} sx={{ ...locationsCardWidth, mb: 1 }}>
               <CardContent>
                 <div
                   style={{

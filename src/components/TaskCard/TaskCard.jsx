@@ -7,7 +7,6 @@ import { historyHook } from "../../hooks/useHistory";
 import {
   successColor,
   hoverAccept,
-  border,
   primaryColor,
   dueDateHighlight,
 } from "../Utils/colors";
@@ -22,6 +21,7 @@ import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { mComments } from "../../hooks/reduxStore";
 import { useSelector } from "react-redux";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
 export default function TaskCard({
   id,

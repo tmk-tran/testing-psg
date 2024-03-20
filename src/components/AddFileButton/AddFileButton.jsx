@@ -33,7 +33,6 @@ export default function AddFileButton({ filename, onFileSelect }) {
       <TextField
         // disabled
         fullWidth
-        // value={file ? file.name : filename ? filename : "No uploaded logo"}
         value={
           file
             ? file.name

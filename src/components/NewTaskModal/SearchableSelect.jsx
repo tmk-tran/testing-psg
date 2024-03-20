@@ -1,25 +1,3 @@
-// import React from "react";
-// import { Autocomplete, TextField } from "@mui/material";
-
-// const names = [
-//   "John Doe",
-//   "Jane Doe",
-//   "Alice Smith",
-//   "Bob Johnson",
-//   // ... add more names as needed
-// ];
-
-// export default function SearchableSelect() {
-//   return (
-//     <Autocomplete
-//       options={names}
-//       renderInput={(params) => (
-//         <TextField {...params} label="Select a Name" variant="outlined" />
-//       )}
-//     />
-//   );
-// }
-
 import React from "react";
 import { Autocomplete, TextField, MenuItem } from "@mui/material";
 

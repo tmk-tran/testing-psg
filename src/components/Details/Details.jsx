@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
-// ~~~~~~~~~~ Style ~~~~~~~~~~
+// ~~~~~~~~~~ Style ~~~~~~~~~~ //
 import "./Details.css";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-// ~~~~~~~~~~ Components ~~~~~~~~~~
+// ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import ContactDetails from "../ContactDetails/ContactDetails";
 import OrgGroupInfo from "../OrgGroupInfo/OrgGroupInfo";
 import NotesDisplay from "../NotesDisplay/NotesDisplay";
@@ -19,7 +19,7 @@ import LocationsCard from "../LocationsCard/LocationsCard";
 import AddNewCouponModal from "../CouponReviewCard/AddNewCouponModal";
 import SellersTable from "../OrgSellers/SellersTable";
 import OrgAdminInfo from "./OrgAdminInfo";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
 import { useAlert } from "../SuccessAlert/useAlert";
 import {
@@ -31,7 +31,6 @@ import {
   mComments,
   mLocations,
 } from "../../hooks/reduxStore";
-import { border } from "../Utils/colors";
 import { useCaseType } from "../Utils/useCaseType";
 import { useSelector } from "react-redux";
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,8 +56,6 @@ export default function Details({
   const { caseType, handleCaseTypeChange } = useCaseType("default");
 
   // Check if the user is on the task page
-  // const isTaskPage = location.pathname.includes("/orgtaskdetails");
-  // const isMerchantTaskPage = location.pathname.includes("/merchantTaskDetails");
   console.log(isTaskPage);
 
   // ~~~~~~~~~~ Hooks ~~~~~~~~~~
@@ -67,7 +64,6 @@ export default function Details({
   console.log(detailsOrg)
   const groups = oGroups();
   console.log(groups);
-  // const notes = !isMerchantTaskPage ? oNotes() : mNotes();
   const notes = isMerchantTaskPage ? mNotes() : oNotes();
   console.log(notes);
   const merchantDetails = mDetails();
@@ -76,6 +72,7 @@ export default function Details({
   console.log(comments);
   const locations = mLocations();
   console.log(locations);
+
   const [groupAdded, setGroupAdded] = useState(false);
   console.log(groupAdded);
   const [locationAdded, setLocationAdded] = useState(false);
@@ -167,10 +164,6 @@ export default function Details({
   //     goal: info.sum,
   //   });
   // });
-
-  // const handleCaseTypeChange = (newCaseType) => {
-  //   setAlertCaseType(newCaseType);
-  // };
 
   const handleAddGroup = () => {
     setGroupAdded(true);

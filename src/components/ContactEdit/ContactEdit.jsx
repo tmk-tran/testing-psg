@@ -159,7 +159,7 @@ export default function ContactEdit({
     // showToast();
 
     // Sweet Alert
-    showSaveSweetAlert();
+    showSaveSweetAlert({ label: "Contact Updated" });
 
     // Clear email error if it was previously set
     setEmailError(false);

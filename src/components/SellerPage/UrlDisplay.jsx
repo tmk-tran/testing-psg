@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Typography from "../Typography/Typography";
 import CopySnackBar from "../OrgSellers/CopySnackbar";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-import { transactionsUrl, orderUrl } from "./sellerUtils";
+import { transactionsUrl, orderUrl } from "./sellerUrl";
 
 export default function UrlDisplay({ sellerRefId }) {
   console.log(sellerRefId);

@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Modal, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Modal,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ModalButtons from "../Modals/ModalButtons";
 
@@ -169,6 +176,11 @@ export default function CashUpdateModal({
             }
             fullWidth
             sx={{ mt: 2 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
           />
           <ModalButtons
             label="Submit"

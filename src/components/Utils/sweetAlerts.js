@@ -50,9 +50,18 @@ export const showDeleteSweetAlert = (deleteCall, caseType) => {
 };
 
 // Sweet Alert in OrgContactDetailsEdit
-export const showSaveSweetAlert = () => {
+// export const showSaveSweetAlert = () => {
+//   Swal.fire({
+//     title: "Saved!",
+//     icon: "success",
+//     confirmButtonColor: primaryColor.color,
+//   });
+// };
+export const showSaveSweetAlert = ({ label }) => {
+  // console.log(label);
+  const title = label !== null ? `${label}!` : "Saved!";
   Swal.fire({
-    title: "Saved!",
+    title: title,
     icon: "success",
     confirmButtonColor: primaryColor.color,
   });

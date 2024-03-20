@@ -1,9 +1,19 @@
 import { Typography } from "@mui/material";
-import { border } from "../Utils/colors";
+import { border, highlightColor } from "../Utils/colors";
 
-export default function RefIdDisplay({ seller }) {
-    console.log(seller);
-    return (
-        <Typography variant="h6">Referral ID: {seller.refId}</Typography>
-    );
+const highlighted = {
+  ...highlightColor,
+  borderRadius: 3,
+  p: 1,
+};
+export default function RefIdDisplay({ seller, pageLoad }) {
+  console.log(seller);
+  return (
+    <Typography
+      variant="h6"
+      sx={{ textAlign: "center", ...highlighted }}
+    >
+      Referral ID: {seller.refId}
+    </Typography>
+  );
 }
