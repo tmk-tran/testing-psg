@@ -270,9 +270,52 @@ app.post("/api/orders/:orderID/capture", async (req, res) => {
 app.post(`/api/newContact`, async (req, res) => {
     try {
         const apiKey = process.env.AC_API_KEY; 
-        const data = req.body 
+        const data = {
+          "firstName": req.body.firstName,
+          "lastName": req.body.lastName,
+          "phone": req.body.phone,
+          "email": req.body.email,
+             "fieldValues": [
+              {
+              "field": "1",
+              "value": req.body.ac_address
+             },
+             {
+              "field": "2",
+              "value": req.body.city
+             },
+             {
+              "field": "3",
+              "value": req.body.state
+             },
+             {
+              "field": "4",
+              "value": req.body.zip
+             },
+             {
+              "field": "59",
+              "value": req.body.organization
+             },
+             {
+              "field": "60",
+              "value": req.body.url
+             },
+             {
+              "field": "63",
+              "value": req.body.year
+             },
+             {
+              "field": "64",
+              "value": req.body.email
+             },
+             {
+              "field": "66",
+              "value": req.body.donation
+             }
+             ]
+          }
 
-        const response = await axios.post(
+        const response1 = await axios.post(
             `https://${process.env.ac_address}/api/${process.env.version}/contacts`,
             JSON.stringify(data),
             {
@@ -282,8 +325,54 @@ app.post(`/api/newContact`, async (req, res) => {
                 }
             }
         );
-        console.log('Response:', response);
-        res.sendStatus(200)
+        console.log('Response from ActiveCampaign:', response1.data);
+        const contactId = response1.data.contact.id;
+
+        var list = 0;
+        switch (req.body.city) {
+          case "Fargo":
+            list = 10
+            break;
+          case "Grand Forks":
+            list = 11
+            break;
+          default: 
+          list = 0
+          break;
+        }
+
+        const response2 = await axios.post(
+          `https://${process.env.ac_address}/api/${process.env.version}/contactLists`,
+          JSON.stringify({
+            "list": list,
+            "contact": contactId,
+            "status": 1
+        }),
+          {
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Api-Token': apiKey
+              }
+          }
+      );
+      console.log('Response from adding contact to list:', response2.data);
+
+      const response3 = await axios.post(
+        `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
+        JSON.stringify({
+          "contact": contactId,
+          "tag": "psg"
+      }),
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Api-Token': apiKey
+            }
+        }
+    );
+    console.log('Response from adding tag to contact:', response3.data);
+
+    res.sendStatus(200)
     } catch (error) {
         console.error('Error sending contact to Active Campaign', error);
         res.sendStatus(500);
