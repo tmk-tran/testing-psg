@@ -40,7 +40,7 @@ function HomePage({ isOrgAdmin }) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isMerchantList, setIsMerchantList] = useState(false);
   console.log(isMerchantList);
-  const organizationsList = useSelector((store) => store.organizations.organization);
+  const organizationsList = useSelector((store) => store.organizations);
   console.log(organizationsList);
   const merchants = allMerchants() || [];
   console.log(merchants);
@@ -128,7 +128,7 @@ function HomePage({ isOrgAdmin }) {
     ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
     : isMerchantList
     ? merchants.slice(indexOfFirstItem, indexOfLastItem)
-    : organizationsList?.slice(indexOfFirstItem, indexOfLastItem) || [];
+    : organizationsList?.organization?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
 
   console.log(currentItems);

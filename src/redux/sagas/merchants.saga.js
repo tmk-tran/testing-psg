@@ -9,7 +9,7 @@ function* merchantDetails(action) {
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{   merchant (filter: "id = ${action.payload.id}"){
           id
-          business_id
+          merchant_name
           address
           city
           state
@@ -19,13 +19,10 @@ function* merchantDetails(action) {
           contact_phone_number
           contact_email
           is_deleted
-          region_id
-          busines{
-            business_name
-          }
-          region{
-            region_name
-          }
+          archive_reason
+          filename
+          website
+          merchant_logo
         }
       }`;
 
@@ -53,9 +50,9 @@ function* allMerchants(action) {
     const auth_response = action.payload
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `{  merchant{
+    const query = `{  merchant {
       id
-      business_id
+      merchant_name
       address
       city
       state
@@ -65,13 +62,10 @@ function* allMerchants(action) {
       contact_phone_number
       contact_email
       is_deleted
-      region_id
-      busines{
-        business_name
-      }
-      region{
-        region_name
-      }
+      archive_reason
+      filename
+      website
+      merchant_logo
     }
   }`;
 

@@ -34,7 +34,7 @@ function* organizationTask(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log("FETCH request from orgTask.saga, ITEMS = ", response.data);
-    yield put({ type: "SET_ORG_TASKS", payload: response.data.organization_task });
+    yield put({ type: "SET_ORG_TASKS", payload: response.data.organization_tasks });
   } catch (error) {
     console.log("error in orgTasks Saga", error);
   }
@@ -73,7 +73,7 @@ function* fetchAllOrganizationTasks(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log("FETCH request from allOrgTask.saga, ITEMS = ", response.data);
-    yield put({ type: "SET_ORG_TASKS", payload: response.data.organization_task });
+    yield put({ type: "SET_ORG_TASKS", payload: response.data.organization_tasks });
   } catch (error) {
     console.log("error in allOrgTasks Saga", error);
   }
@@ -85,7 +85,7 @@ function* addOrganizationTask(action) {
       const auth_response = action.payload.auth
       const ACCESS_TOKEN = auth_response.data.access_token;
       const QUERY_URL = auth_response.data.routes.query;
-      const query = `mutation($input: organization_taskInput){
+      const query = `mutation($input: organization_tasksInput){
         create_organization_tasks (input: $input){
           id
           category
@@ -132,10 +132,11 @@ function* addOrganizationTask(action) {
 function* editOrganizationTask(action) {
   try {
     const updatedTask = action.payload.updatedTask
+    console.log(updatedTask)
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = ` mutation($input: organization_taskInput, $id: ID!){
+    const query = ` mutation($input: organization_tasksInput, $id: ID!){
       update_organization_tasks (input: $input id: $id){
         id
         category
@@ -160,13 +161,8 @@ function* editOrganizationTask(action) {
     data.append("query", query);
     data.append("variables", JSON.stringify({
       "input": {
-        "category": updatedTask.category,
-        "task": updatedTask.task,
-        "organization_id": Number(updatedTask.organization_id),
-        "organization_name": updatedTask.organization_name,
         "assign": updatedTask.assign,
         "due_date": updatedTask.due_date,
-        "description": updatedTask.description,
         "task_status": updatedTask.task_status
       },
       "id": Number(updatedTask.id)
@@ -176,7 +172,7 @@ function* editOrganizationTask(action) {
     console.log(response)
     yield put({ type: "FETCH_ALL_ORGANIZATION_TASKS", payload: auth_response  });
   } catch (error) {
-    console.log("error with deleteOrgNotes request", error);
+    console.log("error with updateOrgTask request", error);
   }
 }
 

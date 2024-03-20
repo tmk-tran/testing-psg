@@ -51,7 +51,7 @@ export default function TaskCard({
   const history = historyHook();
   const dispatch = dispatchHook();
   const auth = useSelector((store) => store.auth)
-
+  console.log(task)
   // Comments
   const merchantComments = mComments(mId) || [];
   console.log(merchantComments);
@@ -85,11 +85,14 @@ export default function TaskCard({
     console.log(updateActionType);
     console.log(task.id);
     console.log(selectedTask);
+    
     dispatch({
       type: updateActionType,
-      payload: {
+      payload: { updatedTask: {
         id: task.id,
-        task_status: selectedTask,
+        assign: task.assign,
+        due_date: task.due_date,
+        task_status: selectedTask},
         auth: auth,
       },
     });

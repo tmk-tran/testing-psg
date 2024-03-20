@@ -18,6 +18,8 @@ function* merchantTask(action) {
         due_date
         description
         task_status
+        coupon_details
+        is_deleted
       }
     }`
 
@@ -34,7 +36,7 @@ function* merchantTask(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log("FETCH request from merchantTask.saga, ITEMS = ", response.data);
-    yield put({ type: "SET_MERCHANT_TASKS", payload: response.data.merchant_task });
+    yield put({ type: "SET_MERCHANT_TASKS", payload: response.data.merchant_tasks });
   } catch (error) {
     console.log("error in merchantTasks Saga", error);
   }
@@ -57,6 +59,8 @@ function* fetchAllMerchantTasks(action) {
         due_date
         description
         task_status
+        coupon_details
+        is_deleted
       }
     }`
 
@@ -73,7 +77,7 @@ function* fetchAllMerchantTasks(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log("FETCH request from allMerchantTask.saga, ITEMS = ", response.data);
-    yield put({ type: "SET_MERCHANT_TASKS", payload: response.data.merchant_task });
+    yield put({ type: "SET_MERCHANT_TASKS", payload: response.data.merchant_tasks });
   } catch (error) {
     console.log("error in allMerchantTasks Saga", error);
   }
@@ -85,17 +89,19 @@ function* addMerchantTask(action) {
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `mutation($input: merchant_taskInput){
+    const query = `mutation($input: merchant_tasksInput){
       create_merchant_tasks (input: $input){
         id
         category
         task
-        organization_id
-        organization_name
+        merchant_id
+        merchant_name
         assign
         due_date
         description
         task_status
+        coupon_details
+        is_deleted
       }
     }`
 
@@ -135,7 +141,7 @@ function* editMerchantTask(action) {
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = ` mutation ($input: merchant_taskInput, $id: ID!){
+    const query = ` mutation ($input: merchant_tasksInput, $id: ID!){
       update_merchant_tasks (input: $input id: $id){
         id
         category
@@ -146,6 +152,8 @@ function* editMerchantTask(action) {
         due_date
         description
         task_status
+        coupon_details
+        is_deleted
       }
     }`
 
@@ -160,10 +168,6 @@ function* editMerchantTask(action) {
     data.append("query", query);
     data.append("variables", JSON.stringify({
       "input": {
-        "category": updatedTask.category,
-        "task": updatedTask.task,
-        "merchant_id": Number(updatedTask.merchant_id),
-        "organization_name": updatedTask.merchant_name,
         "assign": updatedTask.assign,
         "due_date": updatedTask.due_date,
         "description": updatedTask.description,

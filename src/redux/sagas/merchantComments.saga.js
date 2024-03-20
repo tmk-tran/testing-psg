@@ -11,10 +11,10 @@ function* fetchAllMerchantComments(action) {
           merchant_comments{
         id
         merchant_id
-        date
-        time
         comment_content
         is_deleted
+        user
+        task_id
         created_at
       }
     }`
@@ -51,10 +51,10 @@ function* merchantComments(action) {
       merchant_comments (filter: "merchant_id = ${action.payload.id} "){
         id
         merchant_id
-        date
-        time
         comment_content
         is_deleted
+        user
+        task_id
         created_at
       }
     }`
