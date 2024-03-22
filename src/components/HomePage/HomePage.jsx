@@ -35,8 +35,8 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   const user = useSelector((store) => store.user)
   useEffect(() => {
     console.log('Dispatching data fetch action...');
-    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth})
-    dispatch({ type: "FETCH_MERCHANTS", payload: auth})
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth })
+    dispatch({ type: "FETCH_MERCHANTS", payload: auth })
   }, []);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,7 +59,7 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   console.log(editComplete);
   const itemsPerPage = 12;
 
-  
+
   //   // Initial data fetch based on isMerchantList
   //   const fetchDataAction = isMerchantList
   //     ? "FETCH_MERCHANTS"
@@ -67,10 +67,10 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   //   dispatch({ type: fetchDataAction, payload: auth });
   // };
 
-      useEffect(() => {
+  useEffect(() => {
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
     dispatch({ type: dispatchAction, payload: auth });
-  
+
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
       dispatch({ type: fetchDataAction, payload: auth });
@@ -80,6 +80,9 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
 
   const couponNumbers = mCoupons() || [];
   console.log(couponNumbers);
+
+
+  
 
   // fuzzy search information
   const listToSearch = !isMerchantList ? organizationsList : merchants;
@@ -128,21 +131,21 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   const currentItems =
-  searchResult.length > 0
-    ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
-    : isMerchantList
-    ? merchants.slice(indexOfFirstItem, indexOfLastItem)
-    : organizationsList?.organization?.slice(indexOfFirstItem, indexOfLastItem) || [];
+    searchResult.length > 0
+      ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
+      : isMerchantList
+        ? merchants.slice(indexOfFirstItem, indexOfLastItem)
+        : organizationsList?.organization?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
 
   console.log(currentItems);
 
   const totalItems =
-  searchResult.length > 0
-    ? searchResult.length
-    : !isMerchantList
-    ? organizationsList?.organization?.length || 0
-    : merchants.length;
+    searchResult.length > 0
+      ? searchResult.length
+      : !isMerchantList
+        ? organizationsList?.organization?.length || 0
+        : merchants.length;
   const pageCount = Math.ceil(totalItems / itemsPerPage);
 
   const handlePageChange = (event, value) => {
@@ -153,7 +156,28 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
     setEditComplete(true);
   };
 
-  
+  function createCouponCount(merchants, coupons) {
+    const couponCount = [];
+
+    for (const merchant of merchants) {
+      console.log(merchant);
+      for (const coupon of coupons) {
+        console.log(coupon)
+        if (merchant.id == coupon.merchant_id) {
+          console.log("Merchant ID:", merchant.id, "Coupon Merchant ID:", coupon.merchant_id);
+          couponCount.push({
+            merchant: merchant.id,
+            count: coupon.count
+          });
+        }
+      }
+    }
+    return couponCount;
+  }
+
+  const couponCount = createCouponCount(merchants, couponNumbers);
+  console.log(couponCount)
+
   return (
     <div className="organizationsContainer">
       <Paper elevation={3} style={{ width: "90%", margin: "0 auto" }}>
@@ -246,31 +270,29 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
           {
             isMerchantList
               ? currentItems.map((merchant, index) => (
-                  <ListView
-                    key={index}
-                    data={merchant}
-                    isMerchantList={true}
-                    onChange={handleEdit}
-                    editComplete={editComplete}
-                    setEditComplete={setEditComplete}
-                    numCoupons={
-                      couponNumbers.find(
-                        (coupon) => coupon.merchant_id === merchant.id
-                      )?.num_coupons || 0
-                    }
-                  />
-                ))
+                <ListView
+                  key={index}
+                  data={merchant}
+                  isMerchantList={true}
+                  onChange={handleEdit}
+                  editComplete={editComplete}
+                  setEditComplete={setEditComplete}
+                  numCoupons={
+                    couponCount || 0
+                  }
+                />
+              ))
               : currentItems.map((organization, index) => (
-                  <ListView
-                    key={index}
-                    data={organization}
-                    isMerchantList={false}
-                    onChange={handleEdit}
-                    editComplete={editComplete}
-                    setEditComplete={setEditComplete}
-                    isOrgAdmin={isOrgAdmin}
-                  />
-                ))
+                <ListView
+                  key={index}
+                  data={organization}
+                  isMerchantList={false}
+                  onChange={handleEdit}
+                  editComplete={editComplete}
+                  setEditComplete={setEditComplete}
+                  isOrgAdmin={isOrgAdmin}
+                />
+              ))
             // <div>Not Merchant List</div>
           }
         </div>

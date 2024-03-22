@@ -24,12 +24,12 @@ function ListView({
   isOrgAdmin,
   numCoupons,
 }) {
-  // console.log(data);
+  console.log(data);
   // console.log(data.organization_logo_base64);
   // console.log(data.merchant_logo_base64);
-  // console.log(isMerchantList);
+  console.log(isMerchantList);
   // console.log(numCoupons);
-  
+  console.log(numCoupons)
   const user = User() || {};
   console.log(user);
   const history = useHistory();
@@ -165,6 +165,7 @@ function ListView({
 
   const result = calculateBooksDifference(totalCheckedOutBooks, totalCheckedInBooks, totalBooksSold);
 
+
   return (
     <>
       <Card className="mainListContainer">
@@ -273,7 +274,15 @@ function ListView({
                     {/* ///////////////////////////////////////////// */}
                     {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                     {/* ~~~~~~~~~~ Display Number of Coupons (active) ~~~~~~~~~~ */}
-                    <Typography>Coupon Count (Active): {numCoupons}</Typography>
+                    {numCoupons.map((count) => {
+                      if (count.merchant === data.id) {
+                        return (
+                          <>
+                            <Typography>Coupon Count (Active): {count.count}</Typography>
+                          </>
+                        );
+                      }
+                    })}
                   </div>
                 )}
               </div>

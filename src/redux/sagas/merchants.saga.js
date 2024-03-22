@@ -22,7 +22,6 @@ function* merchantDetails(action) {
           archive_reason
           filename
           website
-          merchant_logo
         }
       }`;
 
@@ -65,7 +64,6 @@ function* allMerchants(action) {
       archive_reason
       filename
       website
-      merchant_logo
     }
   }`;
 
@@ -97,10 +95,10 @@ function* merchantCouponNumber(action) {
     const QUERY_URL = auth_response.data.routes.query;
     console.log(auth_response)
     const query = `{
-      Aggregates{
-        coupon_count: count(subquery: 
-        "query{coupon{id  merchant{id}}}" 
-        ordering: "merchant_id")
+        Aggregates{
+          coupon_count: count(subquery: 
+          "query{coupon{id  merchant{id}}}" 
+          ordering: "merchant_id")
       }
     }`
 
@@ -116,10 +114,10 @@ function* merchantCouponNumber(action) {
     data.append("variables", `{}`);
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
-    console.log(response.data.Aggrigates)
+    console.log(response.data.Aggregates)
     console.log("FETCH request to merchantCouponCount");
 
-    yield put({  type: "SET_COUPON_NUMBER",  payload: response.data.Aggrigates});
+    yield put({  type: "SET_COUPON_NUMBER",  payload: response.data.Aggregates.coupon_count});
 
   } catch (err) {
     console.log("error in merchantCouponCount Saga", err);

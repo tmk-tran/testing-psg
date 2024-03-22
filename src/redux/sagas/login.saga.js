@@ -22,7 +22,7 @@ function* loginUser(action) {
       const params = new URLSearchParams();
       params.append("login", action.payload.username);
       params.append("password", action.payload.password);
-      params.append("tenantid", "10121");
+      params.append("tenantid", "10140");
     
       const response = yield axios.post(AUTH_URL, params, config);
       console.log(response);

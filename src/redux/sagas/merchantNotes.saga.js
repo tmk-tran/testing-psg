@@ -8,14 +8,12 @@ function* merchantNotes(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
-      query {
-      merchant_note (filter: "merchant_id = ${action.payload.id}" ordering: "id DESC"){
+      merchant_notes (filter: "merchant_id = ${action.payload.id}" ordering: "id DESC"){
         id
          merchant_id
         note_date
         note_content
         is_deleted
-      }
     }
   }`
 
@@ -32,7 +30,7 @@ function* merchantNotes(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log("FETCH request from merchantNotes.saga, ITEMS = ", response.data);
-    yield put({ type: "SET_MERCHANT_NOTES", payload: response.data.merchant_note });
+    yield put({ type: "SET_MERCHANT_NOTES", payload: response.data.merchant_notes });
   } catch (error) {
     console.log("error in merchantNotes Saga", error);
   }
@@ -44,8 +42,8 @@ function* addNotes(action) {
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `mutation($input: merchant_noteInput){
-      create_merchant_note (input: $input){
+    const query = `mutation($input: merchant_notesInput){
+      create_merchant_notes (input: $input){
          id
          merchant_id
          note_date
