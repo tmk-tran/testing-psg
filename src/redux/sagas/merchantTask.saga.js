@@ -7,7 +7,7 @@ function* merchantTask(action) {
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `query {
+    const query = `{
       merchant_tasks (filter: "merchant_id = ${action.payload.id}" ordering: "due_date ASC"){
         id
         category
@@ -48,7 +48,7 @@ function* fetchAllMerchantTasks(action) {
     const auth_response = action.payload
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `query {
+    const query = `{
       merchant_tasks (ordering: "due_date ASC"){
         id
         category
