@@ -22,6 +22,8 @@ function* fetchOrganizationsSaga(action) {
        primary_contact_email
        is_deleted
        organization_earnings
+       organization_logo
+       filename
        organization_notes_collection {
        organization_id
        note_date
@@ -133,6 +135,8 @@ function* addOrganizationSaga(action) {
     organization_logo
     is_deleted
     organization_earnings
+    organization_logo
+    filename
   }
 }`;
 
@@ -194,6 +198,8 @@ function* deleteOrganizationSaga(action) {
      organization_logo
      is_deleted
      organization_earnings
+     organization_logo
+     filename
   }
 }`;
 

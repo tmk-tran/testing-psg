@@ -20,6 +20,7 @@ function* merchantDetails(action) {
           contact_email
           is_deleted
           archive_reason
+          merchant_logo
           filename
           website
         }
@@ -62,6 +63,7 @@ function* allMerchants(action) {
       contact_email
       is_deleted
       archive_reason
+      merchant_logo
       filename
       website
     }
