@@ -11,7 +11,7 @@ export default function CommentInput({
   taskId,
   onSubmit,
   onChange,
-  files,
+  file,
 }) {
   // console.log(merchantId);
   // console.log(taskId);
@@ -33,6 +33,7 @@ export default function CommentInput({
     comment_content: comment,
     user: currentUsername,
     task_id: taskId,
+    coupon_id: file.id,
   };
 
   const handleSubmit = () => {

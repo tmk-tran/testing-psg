@@ -1,13 +1,15 @@
-// ~~~~~~~~~~ Component ~~~~~~~~~~
-import AccountMenu from "../AccountMenu/AccountMenu";
-import NavLinks from "../NavLinks/NavLinks";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-// ~~~~~~~~~~ Style ~~~~~~~~~~
+import { Box, Typography } from "@mui/material";
+// ~~~~~~~~~~ Style ~~~~~~~~~~ //
 import "./Header.css";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~
-import { User } from "../../hooks/reduxStore";
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { border } from "../Utils/colors";
 import { historyHook } from "../../hooks/useHistory";
+import { flexCenter } from "../Utils/pageStyles";
+// ~~~~~~~~~~ Component ~~~~~~~~~~ //
+import AccountMenu from "../AccountMenu/AccountMenu";
+import NavLinks from "../NavLinks/NavLinks";
+import RegionText from "./RegionText";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export default function Header({ user }) {
   console.log(user);
@@ -16,6 +18,8 @@ export default function Header({ user }) {
   return (
     <>
       <div style={{ height: "88px", backgroundColor: "#273B91" }}>
+        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+        {/* ~~~~~~~~~~ Logo ~~~~~~~~~~ */}
         <div
           style={{
             height: "86px",
@@ -33,6 +37,9 @@ export default function Header({ user }) {
             onClick={() => history.push("/home")}
             style={{ cursor: "pointer" }}
           />
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~~~~~~ Region Text ~~~~~~~~~~ */}
+          <RegionText sx={flexCenter} color="ghostwhite" location="Fargo" />
           <div
             style={{
               display: "flex",
@@ -40,10 +47,14 @@ export default function Header({ user }) {
               alignItems: "center",
             }}
           >
+            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+            {/* ~~~~~~~~~~ Menu ~~~~~~~~~~ */}
             {/* If a user is logged in, show these links */}
             <div>{user.id && <AccountMenu />}</div>
           </div>
         </div>
+        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+        {/* ~~~~~~~~~~ Icon ~~~~~~~~~~ */}
         <div style={{ position: "absolute", right: "10%", top: "3%" }}>
           {/* <ShoppingCartIcon
             sx={{ color: "ghostwhite", cursor: "pointer" }}
@@ -56,38 +67,4 @@ export default function Header({ user }) {
       </div>
     </>
   );
-}
-
-{
-  /* <>
-    <div style={{ height: "88px", backgroundColor: "#273B91" }}>
-      <div
-        style={{
-          height: "86px",
-          width: "70vw",
-          margin: "0 auto",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          ...border,
-        }}
-      >
-        <img
-          className="main-logo"
-          src="../images/main-logo.jpg"
-          alt="Preferred Saving Guide logo in colors blue and gold"
-        />
-        {user.id && <AccountMenu />}
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <ShoppingCartIcon />
-        </div>
-      </div>
-      <div style={{ flexGrow: 1, ...border, height: "25px" }}></div>
-    </div>
-    <div className="NavLinks-container">
-      <NavLinks />
-    </div>
-  </>
-);
-} */
 }

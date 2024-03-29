@@ -28,7 +28,7 @@ const AccountMenu = () => {
       style={{
         minWidth: "120px",
         backgroundColor: "#19338E",
-        width: "216px",
+        // width: "216px",
         height: "48px",
         border: "1px solid gray",
         padding: "0 10px",

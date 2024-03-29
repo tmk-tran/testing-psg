@@ -5,7 +5,7 @@ import { historyHook } from "../../hooks/useHistory";
 const NewOrderButton = ({ refId }) => {
   const history = historyHook();
   const startNewOrder = () => {
-    history.push(`/seller/${refId}/`);
+    history.push(`/fargo/seller/${refId}/`);
   };
 
   return (

@@ -20,10 +20,13 @@ import { hoverAccept, primaryColor } from "../Utils/colors";
 import StateFieldInput from "./StateFieldInput";
 import WebsiteInput from "./WebsiteInput";
 import RadioButtons from "./RadioButtons";
-import { capitalizeWords } from "../Utils/helpers";
+import { capitalizeFirstWord, capitalizeWords } from "../Utils/helpers";
 import ModalButtons from "../Modals/ModalButtons";
+import PhoneInput from "../LocationsCard/PhoneInput";
+import StateSelector from "../StateSelector/StateSelector";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
-export default function AddOrganizationModal({
+export default function AddAccountModal({
   open,
   handleModalClose,
   isMerchantList,
@@ -38,7 +41,7 @@ export default function AddOrganizationModal({
   console.log(merchantName);
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const [state, setState] = useState(false);
   const [zip, setZip] = useState("");
   const [merchantWebsite, setMerchantWebsite] = useState("");
   const [contactFirstName, setContactFirstName] = useState("");
@@ -50,70 +53,131 @@ export default function AddOrganizationModal({
   const [orgEarnings, setOrgEarnings] = useState(10);
   const [selectedChoice, setSelectedChoice] = useState("");
   console.log(selectedChoice);
+  // ~~~~~~~~~ Errors ~~~~~~~~~~~ //
+  const [organizationNameError, setOrganizationNameError] = useState(false);
+  const [organizationTypeError, setOrganizationTypeError] = useState(false);
+  const [merchantNameError, setMerchantNameError] = useState(false);
+  const [addressError, setAddressError] = useState(false);
+  const [cityError, setCityError] = useState(false);
+  const [stateError, setStateError] = useState(false);
+  const [zipError, setZipError] = useState(false);
+  const [contactFirstNameError, setContactFirstNameError] = useState(false);
+  const [contactLastNameError, setContactLastNameError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleLogoSelection = (selectedFile) => {
     setLogoFile(selectedFile);
   };
-
+  console.log(contactPhone);
   // Save function to dispatch data for new organization
   const handleSave = () => {
-    !isMerchantList
-      ? dispatch({
-          type: "ADD_ORGANIZATION",
-          payload: {
-            organization_name: organizationName,
-            type: organizationType,
-            address,
-            city,
-            state,
-            zip,
-            primary_contact_first_name: contactFirstName,
-            primary_contact_last_name: contactLastName,
-            primary_contact_phone: contactPhone,
-            primary_contact_email: contactEmail,
-            organization_logo: logoFile,
-            organization_earnings: orgEarnings,
-            auth
-          },
-        })
-      : dispatch({
-          type: "ADD_MERCHANT",
-          payload: {
-            merchant_name: merchantName,
-            address,
-            city,
-            state,
-            zip,
-            primary_contact_first_name: contactFirstName,
-            primary_contact_last_name: contactLastName,
-            contact_phone_number: contactPhone,
-            contact_email: contactEmail,
-            merchant_logo: logoFile,
-            website: merchantWebsite,
-            auth
-          },
-        });
+    console.log("clicked");
+    if (!isMerchantList) {
+      if (!organizationName) {
+        setOrganizationNameError(true);
+        return;
+      }
+    }
+    if (!isMerchantList) {
+      if (!organizationType) {
+        setOrganizationTypeError(true);
+        return;
+      }
+    }
+    if (isMerchantList) {
+      if (!merchantName) {
+        setMerchantNameError(true);
+        return;
+      }
+    }
+    if (!address) {
+      setAddressError(true);
+      return;
+    }
+    if (!city) {
+      setCityError(true);
+      return;
+    }
+    if (!state) {
+      setIsSubmitted(true);
+      return;
+    }
+    if (!zip) {
+      setZipError(true);
+      return;
+    }
+    if (!contactFirstName) {
+      setContactFirstNameError(true);
+      return;
+    }
+    if (!contactLastName) {
+      setContactLastNameError(true);
+      return;
+    }
+    if (!contactPhone) {
+      setPhoneError(true);
+      return;
+    }
+
+    const action1 = {
+      type: "ADD_ORGANIZATION",
+      payload: {
+        organization_name: organizationName,
+        type: organizationType,
+        address,
+        city,
+        state,
+        zip,
+        primary_contact_first_name: contactFirstName,
+        primary_contact_last_name: contactLastName,
+        primary_contact_phone: contactPhone,
+        primary_contact_email: contactEmail,
+        organization_logo: logoFile,
+        organization_earnings: orgEarnings,
+      },
+    };
+    !isMerchantList && console.log(action1);
+    !isMerchantList && dispatch(action1);
+
+    const action2 = {
+      type: "ADD_MERCHANT",
+      payload: {
+        merchant_name: merchantName,
+        address,
+        city,
+        state,
+        zip,
+        primary_contact_first_name: contactFirstName,
+        primary_contact_last_name: contactLastName,
+        contact_phone_number: contactPhone,
+        contact_email: contactEmail,
+        merchant_logo: logoFile,
+        website: merchantWebsite,
+        contact_method: selectedChoice,
+      },
+    };
+    isMerchantList && console.log(action2);
+    isMerchantList && dispatch(action2);
+
     // clear input fields
     clearFields();
     // close modal
     handleModalClose();
-    // sweet alerts to confirm addition of organization
-    Swal.fire({
-      icon: "success",
-      title: "Organization Successfully Added!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    // Sweet alert
+    !isMerchantList &&
+      showSaveSweetAlert({ label: "Organization successfully added" });
+    isMerchantList &&
+      showSaveSweetAlert({ label: "Merchant successfully added" });
   };
 
-  // clear input fields function
   const clearFields = () => {
     setOrganizationName("");
     setMerchantName("");
     setOrganizationType("");
     setAddress("");
     setCity("");
-    setState("");
+    setState(false);
     setZip("");
     setContactFirstName("");
     setContactLastName("");
@@ -121,15 +185,23 @@ export default function AddOrganizationModal({
     setContactEmail("");
     setLogoFile("");
     setOrgEarnings(10);
+    setOrganizationNameError(false);
+    setOrganizationTypeError(false);
+    setMerchantNameError(false);
+    setAddressError(false);
+    setCityError(false);
+    setStateError(false);
+    setZipError(false);
+    setPhoneError(false);
   };
 
-  // cancel adding organization which clears the input fields and closes the modal
+  // for cancel button
   const cancelAdd = () => {
     clearFields();
     handleModalClose();
   };
 
-  // modal style, styled here not in the css file
+  // modal style
   const style = {
     position: "absolute",
     top: "50%",
@@ -150,13 +222,9 @@ export default function AddOrganizationModal({
     width: "98%",
   };
 
-  // function to capitalize the first letter of whatever you wrap in this
-  const capitalizeFirstLetter = (value) => {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  };
-
   const stateInput = (value) => {
-    setState(value);
+    console.log(value.abbreviation);
+    setState(value.abbreviation);
   };
 
   const websiteInput = (value) => {
@@ -167,7 +235,7 @@ export default function AddOrganizationModal({
     setSelectedChoice(choice);
   };
 
-  // Define your choices
+  // Preferred method of contact choices
   const choices = ["Text", "Email", "Phone", "In-person visit"];
 
   return (
@@ -224,9 +292,23 @@ export default function AddOrganizationModal({
                 )}
                 onChange={(e) => {
                   !isMerchantList
-                    ? setOrganizationName(capitalizeFirstLetter(e.target.value))
-                    : setMerchantName(capitalizeFirstLetter(e.target.value));
+                    ? (setOrganizationName(capitalizeFirstWord(e.target.value)),
+                      setOrganizationNameError(false))
+                    : (setMerchantName(capitalizeFirstWord(e.target.value)),
+                      setMerchantNameError(false));
                 }}
+                error={
+                  !isMerchantList ? organizationNameError : merchantNameError
+                }
+                helperText={
+                  !isMerchantList
+                    ? organizationNameError
+                      ? "Please enter an organization name"
+                      : ""
+                    : merchantNameError
+                    ? "Please enter a merchant name"
+                    : ""
+                }
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -238,7 +320,16 @@ export default function AddOrganizationModal({
                   label="Organization Type"
                   fullWidth
                   value={capitalizeWords(organizationType)}
-                  onChange={(e) => setOrganizationType(e.target.value)}
+                  onChange={(e) => {
+                    setOrganizationType(e.target.value);
+                    setOrganizationTypeError(false);
+                  }}
+                  error={organizationTypeError}
+                  helperText={
+                    organizationTypeError
+                      ? "Please select an organization type"
+                      : ""
+                  }
                 />
               </Grid>
             ) : null}
@@ -250,7 +341,12 @@ export default function AddOrganizationModal({
                 label="Address"
                 fullWidth
                 value={capitalizeWords(address)}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                  setAddressError(false);
+                }}
+                error={addressError}
+                helperText={addressError ? "Please enter an address" : ""}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -261,13 +357,23 @@ export default function AddOrganizationModal({
                 label="City"
                 fullWidth
                 value={capitalizeWords(city)}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  setCityError(false);
+                }}
+                error={cityError}
+                helperText={cityError ? "Please enter a city" : ""}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~ STATE ~~~~~~~~~~~~~~~~~ */}
             <Grid item xs={4}>
-              <StateFieldInput label={"State*"} stateInput={stateInput} />
+              {/* <StateFieldInput label={"State*"} stateInput={stateInput} /> */}
+              <StateSelector
+                onChange={stateInput}
+                stateSelected={state}
+                isSubmitted={isSubmitted}
+              />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~ ZIP ~~~~~~~~~~~~~~~~~~ */}
@@ -278,7 +384,12 @@ export default function AddOrganizationModal({
                 fullWidth
                 value={zip}
                 type="number"
-                onChange={(e) => setZip(Number(e.target.value))}
+                onChange={(e) => {
+                  setZip(Number(e.target.value));
+                  setZipError(false);
+                }}
+                error={zipError}
+                helperText={zipError ? "Please enter a zip code" : ""}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -307,7 +418,14 @@ export default function AddOrganizationModal({
                 label="Contact First Name*"
                 fullWidth
                 value={capitalizeWords(contactFirstName)}
-                onChange={(e) => setContactFirstName(e.target.value)}
+                onChange={(e) => {
+                  setContactFirstName(e.target.value);
+                  setContactFirstNameError(false);
+                }}
+                error={contactFirstNameError}
+                helperText={
+                  contactFirstNameError ? "Please enter a first name" : ""
+                }
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -318,26 +436,33 @@ export default function AddOrganizationModal({
                 label="Contact Last Name"
                 fullWidth
                 value={capitalizeWords(contactLastName)}
-                onChange={(e) => setContactLastName(e.target.value)}
+                onChange={(e) => {
+                  setContactLastName(e.target.value);
+                  setContactLastNameError(false);
+                }}
+                error={contactLastNameError}
+                helperText={
+                  contactLastNameError ? "Please enter a last name" : ""
+                }
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~ PHONE ~~~~~~~~~~~~~~~~~ */}
             <Grid item xs={6}>
-              <TextField
-                required
-                label="Contact Phone"
-                fullWidth
-                value={contactPhone}
-                type="number"
-                onChange={(e) => setContactPhone(Number(e.target.value))}
+              <PhoneInput
+                phoneNumber={contactPhone}
+                setPhoneNumber={setContactPhone}
+                sx={{ mb: 2 }}
+                setPhoneError={setPhoneError}
+                error={phoneError}
+                helperText={phoneError ? "Please enter phone number" : ""}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~ EMAIL ~~~~~~~~~~~~~~~~~ */}
             <Grid item xs={6}>
               <TextField
-                label="Contact Email (optional)"
+                label="Email (optional)"
                 fullWidth
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
@@ -346,16 +471,23 @@ export default function AddOrganizationModal({
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~ PREFERED CONTACT METHOD ~~~~~~ */}
             {isMerchantList ? (
-              <Grid
-                item
-                xs={12}
-                sx={{ display: "flex", justifyContent: "center" }}
-              >
-                <RadioButtons
-                  choices={choices}
-                  onSelectionChange={handleSelectionChange}
-                />
-              </Grid>
+              <>
+                <Grid item xs={12}>
+                  <Typography variant="caption" sx={{ fontWeight: "bold" }}>
+                    Preferred Method:
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{ display: "flex", justifyContent: "center" }}
+                >
+                  <RadioButtons
+                    choices={choices}
+                    onSelectionChange={handleSelectionChange}
+                  />
+                </Grid>
+              </>
             ) : null}
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~ LOGO ~~~~~~~~~~~~~~~~~~ */}
@@ -365,7 +497,12 @@ export default function AddOrganizationModal({
           </Grid>
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ ADD BUTTON ~~~~~~~~~~~~~~ */}
-          <ModalButtons label="Add" onSave={handleSave} onCancel={cancelAdd} width="50%" />
+          <ModalButtons
+            label="Add"
+            onSave={handleSave}
+            onCancel={cancelAdd}
+            width="50%"
+          />
         </Box>
       </Modal>
     </div>

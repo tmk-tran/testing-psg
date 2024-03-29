@@ -79,6 +79,21 @@ function* merchantComments(action) {
   }
 }
 
+function* couponComments(action) {
+  console.log(action);
+  console.log(action.payload);
+
+  try {
+    const items = yield axios.get(
+      `/api/merchantComments/task/${action.payload}`
+    );
+    console.log("FETCH request from couponComments.saga, ITEMS = ", items.data);
+    yield put({ type: "SET_MERCHANT_COMMENTS", payload: items.data });
+  } catch (error) {
+    console.log("error in couponComments Saga", error);
+  }
+}
+
 function* addComments(action) {
   try {
     const newComment = action.payload.newComment;
@@ -128,5 +143,6 @@ function* addComments(action) {
 export default function* merchantCommentsSaga() {
   yield takeEvery("FETCH_ALL_MERCHANT_COMMENTS", fetchAllMerchantComments);
   yield takeEvery("FETCH_MERCHANT_COMMENTS", merchantComments);
+  yield takeEvery("FETCH_COUPON_COMMENTS", couponComments);
   yield takeEvery("ADD_MERCHANT_COMMENT", addComments);
 }

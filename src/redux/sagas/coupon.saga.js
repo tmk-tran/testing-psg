@@ -11,7 +11,8 @@ function* couponFiles(action) {
   console.log(action);
 
   try {
-    const response = yield axios.get(`/api/coupon`);
+    // const response = yield axios.get(`/api/coupon`);
+    const response = yield axios.get(`/api/userCoupon/${action.payload}`);
     console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store
@@ -30,6 +31,8 @@ function* couponFiles(action) {
         exclusions: coupon.exclusions,
         expiration: coupon.expiration,
         additionalInfo: coupon.additional_info,
+        taskId: coupon.task_id,
+        bookId: coupon.book_id,
         locationId: coupon.location_id,
         locationName: coupon.location_name,
         phoneNumber: coupon.phone_number,
@@ -42,7 +45,6 @@ function* couponFiles(action) {
         locationMerchantId: coupon.location_merchant_id,
         additionalDetails: coupon.location_additional_details,
         merchantName: coupon.merchant_name,
-        is_redeemed: coupon.is_redeemed,
       };
 
       // if (coupon.pdf_data && coupon.pdf_data.data) {
@@ -110,6 +112,8 @@ function* pdfFile(action) {
         details: coupon.details,
         expiration: coupon.expiration,
         additionalInfo: coupon.additional_info,
+        taskId: coupon.task_id,
+        bookId: coupon.book_id,
         location_id: coupon.location_id,
         location_name: coupon.location_name,
         phone_number: coupon.phone_number,
@@ -117,18 +121,19 @@ function* pdfFile(action) {
         city: coupon.city,
         state: coupon.state,
         zip: coupon.zip,
-        coordinates: coupon.coordinates,
-        region_id: coupon.region_id,
+        // coordinates: coupon.coordinates,
+        // region_id: coupon.region_id,
         location_merchant_id: coupon.location_merchant_id,
         location_additional_details: coupon.location_additional_details,
+        merchantName: coupon.merchant_name,
       };
 
-      if (coupon.pdf_data && coupon.pdf_data.data) {
-        formattedFile.pdfBlob = new Blob(
-          [Uint8Array.from(coupon.pdf_data.data)],
-          { type: "application/pdf" }
-        );
-      }
+      // if (coupon.pdf_data && coupon.pdf_data.data) {
+      //   formattedFile.pdfBlob = new Blob(
+      //     [Uint8Array.from(coupon.pdf_data.data)],
+      //     { type: "application/pdf" }
+      //   );
+      // }
 
       if (coupon.front_view_pdf && coupon.front_view_pdf.data) {
         formattedFile.frontViewBlob = new Blob(
@@ -239,7 +244,8 @@ function* updateCoupon(action) {
 }
 
 export default function* couponSaga() {
-  yield takeEvery("FETCH_COUPON_FILES", couponFiles); // this call will come from Coupon component
+  // yield takeEvery("FETCH_COUPON_FILES", couponFiles); // this call will come from Coupon component
+  yield takeEvery("FETCH_CONSUMER_COUPONS", couponFiles)
   yield takeEvery("FETCH_PDF_FILE", pdfFile); // place this call in the component that is viewed after clicking on the file (with its id)
   yield takeEvery("ADD_COUPON", addCoupon);
   yield takeEvery("UPLOAD_FRONT_VIEW_PDF", frontViewUpload);

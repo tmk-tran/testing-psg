@@ -94,7 +94,6 @@ export default function CouponCard({ coupon, i }) {
           <Box
             sx={{
               flexGrow: 1,
-              // ...border,
             }}
           >
             <div style={{ ...centeredStyle, margin: "25px auto" }}>
@@ -117,7 +116,7 @@ export default function CouponCard({ coupon, i }) {
             </Typography> */}
               <Typography variant="caption">
                 {coupon.exclusions ? (
-                  <>Exclusions: {coupon.exclusions}</>
+                  <>Exclusions: {capitalizeWords(coupon.exclusions)}</>
                 ) : null}
               </Typography>
             </div>

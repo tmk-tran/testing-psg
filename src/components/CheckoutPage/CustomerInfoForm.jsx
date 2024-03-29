@@ -5,6 +5,8 @@ import Typography from "../Typography/Typography";
 import { border } from "../Utils/colors";
 import { flexRowSpace } from "../Utils/pageStyles";
 import { capitalizeWords } from "../Utils/helpers";
+// ~~~~~~~~~~ Components ~~~~~~~~~~ //
+import PhoneInput from "../LocationsCard/PhoneInput";
 
 export default function CustomerInfoForm({
   handleStateChange,
@@ -99,7 +101,7 @@ export default function CustomerInfoForm({
           </Grid>
           {/* ~~~~~~~~~ Phone Number ~~~~~~~~~~~~~~~ */}
           <Grid item xs={12} sm={6}>
-            <TextField
+            {/* <TextField
               label="Phone Number"
               value={phone}
               onChange={(e) => {
@@ -111,6 +113,15 @@ export default function CustomerInfoForm({
               variant="outlined"
               fullWidth
               required
+              error={!!errors.phone}
+              helperText={errors.phone}
+            /> */}
+            <PhoneInput
+              phoneNumber={phone}
+              setPhoneNumber={setPhone}
+              setPhoneError={() =>
+                setErrors((prevErrors) => ({ ...prevErrors, phone: "" }))
+              }
               error={!!errors.phone}
               helperText={errors.phone}
             />

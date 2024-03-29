@@ -42,28 +42,23 @@ export default function EditCouponModal({ file }) {
   const couponId = params.couponId;
   const merchantId = params.merchantId;
   const [open, setOpen] = useState(false);
-  const [offer, setOffer] = useState(file ? file.offer : "");
-  console.log(offer);
-  const [value, setValue] = useState(file ? file.value : null);
-  const [exclusions, setExclusions] = useState(file ? file.exclusions : null);
-  const [expiration, setExpiration] = useState(file ? file.expiration : null);
-  const [additionalInfo, setAdditionalInfo] = useState(
-    file ? file.additionalInfo : null
-  );
-  const [phoneNumber, setPhoneNumber] = useState(
-    file ? file.phoneNumber : null
-  );
-  const [website, setWebsite] = useState(file ? file.website : null);
+  const [offer, setOffer] = useState("");
+  const [value, setValue] = useState(null);
+  const [exclusions, setExclusions] = useState("");
+  const [expiration, setExpiration] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [website, setWebsite] = useState("");
 
   useEffect(() => {
     if (file) {
-      setOffer(file.offer);
-      setValue(file.value);
-      setExclusions(file.exclusions);
-      setExpiration(file.expiration);
-      setAdditionalInfo(file.additional_info);
-      setPhoneNumber(file.phone_number);
-      setWebsite(file.website);
+      setOffer(file.offer || "");
+      setValue(file.value || 0);
+      setExclusions(file.exclusions || "");
+      setExpiration(file.expiration || "");
+      setAdditionalInfo(file.additionalInfo || "");
+      setPhoneNumber(file.phoneNumber || "");
+      setWebsite(file.website || "");
     }
   }, [file]);
 
@@ -91,9 +86,9 @@ export default function EditCouponModal({ file }) {
   const resetForm = () => {
     setOffer("");
     setValue(0);
-    setExclusions(null);
-    setExpiration(null);
-    setAdditionalInfo(null);
+    setExclusions("");
+    setExpiration("");
+    setAdditionalInfo("");
     showSaveSweetAlert({ label: "Coupon Updated" });
 
     handleClose();
@@ -101,7 +96,7 @@ export default function EditCouponModal({ file }) {
 
   return (
     <div>
-      <EditButton onClick={handleOpen} />
+      <EditButton onClick={handleOpen} title={"Edit Coupon Details"} />
       <Modal
         open={open}
         onClose={() => {}}

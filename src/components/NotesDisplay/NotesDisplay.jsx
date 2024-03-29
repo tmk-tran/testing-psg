@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import "./NotesDisplay.css";
 import { useTheme } from "@mui/material/styles";
@@ -29,13 +30,13 @@ import { useSelector } from "react-redux";
 
 export default function NotesDisplay({
   notes,
-  orgDetails, // change name ??
+  details,
   caseType,
   isMerchantTaskPage,
 }) {
   console.log(isMerchantTaskPage);
   console.log(notes);
-  console.log(orgDetails);
+  console.log(details);
   console.log(caseType);
   console.log(notes);
 
@@ -48,16 +49,16 @@ export default function NotesDisplay({
   // State for showing notes
   const [inputValue, setInputValue] = useState("");
   // State from popover
-  // const [orgId, setOrgId] = useState(orgDetails.organization_id);
+  // const [orgId, setOrgId] = useState(details.organization_id);
   const [orgId, setOrgId] = useState(
-    !isMerchantTaskPage ? orgDetails?.id : orgDetails?.id
+    !isMerchantTaskPage ? details.organization_id : details.id
   );
   console.log(orgId);
   const [noteDate, setNoteDate] = useState(new Date());
   const [noteAdded, setNoteAdded] = useState(false);
 
-  // Access merchant_id directly from orgDetails if isMerchantTaskPage is true
-  const merchantId = isMerchantTaskPage ? orgDetails.id : null;
+  // Access merchant_id directly from details if isMerchantTaskPage is true
+  const merchantId = isMerchantTaskPage ? details.id : null;
   console.log(merchantId);
 
   // useEffect(() => {
@@ -93,7 +94,7 @@ export default function NotesDisplay({
     const formattedDate = noteDate.toISOString().split('T')[0];
 
     const sendNote = {
-      organization_id: !isMerchantTaskPage ? orgId : null,
+      organization_id: isMerchantTaskPage ? null : orgId,
       merchant_id: isMerchantTaskPage ? orgId : null,
       note_date: formattedDate,
       note_content: inputValue,
@@ -125,7 +126,7 @@ export default function NotesDisplay({
     showDeleteSweetAlert(() => {
       // If the user confirms, call the handleDelete function
       handleDelete(noteId, entityId);
-    }, "delete" );
+    }, "delete");
   };
 
   const handleDelete = (noteId, entityId) => {
@@ -198,34 +199,40 @@ export default function NotesDisplay({
                               )
                               .join(" ")}
                         </li>
-
-                        <Button
-                          className="notes-delete-btn"
-                          onClick={() => {
-                            if (isMerchantTaskPage) {
-                              console.log(
-                                "Merchant Task Page - Note ID:",
-                                note.id,
-                                "Merchant ID:",
-                                note.merchant_id
-                              );
-                              showDeleteConfirmation(note.id, note.merchant_id);
-                            } else {
-                              console.log(
-                                "Organization Task Page - Note ID:",
-                                note.id,
-                                "Organization ID:",
-                                note.organization_id
-                              );
-                              showDeleteConfirmation(
-                                note.id,
-                                note.organization_id
-                              );
-                            }
-                          }}
-                        >
-                          <DeleteIcon style={{ fontSize: "20px" }} />
-                        </Button>
+                        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                        {/* ~~~~~~ Delete button ~~~~~ */}
+                        <Tooltip title="Delete This Note">
+                          <Button
+                            className="notes-delete-btn"
+                            onClick={() => {
+                              if (isMerchantTaskPage) {
+                                console.log(
+                                  "Merchant Task Page - Note ID:",
+                                  note.id,
+                                  "Merchant ID:",
+                                  note.merchant_id
+                                );
+                                showDeleteConfirmation(
+                                  note.id,
+                                  note.merchant_id
+                                );
+                              } else {
+                                console.log(
+                                  "Organization Task Page - Note ID:",
+                                  note.id,
+                                  "Organization ID:",
+                                  note.organization_id
+                                );
+                                showDeleteConfirmation(
+                                  note.id,
+                                  note.organization_id
+                                );
+                              }
+                            }}
+                          >
+                            <DeleteIcon style={{ fontSize: "20px" }} />
+                          </Button>
+                        </Tooltip>
                       </div>
                       <br />
                       <hr style={hrStyle} />

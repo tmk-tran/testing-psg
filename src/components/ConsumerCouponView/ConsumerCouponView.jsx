@@ -12,7 +12,7 @@ import {
 } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import { couponsData } from "../../hooks/reduxStore";
+import { User, couponsData, bookYear } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import Typography from "../Typography/Typography";
 import CouponCard from "./CouponCard";
@@ -21,6 +21,8 @@ import ToggleButton from "../ToggleButton/ToggleButton";
 
 export default function ConsumerCouponView() {
   const dispatch = dispatchHook();
+  const user = User();
+  console.log(user);
   const [toggleView, setToggleView] = useState(false);
   console.log(toggleView);
   const [query, setQuery] = useState("");
@@ -30,16 +32,23 @@ export default function ConsumerCouponView() {
 
   useEffect(() => {
     const dispatchAction = {
-      type: "FETCH_COUPON_FILES",
+      type: "FETCH_CONSUMER_COUPONS",
+      // type: "FETCH_COUPON_FILES",
+      payload: user.id,
     };
     dispatch(dispatchAction);
   }, []);
 
   const coupons = couponsData() || [];
   console.log(coupons);
+  const activeYear = bookYear();
+  console.log(activeYear);
+
+  const years = activeYear[0].year;
+  const expirationYear = years.split("-")[1];
 
   const fuse = new Fuse(coupons, {
-    keys: ["merchantName"], // The 'merchant' field is used for searching
+    keys: ["merchant_name"], // The 'merchant' field is used for searching
     includeScore: true,
     threshold: 0.3, // Adjust the threshold for fuzzy search accuracy
   });
@@ -64,6 +73,7 @@ export default function ConsumerCouponView() {
       typeof coupon.merchantName === "string" &&
       coupon.merchantName.toLowerCase().includes(query.toLowerCase())
   );
+  console.log(filteredMerchants);
 
   const clearInput = () => {
     setQuery("");
@@ -121,8 +131,9 @@ export default function ConsumerCouponView() {
               onChange={handleSearch}
               clearInput={clearInput}
             />
+            {/* ~~~~~ Valid through ~~~~~~ */}
             <Typography
-              label="Coupons valid mm/dd/yy - mm/dd/yy"
+              label={`Valid through September 1, ${expirationYear}`}
               variant="body2"
               sx={{ mt: 2 }}
             />

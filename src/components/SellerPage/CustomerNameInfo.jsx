@@ -4,8 +4,14 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { border } from "../Utils/colors";
 import { flexCenter, flexEnd, flexRowSpace } from "../Utils/pageStyles";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+import PhoneInput from "../LocationsCard/PhoneInput";
 
-export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad, setPageLoad }) {
+export default function CustomerNameInfo({
+  onSubmit,
+  setShowOrderTable,
+  pageLoad,
+  setPageLoad,
+}) {
   const seller = useParams();
   const refId = seller.refId;
   console.log(refId);
@@ -14,30 +20,11 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState("");
   const [lastNameError, setLastNameError] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
-  const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [showSkip, setShowSkip] = useState(true);
-
-  // useEffect(() => {
-  //   onFormChange({
-  //     refId: refId,
-  //     last_name: customerLastName,
-  //     first_name: customerFirstName,
-  //     phone: customerPhoneNumber
-  //   });
-  // }, [refId, customerLastName, customerFirstName, customerPhoneNumber]);
-
-  // const handleLastName = (e) => setCustomerLastName(e.target.value);
-  // const handleFirstName = (e) => setCustomerFirstName(e.target.value);
-  // const handlePhoneNumber = (e) => {
-  //   const value = e.target.value;
-  //   if (!/^\d{0,10}$/.test(value)) {
-  //     setPhoneNumberError("Phone number must be 10 digits long");
-  //   } else {
-  //     setPhoneNumberError("");
-  //     setCustomerPhoneNumber(value);
-  //   }
-  // };
+  const [customerInfoSubmitted, setCustomerInfoSubmitted] = useState(false);
+  console.log(customerInfoSubmitted);
 
   const handleLastName = (e) => {
     setCustomerLastName(e.target.value);
@@ -46,6 +33,7 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
         customerFirstName !== "" ||
         customerPhoneNumber !== ""
     );
+    setLastNameError(false);
   };
 
   const handleFirstName = (e) => {
@@ -55,6 +43,7 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
         e.target.value !== "" ||
         customerPhoneNumber !== ""
     );
+    setFirstNameError(false);
   };
 
   const handlePhoneNumber = (e) => {
@@ -76,7 +65,7 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
     setCustomerPhoneNumber("");
     setLastNameError("");
     setFirstNameError("");
-    setPhoneNumberError("");
+    setPhoneNumberError(false);
     setShowSaveButton(false);
   };
 
@@ -91,7 +80,7 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
       return;
     }
     if (!customerPhoneNumber || customerPhoneNumber.length !== 10) {
-      setPhoneNumberError("Phone number must be 10 digits long");
+      setPhoneNumberError(true);
       return;
     }
     // Call your submit function here
@@ -111,6 +100,8 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
     });
     resetForm();
     showSaveSweetAlert({ label: null });
+    setCustomerInfoSubmitted(true);
+    setShowOrderTable(true);
   };
 
   const skipClick = () => {
@@ -120,36 +111,44 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Typography sx={{ textAlign: pageLoad ? "center" : "flex-start" }}>Customer information (optional):</Typography>
-      <Box
-        sx={{
-          display: "flex",
-          gap: 2,
-          flexDirection: pageLoad ? "column" : "row",
-          justifyContent: pageLoad ? "center" : "flex-start",
-          alignItems: pageLoad ? "center" : "flex-start",
-        }}
-      >
-        <TextField
-          value={customerLastName}
-          fullWidth
-          sx={{ width: pageLoad ? "50%" : "100%" }}
-          label="Last Name"
-          onChange={handleLastName}
-          error={!!lastNameError}
-          helperText={lastNameError}
-        />
-        <TextField
-          value={customerFirstName}
-          fullWidth
-          sx={{ width: pageLoad ? "50%" : "100%" }}
-          label="First Name"
-          onChange={handleFirstName}
-          error={!!firstNameError}
-          helperText={firstNameError}
-        />
-        <TextField
+    <>
+      {!customerInfoSubmitted ? (
+        <form onSubmit={handleSubmit}>
+          <Typography sx={{ textAlign: pageLoad ? "center" : "flex-start" }}>
+            Customer information (optional):
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexDirection: pageLoad ? "column" : "row",
+              justifyContent: pageLoad ? "center" : "flex-start",
+              alignItems: pageLoad ? "center" : "flex-start",
+            }}
+          >
+            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+            {/* ~~~~~~~~~~ First Name ~~~~~~~~~ */}
+            <TextField
+              value={customerFirstName}
+              fullWidth
+              sx={{ width: pageLoad ? "50%" : "100%" }}
+              label="First Name"
+              onChange={handleFirstName}
+              error={!!firstNameError}
+              helperText={firstNameError}
+            />
+            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+            {/* ~~~~~~~~~~ Last Name ~~~~~~~~~ */}
+            <TextField
+              value={customerLastName}
+              fullWidth
+              sx={{ width: pageLoad ? "50%" : "100%" }}
+              label="Last Name"
+              onChange={handleLastName}
+              error={!!lastNameError}
+              helperText={lastNameError}
+            />
+            {/* <TextField
           value={customerPhoneNumber}
           fullWidth
           sx={{ width: pageLoad ? "50%" : "100%" }}
@@ -158,17 +157,28 @@ export default function CustomerNameInfo({ onSubmit, setShowOrderTable, pageLoad
           error={!!phoneNumberError}
           helperText={phoneNumberError}
           onChange={handlePhoneNumber}
-        />
-
-      </Box>
-      <Box sx={pageLoad ? flexCenter : flexEnd}>
-        {showSkip ? <Button onClick={skipClick}>Skip</Button> : null}
-        {showSaveButton && (
-          <Button variant="contained" color="secondary" type="submit">
-            Save Customer Info
-          </Button>
-        )}
-      </Box>
-    </form>
+        /> */}
+            <PhoneInput
+              phoneNumber={customerPhoneNumber}
+              setPhoneNumber={setCustomerPhoneNumber}
+              sx={{ width: pageLoad ? "50%" : "100%" }}
+              setPhoneError={setPhoneNumberError}
+              error={phoneNumberError}
+              helperText={
+                phoneNumberError ? "Phone number must be 10 digits" : ""
+              }
+            />
+          </Box>
+          <Box sx={pageLoad ? flexCenter : flexEnd}>
+            {showSkip ? <Button onClick={skipClick}>Skip</Button> : null}
+            {showSaveButton && (
+              <Button variant="contained" color="secondary" type="submit">
+                Save Customer Info
+              </Button>
+            )}
+          </Box>
+        </form>
+      ) : null}
+    </>
   );
 }

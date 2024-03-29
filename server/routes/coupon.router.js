@@ -23,8 +23,7 @@ router.get("/", (req, res) => {
                 ARRAY_AGG(l.zip) AS zip,
                 ARRAY_AGG(l.merchant_id) AS location_merchant_id,
                 ARRAY_AGG(l.additional_details) AS location_additional_details,
-                m.merchant_name,
-                cl.is_redeemed
+                m.merchant_name
               FROM
                 coupon_location cl
               JOIN
@@ -33,16 +32,8 @@ router.get("/", (req, res) => {
                 location l ON cl.location_id = l.id
               JOIN
                 merchant m ON c.merchant_id = m.id
-              LEFT JOIN
-                coupon_redemption cr ON cl.id = cr.location_id
-              WHERE
-                NOT EXISTS (
-                    SELECT 1
-                    FROM coupon_redemption cr
-                  WHERE cr.coupon_id = cl.coupon_id AND cl.is_redeemed = true
-                )
               GROUP BY
-                c.id, m.merchant_name, cl.coupon_id, cl.is_redeemed
+                c.id, m.merchant_name, cl.coupon_id
               ORDER BY
                 m.merchant_name ASC;
 
@@ -91,29 +82,53 @@ router.get("/details/:id", (req, res) => {
 
   // const queryText = "SELECT * FROM coupon WHERE id = $1";
 
+  // const queryText = `
+  //         SELECT
+  //           c.*,
+  //           l.id AS location_id,
+  //           l.location_name,
+  //           l.phone_number,
+  //           l.address,
+  //           l.city,
+  //           l.state,
+  //           l.zip,
+  //           l.coordinates,
+  //           l.region_id,
+  //           l.merchant_id AS location_merchant_id,
+  //           l.additional_details AS location_additional_details
+  //         FROM
+  //           coupon c
+  //         JOIN
+  //           coupon_location cl ON c.id = cl.coupon_id
+  //         JOIN
+  //           location l ON cl.location_id = l.id
+  //         WHERE
+  //           c.id = $1;
+  //   `;
+
   const queryText = `
-          SELECT
-            c.*,
-            l.id AS location_id,
-            l.location_name,
-            l.phone_number,
-            l.address,
-            l.city,
-            l.state,
-            l.zip,
-            l.coordinates,
-            l.region_id,
-            l.merchant_id AS location_merchant_id,
-            l.additional_details AS location_additional_details
-          FROM
-            coupon c
-          JOIN
-            coupon_location cl ON c.id = cl.coupon_id
-          JOIN
-            location l ON cl.location_id = l.id
-          WHERE
-            c.id = $1;
-    `;
+              SELECT
+                c.*,
+                l.id AS location_id,
+                l.location_name,
+                l.phone_number,
+                l.address,
+                l.city,
+                l.state,
+                l.zip,
+                l.coordinates,
+                l.region_id,
+                l.merchant_id AS location_merchant_id,
+                l.additional_details AS location_additional_details
+              FROM
+                coupon c
+              LEFT JOIN
+                coupon_location cl ON c.id = cl.coupon_id
+              LEFT JOIN
+                location l ON cl.location_id = l.id
+              WHERE
+                c.id = $1;
+            `;
 
   pool
     .query(queryText, [couponId])
@@ -135,6 +150,7 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
   const value = coupon.value;
   const exclusions = coupon.exclusions;
   const additionalInfo = coupon.additional_info;
+  const bookId = coupon.book_id;
   const locationIds = coupon.location_ids; // Assuming location_ids is passed in the request
 
   try {
@@ -148,8 +164,9 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
         offer,
         value, 
         exclusions, 
-        additional_info) 
-      VALUES ($1, $2, $3, $4, $5)
+        additional_info,
+        book_id) 
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id;
     `;
     const couponResult = await pool.query(couponInsertQuery, [
@@ -158,6 +175,7 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
       value,
       exclusions,
       additionalInfo,
+      bookId,
     ]);
     const newCouponId = couponResult.rows[0].id;
 

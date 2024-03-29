@@ -4,19 +4,16 @@ import PropTypes from "prop-types";
 import { Tab, Tabs, Box, Typography, Card, CardContent } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
-import SearchBar from "../SearchBar/SearchBar";
 import TaskListOrg from "../TaskList/TaskListOrg";
 import TaskListMerchant from "../TaskList/TaskListMerchant";
 import NewTaskModal from "../NewTaskModal/NewTaskModal";
-import TaskList from "../TaskList/TaskList";
-import { border } from "../Utils/colors";
-import { historyHook } from "../../hooks/useHistory";
-import { dispatchHook } from "../../hooks/useDispatch";
-import { mComments } from "../../hooks/reduxStore";
-import SearchableSelect from "../NewTaskModal/SearchableSelect";
-import { useAlert } from "../SuccessAlert/useAlert";
+import NewBookYear from "../NewBookYear/NewBookYear";
 import SuccessAlert from "../SuccessAlert/SuccessAlert";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
+import { border } from "../Utils/colors";
+import { dispatchHook } from "../../hooks/useDispatch";
+import { mComments } from "../../hooks/reduxStore";
+import { useAlert } from "../SuccessAlert/useAlert";
 import { tabWidth } from "../Utils/helpers";
 import { useSelector } from "react-redux";
 
@@ -51,7 +48,6 @@ function a11yProps(index) {
 
 export default function BasicTabs() {
   const dispatch = dispatchHook();
-  const history = historyHook();
   const auth = useSelector((store) => store.auth)
   const [value, setValue] = useState(0);
   const [merchantTab, setMerchantTab] = useState(false);
@@ -69,7 +65,7 @@ export default function BasicTabs() {
     } else if (activeTab === "merchant") {
       dispatch({ type: "FETCH_ALL_MERCHANT_TASKS", payload: auth });
     }
-    dispatch({ type: "SET_ACTIVE_TAB" });
+    // dispatch({ type: "SET_ACTIVE_TAB" });
     // Add more conditions if needed...
   }, [dispatch, activeTab]);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,7 +148,11 @@ export default function BasicTabs() {
               onClick={handleMerchantTab}
               sx={tabWidth}
             />
-            {/* <Tab label="Coupons" {...a11yProps(2)} /> */}
+            <Tab
+              label="Coupon Book"
+              {...a11yProps(2)}
+              onClick={() => setActiveTab("book year")}
+            />
           </Tabs>
           <NewTaskModal
             tabs={true}
@@ -183,9 +183,9 @@ export default function BasicTabs() {
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~ Coupon Tab (unused) ~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-        {/* <TabPanel value={value} index={2}>
-        Review / Publish info here
-      </TabPanel> */}
+        <TabPanel value={value} index={2}>
+          <NewBookYear />
+        </TabPanel>
         {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
       </Box>
     </>

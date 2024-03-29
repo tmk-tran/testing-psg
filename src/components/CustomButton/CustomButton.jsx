@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 
 export default function CustomButton({
   label,
@@ -10,17 +10,21 @@ export default function CustomButton({
   disabled,
   fullWidth,
   Icon,
+  title,
 }) {
   return (
-    <Button
-      startIcon={icon}
-      variant={variant}
-      onClick={onClick}
-      sx={sx}
-      disabled={disabled}
-      fullWidth={fullWidth}
-    >
-      {label}{Icon && Icon}
-    </Button>
+    <Tooltip title={title} placement="top">
+      <Button
+        startIcon={icon}
+        variant={variant}
+        onClick={onClick}
+        sx={sx}
+        disabled={disabled}
+        fullWidth={fullWidth}
+      >
+        {label}
+        {Icon && Icon}
+      </Button>
+    </Tooltip>
   );
 }

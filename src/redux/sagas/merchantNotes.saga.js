@@ -37,6 +37,8 @@ function* merchantNotes(action) {
 }
 
 function* addNotes(action) {
+  console.log(action.payload);
+
   try {
     const newNote = action.payload.newNote
     const auth_response = action.payload.auth

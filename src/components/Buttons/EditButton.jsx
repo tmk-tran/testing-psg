@@ -1,10 +1,12 @@
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 
-export default function EditButton({ onClick }) {
+export default function EditButton({ onClick, title }) {
   return (
-    <Button>
-      <EditNoteIcon onClick={onClick} />
-    </Button>
+    <Tooltip title={title}>
+      <Button onClick={onClick}>
+        <EditNoteIcon />
+      </Button>
+    </Tooltip>
   );
 }

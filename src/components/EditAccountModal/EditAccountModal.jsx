@@ -202,7 +202,10 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
                 value={capitalizeStateAbbr(editedAccount.state)}
                 onChange={(e) => handleChange("state", e.target.value)}
               /> */}
-              <StateSelector onChange={handleChange} />
+              <StateSelector
+                onChange={handleChange}
+                stateSelected={selectedState}
+              />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~~ ZIP ~~~~~~~~~~~~~~ */}

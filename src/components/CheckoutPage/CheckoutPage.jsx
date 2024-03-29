@@ -38,22 +38,26 @@ export default function CheckoutPage({ caseType }) {
   const history = historyHook();
   const location = useLocation();
   const dispatch = dispatchHook();
-  // const dispatch = useDispatch();
   console.log(location.state);
   const paramsObject = useParams();
   const refId = paramsObject.refId;
-  // Access state from URL and use it in component
+  // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
   const orderTotal = location.state?.orderTotal ?? 0;
   const customDonation = location.state?.customDonation ?? 0;
   console.log("Selected Products in CheckoutPage:", selectedProducts);
   console.log(orderTotal);
   console.log(customDonation);
+  // Access digital payment amount //
+  let digitalPayment;
+  digitalPayment = orderTotal - customDonation;
+  console.log(digitalPayment);
   // Number of books sold //
   const [physicalBookDigital, setPhysicalBookDigital] = useState(0);
   console.log(physicalBookDigital);
   const [digitalBookCredit, setDigitalBookCredit] = useState(0);
   console.log(digitalBookCredit);
+  const [digitalDonation, setDigitalDonation] = useState(0);
 
   const [activeStep, setActiveStep] = useState(0);
   console.log(activeStep);
@@ -96,6 +100,7 @@ export default function CheckoutPage({ caseType }) {
   useEffect(() => {
     let physicalDigital = 0;
     let digitalCredit = 0;
+    let donationAmount = 0;
 
     selectedProducts.forEach((product) => {
       if (product.bookType === "Physical Coupon Book") {
@@ -112,7 +117,7 @@ export default function CheckoutPage({ caseType }) {
       } else if (product.bookType === "Donate") {
         switch (caseType) {
           case "credit":
-            digitalCredit = 0;
+            donationAmount += customDonation;
             break;
           default:
             break;
@@ -131,11 +136,13 @@ export default function CheckoutPage({ caseType }) {
     // setPhysicalBookCash(physicalCash);
     setPhysicalBookDigital(physicalDigital);
     setDigitalBookCredit(digitalCredit);
+    setDigitalDonation(donationAmount);
   }, [selectedProducts, caseType]);
 
   // console.log(physicalBookCash);
   console.log(physicalBookDigital);
   console.log(digitalBookCredit);
+  console.log(digitalDonation);
 
   const handleStateChange = (state, value) => {
     // Handle the state change in the parent component
@@ -235,6 +242,10 @@ export default function CheckoutPage({ caseType }) {
     if (!city) {
       newErrors.city = "Please enter city";
     }
+    if (!stateSelected) {
+      setIsSubmitted(true);
+      return;
+    }
     if (!zip) {
       newErrors.zip = "Please enter zip code";
     }
@@ -246,31 +257,21 @@ export default function CheckoutPage({ caseType }) {
     !hasErrors && setIsSubmitted(true);
     // setIsSubmitted(true);
     !hasErrors && handleNext();
+
+    saveCustomerInfo();
   };
 
   const returnToStore = () => {
-    history.push(`/seller/${refId}/${caseType}`);
+    history.push(`/fargo/seller/${refId}/${caseType}`);
   };
 
   const handleSubmit = () => {
-    if (!stateSelected) {
-      // Handle error, e.g., display an error message
-      console.log("Please select a state.");
-      setIsSubmitted(true);
-      return;
-    }
-    // Continue with form submission
-    console.log("State selected:", stateSelected);
-    setIsSubmitted(false);
-    // handleNext();
-    console.log(isSubmitted);
-
     // Check if this is the last step in the process
     if (activeStep === steps.length - 1) {
       // This is the last step, update transactions
       updateTransactions();
       // You might also want to redirect the user to a confirmation page
-      history.push(`/seller/${refId}/complete`);
+      history.push(`/fargo/seller/${refId}/complete`);
     } else {
       // This is not the last step, move to the next step
       handleNext();
@@ -294,7 +295,7 @@ export default function CheckoutPage({ caseType }) {
       updateActions.push({
         type: "UPDATE_DONATIONS",
         payload: {
-          updateType: "digital",
+          updateType: "digital_donations",
           id: sellerId,
           refId: refId,
           digital_donations: customDonation,
@@ -308,7 +309,7 @@ export default function CheckoutPage({ caseType }) {
           updateType: "digital",
           id: sellerId,
           refId: refId,
-          digital: orderTotal,
+          digital: digitalPayment,
         },
       });
 
@@ -322,6 +323,26 @@ export default function CheckoutPage({ caseType }) {
     handleNext();
   };
   console.log(orderInfo);
+
+  const saveCustomerInfo = () => {
+    const saveAction = {
+      type: "ADD_CUSTOMER",
+      payload: {
+        refId: refId,
+        last_name: lastName,
+        first_name: firstName,
+        email: email,
+        phone: phone,
+        address: address,
+        unit: unit,
+        city: city,
+        state: stateSelected,
+        zip: zip,
+      },
+    };
+    console.log("Dispatching action:", saveAction);
+    dispatch(saveAction);
+  };
 
   return (
     <Container sx={{ display: "flex", justifyContent: "center" }}>
@@ -360,15 +381,6 @@ export default function CheckoutPage({ caseType }) {
                   // ? "Place Order"
                   "Continue"
             }
-            // onClick={
-            //   activeStep === 0
-            //     ? handleForm // First step, check form info
-            //     : activeStep === steps.length - 1
-            //     ? handleSubmit // If it's the last step, handle form submission
-            //     : activeStep === steps.length - 2
-            //     ? updateTransactions // If it's the second last step, update transactions
-            //     : handleNext // Otherwise, move to the next step
-            // }
             onClick={
               activeStep === 0
                 ? handleForm // First step, check form info

@@ -36,8 +36,19 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 });
 
 router.post("/", rejectUnauthenticated, (req, res) => {
-  const queryText = `INSERT INTO "merchant_tasks" (category, task, merchant_id, merchant_name, assign, due_date, description, task_status) 
-                                            VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
+  console.log("From ALLTASKS ROUTER: ", req.body);
+  const queryText = `
+          INSERT INTO "merchant_tasks" (
+            category, 
+            task, 
+            merchant_id, 
+            merchant_name, 
+            assign, 
+            due_date, 
+            description, 
+            task_status, 
+            coupon_details) 
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`;
   const category = req.body.category;
   const task = req.body.task;
   const merchantId = req.body.merchant_id;
@@ -46,6 +57,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
   const dueDate = req.body.due_date;
   const description = req.body.description;
   const taskStatus = req.body.task_status;
+  const couponOffer = req.body.coupon_details;
 
   pool
     .query(queryText, [
@@ -57,6 +69,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       dueDate,
       description,
       taskStatus,
+      couponOffer,
     ])
     .then((result) => {
       res.send(result.rows);
@@ -68,12 +81,24 @@ router.post("/", rejectUnauthenticated, (req, res) => {
 });
 
 router.put("/:id", rejectUnauthenticated, (req, res) => {
+  console.log("From ALLTASKS ROUTER: ", req.body);
   const taskId = req.params.id;
+  const task = req.body.task;
   const taskStatus = req.body.task_status;
 
-  const queryText = `UPDATE "merchant_tasks" SET task_status = $1 WHERE id = $2;`;
+  // const queryText = `UPDATE "merchant_tasks" SET task_status = $1 WHERE id = $2;`;
+  const queryText = `
+            UPDATE 
+              "merchant_tasks"
+            SET
+              task = $1,
+              task_status = $2
+            WHERE
+              id = $3;
+        `;
+
   pool
-    .query(queryText, [taskStatus, taskId])
+    .query(queryText, [task, taskStatus, taskId])
     .then((response) => {
       res.sendStatus(200);
     })

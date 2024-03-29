@@ -27,7 +27,8 @@ router.get("/", rejectUnauthenticated, (req, res) => {
     archive_reason,
     encode(merchant_logo, 'base64') AS merchant_logo_base64,
     filename,
-    website
+    website,
+    contact_method
   FROM 
     merchant 
   WHERE 
@@ -77,6 +78,7 @@ router.get("/number", rejectUnauthenticated, (req, res) => {
 
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const merchantId = req.params.id;
+  console.log("FROM MERCHANTS ROUTER: ", merchantId);
 
   // const queryText = `SELECT * FROM merchant WHERE id = $1;`;
   const queryText = `
@@ -95,15 +97,14 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
       res.send(result.rows);
     })
     .catch((err) => {
-      console.log("error in the GET / request for authorized users", err);
+      console.log("error in the GET / request for merchant details", err);
       res.sendStatus(500);
     });
 });
 
 router.post("/", upload.single("merchant_logo"), (req, res) => {
   const data = req.body;
-  console.log(req.body);
-  console.log(req.user);
+  console.log("from merchants.router POST: ", req.body);
   const merchantLogo = req.file ? req.file.buffer : null;
 
   const merchantName = data.merchant_name;
@@ -116,13 +117,14 @@ router.post("/", upload.single("merchant_logo"), (req, res) => {
   const contactPhoneNumber = data.contact_phone_number;
   const contactEmail = data.contact_email;
   const filename = data.filename ? data.filename : null;
-  let website = data.website;
+  const website = data.website ? data.website : null;
+  const contactMethod = data.contact_method;
 
-  // Check if the website address already starts with "http://" or "https://"
-  if (!website.startsWith("http://") && !website.startsWith("https://")) {
-    // If it doesn't, prepend "https://"
-    website = "https://" + website;
-  }
+  // // Check if the website address already starts with "http://" or "https://"
+  // if (!website.startsWith("http://") && !website.startsWith("https://")) {
+  //   // If it doesn't, prepend "https://"
+  //   website = "https://" + website;
+  // }
 
   const queryText = `
       INSERT INTO "merchant" (
@@ -137,9 +139,10 @@ router.post("/", upload.single("merchant_logo"), (req, res) => {
         "contact_email",
         "merchant_logo",
         "filename",
-        "website"
+        "website",
+        "contact_method"
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`;
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`;
 
   pool
     .query(queryText, [
@@ -155,6 +158,7 @@ router.post("/", upload.single("merchant_logo"), (req, res) => {
       merchantLogo,
       filename,
       website,
+      contactMethod,
     ])
     .then((response) => {
       console.log("response from POST merchants.router: ", response.rows);
@@ -173,7 +177,7 @@ router.put(
   (req, res) => {
     const merchant = req.body;
     const merchantId = req.params.id;
-    console.log("MERCHANT = ", merchant);
+    console.log("from merchant.router PUT route: ", merchant);
     const merchant_logo = req.file ? req.file.buffer : null;
 
     // Merchant Details
@@ -189,20 +193,21 @@ router.put(
     const phone = merchant.contact_phone_number;
     const email = merchant.contact_email;
     const filename = merchant.filename;
-    let website = merchant.website ? merchant.website : null;
+    const website = merchant.website ? merchant.website : null;
+    const contactMethod = merchant.contact_method;
 
-    // Check if the website address is not empty and does not start with "http://" or "https://"
-    if (
-      website &&
-      !website.startsWith("http://") &&
-      !website.startsWith("https://")
-    ) {
-      // If it doesn't, prepend "https://"
-      website = "https://" + website;
-    } else if (!website) {
-      // If website is empty, set it to null
-      website = null;
-    }
+    // // Check if the website address is not empty and does not start with "http://" or "https://"
+    // if (
+    //   website &&
+    //   !website.startsWith("http://") &&
+    //   !website.startsWith("https://")
+    // ) {
+    //   // If it doesn't, prepend "https://"
+    //   website = "https://" + website;
+    // } else if (!website) {
+    //   // If website is empty, set it to null
+    //   website = null;
+    // }
 
     // const user = req.user.id;
     const queryText = `
@@ -219,8 +224,9 @@ router.put(
           contact_email = $9,
           merchant_logo = $10,
           filename = $11,
-          website = $12
-        WHERE id = $13;`;
+          website = $12,
+          contact_method = $13
+        WHERE id = $14;`;
     pool
       .query(queryText, [
         merchantName,
@@ -235,6 +241,7 @@ router.put(
         merchant_logo,
         filename,
         website,
+        contactMethod,
         merchantId,
       ])
       .then((response) => {

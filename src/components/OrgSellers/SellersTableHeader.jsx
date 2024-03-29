@@ -5,7 +5,8 @@ import ToggleButton from "../ToggleButton/ToggleButton";
 
 export default function SellersTableHeader({ viewUrlTable, setViewUrlTable }) {
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
+    <Box sx={{ textAlign: "center", ml: 1.5 }}>
+      {/* <Box sx={{ display: "flex", flexDirection: "row" }}> */}
       <Typography label="Participating Sellers" variant="h6" sx={{ p: 1 }} />
       {/* <ToggleButton
         onClick={() => setViewUrlTable(!viewUrlTable)}

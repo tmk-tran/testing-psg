@@ -34,25 +34,48 @@ router.post("/", rejectUnauthenticated, (req, res) => {
   const lastName = customer.last_name;
   const firstName = customer.first_name;
   const phone = customer.phone;
+  const email = customer.email;
+  const address = customer.address;
+  const unit = customer.unit;
+  const city = customer.city;
+  const state = customer.state;
+  const zip = customer.zip;
 
   // Check if the phone number is exactly 10 digits long
-  if (!/^\d{10}$/.test(phone)) {
-    console.log("Phone number is not 10 digits long");
-    return res.status(400).send("Phone number must be 10 digits long");
-  }
+  // if (!/^\d{10}$/.test(phone)) {
+  //   console.log("Phone number is not 10 digits long");
+  //   return res.status(400).send("Phone number must be 10 digits long");
+  // }
 
   const queryText = `
         INSERT INTO "customers" (
           "refId",
           "last_name",
           "first_name",
-          "phone"
+          "phone",
+          "email",
+          "address",
+          "unit",
+          "city",
+          "state",
+          "zip"
         )
-        VALUES ($1, $2, $3, $4);
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
         `;
 
   pool
-    .query(queryText, [refId, lastName, firstName, phone])
+    .query(queryText, [
+      refId,
+      lastName,
+      firstName,
+      phone,
+      email,
+      address,
+      unit,
+      city,
+      state,
+      zip,
+    ])
     .then((response) => {
       console.log("response from POST customers.router: ", response.rows);
       res.sendStatus(201);

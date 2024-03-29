@@ -18,7 +18,8 @@ function PayPalButton({ selectedProducts, customDonation, orderSuccess }) {
   // Removed 'venmo' from "enable-funding"
   const initialOptions = {
     "client-id":
-      "AXW1Fk6t36VzplCt2ev6VRwygaNynFd4tz4KBWicOhfvFrPLenoFFcwIbgih38FpabvP9I6RXFfyZ_Nx",
+      // "AXW1Fk6t36VzplCt2ev6VRwygaNynFd4tz4KBWicOhfvFrPLenoFFcwIbgih38FpabvP9I6RXFfyZ_Nx",
+      "AXw4KZ31SkyY5t_62QfDp4x7pQYm5t1-UfGpGDOOJVXo7Xb0UEdlRPkXW8mhOtVxDJhAY4PSofVyDaFu",
       // process.env.REACT_APP_PAYPAL_CLIENT_ID,
     "enable-funding": "paylater,card",
     "disable-funding": "",

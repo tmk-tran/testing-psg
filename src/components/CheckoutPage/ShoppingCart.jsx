@@ -63,7 +63,7 @@ export default function ShoppingCart() {
 
   const toCheckout = () => {
     history.push({
-      pathname: `/seller/${refId}/${caseType}/checkout`,
+      pathname: `/fargo/seller/${refId}/${caseType}/checkout`,
       state: { selectedProducts, orderTotal, customDonation },
     });
   };
@@ -108,7 +108,7 @@ export default function ShoppingCart() {
 
       console.log("Dispatching actions:", updateActions);
       updateActions.forEach((action) => dispatch(action));
-      history.push(`/seller/${refId}/complete`);
+      history.push(`/fargo/seller/${refId}/complete`);
     };
 
     submitPaymentSweetAlert(saveCall);

@@ -10,7 +10,7 @@ function LoginPage() {
   return (
     <div>
       <Typography variant="h5" sx={{ textAlign: "center", fontWeight: "bold" }}>
-        * Testing Environment *
+        * Fargo Testing Environment *
       </Typography>
       <br />
       <LoginForm />
@@ -24,9 +24,7 @@ function LoginPage() {
       >
         <Typography>Not a member?&nbsp;</Typography>
         <Button
-          type="button"
           style={{ textDecoration: "underline" }}
-          className="btn btn_asLink"
           onClick={() => {
             history.push("/registration");
           }}

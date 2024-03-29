@@ -11,9 +11,14 @@ import "./CouponReviewDetails.css";
 import { mComments } from "../../hooks/reduxStore";
 import { useAlert } from "../SuccessAlert/useAlert";
 
-export default function CouponReviewComments({ merchantId, onSubmit, files, handleUploadFile }) {
-  console.log(files);
-  const [taskId, setTaskId] = useState(null);
+export default function CouponReviewComments({
+  merchantId,
+  onSubmit,
+  file,
+  handleUploadFile,
+}) {
+  console.log(file);
+  const [taskId, setTaskId] = useState("");
   console.log(taskId);
   console.log(merchantId);
   const merchantComments = mComments() || [];
@@ -59,14 +64,17 @@ export default function CouponReviewComments({ merchantId, onSubmit, files, hand
         Comments
       </Typography>
 
-      {merchantComments.map((comment, i) => (
-        <div className="comment-display-row" key={i}>
-          <CommentDisplay
-            comment={comment}
-            showAllComments={true}
-          />
-        </div>
-      ))}
+      {merchantComments.length > 0 ? (
+        merchantComments.map((comment, i) => (
+          <div className="comment-display-row" key={i}>
+            <CommentDisplay comment={comment} showAllComments={true} />
+          </div>
+        ))
+      ) : (
+        <Typography variant="body2" sx={{ textAlign: "center" }}>
+          No comments, add one below!
+        </Typography>
+      )}
 
       <div style={{ width: "100%", marginTop: "auto" }}>
         <CommentInput
@@ -74,7 +82,7 @@ export default function CouponReviewComments({ merchantId, onSubmit, files, hand
           taskId={taskId}
           onSubmit={onSubmit}
           onChange={handleTaskUpdate}
-          files={files}
+          file={file}
           onUploadFile={handleUploadFile}
         />
       </div>

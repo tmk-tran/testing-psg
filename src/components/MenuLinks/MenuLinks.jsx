@@ -51,7 +51,7 @@ export default function BasicMenu() {
   }
 
   function goHome() {
-    history.push("/user");
+    history.push("/home");
     handleClose();
   }
 

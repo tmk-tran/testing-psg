@@ -14,6 +14,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import DetailsEdit from "../DetailsEdit/DetailsEdit";
 import ContactDetailsCard from "./ContactDetailsCard";
+import EditButton from "../Buttons/EditButton";
 // ~~~~~~~~~~ Utils ~~~~~~~~~~
 import { capitalizeWords, formatPhoneNumber } from "../Utils/helpers";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
@@ -58,9 +59,18 @@ export default function ContactDetails({
 
   const handleSaveOrgDetails = (editedDetails) => {
     console.log("New Details:", editedDetails);
-    isMerchantTaskPage
-      ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedItem: editedDetails, auth: auth} })
-      : dispatch({ type: "EDIT_ORG_DETAILS", payload: {editedItem: editedDetails, auth: auth} });
+    const merchantAction = {
+      type: "EDIT_MERCHANT_DETAILS",
+      payload:{ editedItem: editedDetails, auth: auth}
+    };
+    const orgAction = {
+      type: "EDIT_ORG_DETAILS",
+      payload: { editedItem: editedDetails, auth: auth}
+    };
+    isMerchantTaskPage ? dispatch(merchantAction) : dispatch(orgAction);
+
+    console.log(merchantAction);
+    console.log(orgAction);
   };
 
   return (
@@ -72,9 +82,10 @@ export default function ContactDetails({
               <div className="org-details-header">
                 <div className="edit-icon-btn">
                   {!isOrgAdminPage && (
-                    <Button onClick={handleEditOrg}>
-                      <EditNoteIcon className="edit-note-icon" />
-                    </Button>
+                    <EditButton
+                      onClick={handleEditOrg}
+                      title={"Edit Account Details"}
+                    />
                   )}
                 </div>
                 <DetailsEdit

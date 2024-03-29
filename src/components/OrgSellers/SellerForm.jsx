@@ -11,7 +11,10 @@ import {
 // ~~~~~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 import { lineDivider } from "../Utils/modalStyles";
 import { highlightColor, primaryColor, border } from "../Utils/colors";
-import { capitalizeFirstWord, capitalizeWords } from "../Utils/helpers";
+import {
+  capitalizeFirstWord,
+  capitalizeWords,
+} from "../Utils/helpers";
 import { useCaseType } from "../Utils/useCaseType";
 import { dispatchHook } from "../../hooks/useDispatch";
 // ~~~~~~~~~~~~ Components ~~~~~~~~~~~~~~~~~~~~~ //
@@ -54,6 +57,7 @@ console.log(sample);
 
 export default function SellerForm({
   user,
+  orgId,
   columns,
   open,
   mode,
@@ -61,12 +65,13 @@ export default function SellerForm({
   handleAddSeller,
   handleEditSeller,
   sellerToEdit,
-  sellers,
+  updateActions,
+  setUpdateActions,
 }) {
   console.log(user);
+  console.log(orgId);
   console.log(sellerToEdit);
   console.log(mode);
-  const dispatch = dispatchHook();
 
   const initialFormState = columns.reduce((acc, column) => {
     acc[column.id] = [
@@ -93,8 +98,13 @@ export default function SellerForm({
     teacher: false,
   });
   const { caseType, handleCaseTypeChange } = useCaseType("default");
-  const [updateMoneyAmount, setUpdateMoneyAmount] = useState(null);
+  console.log(caseType);
+  // ~~~~~~~~~~ Money update state ~~~~~~~~~~ //
+  const [updateMoneyAmount, setUpdateMoneyAmount] = useState(0);
   console.log(updateMoneyAmount);
+  const [cashEditAmount, setCashEditAmount] = useState(0);
+  const [checksEditAmount, setChecksEditAmount] = useState(0);
+  const [donationsEditAmount, setDonationsEditAmount] = useState(0);
 
   useEffect(() => {
     if (mode === "edit") {
@@ -165,17 +175,46 @@ export default function SellerForm({
       handleAddSeller(updatedFormData);
     } else if (mode === "edit") {
       // Edit logic remains the same
-      // No need to generate or alter refId for editing
-      handleEditSeller(updatedFormData);
+      const editPayload = {
+        id: sellerToEdit.id,
+        refId: updatedFormData.refId,
+        lastname: updatedFormData.lastname,
+        firstname: updatedFormData.firstname,
+        level: updatedFormData.level,
+        teacher: updatedFormData.teacher,
+        initial_books: updatedFormData.initial_books,
+        additional_books: updatedFormData.additional_books,
+        books_returned: updatedFormData.books_returned,
+        digital: updatedFormData.digital,
+        notes: updatedFormData.notes,
+        organization_id: updatedFormData.organization_id,
+        is_deleted: updatedFormData.is_deleted,
+        books_due: updatedFormData.books_due,
+        digital_donations: updatedFormData.digital_donations,
+        organization_name: updatedFormData.organization_name,
+        address: updatedFormData.address,
+        city: updatedFormData.city,
+        state: updatedFormData.state,
+        zip: updatedFormData.zip,
+        physical_book_cash: updatedFormData.physical_book_cash,
+        physical_book_digital: updatedFormData.physical_book_digital,
+        digital_book_credit: updatedFormData.digital_book_credit,
+        seller_earnings: updatedFormData.seller_earnings,
+      };
+      handleEditSeller(editPayload);
     }
 
     console.log(updatedFormData);
-    setFormData(initialFormState);
-    handleClose();
+    handleFormReset();
   };
 
   const handleFormReset = () => {
     setFormData(initialFormState);
+    setUpdateActions([]);
+    setUpdateMoneyAmount(0);
+    setCashEditAmount(0);
+    setChecksEditAmount(0);
+    setDonationsEditAmount(0);
     setErrors(false);
     handleClose();
   };
@@ -193,11 +232,29 @@ export default function SellerForm({
         refId: refId,
         [updateType.toLowerCase()]: Number(amountToUpdate),
         updateType: updateType.toLowerCase(),
+        orgId: orgId,
       },
     };
-    console.log("Dispatching action:", updateAction);
-    dispatch(updateAction);
-    setUpdateMoneyAmount(amountToUpdate);
+    console.log("Dispatch action:", updateAction);
+
+    // Add the update action to the array
+    const updatedActions = [...updateActions, updateAction];
+    setUpdateActions(updatedActions);
+
+    // Set the state based on the updateType
+    switch (updateType) {
+      case "Cash":
+        setCashEditAmount(amountToUpdate);
+        break;
+      case "Checks":
+        setChecksEditAmount(amountToUpdate);
+        break;
+      case "Donations":
+        setDonationsEditAmount(amountToUpdate);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -376,7 +433,10 @@ export default function SellerForm({
                     <TextField
                       name="donations"
                       label="Donations (Cash)"
-                      value={formData["donations"]}
+                      value={
+                        Number(formData["donations"]) +
+                        Number(donationsEditAmount)
+                      }
                       onChange={handleChange}
                       fullWidth
                       size="small"
@@ -401,7 +461,9 @@ export default function SellerForm({
                     <TextField
                       name="checks"
                       label="Checks"
-                      value={formData["checks"]}
+                      value={
+                        Number(formData["checks"]) + Number(checksEditAmount)
+                      }
                       onChange={handleChange}
                       fullWidth
                       size="small"
@@ -425,12 +487,7 @@ export default function SellerForm({
                     <TextField
                       name="cash"
                       label="Cash"
-                      value={
-                        Number(formData["cash"]) +
-                        (updateMoneyAmount !== null
-                          ? Number(updateMoneyAmount)
-                          : 0)
-                      }
+                      value={Number(formData["cash"]) + Number(cashEditAmount)}
                       onChange={handleChange}
                       fullWidth
                       size="small"

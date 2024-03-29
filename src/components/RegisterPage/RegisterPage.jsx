@@ -14,7 +14,7 @@ function RegisterPage() {
       <RegisterForm />
 
       <center>
-        <h1>This application for ADMIN use only</h1>
+        <h1>Welcome to the Fargo testing environment</h1>
       </center>
     </div>
   );

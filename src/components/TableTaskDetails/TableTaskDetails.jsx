@@ -19,10 +19,10 @@ export default function TableTaskDetails({ mId, caseType }) {
   console.log(mId);
   console.log(caseType);
   const dispatch = dispatchHook();
-  const merchantTasks = mTasks();
+  const merchantTasks = Array.isArray(mTasks()) ? mTasks() : [];
   console.log(merchantTasks);
   const comments = mComments();
-  const orgTasks = oTasks();
+  const orgTasks = oTasks() || [];
   console.log(orgTasks);
   const auth = useSelector((store) => store.auth)
 
@@ -45,20 +45,37 @@ export default function TableTaskDetails({ mId, caseType }) {
     textAlign: "center",
   };
 
-  useEffect(() => {
-    dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: {id: mId, auth: auth} });
+  // useEffect(() => {
+  //   dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: mId });
 
-    dispatch({
-      type: "FETCH_MERCHANT_TASKS",
-      payload: {id: mId,
-        auth: auth}
-    });
-  }, [mId]); // Deleted dispatch from dependencies
+  //   dispatch({
+  //     type: "FETCH_MERCHANT_TASKS",
+  //     payload: mId,
+  //   });
+  // }, [mId]); // Deleted dispatch from dependencies
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "FETCH_MERCHANT_TASKS",
+  //     payload: mId,
+  //   });
+  // }, [mId]);
+
+  useEffect(() => {
+    // Check if tasks are loaded before fetching comments
+    if (Array.isArray(merchantTasks) && merchantTasks.length > 0) {
+      dispatch({
+        type: "FETCH_MERCHANT_COMMENTS",
+        payload: {id: mId, auth: auth}
+      });
+    }
+  }, [merchantTasks, mId]);
 
   const renderTask = (task, index) => {
-    const taskComments = comments.filter(
-      (comment) => comment.task_id === task.id
-    );
+    const taskComments =
+      comments && Array.isArray(comments)
+        ? comments.filter((comment) => comment.task_id === task.id)
+        : [];
+
     const displaySingleComment = taskComments.length > 0;
 
     return (

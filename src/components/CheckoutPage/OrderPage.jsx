@@ -50,12 +50,12 @@ export default function OrderPage({ caseType }) {
       price: 25,
       quantity: 0,
     },
-    {
-      id: 3,
-      bookType: "Grand Forks (Digital Coupon Book)",
-      price: 25,
-      quantity: 0,
-    },
+    // {
+    //   id: 3,
+    //   bookType: "Grand Forks (Digital Coupon Book)",
+    //   price: 25,
+    //   quantity: 0,
+    // },
     { id: 4, bookType: "Donate", price: 0, quantity: 0 },
   ]);
 
@@ -104,12 +104,17 @@ export default function OrderPage({ caseType }) {
   const handleQuantityChange = (newRows) => {
     setRows(newRows);
   };
-
+  
   const mapSelectedRowsToProducts = () => {
     return selectedRows.map((selectedId) => {
-      return rows.find((row) => row.id === selectedId);
+      const row = rows.find((row) => row.id === selectedId);
+      if (row.id === 4) {
+        // Set the price of the donation product to customDonation
+        return { ...row, price: customDonation };
+      }
+      return row;
     });
-  };
+  };  
 
   const selectedProducts = mapSelectedRowsToProducts();
   console.log("Selected Products:", selectedProducts);
@@ -133,7 +138,7 @@ export default function OrderPage({ caseType }) {
 
   const addToCart = () => {
     history.push({
-      pathname: `/seller/${seller.refId}/${caseType}/cart`,
+      pathname: `/fargo/seller/${seller.refId}/${caseType}/cart`,
       state: {
         seller,
         sellerId,

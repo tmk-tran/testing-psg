@@ -16,6 +16,7 @@ import AddFileButton from "../AddFileButton/AddFileButton";
 import ModalButtons from "../Modals/ModalButtons";
 import AllLocationsButton from "./AllLocationsButton";
 import PhoneInput from "../LocationsCard/PhoneInput";
+import YearSelect from "../OrgSellers/YearSelect";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~ //
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { dispatchHook } from "../../hooks/useDispatch";
@@ -43,18 +44,19 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   const [open, setOpen] = useState(false);
   const [merchantId, setMerchantId] = useState(paramsObject.id);
   // ~~~~~~~~~~ Form State ~~~~~~~~~~~~~~~~~~~ //
-  const [couponOffer, setCouponOffer] = useState("");
-  const [couponValue, setCouponValue] = useState("");
-  const [exclusions, setExclusions] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
   const [selectedLocations, setSelectedLocations] = useState([]);
   console.log(selectedLocations);
+  const [seasonIdSelected, setSeasonIdSelected] = useState("");
   const [selectAllLocations, setSelectAllLocations] = useState(false);
-  const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
+  const [couponOffer, setCouponOffer] = useState("");
+  const [website, setWebsite] = useState("");
+  const [couponValue, setCouponValue] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [exclusions, setExclusions] = useState("");
+  const [address, setAddress] = useState("");
   // ~~~~~~~~~~ Errors ~~~~~~~~~~~~~~~~~~~~~~~ //
   const [locationsError, setLocationsError] = useState(false);
-  const [website, setWebsite] = useState("");
   const [websiteError, setWebsiteError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [offerError, setOfferError] = useState(false);
@@ -68,6 +70,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   console.log(website);
   console.log(additionalInfo);
   console.log(merchantId);
+  console.log(seasonIdSelected);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -81,14 +84,15 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
     exclusions: exclusions.trim() !== "" ? exclusions : null,
     additional_info: additionalInfo.trim() !== "" ? additionalInfo : null,
     location_ids: [selectedLocations],
+    book_id: seasonIdSelected,
   };
 
   const addCoupon = () => {
     // Check if required fields are filled
-    if (!selectedLocations.length) {
-      setLocationsError(true);
-      return; // Stop if condition met, resolve to continue
-    }
+    // if (!selectedLocations.length) {
+    //   setLocationsError(true);
+    //   return; // Stop if condition met, resolve to continue
+    // }
     if (!couponOffer) {
       setOfferError(true);
       return;
@@ -126,14 +130,15 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   };
 
   const resetForm = () => {
-    setCouponOffer("");
-    setCouponValue("");
-    setExclusions("");
-    setAdditionalInfo("");
-    setSelectAllLocations(false);
-    setPhone("");
-    setWebsite("");
     setSelectedLocations([]);
+    setSeasonIdSelected("");
+    setPhone("");
+    setCouponOffer("");
+    setWebsite("");
+    setCouponValue("");
+    setAdditionalInfo("");
+    setExclusions("");
+    setSelectAllLocations(false);
     setPhoneError(false);
     setOfferError(false);
     setWebsiteError(false);
@@ -158,7 +163,12 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
     <div>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ ADD BUTTON ~~~~~~~~~~ */}
-      <AddBox label="Coupon" buttonStyle={{ mb: 2 }} onClick={handleOpen} />
+      <AddBox
+        title="New Coupon"
+        label="Coupon"
+        buttonStyle={{ mb: 2 }}
+        onClick={handleOpen}
+      />
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       <Modal
         open={open}
@@ -179,14 +189,27 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
           <Divider sx={lineDivider} />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~ LOCATION SELECT ~~~~~~~ */}
-          <SelectMenu
-            label="Participating Location*"
-            locations={locations}
-            selectAllLocations={selectAllLocations}
-            onLocationChange={handleLocationChange}
-            error={locationsError}
-          />
           <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <SelectMenu
+                label="Participating Location*"
+                locations={locations}
+                selectAllLocations={selectAllLocations}
+                onLocationChange={handleLocationChange}
+                error={locationsError}
+              />
+            </Grid>
+            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+            {/* ~~~~~~~~~~ YEAR SELECT ~~~~~~~~~~ */}
+            <Grid item xs={6}>
+              <YearSelect
+                labelOutside
+                sx={{ mb: 2 }}
+                setYear={setSeasonIdSelected}
+              />
+            </Grid>
+            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+            {/* ~~~~~~~~~~ SELECT ALL LOCATIONS ~~~~~~~~~ */}
             <Grid item xs={6}>
               <Box
                 sx={{

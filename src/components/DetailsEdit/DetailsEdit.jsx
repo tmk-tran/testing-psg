@@ -50,6 +50,10 @@ export default function DetailsEdit({
     !isMerchantTaskPage ? info.primary_contact_email : info.contact_email
   );
   console.log(contactEmail);
+  const [contactWebsite, setContactWebsite] = useState(
+    isMerchantTaskPage ? info.website : null
+  );
+  console.log(contactWebsite);
 
   useEffect(() => {
     setContactFirstName(info.primary_contact_first_name);
@@ -60,6 +64,9 @@ export default function DetailsEdit({
     !isMerchantTaskPage
       ? setContactEmail(info.primary_contact_email)
       : setContactEmail(info.contact_email);
+    isMerchantTaskPage
+      ? setContactWebsite(info.website)
+      : setContactWebsite(null);
   }, [info, isOpen]);
 
   const handleSave = () => {
@@ -103,6 +110,7 @@ export default function DetailsEdit({
           primary_contact_last_name: contactLastName,
           contact_phone_number: contactPhone,
           contact_email: contactEmail,
+          website: contactWebsite,
           id: merchantId,
         };
 

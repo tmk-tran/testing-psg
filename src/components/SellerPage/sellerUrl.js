@@ -8,9 +8,9 @@
 
 // FOR TEST ENVIRONMENT USE ~~~~~~~~~~~~~~~~ //
 export const transactionsUrl = (refId) => {
-  return `testpsg.fly.dev/#/seller/${refId}/cash`;
+  return `testpsg.fly.dev/#/fargo/seller/${refId}/cash`;
 };
 
 export const orderUrl = (refId) => {
-  return `testpsg.fly.dev/#/seller/${refId}`;
+  return `testpsg.fly.dev/#/fargo/seller/${refId}`;
 };

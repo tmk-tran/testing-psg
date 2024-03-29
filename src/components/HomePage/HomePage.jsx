@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
-  TextField,
   Paper,
   Pagination,
   Typography,
   Fab,
+  Tooltip,
 } from "@mui/material";
 import "./HomePage.css";
 import Fuse from "fuse.js";
@@ -190,6 +190,19 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
               sxButton={{ margin: 2 }}
               sxIcon={{ mr: 1 }}
               // onClick={() => setIsMerchantList(!isMerchantList)}
+              title="Toggle List View"
+              onClick={() => setIsMerchantList((prevState) => !prevState)}
+              label1="Merchants"
+              label2="Organizations"
+              toggleState={isMerchantList}
+            />
+          )}
+          {isOrgAdmin && isGraphicDesigner && (
+            <ToggleButton
+              sxButton={{ margin: 2 }}
+              sxIcon={{ mr: 1 }}
+              // onClick={() => setIsMerchantList(!isMerchantList)}
+              title="Toggle List View"
               onClick={() => setIsMerchantList((prevState) => !prevState)}
               label1="Merchants"
               label2="Organizations"
@@ -241,23 +254,25 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~ Add Account Button ~~~~~~~~~~ */}
             {!isOrgAdmin && (
-              <Button
-                style={{ marginBottom: "5px" }}
-                // variant="outlined"
-                onClick={handleAddAccountClick}
-              >
-                {!isMerchantList ? (
-                  <>
-                    <AddBoxIcon sx={buttonIconSpacing} />
-                    Organization
-                  </>
-                ) : (
-                  <>
-                    <AddBoxIcon sx={buttonIconSpacing} />
-                    Merchant
-                  </>
-                )}
-              </Button>
+              <Tooltip title="Add a New Account">
+                <Button
+                  style={{ marginBottom: "5px" }}
+                  // variant="outlined"
+                  onClick={handleAddAccountClick}
+                >
+                  {!isMerchantList ? (
+                    <>
+                      <AddBoxIcon sx={buttonIconSpacing} />
+                      Organization
+                    </>
+                  ) : (
+                    <>
+                      <AddBoxIcon sx={buttonIconSpacing} />
+                      Merchant
+                    </>
+                  )}
+                </Button>
+              </Tooltip>
             )}
           </div>
         </div>

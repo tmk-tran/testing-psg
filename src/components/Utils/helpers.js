@@ -12,6 +12,7 @@ export function formatPhoneNumber(phoneNumber) {
 
 // Format date to MM/DD/YYYY, used in OrgNotes component
 export const formatDate = (dateString) => {
+  if (!dateString) return null; // Return null if dateString is undefined or null
   const dateWithoutTime = dateString.split("T")[0]; // Extract only the date part
   const [year, month, day] = dateWithoutTime.split("-");
   return `${month}/${day}/${year}`;
@@ -30,14 +31,14 @@ export const convertTo12HourFormat = (time24hr) => {
 
 export const formatDateTime = (dateTimeString) => {
   const date = new Date(dateTimeString);
-  const formattedDate = date.toLocaleDateString('en-US', {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
+  const formattedDate = date.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
   });
-  const formattedTime = date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: true,
   });
   return `${formattedDate} ${formattedTime}`;
@@ -190,4 +191,34 @@ export const saveBtnWidth = {
 // Handle caseType change
 export const handleCaseTypeChange = (newValue) => {
   setCaseType(newValue);
+};
+
+export const getExpirationYear = (bookYearData) => {
+  const years = bookYearData[0].year;
+  const expirationYear = years.split("-")[1];
+  return expirationYear;
+};
+
+// seasonHelper.js
+
+export const getCurrentSeason = () => {
+  // Fetch the current year
+  const currentYear = new Date().getFullYear();
+
+  // Fetch the current date
+  const currentDate = new Date();
+
+  // Determine the current season based on the current date
+  let currentSeason;
+  if (
+    currentDate >= new Date(`${currentYear - 1}-09-02`) &&
+    currentDate <= new Date(`${currentYear}-09-01`)
+  ) {
+    // Season starts after September 1st
+    currentSeason = `${currentYear - 1}-${currentYear}`;
+  } else {
+    currentSeason = `${currentYear}-${currentYear + 1}`;
+  }
+
+  return currentSeason;
 };

@@ -9,11 +9,11 @@ import {
   Popover,
   useTheme,
   useMediaQuery,
+  Tooltip,
 } from "@mui/material/";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import "./AddGroupPopover.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
-import { showToast } from "../Utils/helpers";
 import { border } from "../Utils/colors";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
@@ -57,8 +57,7 @@ export default function BasicPopover({ info, groups, onChange }) {
       group_description: description,
     };
 
-    // from Utils
-    // showToast();
+    
 
     dispatch({ type: "ADD_GROUP", payload: {newGroup: groupInfo, auth: auth} });
 
@@ -73,11 +72,20 @@ export default function BasicPopover({ info, groups, onChange }) {
 
   return (
     <div className="popover-container">
-      <Button id="add-group-button" onClick={handleClick} fullWidth>
-        <AddBoxIcon />
-        &nbsp;Group
-        {/* Add Group */}
-      </Button>
+        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+        {/* ~~~~~~~~~~ Add group button ~~~~~~~~~~ */}
+      <Tooltip title="Add a new group">
+        <Button
+          id="add-group-button"
+          onClick={handleClick}
+          fullWidth
+        >
+          <AddBoxIcon />
+          &nbsp;Group
+          {/* Add Group */}
+        </Button>
+      </Tooltip>
+
       <Popover
         id={id}
         open={open}

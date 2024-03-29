@@ -19,14 +19,15 @@ export default function BottomSection({ coupon }) {
           </Box>
         </Grid>
         <Grid item xs={2} sx={{ display: "flex", justifyContent: "flex-end" }}>
+            {coupon.expiration ? (
           <Typography variant="caption">
             Expires:{" "}
-            {coupon.expiration ? (
-              formatDate(coupon.expiration)
-            ) : (
-              <Typography variant="caption">None set</Typography>
-            )}
+              {formatDate(coupon.expiration)}
           </Typography>
+            ) : (
+            //   <Typography variant="caption">None set</Typography>
+              null
+            )}
         </Grid>
       </Grid>
     </Box>

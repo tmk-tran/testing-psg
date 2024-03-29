@@ -188,7 +188,8 @@ CREATE TABLE merchant_comments (
     is_deleted boolean DEFAULT false,
     "user" character varying(80) NOT NULL,
     task_id integer REFERENCES merchant_tasks(id),
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    coupon_id integer REFERENCES coupon(id)
 );
 
 ----------------------------------------------------
@@ -277,7 +278,9 @@ CREATE TABLE sellers (
     notes character varying(250),
     organization_id integer REFERENCES organization(id),
     is_deleted boolean DEFAULT false,
-    digital_donations numeric
+    digital_donations numeric,
+    books_due integer,
+    coupon_book_id integer REFERENCES coupon_book(id)
 );
 
 ------ Function for sellers -------------------
@@ -315,7 +318,13 @@ CREATE TABLE customers (
     last_name character varying(30) NOT NULL,
     first_name character varying(30) NOT NULL,
     phone bigint,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    email character varying(50),
+    address character varying(50),
+    unit character varying(10),
+    city character varying(50),
+    state character varying(25),
+    zip integer
 );
 
 -------------------------------------------------------------
@@ -371,17 +380,19 @@ EXECUTE FUNCTION create_transaction_for_new_seller();
 CREATE TABLE coupon (
     id SERIAL PRIMARY KEY,
     pdf_data bytea,
-    filename character varying(255),
     merchant_id integer REFERENCES merchant(id),
     is_deleted boolean DEFAULT false,
+    filename_front character varying(255),
     front_view_pdf bytea,
+    filename_back character varying(255),
     back_view_pdf bytea,
     offer character varying(200),
     value numeric,
     exclusions character varying(200),
-    details character varying(200),
     expiration date,
-    additional_info character varying(200)
+    additional_info character varying(200),
+    task_id integer REFERENCES merchant_tasks(id),
+    book_id integer REFERENCES coupon_book(id)
 );
 ----------------------------------------------------------------------
 
@@ -404,25 +415,6 @@ CREATE TABLE coupon_redemption (
     redeemed_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     redeemed_by integer REFERENCES "user"(id)
 );
-
----------------- Function for coupon redemption ------------
-CREATE OR REPLACE FUNCTION update_coupon_location_redeemed()
-RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE coupon_location
-    SET is_redeemed = true
-    WHERE coupon_id = NEW.coupon_id AND location_id = NEW.location_id;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
---------------------------------------------------------------
-
------ Trigger for updating redemption --------
-CREATE TRIGGER update_coupon_location_redeemed_trigger
-AFTER INSERT ON coupon_redemption
-FOR EACH ROW
-EXECUTE FUNCTION update_coupon_location_redeemed();
------------------------------------------------
 
 ---------- Paypal transactions table ---------------
 CREATE TABLE paypal_transactions (
@@ -455,4 +447,114 @@ CREATE TABLE paypal_transactions (
     seller_receivable_paypal_fee_value numeric(10,2),
     seller_receivable_net_amount_value numeric(10,2)
 );
+----------------------------------------------------
+
+---------- Trigger for coupon related tasks --------
+
+-- Function for coupons / tasks
+CREATE OR REPLACE FUNCTION create_coupon_on_new_task()
+RETURNS TRIGGER AS
+$$
+DECLARE
+    new_coupon_id INTEGER;
+BEGIN
+    -- Check if the task is 'new create proof'
+    IF LOWER(NEW.task) = 'new create proof' THEN
+        -- Start a transaction
+        BEGIN
+            -- Insert a new row into the coupon table
+            INSERT INTO coupon (merchant_id, offer, value, exclusions, expiration, additional_info, task_id)
+            VALUES (NEW.merchant_id, NEW.coupon_details, 0, '', NULL, '', NEW.id)
+            RETURNING id INTO new_coupon_id;
+
+            -- Update the merchant_tasks table with the new coupon_id
+            UPDATE merchant_tasks SET coupon_id = new_coupon_id WHERE id = NEW.id;
+        -- Commit the transaction
+        END;
+    END IF;
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+-- Trigger for tasks
+CREATE TRIGGER new_task_trigger
+AFTER INSERT ON merchant_tasks
+FOR EACH ROW
+EXECUTE FUNCTION create_coupon_on_new_task();
+
+----------------------------------------------------
+CREATE TABLE "user" (
+    id SERIAL PRIMARY KEY,
+    username character varying(80) NOT NULL UNIQUE,
+    password character varying(1000) NOT NULL,
+    is_admin boolean DEFAULT false,
+    is_deleted boolean DEFAULT false,
+    org_admin boolean DEFAULT false,
+    graphic_designer boolean DEFAULT false,
+    org_id integer REFERENCES organization(id)
+);
+
+------- Table for creating coupon lost for users, uses function -----
+------- and trigger listed below ------------------------------------
+
+CREATE TABLE user_coupon (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES "user"(id),
+    coupon_id INTEGER REFERENCES coupon(id),
+    location_id INTEGER REFERENCES location(id),
+    CONSTRAINT user_coupon_user_id_coupon_id_location_id_key UNIQUE (user_id, coupon_id, location_id)
+);
+
+-- Function to insert coupon IDs for a new user and mark them as unredeemed
+CREATE OR REPLACE FUNCTION insert_user_coupons()
+RETURNS TRIGGER AS
+$$
+BEGIN
+    -- Insert coupon IDs for the new user into user_coupon table
+    INSERT INTO user_coupon (user_id, coupon_id)
+	SELECT NEW.id, id
+	FROM coupon;
+
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Trigger to automatically insert coupon IDs for a new user
+CREATE TRIGGER insert_user_coupons_trigger
+AFTER INSERT ON "user"
+FOR EACH ROW
+EXECUTE FUNCTION insert_user_coupons();
+
+
+----------------------------------------------------------------------
+
+----------------------------------------------------------------------
+------- Function and trigger for unique coupons for users ------------
+CREATE OR REPLACE FUNCTION redeem_coupon_trigger_function()
+RETURNS TRIGGER AS
+$$
+BEGIN
+    -- Insert a record into the user_coupons table when a coupon is redeemed
+    INSERT INTO user_coupon (user_id, coupon_id, location_id)
+    VALUES (NEW.redeemed_by, NEW.coupon_id, NEW.location_id);
+    -- Update the redeemed column to true in the coupon_redemption table
+    UPDATE user_coupon
+    SET redeemed = true
+    WHERE user_id = NEW.redeemed_by AND coupon_id = NEW.coupon_id;
+    
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Trigger --
+CREATE TRIGGER redeem_coupon_trigger
+AFTER INSERT ON coupon_redemption
+FOR EACH ROW
+EXECUTE FUNCTION redeem_coupon_trigger_function();
+
 ----------------------------------------------------

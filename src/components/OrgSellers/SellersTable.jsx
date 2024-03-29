@@ -12,32 +12,31 @@ import {
   TablePagination,
   TableRow,
   TableFooter,
-  IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import EditAttributesIcon from "@mui/icons-material/EditAttributes";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User, oSellers } from "../../hooks/reduxStore";
-// ~~~~~~~~~~ Component ~~~~~~~~~~
+import { User, oSellers, bookYear } from "../../hooks/reduxStore";
+import { primaryColor } from "../Utils/colors";
+import { border } from "../Utils/colors";
+import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
+// ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import SellerForm from "./SellerForm";
 import CustomButton from "../CustomButton/CustomButton";
 import ActionIcons from "./ActionIcons";
 import ViewUrl from "./ViewUrl";
-import { errorColor, primaryColor } from "../Utils/colors";
-import { border } from "../Utils/colors";
-import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
-import SellerLink from "../SellerPage/SellerLink";
 import ActionButton from "./ActionButton";
 import SellersTableHeader from "./SellersTableHeader";
 import BooksSoldForm from "./BooksSoldForm";
+import YearSelect from "./YearSelect";
 import { useSelector } from "react-redux";
 
 const evenRowColor = {
-  backgroundColor: "#fbfbfb",
+  backgroundColor: "#f9f9f9",
 };
 
 const sellersBorder = {
@@ -88,15 +87,47 @@ export default function SellersTable() {
   console.log(booksSold);
   const [editingRefId, setEditingRefId] = useState(null);
   console.log(editingRefId);
+  const [updateActions, setUpdateActions] = useState([]);
+  console.log(updateActions);
+  const [viewYearId, setViewYearId] = useState(null);
+
 
   useEffect(() => {
-    dispatch({ type: "FETCH_SELLERS", payload: {id: orgId, auth: auth} });
+    dispatch({ type: "FETCH_SELLERS", payload: paramsObject.id });
   }, []);
-
+ const user = User() || [];
+  console.log(user);
   const sellers = oSellers() || [];
   console.log(sellers);
-  const user = User() || [];
-  console.log(user);
+  const year = bookYear() || [];
+  const yearId = year[0].id;
+  console.log(yearId);
+
+  useEffect(() => {
+    const dispatchAction = {
+      type: "FETCH_SELLERS",
+      payload: {
+        orgId: paramsObject.id,
+        yearId: yearId,
+      },
+    };
+    console.log(dispatchAction);
+    dispatch(dispatchAction);
+  }, []);
+
+  useEffect(() => {
+    if (viewYearId !== null) {
+      const dispatchAction2 = {
+        type: "FETCH_SELLERS",
+        payload: {
+          orgId: paramsObject.id,
+          yearId: viewYearId,
+        },
+      };
+      console.log(dispatchAction2);
+      dispatch(dispatchAction2);
+    }
+  }, [viewYearId]);
 
   // ~~~~~~ Open / Close Seller Form ~~~~~~ //
   const handleOpen = (mode) => {
@@ -123,10 +154,12 @@ export default function SellersTable() {
     }
   };
 
+  // Adding a new seller //
   const handleAddSeller = (formData) => {
     const formDataWithId = {
       ...formData,
       organization_id: paramsObject.id,
+      coupon_book_id: yearId,
     };
 
     const action = {
@@ -141,13 +174,24 @@ export default function SellersTable() {
 //FIGURE OUT WHERE EDITEDSELLER IS LOCATED------
 
   const handleEditSeller = (editedSeller) => {
+    console.log(editedSeller);
+
     const editAction = {
       type: "EDIT_SELLER",
       payload: {editedSeller: editedSeller, auth: auth}
     };
-    console.log("Dispatching action:", editAction);
     dispatch(editAction);
-    showSaveSweetAlert({ label: null });
+    console.log("Dispatching action:", editAction);
+
+    // Dispatch each update action from updateActions
+    updateActions.forEach((action) => {
+      console.log("Dispatching action:", action);
+      dispatch(action);
+    });
+
+    // Reset updateActions state
+    setUpdateActions([]);
+    showSaveSweetAlert({ label: "Seller Updated" });
   };
 
   //REWRITE THIS TO WORK WITH DEVII-------
@@ -222,6 +266,11 @@ export default function SellersTable() {
           ...sellersBorder,
         }}
       >
+        {/* ~~~~~ Year View ~~~~~ */}
+        <YearSelect
+          sx={{ minWidth: 150, p: 1 }}
+          setYear={setViewYearId}
+        />
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~ Header ~~~~~~~~~~ */}
         <SellersTableHeader
@@ -230,18 +279,22 @@ export default function SellersTable() {
         />
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~ Add Seller Button ~~~~~~~~ */}
-        <CustomButton
-          label="New Seller"
-          variant="contained"
-          // onClick={handleOpen}
-          onClick={() => handleOpen("add")}
-          icon={<AddIcon />}
-        />
+        <Box sx={{ p: 1 }}>
+          <CustomButton
+            label="New Seller"
+            variant="contained"
+            sx={{ height: "100%" }}
+            onClick={() => handleOpen("add")}
+            icon={<AddIcon />}
+            title="Add a new seller"
+          />
+        </Box>
       </Box>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~ Modals for Seller Table ~~~~~ */}
       <SellerForm
         user={user}
+        orgId={orgId}
         columns={columns}
         open={open}
         mode={mode}
@@ -249,7 +302,8 @@ export default function SellersTable() {
         handleAddSeller={handleAddSeller}
         handleEditSeller={handleEditSeller}
         sellerToEdit={sellerToEdit}
-        sellers={sellers}
+        updateActions={updateActions}
+        setUpdateActions={setUpdateActions}
       />
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Form for updating books sold ~~~~~~~~~~ */}
@@ -351,7 +405,7 @@ export default function SellersTable() {
                                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                                 {/* ~~~~~ View URL Icon ~~~~~ */}
                                 <ActionButton
-                                  title="View URLs"
+                                  title="View URL"
                                   Icon={LaunchIcon}
                                   iconSx={{ fontSize: "25px" }}
                                   onClick={() => handleViewUrl(value)}
@@ -386,11 +440,6 @@ export default function SellersTable() {
                                 </>
                               ) : column.id === "physical_book_cash" ? (
                                 <>
-                                  {/* <IconButton
-                                    onClick={() => handleIconClick(seller.id)}
-                                  >
-                                    <EditIcon sx={{ fontSize: "large" }} />
-                                  </IconButton> */}
                                   {value}
                                   <ActionButton
                                     title="Edit Books Sold"

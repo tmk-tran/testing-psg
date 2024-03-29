@@ -12,7 +12,6 @@ import NotesDisplay from "../NotesDisplay/NotesDisplay";
 import OrgDetailsGoalView from "../OrgDetailsGoalView/OrgDetailsGoalView";
 import DetailsTaskView from "../DetailsTaskView/DetailsTaskView";
 import CouponReviewCard from "../CouponReviewCard/CouponReviewCard";
-import MerchantContactDetails from "../ContactDetails/MerchantContactDetails";
 import BackButton from "../Buttons/BackButton";
 import SuccessAlert from "../SuccessAlert/SuccessAlert";
 import LocationsCard from "../LocationsCard/LocationsCard";
@@ -30,6 +29,7 @@ import {
   mNotes,
   mComments,
   mLocations,
+  User,
 } from "../../hooks/reduxStore";
 import { useCaseType } from "../Utils/useCaseType";
 import { useSelector } from "react-redux";
@@ -42,6 +42,7 @@ export default function Details({
   isOrgAdminPage,
 }) {
   console.log(isMerchantTaskPage);
+  console.log(isTaskPage);
   console.log(isMerchantDetails);
   console.log(isOrgAdminPage);
   const theme = useTheme();
@@ -60,7 +61,13 @@ export default function Details({
 
   // ~~~~~~~~~~ Hooks ~~~~~~~~~~
   const dispatch = dispatchHook();
+  const user = User();
+  console.log(user);
   const detailsOrg = oDetails();
+  const organizationId =
+    detailsOrg.length > 0 ? detailsOrg[0].organization_id : null;
+  // Use organizationId, which will be null if detailsOrg is empty
+  console.log(organizationId);
   console.log(detailsOrg)
   const groups = oGroups();
   console.log(groups);
@@ -78,6 +85,7 @@ export default function Details({
   const [locationAdded, setLocationAdded] = useState(false);
   console.log(locationAdded);
   const auth = useSelector((store) => store.auth);
+  const [noteAdded, setNoteAdded] = useState(false);
 
   useEffect(() => {
     console.log("Dispatching FETCH_ORG_DETAILS");
@@ -87,14 +95,16 @@ export default function Details({
         auth: auth}
     });
 
-    console.log("Dispatching FETCH_MERCHANT_DETAILS or FETCH_ORG_FUNDRAISERS");
-    dispatch({
+    // console.log("Dispatching FETCH_MERCHANT_DETAILS or FETCH_ORG_FUNDRAISERS");
+    const action = {
       type: isMerchantTaskPage
         ? "FETCH_MERCHANT_DETAILS"
         : "FETCH_ORG_FUNDRAISERS",
       payload: {id: paramsObject.id,
         auth: auth}
-    });
+    };
+    console.log(action);
+    dispatch(action);
 
     const actionType = isMerchantTaskPage
       ? "FETCH_MERCHANT_DETAILS"
@@ -133,13 +143,16 @@ export default function Details({
 
     setGroupAdded(false);
     setLocationAdded(false);
+    setNoteAdded(false);
   }, [
     paramsObject.id,
     isMerchantTaskPage,
     isTaskPage,
+    isOrgAdminPage,
     isOrgDetailsPage,
     groupAdded,
     locationAdded,
+    noteAdded,
   ]);
 
   // Create a map to store organization details and associated groups
@@ -173,6 +186,12 @@ export default function Details({
     setLocationAdded(true);
   };
 
+  // Note addition
+  const handleAddNote = () => {
+    // Update the noteAdded state to trigger a refresh
+    setNoteAdded(true);
+  };
+
   return (
     <div className={`details-container ${isSmallScreen ? "small-screen" : ""}`}>
       <SuccessAlert
@@ -192,15 +211,11 @@ export default function Details({
           {detailsOrg.map(({ orgDetails }) => (
             <React.Fragment key={orgDetails?.id}>
               {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
-                <NotesDisplay notes={notes} orgDetails={orgDetails} />
+                <NotesDisplay notes={notes} details={orgDetails} />
               )}
 
               {isTaskPage && !isOrgAdminPage && (
-                <NotesDisplay
-                  notes={notes}
-                  orgDetails={orgDetails}
-                  caseType={1}
-                />
+                <NotesDisplay notes={notes} details={orgDetails} caseType={1} />
               )}
               {/* ////////////////////////////////// */}
               {/* Check if it's a merchant task page */}
@@ -209,16 +224,18 @@ export default function Details({
                 !isOrgAdminPage &&
                 // Map over merchantDetails and pass each object to NotesDisplay
                 merchantDetails.map((merchantInfo) => (
-                  <NotesDisplay
-                    key={merchantInfo.id}
-                    notes={notes}
-                    orgDetails={merchantInfo}
-                    isMerchantTaskPage={isMerchantTaskPage}
-                  />
+                  <React.Fragment key={merchantInfo.id}>
+                    <NotesDisplay
+                      key={merchantInfo.id}
+                      notes={notes}
+                      details={merchantInfo}
+                      isMerchantTaskPage={isMerchantTaskPage}
+                    />
+                  </React.Fragment>
                 ))}
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~~ Instructions for User ~~~~~~~~~~~ */}
-              {/* {isOrgAdminPage && <OrgAdminInfo />} */}
+              {isOrgAdminPage && <OrgAdminInfo />}
 
               <center>
                 {isMerchantTaskPage ? (
@@ -333,7 +350,12 @@ export default function Details({
               )}
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~ Sellers Table ~~~~~~~~~~ */}
-              {(isTaskPage || isOrgDetailsPage) && <SellersTable />}
+              {/* {(isTaskPage || isOrgDetailsPage) && <SellersTable />} */}
+              {(isTaskPage || isOrgDetailsPage) &&
+                (!isOrgAdminPage ||
+                  (isOrgAdminPage &&
+                    user.org_id === organizationId &&
+                    user.org_admin)) && <SellersTable />}
             </React.Fragment>
           ))}
         </div>

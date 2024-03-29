@@ -2,6 +2,7 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* merchantDetails(action) {
+  console.log(action.payload);
   try {
     console.log(action.payload)
     const auth_response = action.payload.auth
@@ -165,6 +166,7 @@ function* addMerchantSaga(action) {
       formData.append("filename", action.payload.merchant_logo.name);
     }
     formData.append("website", action.payload.website);
+    formData.append("contact_method", action.payload.contact_method);
 
     const response = yield axios.post(`/api/merchants`, formData, {
       headers: {
@@ -226,6 +228,7 @@ function* editMerchant(action) {
     );
     formData.append("contact_email", action.payload.contact_email);
     formData.append("website", action.payload.website);
+    formData.append("contact_method", action.payload.contact_method);
 
     // Check if a file is uploaded
     if (action.payload.uploadedFile) {
