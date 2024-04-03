@@ -22,6 +22,7 @@ import { historyHook } from "../../hooks/useHistory";
 import { navButtonStyle } from "./checkoutStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
+import axios from "axios";
 
 export const containerStyle = {
   width: "50vw",
@@ -160,6 +161,27 @@ export default function CheckoutPage({ caseType }) {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+  //ASK MARK WHERE THIS SHOULD GO
+  const acInfo = () => {
+    const data = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      address: address,
+      unit: unit,
+      city: city,
+      state: stateSelected,
+      zip: zip,
+      organization: "",
+      url: "",
+      year: 2024-2025,
+      donation: customDonation,
+      type: ""
+    }
+    dispatch({type: "ADD_CONTACT", payload: data})
+  }
 
   const getStepContent = (step) => {
     switch (step) {
