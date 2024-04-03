@@ -21,5 +21,26 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
     });
 });
 
+router.put("/:id", rejectUnauthenticated, (req, res) => {
+  const assignedTo = req.body.assign;
+  const taskId = req.params.id;
+
+  const queryText = `
+          UPDATE "merchant_tasks"
+          SET assign = $1
+          WHERE id = $2;
+  `;
+
+  pool
+    .query(queryText, [assignedTo, taskId])
+    .then((result) => {
+      console.log("FROM merchantTasks.router: ", result.rows);
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      console.log("error in the PUT / request for merchantTasks router: ", err);
+      res.sendStatus(500);
+    });
+});
 
 module.exports = router;

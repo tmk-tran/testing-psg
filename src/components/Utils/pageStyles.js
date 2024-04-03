@@ -19,6 +19,11 @@ export const flexRowSpace = {
   justifyContent: "space-between",
 };
 
+export const flexColumn = {
+  display: "flex",
+  flexDirection: "column",
+};
+
 export const flexColumnSpace = {
   display: "flex",
   flexDirection: "column",

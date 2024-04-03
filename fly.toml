@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for testpsg on 2024-03-19T23:28:22-05:00
+# fly.toml app configuration file generated for testpsg on 2024-04-03T10:03:22-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,9 +7,6 @@ app = 'testpsg'
 primary_region = 'ord'
 
 [build]
-
-[env]
-  PORT = 8080
 
 [http_service]
   internal_port = 8080
@@ -23,3 +20,6 @@ primary_region = 'ord'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+
+[env]
+  PORT=8080

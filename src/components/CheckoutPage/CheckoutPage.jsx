@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import {
+  useTheme,
+  useMediaQuery,
   Box,
   Container,
   Grid,
@@ -34,6 +36,8 @@ export const containerStyle = {
 const steps = ["Information", "Payment", "Order Confirmation"];
 
 export default function CheckoutPage({ caseType }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   console.log(caseType);
   const history = historyHook();
   const location = useLocation();
@@ -66,7 +70,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
   console.log(digitalBookCredit);
   const [digitalDonation, setDigitalDonation] = useState(0);
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   console.log(activeStep);
   const [stateSelected, setStateSelected] = useState(false);
   console.log(stateSelected);
@@ -195,6 +199,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
       case 0:
         return (
           <CustomerInfoForm
+            isMobile={isMobile}
             handleStateChange={handleStateChange}
             isSubmitted={isSubmitted}
             errors={errors}
@@ -389,7 +394,10 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
           {/* ~~~~~~~ RENDERED STEPPER CONTENT ~~~~~~~ */}
           <Grid item xs={12} md={8}>
             {/* ~~~~~ Container for content ~~~~~ */}
-            <Paper elevation={2} sx={containerStyle}>
+            <Paper
+              elevation={2}
+              sx={{ ...containerStyle, ...(isMobile && { width: "100vw" }) }}
+            >
               {getStepContent(activeStep)}
             </Paper>
           </Grid>

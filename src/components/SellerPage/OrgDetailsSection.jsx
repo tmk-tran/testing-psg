@@ -2,16 +2,13 @@ import { Box, Card, CardContent, Typography } from "@mui/material";
 import { primaryColor } from "../Utils/colors";
 import { border } from "../Utils/colors";
 
-const cardStyle = {
-  width: "40%",
-};
-
-export default function OrgDetailsSection({ seller }) {
+export default function OrgDetailsSection({ isMobile, seller }) {
   console.log(seller);
   return (
-    <Card elevation={3} sx={cardStyle}>
+    <Card elevation={3} sx={{ width: isMobile ? "100%" : "40%" }}>
       <CardContent>
-        <Box sx={{ width: "25%", margin: "0 auto" }}>
+        {/* ~~~~~ HEADER ~~~~~ */}
+        <Box sx={{ width: isMobile ? "100%" : "25%", margin: "0 auto" }}>
           <Typography
             variant="body2"
             sx={{
@@ -23,9 +20,11 @@ export default function OrgDetailsSection({ seller }) {
             Organization:
           </Typography>
         </Box>
+        {/* ~~~~~ NAME ~~~~~ */}
         <Typography variant="h6" sx={{ textAlign: "center" }}>
           {seller.organization_name}
         </Typography>
+        {/* ~~~~~ ADDRESS ~~~~~ */}
         <Typography sx={{ textAlign: "center" }}>{seller.address}</Typography>
         <Typography sx={{ textAlign: "center" }}>
           {seller.city}, {seller.state} {seller.zip}

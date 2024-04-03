@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
-import { Card, CardContent, Typography, Button } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  IconButton,
+} from "@mui/material";
 import "./TaskCard.css";
+import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { historyHook } from "../../hooks/useHistory";
+import { dispatchHook } from "../../hooks/useDispatch";
+import { mComments } from "../../hooks/reduxStore";
 import {
   successColor,
   hoverAccept,
@@ -18,10 +28,31 @@ import {
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import TaskDropdown from "./TaskDropdown";
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
-import { dispatchHook } from "../../hooks/useDispatch";
-import { mComments } from "../../hooks/reduxStore";
+import AssignSelect from "./AssignSelect";
 import { useSelector } from "react-redux";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { flexCenter, flexRowSpace } from "../Utils/pageStyles";
+import TaskCardButtons from "./TaskCardButtons";
+
+const fullWidth = {
+  width: "100%",
+};
+
+const flexColumn = {
+  display: "flex",
+  flexDirection: "column",
+};
+
+const commentBorder = {
+  border: `1px solid ${primaryColor.color}`,
+  borderRadius: "5px",
+};
+
+const iconButtonStyle = {
+  mt: 3,
+  ml: 1,
+  color: primaryColor.color,
+};
 
 export default function TaskCard({
   id,
@@ -48,8 +79,10 @@ export default function TaskCard({
   // console.log(complete);
   const [completedTask, setCompletedTask] = useState(complete === "Complete");
   // console.log(completedTask);
-  const history = historyHook();
-  const dispatch = dispatchHook();
+  const [assignedUser, setAssignedUser] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+
+  console.log(assignedUser);
   const auth = useSelector((store) => store.auth)
   console.log(task)
   // Comments
@@ -85,17 +118,21 @@ export default function TaskCard({
     console.log(updateActionType);
     console.log(task.id);
     console.log(selectedTask);
+
     
-    dispatch({
+    const dispatchAction = {
       type: updateActionType,
       payload: { updatedTask: {
         id: task.id,
+        task: task.task,
         assign: task.assign,
         due_date: task.due_date,
         task_status: selectedTask},
         auth: auth,
       },
-    });
+    };
+    console.log(dispatchAction);
+    dispatch(dispatchAction);
     // Notify the parent component about the task update
     onTaskUpdate();
     // Show the success alert
@@ -123,18 +160,41 @@ export default function TaskCard({
     handleCaseTypeChange("Archived");
   };
 
-  const fullWidth = {
-    width: "100%",
+  const handleEditMode = () => {
+    setIsEditing(true);
   };
 
-  const flexColumn = {
-    display: "flex",
-    flexDirection: "column",
+  const handleCloseEditMode = () => {
+    setIsEditing(false);
   };
 
-  const commentBorder = {
-    border: `1px solid ${primaryColor.color}`,
-    borderRadius: "5px",
+  const assignNewUser = () => {
+    if (assignedUser && taskType === "merchant") {
+      const dispatchAction = {
+        type: "CHANGE_ASSIGNED_TO",
+        payload: {
+          id: task.id,
+          assign: assignedUser,
+          merchantId: mId,
+        },
+      };
+      console.log(dispatchAction);
+      dispatch(dispatchAction);
+    }
+    if (assignedUser && taskType === "organization") {
+      const dispatchAction2 = {
+        type: "CHANGE_ASSIGNED_ORG",
+        payload: {
+          id: task.id,
+          assign: assignedUser,
+          organizationId: oId,
+        },
+      };
+      console.log(dispatchAction2);
+      dispatch(dispatchAction2);
+    }
+    onTaskUpdate();
+    handleCloseEditMode();
   };
 
   return (
@@ -184,7 +244,7 @@ export default function TaskCard({
                   <Typography
                     sx={{
                       fontWeight: "bold",
-                      width: "10vw",
+                      width: "12vw",
                       textAlign: "center",
                       mt: 0.5,
                     }}
@@ -213,12 +273,37 @@ export default function TaskCard({
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                   {/* ~~~~~~~~~~~~~~~~~ ASSIGNED ~~~~~~~~~~~~~~~~~ */}
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                  <div>
-                    <Typography sx={{ width: "10vw", textAlign: "center" }}>
-                      <strong>Assigned to: </strong>
-                      {task.assign}
-                    </Typography>
-                  </div>
+                  <Box sx={flexCenter}>
+                    {isEditing ? (
+                      <Box sx={flexColumn}>
+                        <AssignSelect
+                          selectedUser={assignedUser}
+                          onUserChange={setAssignedUser}
+                        />
+                        {/* ~~~~~ Buttons for assigned user ~~~~~ */}
+                        <TaskCardButtons
+                          onSave={assignNewUser}
+                          onCancel={handleCloseEditMode}
+                        />
+                      </Box>
+                    ) : (
+                      <Typography sx={{ textAlign: "center", mt: 3 }}>
+                        <strong>Assigned to: </strong>
+                        {task.assign}
+                      </Typography>
+                    )}
+                    {!isEditing && (
+                      <IconButton
+                        onClick={handleEditMode}
+                        sx={{
+                          ...iconButtonStyle,
+                          display: isEditing ? "none" : "inline-flex", // Hide when editing
+                        }}
+                      >
+                        <EditIcon sx={{ fontSize: 23 }} />
+                      </IconButton>
+                    )}
+                  </Box>
                 </div>
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~~~~ DESCRIPTION ~~~~~~~~~~~~~ */}

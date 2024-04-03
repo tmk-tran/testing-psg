@@ -1,28 +1,39 @@
-import { Box, Button, Typography } from "@mui/material";
-import { border } from "../Utils/colors";
+import { Box, Grid, Typography } from "@mui/material";
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+import { highlightColor } from "../Utils/colors";
 import { bookYear } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import NewYearForm from "./NewYearForm";
-import AvailableYears from "./AvailableYears";
+import AvailableYearsButtons from "./AvailableYearsButtons";
+
+const typographyStyle = {
+  ...highlightColor,
+  textAlign: "center",
+  borderRadius: "5px",
+  mt: 7,
+  mb: 5,
+};
 
 export default function NewBookYear() {
   const years = bookYear();
   const activeYear = years[0].year;
-  console.log(activeYear);
 
   return (
-    <Box sx={border}>
-      <Typography variant="h6" sx={{ textAlign: "center" }}>
-        Current book year: {activeYear}
-      </Typography>
-      {/* ~~~~~ Available Years ~~~~~ */}
-      <AvailableYears />
-      <Box sx={{ textAlign: "center", mt: 2 }}>
-        <Typography>Start a new coupon book year</Typography>
-        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-        {/* ~~~~~ Start New Year ~~~~~ */}
-        <NewYearForm />
-      </Box>
-    </Box>
+    <Grid container spacing={2}>
+      {/* Left column */}
+      <Grid item xs={6}>
+        <Typography variant="h6" sx={typographyStyle}>
+          Current book year: {activeYear}
+        </Typography>
+        <Box sx={{ textAlign: "center", mt: 2 }}>
+          <Typography>Add a new book year:</Typography>
+          <NewYearForm />
+        </Box>
+      </Grid>
+      {/* Right column */}
+      <Grid item xs={6}>
+        <AvailableYearsButtons activeYear={activeYear} years={years} />
+      </Grid>
+    </Grid>
   );
 }

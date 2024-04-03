@@ -28,18 +28,20 @@ import ModalButtons from "../Modals/ModalButtons";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { useSelector } from "react-redux";
 import { formatDate } from "../Utils/helpers";
-
+import YearSelect from "../OrgSellers/YearSelect";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 450,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  maxHeight: "80vh",
+  overflow: "auto",
 };
 
 const taskOptions = {
@@ -82,6 +84,7 @@ export default function BasicModal({
   const [secondMenuChoice, setSecondMenuChoice] = useState("");
   const [thirdMenuChoice, setThirdMenuChoice] = useState("");
   console.log(thirdMenuChoice);
+  const [bookYearId, setBookYearId] = useState(null);
   const [organizationId, setOrganizationId] = useState(null);
   const [merchantId, setMerchantId] = useState(null);
   console.log(merchantId);
@@ -104,12 +107,13 @@ export default function BasicModal({
 
     // Cleanup function or dependencies for useEffect
   }, [merchantTab]);
-
+  
   const resetForm = () => {
     // Reset form fields
     setFirstMenuChoice("");
     setSecondMenuChoice("");
     setThirdMenuChoice("");
+    setBookYearId(null);
     setOrganizationId(null);
     setMerchantId(null);
     setFourthMenuChoice("");
@@ -200,6 +204,7 @@ export default function BasicModal({
             description: additionalDetails,
             task_status: "New",
             coupon_details: couponDetails,
+            book_id: bookYearId,
           }
         : merchantTab
         ?  {
@@ -211,8 +216,8 @@ export default function BasicModal({
             due_date: dueDate,
             description: additionalDetails,
             task_status: "New",
-            coupon_details: couponDetails
-      
+            coupon_details: couponDetails,
+            book_id: bookYearId,
           }
         :   {
             // Adjust the payload properties for organization logic
@@ -313,6 +318,11 @@ export default function BasicModal({
               ))}
             </Select>
             {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
+
+            {/* ~~~~~ Year Select, Offer field ~~~~~ */}
+            {showDetailsInput && (
+              <YearSelect setYear={setBookYearId} />
+            )}
 
             {showDetailsInput && (
               <TextField

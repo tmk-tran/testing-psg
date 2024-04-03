@@ -42,6 +42,7 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   console.log(changesRequested);
   const [completedCoupon, setCompletedCoupon] = useState(false);
   console.log(completedCoupon);
+  const [bookYears, setBookYears] = useState([]);
 
   const dispatch = dispatchHook();
   const history = historyHook();
@@ -257,20 +258,36 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                       )}
                     </div>
                   </div>
-                  {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                  {/* ~~~~~~~~~ COMMENTS ~~~~~~~~~~ */}
-                  {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                  <Box sx={{ mt: 5, p: 0.5, mr: 1 }}>
-                    {/* <CommentDisplay comment={mostRecentComment} /> */}
-                    {relatedComments.length > 0 ? (
-                      relatedComments.map((comment, index) => (
-                        <CommentDisplay key={index} comment={comment} />
-                      ))
-                    ) : (
-                      <Typography variant="body2" sx={{ ml: 3 }} >
-                        No comment available
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
+                  >
+                    {file.year ? (
+                      <Typography variant="body2" sx={thumbnailHeaderStyle}>
+                        Year: <strong>{file.year}</strong>
                       </Typography>
-                    )}
+                    ) : null}
+                    {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                    {/* ~~~~~~~~~ COMMENTS ~~~~~~~~~~ */}
+                    {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                    <Box sx={{ mt: 5, p: 0.5 }}>
+                      {/* <CommentDisplay comment={mostRecentComment} /> */}
+                      {relatedComments.length > 0 ? (
+                        relatedComments.map((comment, index) => (
+                          <CommentDisplay key={index} comment={comment} />
+                        ))
+                      ) : (
+                        <Typography
+                          variant="body2"
+                          sx={{ ml: 3, textAlign: "center" }}
+                        >
+                          No comment available
+                        </Typography>
+                      )}
+                    </Box>
                   </Box>
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 </div>

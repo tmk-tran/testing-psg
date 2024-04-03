@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Divider } from "@mui/material";
+import { Box, Divider, useTheme, useMediaQuery } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { historyHook } from "../../hooks/useHistory";
 import { dispatchHook } from "../../hooks/useDispatch";
@@ -24,6 +24,8 @@ export default function OrderPage({ caseType }) {
   const dispatch = dispatchHook();
   const history = historyHook();
   const auth = useSelector((store) => store.auth)
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [customDonation, setCustomDonation] = useState(0);
@@ -162,7 +164,8 @@ export default function OrderPage({ caseType }) {
   };
 
   return (
-    <div style={containerStyle}>
+    // <div style={containerStyle}>
+    <div style={{ ...containerStyle, ...(isMobile && { width: '100%' }) }}>
       <Typography
         // label="Order Books"
         label={
@@ -200,6 +203,7 @@ export default function OrderPage({ caseType }) {
       {caseType === "cash" && showOrderTable && (
         <>
           <OrderTable
+            isMobile={isMobile}
             rows={rows}
             selectedRows={selectedRows}
             handleRowSelect={handleRowSelect}
@@ -225,6 +229,7 @@ export default function OrderPage({ caseType }) {
       {(!caseType || (caseType !== "cash" && !showOrderTable)) && (
         <>
           <OrderTable
+            isMobile={isMobile}
             rows={rows}
             selectedRows={selectedRows}
             handleRowSelect={handleRowSelect}

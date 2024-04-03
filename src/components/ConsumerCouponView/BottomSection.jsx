@@ -5,7 +5,7 @@ import { flexCenter } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import LocationSection from "./LocationSection";
 
-export default function BottomSection({ coupon }) {
+export default function BottomSection({ isMobile, coupon }) {
   if (!coupon) {
     return null;
   }
@@ -13,22 +13,27 @@ export default function BottomSection({ coupon }) {
   return (
     <Box>
       <Grid container>
-        <Grid item xs={10}>
-          <Box sx={{ ...flexCenter }}>
+        <Grid item xs={isMobile ? 12 : 10}>
+          {/* ~~~~~ Location Menu ~~~~~ */}
+          <Box sx={isMobile ? {} : flexCenter}>
             <LocationSection coupon={coupon} />
           </Box>
         </Grid>
-        <Grid item xs={2} sx={{ display: "flex", justifyContent: "flex-end" }}>
+        {/* ~~~~~ Expiration ~~~~~ */}
+        {!isMobile ? (
+          <Grid
+            item
+            xs={2}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             {coupon.expiration ? (
-          <Typography variant="caption">
-            Expires:{" "}
-              {formatDate(coupon.expiration)}
-          </Typography>
-            ) : (
-            //   <Typography variant="caption">None set</Typography>
-              null
-            )}
-        </Grid>
+              <Typography variant="caption">
+                Expires: {formatDate(coupon.expiration)}
+              </Typography>
+            ) : //   <Typography variant="caption">None set</Typography>
+            null}
+          </Grid>
+        ) : null}
       </Grid>
     </Box>
   );

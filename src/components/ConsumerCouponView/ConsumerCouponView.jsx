@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Fuse from "fuse.js";
-import { Box } from "@mui/material";
-import Pagination from "@mui/material/Pagination";
+import { Box, useMediaQuery, Pagination } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { border } from "../Utils/colors";
 import {
@@ -9,6 +9,7 @@ import {
   centeredStyle,
   centerMe,
   flexRowSpace,
+  flexColumn,
 } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
@@ -22,11 +23,11 @@ import ToggleButton from "../ToggleButton/ToggleButton";
 export default function ConsumerCouponView() {
   const dispatch = dispatchHook();
   const user = User();
-  console.log(user);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [toggleView, setToggleView] = useState(false);
   console.log(toggleView);
   const [query, setQuery] = useState("");
-  console.log(query);
   const [filteredCoupons, setFilteredCoupons] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -40,9 +41,7 @@ export default function ConsumerCouponView() {
   }, []);
 
   const coupons = couponsData() || [];
-  console.log(coupons);
   const activeYear = bookYear();
-  console.log(activeYear);
 
   const years = activeYear[0].year;
   const expirationYear = years.split("-")[1];
@@ -84,9 +83,13 @@ export default function ConsumerCouponView() {
   const couponsPerPage = 10;
   const indexOfLastCoupon = currentPage * couponsPerPage;
   const indexOfFirstCoupon = indexOfLastCoupon - couponsPerPage;
-  const currentCoupons = !toggleView
-    ? filteredMerchants.slice(indexOfFirstCoupon, indexOfLastCoupon)
-    : [];
+  const currentCoupons = filteredMerchants.slice(
+    indexOfFirstCoupon,
+    indexOfLastCoupon
+  );
+  const totalFilteredMerchants =
+    query.trim() === "" ? coupons.length : filteredMerchants.length;
+  console.log(totalFilteredMerchants);
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -112,16 +115,23 @@ export default function ConsumerCouponView() {
           toggleState={toggleView}
         /> */}
       </Box>
+      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Header ~~~~~~~~~~ */}
       <Typography
         label={toggleView ? "Redeemed Coupons" : "My Coupons"}
         variant="h5"
-        sx={{ mt: 2, fontWeight: "bold", ...centerMe }}
+        sx={{ mt: isMobile ? 0 : 2, fontWeight: "bold", ...centerMe }}
       />
       <br />
       {!toggleView ? (
         <>
-          <Box sx={{ mb: 2, width: "75%", ...flexRowSpace }}>
+          <Box
+            sx={{
+              mb: 2,
+              width: isMobile ? "100%" : "75%",
+              ...(isMobile ? flexColumn : flexRowSpace),
+            }}
+          >
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~ Search Bar ~~~~~~~~~~ */}
             <SearchBar
@@ -131,16 +141,19 @@ export default function ConsumerCouponView() {
               onChange={handleSearch}
               clearInput={clearInput}
             />
+            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~ Valid through ~~~~~~ */}
             <Typography
               label={`Valid through September 1, ${expirationYear}`}
-              variant="body2"
+              variant={isMobile ? "caption" : "body2"}
               sx={{ mt: 2 }}
             />
           </Box>
-          {filteredMerchants.length > 0 ? (
-            filteredMerchants.map((coupon, i) => (
-              <CouponCard key={i} coupon={coupon} />
+          {/* ~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~ List ~~~~~ */}
+          {currentCoupons.length > 0 ? (
+            currentCoupons.map((coupon, index) => (
+              <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
             ))
           ) : (
             <Typography label="No matching coupons found" />
@@ -149,9 +162,10 @@ export default function ConsumerCouponView() {
       ) : (
         <Typography label="Coupons Redeemed" />
       )}
-      {/* Pagination */}
+      {/* ~~~~~~~~~~~~~~~~~~~~~~ */}
+      {/* ~~~~~ Pagination ~~~~~ */}
       <Pagination
-        count={Math.ceil(filteredMerchants.length / couponsPerPage)}
+        count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
         page={currentPage}
         onChange={(event, page) => paginate(page)}
         color="primary"

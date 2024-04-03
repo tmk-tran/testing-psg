@@ -48,7 +48,7 @@ export default function NavLinks() {
         {/* If no user is logged in or user is an org admin, show these links */}
         {!user.id || user.org_admin || user.graphic_designer ? (
           <>
-            {(!user.graphic_designer || !user.id) && (
+            {(!user.id) && (
               <Typography
                 sx={{
                   textAlign: !user.id ? "center" : "inherit",
@@ -65,8 +65,8 @@ export default function NavLinks() {
                 </MuiLink>
               </Typography>
             )}
-            {/* Add the /home link for org admins */}
-            {user.org_admin && (
+            {/* Added the /home link for org admins */}
+            {user.org_admin && !user.graphic_designer && (
               <>
                 <Typography>
                   <MuiLink
@@ -91,7 +91,7 @@ export default function NavLinks() {
               </>
             )}
             {/* Links for graphic designer */}
-            {user.graphic_designer && (
+            {user.graphic_designer && user.org_admin && !user.is_admin && (
               <>
                 <Typography>
                   <MuiLink
@@ -197,7 +197,6 @@ export default function NavLinks() {
                   Transactions
                 </MuiLink>
               </Typography>
-
             </>
           )
         )}

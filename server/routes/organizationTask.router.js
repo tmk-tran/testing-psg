@@ -9,7 +9,12 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
   const orgId = req.params.id;
   console.log(orgId);
 
-  const queryText = `SELECT * FROM organization_tasks WHERE organization_id = $1 ORDER BY due_date ASC;`;
+  const queryText = `
+          SELECT * 
+          FROM organization_tasks 
+          WHERE organization_id = $1 
+          ORDER BY due_date ASC;
+        `;
   pool
     .query(queryText, [orgId])
     .then((result) => {
@@ -22,5 +27,26 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
     });
 });
 
+router.put("/:id", rejectUnauthenticated, (req, res) => {
+  const assignedTo = req.body.assign;
+  const taskId = req.params.id;
+
+  const queryText = `
+          UPDATE "organization_tasks"
+          SET assign = $1
+          WHERE id = $2;
+        `;
+
+  pool
+    .query(queryText, [assignedTo, taskId])
+    .then((result) => {
+      console.log("FROM orgTask.router: ", result.rows);
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      console.log("error in the PUT / request for orgTask router: ", err);
+      res.sendStatus(500);
+    });
+});
 
 module.exports = router;

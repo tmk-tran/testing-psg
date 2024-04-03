@@ -9,7 +9,7 @@ import "./AccountMenu.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
 
-const AccountMenu = () => {
+const AccountMenu = ({ isMobile }) => {
   const user = User();
   const history = historyHook();
   const dispatch = dispatchHook();
@@ -26,7 +26,7 @@ const AccountMenu = () => {
       displayEmpty
       inputProps={{ "aria-label": "Account Menu" }}
       style={{
-        minWidth: "120px",
+        minWidth: isMobile ? "80px" : "120px",
         backgroundColor: "#19338E",
         // width: "216px",
         height: "48px",
@@ -39,9 +39,10 @@ const AccountMenu = () => {
             color: "white",
             display: "flex",
             alignItems: "center",
+            fontSize: isMobile ? "0.8rem" : "inherit",
           }}
         >
-          <PersonIcon sx={{ mr: 1.5 }} />
+          <PersonIcon sx={{ mr: 1.5, fontSize: isMobile ? 24 : "undefined" }} />
           {user.username}
         </Typography>
       )}

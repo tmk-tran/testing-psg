@@ -9,6 +9,7 @@ import { capitalizeWords } from "../Utils/helpers";
 import PhoneInput from "../LocationsCard/PhoneInput";
 
 export default function CustomerInfoForm({
+  isMobile,
   handleStateChange,
   isSubmitted,
   errors,
@@ -32,7 +33,7 @@ export default function CustomerInfoForm({
   setZip,
 }) {
   return (
-    <div style={{ width: "90%", margin: "0 auto", padding: 5 }}>
+    <div style={{ width: "90%", margin: "0 auto", padding: isMobile ? 0 : 5 }}>
       {/* ~~~~~~~~~~ Header ~~~~~~~~~~~~~~ */}
       <Box sx={flexRowSpace}>
         <Typography label="Customer Information" variant="h6" sx={{ mt: 2 }} />

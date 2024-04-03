@@ -1,4 +1,12 @@
 .main-logo {
-    height: 86px;
-    width: 195px
+  height: 86px;
+  width: 195px;
+}
+
+/* Media query for mobile screens (typical iPhone screen width) */
+@media (max-width: 375px) {
+  .main-logo {
+    height: 40px;
+    width: auto;
+  }
 }

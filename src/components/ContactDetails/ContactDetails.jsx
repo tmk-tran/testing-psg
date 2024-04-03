@@ -2,9 +2,6 @@ import React, { useState } from "react";
 // ~~~~~~~~~~ Styles ~~~~~~~~~~
 import {
   Box,
-  Button,
-  Card,
-  Divider,
   Typography,
   useMediaQuery,
 } from "@mui/material";

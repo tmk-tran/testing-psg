@@ -20,7 +20,7 @@ import EditAttributesIcon from "@mui/icons-material/EditAttributes";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User, oSellers, bookYear } from "../../hooks/reduxStore";
+import { User, oSellers, bookYear, allYears } from "../../hooks/reduxStore";
 import { primaryColor } from "../Utils/colors";
 import { border } from "../Utils/colors";
 import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
@@ -89,19 +89,13 @@ export default function SellersTable() {
   console.log(editingRefId);
   const [updateActions, setUpdateActions] = useState([]);
   console.log(updateActions);
-  const [viewYearId, setViewYearId] = useState(null);
 
-
-  useEffect(() => {
-    dispatch({ type: "FETCH_SELLERS", payload: paramsObject.id });
-  }, []);
- const user = User() || [];
-  console.log(user);
+  const user = User() || [];
   const sellers = oSellers() || [];
-  console.log(sellers);
   const year = bookYear() || [];
   const yearId = year[0].id;
-  console.log(yearId);
+  const availableYears = allYears();
+  const [viewYearId, setViewYearId] = useState(year ? yearId : null);
 
   useEffect(() => {
     const dispatchAction = {
@@ -128,6 +122,14 @@ export default function SellersTable() {
       dispatch(dispatchAction2);
     }
   }, [viewYearId]);
+
+  // Get only active year ID
+  const activeYears = availableYears
+    .filter((year) => year.active)
+    .map((year) => year.id);
+
+  // Disable buttons if the selected year is not active
+  const isYearActive = activeYears.includes(viewYearId);
 
   // ~~~~~~ Open / Close Seller Form ~~~~~~ //
   const handleOpen = (mode) => {
@@ -269,6 +271,7 @@ export default function SellersTable() {
         {/* ~~~~~ Year View ~~~~~ */}
         <YearSelect
           sx={{ minWidth: 150, p: 1 }}
+          year={year}
           setYear={setViewYearId}
         />
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -417,6 +420,7 @@ export default function SellersTable() {
                                     (e.currentTarget.style.transform =
                                       "scale(1)")
                                   }
+                                  disabled={!isYearActive}
                                 />
                               </div>
                             )}
@@ -435,6 +439,7 @@ export default function SellersTable() {
                                     seller={seller}
                                     onEdit={(id) => handleEditOpen(id, "edit")}
                                     handleArchive={handleArchive}
+                                    disabled={!isYearActive}
                                   />
                                   {/* <SellerLink seller={seller} /> */}
                                 </>
@@ -457,6 +462,7 @@ export default function SellersTable() {
                                       (e.currentTarget.style.transform =
                                         "scale(1)")
                                     }
+                                    disabled={!isYearActive}
                                   />
                                   {/* {value} */}
                                 </>

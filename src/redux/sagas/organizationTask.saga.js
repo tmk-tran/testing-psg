@@ -176,6 +176,23 @@ function* editOrganizationTask(action) {
   }
 }
 
+function* changeAssignedOrg(action) {
+  const taskId = action.payload.id;
+  const orgId = action.payload.organizationId;
+  console.log(action.payload);
+
+  try {
+    yield axios.put(`/api/organizationTask/${taskId}`, action.payload);
+    console.log("orgTask action.payload = ", action.payload);
+    yield put({
+      type: "FETCH_ALL_ORGANIZATION_TASKS",
+      payload: orgId,
+    });
+  } catch (err) {
+    console.log("error in editOrgTask Saga", err);
+  }
+}
+
 function* deleteOrganizationTask(action) {
   try {
     const items = yield axios.delete(
@@ -201,5 +218,6 @@ export default function* organizationTaskSaga() {
   yield takeEvery("FETCH_ALL_ORGANIZATION_TASKS", fetchAllOrganizationTasks);
   yield takeEvery("ADD_ORGANIZATION_TASK", addOrganizationTask);
   yield takeEvery("UPDATE_ORGANIZATION_TASK", editOrganizationTask);
+  yield takeEvery("CHANGE_ASSIGNED_ORG", changeAssignedOrg);
   yield takeEvery("ARCHIVE_ORGANIZATION_TASK", deleteOrganizationTask);
 }

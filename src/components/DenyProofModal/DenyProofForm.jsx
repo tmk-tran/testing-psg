@@ -1,26 +1,22 @@
 import React from "react";
-// ~~~~~~~~~~ Style ~~~~~~~~~~
-import { Typography, TextField, Button } from "@mui/material";
+// ~~~~~~~~~~ Style ~~~~~~~~~~ //
+import { Typography, TextField } from "@mui/material";
 import {
   secondaryColor,
   errorColor,
   successColor,
   border,
 } from "../Utils/colors";
-// ~~~~~~~~~~ Helpers ~~~~~~~~~~
-import { flexCenter } from "../Utils/pageStyles";
-import { hoverAccept, hoverDeny } from "../Utils/colors";
-// ~~~~~~~~~~ Icons ~~~~~~~~~~
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+// ~~~~~~~~~~ Components ~~~~~~~~~~ //
+import ErrorOutline from "../ErrorOutline/ErrorOutline";
+import ModalButtons from "../Modals/ModalButtons";
 
 const DenyProofForm = ({ onClose }) => {
   return (
     <div style={{ height: "100%" }}>
-      <div style={{ height: "40%", ...flexCenter }}>
-        <div style={flexCenter}>
-          <ErrorOutlineIcon sx={{ fontSize: "100px", color: secondaryColor }} />
-        </div>
-      </div>
+      {/* ~~~~~ Icon ~~~~~ */}
+      <ErrorOutline />
+      {/* ~~~~~ Input field ~~~~~ */}
       <Typography
         variant="h5"
         align="center"
@@ -36,32 +32,8 @@ const DenyProofForm = ({ onClose }) => {
         variant="outlined"
         sx={{ mt: 2, mb: 2 }}
       />
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: 16,
-        }}
-      >
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: errorColor.color, ...hoverDeny }}
-          onClick={onClose}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: successColor.color,
-            width: "105px",
-            ...hoverAccept,
-          }}
-        >
-          Ok
-        </Button>
-      </div>
+      {/* ~~~~~ Buttons ~~~~~ */}
+      <ModalButtons label="Submit" onCancel={onClose} />
     </div>
   );
 };

@@ -379,7 +379,6 @@ EXECUTE FUNCTION create_transaction_for_new_seller();
 -------------------- Coupon table ------------------------------------
 CREATE TABLE coupon (
     id SERIAL PRIMARY KEY,
-    pdf_data bytea,
     merchant_id integer REFERENCES merchant(id),
     is_deleted boolean DEFAULT false,
     filename_front character varying(255),
@@ -459,12 +458,12 @@ DECLARE
     new_coupon_id INTEGER;
 BEGIN
     -- Check if the task is 'new create proof'
-    IF LOWER(NEW.task) = 'new create proof' THEN
+    IF LOWER(NEW.task) = 'new create proof' AND NOT NEW.is_auto_generated THEN
         -- Start a transaction
         BEGIN
             -- Insert a new row into the coupon table
-            INSERT INTO coupon (merchant_id, offer, value, exclusions, expiration, additional_info, task_id)
-            VALUES (NEW.merchant_id, NEW.coupon_details, 0, '', NULL, '', NEW.id)
+            INSERT INTO coupon (merchant_id, offer, value, exclusions, expiration, additional_info, task_id, book_id, is_auto_generated)
+            VALUES (NEW.merchant_id, NEW.coupon_details, NULL, NULL, NULL, NULL, NEW.id, NEW.book_id, true)
             RETURNING id INTO new_coupon_id;
 
             -- Update the merchant_tasks table with the new coupon_id
@@ -477,12 +476,52 @@ END;
 $$
 LANGUAGE plpgsql;
 
+DROP TRIGGER new_task_trigger ON merchant_tasks;
 
 -- Trigger for tasks
 CREATE TRIGGER new_task_trigger
 AFTER INSERT ON merchant_tasks
 FOR EACH ROW
 EXECUTE FUNCTION create_coupon_on_new_task();
+
+----------------------------------------------------
+-- Function for adding task when a new coupon is added
+CREATE OR REPLACE FUNCTION create_task_on_new_coupon()
+RETURNS TRIGGER AS
+$$
+DECLARE
+    new_merchant_name VARCHAR(75);
+BEGIN
+    -- Fetch the merchant_name based on the merchant_id
+    SELECT merchant_name INTO new_merchant_name FROM merchant WHERE id = NEW.merchant_id LIMIT 1;
+
+	-- Check if the coupon is not auto-generated
+    IF NOT NEW.is_auto_generated THEN
+    -- Insert a new row into the merchant_tasks table
+    INSERT INTO merchant_tasks (category, task, merchant_id, merchant_name, assign, due_date, description, task_status, coupon_details, coupon_id, book_id, is_auto_generated)
+    VALUES ('Coupon', 'New create proof', NEW.merchant_id, new_merchant_name, NULL, NULL, NULL, 'New', NULL, NEW.id, NEW.book_id, true);
+    
+    -- Get the newly inserted task's id
+    SELECT id INTO NEW.task_id FROM merchant_tasks WHERE coupon_id = NEW.id;
+
+    -- Update the coupon table with the new task_id
+    UPDATE coupon SET task_id = NEW.task_id WHERE id = NEW.id;
+    
+END IF;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Drop the existing trigger if it exists
+DROP TRIGGER IF EXISTS new_coupon_trigger ON coupon;
+
+-- Trigger for coupons
+CREATE TRIGGER new_coupon_trigger
+AFTER INSERT ON coupon
+FOR EACH ROW
+EXECUTE FUNCTION create_task_on_new_coupon();
 
 ----------------------------------------------------
 CREATE TABLE "user" (
@@ -557,4 +596,14 @@ AFTER INSERT ON coupon_redemption
 FOR EACH ROW
 EXECUTE FUNCTION redeem_coupon_trigger_function();
 
+----------------------------------------------------
+
+----------------------------------------------------
+------------- Coupon Book Table --------------------
+CREATE TABLE coupon_book (
+    id SERIAL PRIMARY KEY,
+    year character varying(20) NOT NULL,
+    active boolean DEFAULT false
+);
+----------------------------------------------------
 ----------------------------------------------------

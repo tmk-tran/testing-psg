@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Paper } from "@mui/material";
+import { useTheme, useMediaQuery } from "@mui/material";
 // ~~~~~~~~~~ Components ~~~~~~~~~~~~~~~~~~~~~~~~~~
 import OrderSummaryTable from "./OrderSummaryTable";
 import TotalUpdate from "./TotalUpdate";
@@ -15,6 +15,8 @@ import { border } from "../Utils/colors";
 import { submitPaymentSweetAlert } from "../Utils/sweetAlerts";
 
 export default function ShoppingCart() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = dispatchHook();
   const location = useLocation();
   console.log(location);
@@ -100,7 +102,7 @@ export default function ShoppingCart() {
             updateType: "donations",
             id: sellerId,
             refId: refId,
-            donations: customDonation
+            donations: customDonation,
           },
         };
         updateActions.push(updateSellerTable);
@@ -115,7 +117,7 @@ export default function ShoppingCart() {
   };
 
   return (
-    <div style={containerStyle}>
+    <div style={{ ...containerStyle, ...(isMobile && { width: "100%" }) }}>
       <div
         style={{
           marginTop: "53px",

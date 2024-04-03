@@ -9,37 +9,36 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
   const userId = req.params.id;
 
   const queryText = `
-                SELECT
-                  c.*,
-                  cl.coupon_id AS coupon_id,
-                  ARRAY_AGG(l.id) AS location_id,
-                  ARRAY_AGG(l.location_name) AS location_name,
-                  ARRAY_AGG(l.phone_number) AS phone_number,
-                  ARRAY_AGG(l.address) AS address,
-                  ARRAY_AGG(l.city) AS city,
-                  ARRAY_AGG(l.state) AS state,
-                  ARRAY_AGG(l.zip) AS zip,
-                  ARRAY_AGG(l.merchant_id) AS location_merchant_id,
-                  ARRAY_AGG(l.additional_details) AS location_additional_details,
-                  m.merchant_name
-                FROM
-                  coupon_location cl
-                JOIN
-                  coupon c ON cl.coupon_id = c.id
-                JOIN
-                  location l ON cl.location_id = l.id
-                JOIN
-                  merchant m ON c.merchant_id = m.id
-                LEFT JOIN
-                  user_coupon uc ON cl.coupon_id = uc.coupon_id
-                WHERE
-                  uc.user_id = $1
-                  AND uc.redeemed = false
-                GROUP BY
-                  c.id, m.merchant_name, cl.coupon_id
-                ORDER BY
-                  m.merchant_name ASC;
-    
+          SELECT
+            c.*,
+            cl.coupon_id AS coupon_id,
+            ARRAY_AGG(l.id) AS location_id,
+            ARRAY_AGG(l.location_name) AS location_name,
+            ARRAY_AGG(l.phone_number) AS phone_number,
+            ARRAY_AGG(l.address) AS address,
+            ARRAY_AGG(l.city) AS city,
+            ARRAY_AGG(l.state) AS state,
+            ARRAY_AGG(l.zip) AS zip,
+            ARRAY_AGG(l.merchant_id) AS location_merchant_id,
+            ARRAY_AGG(l.additional_details) AS location_additional_details,
+            m.merchant_name
+          FROM
+            coupon c
+          LEFT JOIN
+            coupon_location cl ON c.id = cl.coupon_id
+          LEFT JOIN
+            location l ON cl.location_id = l.id
+          JOIN
+            merchant m ON c.merchant_id = m.id
+          LEFT JOIN
+            user_coupon uc ON c.id = uc.coupon_id
+          WHERE
+            uc.user_id = $1
+            AND uc.redeemed = false
+          GROUP BY
+            c.id, m.merchant_name, cl.coupon_id
+          ORDER BY
+            m.merchant_name ASC;
         `;
 
   pool

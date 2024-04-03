@@ -12,7 +12,7 @@ import SuccessAlert from "../SuccessAlert/SuccessAlert";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { border } from "../Utils/colors";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { mComments } from "../../hooks/reduxStore";
+import { User, mComments } from "../../hooks/reduxStore";
 import { useAlert } from "../SuccessAlert/useAlert";
 import { tabWidth } from "../Utils/helpers";
 import { useSelector } from "react-redux";
@@ -48,6 +48,7 @@ function a11yProps(index) {
 
 export default function BasicTabs() {
   const dispatch = dispatchHook();
+  const user = User();
   const auth = useSelector((store) => store.auth)
   const [value, setValue] = useState(0);
   const [merchantTab, setMerchantTab] = useState(false);
@@ -65,8 +66,6 @@ export default function BasicTabs() {
     } else if (activeTab === "merchant") {
       dispatch({ type: "FETCH_ALL_MERCHANT_TASKS", payload: auth });
     }
-    // dispatch({ type: "SET_ACTIVE_TAB" });
-    // Add more conditions if needed...
   }, [dispatch, activeTab]);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -148,11 +147,13 @@ export default function BasicTabs() {
               onClick={handleMerchantTab}
               sx={tabWidth}
             />
-            <Tab
-              label="Coupon Book"
-              {...a11yProps(2)}
-              onClick={() => setActiveTab("book year")}
-            />
+            {user.is_admin && (
+              <Tab
+                label="Coupon Book"
+                {...a11yProps(2)}
+                onClick={() => setActiveTab("book year")}
+              />
+            )}
           </Tabs>
           <NewTaskModal
             tabs={true}
@@ -161,27 +162,22 @@ export default function BasicTabs() {
             merchantTab={merchantTab}
             onChange={handleTaskUpdate}
           />
-          {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
-
-          {/* <div style={{ flexGrow: 0.3 }}></div> */}
-          {/* <SearchBar /> */}
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         </Box>
-        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~ Tab Body ~~~~~~~~~~~~~~ */}
-        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         <TabPanel value={value} index={0}>
           <TaskListOrg />
-          {/* <TaskList taskType={type} /> */}
         </TabPanel>
 
         <TabPanel value={value} index={1}>
           <TaskListMerchant />
-          {/* <TaskList taskType={type} /> */}
         </TabPanel>
         {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
 
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-        {/* ~~~~~~~~~~~~~~ Coupon Tab (unused) ~~~~~~~~~~~~~~ */}
+        {/* ~~~~~~~~~~~~ Coupon Book Year ~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         <TabPanel value={value} index={2}>
           <NewBookYear />

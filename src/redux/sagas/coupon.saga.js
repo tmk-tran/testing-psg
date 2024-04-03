@@ -47,13 +47,6 @@ function* couponFiles(action) {
         merchantName: coupon.merchant_name,
       };
 
-      // if (coupon.pdf_data && coupon.pdf_data.data) {
-      //   formattedFile.pdfBlob = new Blob(
-      //     [Uint8Array.from(coupon.pdf_data.data)],
-      //     { type: "application/pdf" }
-      //   );
-      // }
-
       if (coupon.front_view_pdf && coupon.front_view_pdf.data) {
         formattedFile.frontViewBlob = new Blob(
           [Uint8Array.from(coupon.front_view_pdf.data)],
@@ -102,7 +95,6 @@ function* pdfFile(action) {
     const formattedFiles = files.map((coupon) => {
       const formattedFile = {
         id: coupon.id,
-        pdfBlob: null,
         filename: coupon.filename,
         frontViewBlob: null,
         backViewBlob: null,
@@ -114,6 +106,7 @@ function* pdfFile(action) {
         additionalInfo: coupon.additional_info,
         taskId: coupon.task_id,
         bookId: coupon.book_id,
+        year: coupon.year,
         location_id: coupon.location_id,
         location_name: coupon.location_name,
         phone_number: coupon.phone_number,
@@ -127,13 +120,6 @@ function* pdfFile(action) {
         location_additional_details: coupon.location_additional_details,
         merchantName: coupon.merchant_name,
       };
-
-      // if (coupon.pdf_data && coupon.pdf_data.data) {
-      //   formattedFile.pdfBlob = new Blob(
-      //     [Uint8Array.from(coupon.pdf_data.data)],
-      //     { type: "application/pdf" }
-      //   );
-      // }
 
       if (coupon.front_view_pdf && coupon.front_view_pdf.data) {
         formattedFile.frontViewBlob = new Blob(
@@ -245,7 +231,7 @@ function* updateCoupon(action) {
 
 export default function* couponSaga() {
   // yield takeEvery("FETCH_COUPON_FILES", couponFiles); // this call will come from Coupon component
-  yield takeEvery("FETCH_CONSUMER_COUPONS", couponFiles)
+  yield takeEvery("FETCH_CONSUMER_COUPONS", couponFiles);
   yield takeEvery("FETCH_PDF_FILE", pdfFile); // place this call in the component that is viewed after clicking on the file (with its id)
   yield takeEvery("ADD_COUPON", addCoupon);
   yield takeEvery("UPLOAD_FRONT_VIEW_PDF", frontViewUpload);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Button, Divider } from "@mui/material";
+import { Box, Button, Divider, useTheme, useMediaQuery } from "@mui/material";
 // ~~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~ //
 import { centeredStyle, containerStyle, flexEnd } from "../Utils/pageStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
@@ -22,6 +22,8 @@ export default function SellerLandingPage() {
   const auth = useSelector((store) => store.auth);
   const history = historyHook();
   const paramsObject = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   console.log(paramsObject);
   const [showGoButton, setShowGoButton] = useState(false);
   console.log(showGoButton);
@@ -53,14 +55,23 @@ export default function SellerLandingPage() {
     <Box sx={containerStyle}>
       {sellerData.map((seller) => (
         <Box key={seller.id} sx={{ mt: 5, ...centeredStyle }}>
-          <OrgDetailsSection seller={seller} />
+          {/* ~~~~~ OrgDetails ~~~~~ */}
+          <OrgDetailsSection isMobile={isMobile} seller={seller} />
           <br />
-          <Box sx={{ ...flexCenter, width: "40%", borderRadius: "4px" }}>
+          {/* ~~~~~ Referral ID ~~~~~ */}
+          <Box
+            sx={{
+              ...flexCenter,
+              width: isMobile ? "100%" : "40%",
+              borderRadius: "4px",
+            }}
+          >
             <RefIdDisplay seller={seller} />
           </Box>
           <Divider />
           <br />
-          <PaymentMenu onPaymentSelect={handlePaymentSelect} />
+          {/* ~~~~~ Payment Method ~~~~~ */}
+          <PaymentMenu isMobile={isMobile} onPaymentSelect={handlePaymentSelect} />
           <br />
           {showGoButton && (
             <Box sx={{ width: "40%", ...flexEnd }}>

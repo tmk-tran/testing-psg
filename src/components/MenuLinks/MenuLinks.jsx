@@ -1,6 +1,6 @@
 import React from "react";
 import Swal from "sweetalert2";
-import { useTheme, createTheme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
@@ -27,7 +27,6 @@ export default function BasicMenu() {
   const user = User();
   const history = historyHook();
   const dispatch = dispatchHook();
-  const theme = useTheme();
   const isSmallScreen = useMediaQuery(customTheme.breakpoints.down("md"));
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -40,37 +39,42 @@ export default function BasicMenu() {
     setAnchorEl(null);
   };
 
-  function newFundraiserForm() {
-    history.push("/newFundraiser");
+  const goHome = () => {
+    history.push("/fargo/home");
     handleClose();
-  }
+  };
 
-  function archivedOrganizations() {
-    history.push("/archivedOrganizations");
+  const newFundraiserForm = () => {
+    history.push("/fargo/newFundraiser");
     handleClose();
-  }
+  };
 
-  function goHome() {
-    history.push("/home");
+  const archivedOrganizations = () => {
+    history.push("/fargo/archivedOrganizations");
     handleClose();
-  }
+  };
 
-  function coupon() {
-    history.push("/coupon");
+  const coupon = () => {
+    history.push("/fargo/coupon");
     handleClose();
-  }
+  };
 
-  function aboutPage() {
-    history.push("/about");
+  const tasks = () => {
+    history.push("/fargo/tasks");
     handleClose();
-  }
+  };
 
-  function goToProfile() {
+  const transactions = () => {
+    history.push("/fargo/transactions");
+    handleClose();
+  };
+
+  const goToProfile = () => {
     history.push(`/userProfile/${user.id}`);
     handleClose();
-  }
+  };
 
-  function logOut() {
+  const logOut = () => {
     Swal.fire({
       title: "Are you sure you want to logout?",
       icon: "warning",
@@ -85,9 +89,9 @@ export default function BasicMenu() {
       }
     });
     handleClose();
-  }
+  };
 
-  return isSmallScreen ? (
+  return isSmallScreen && user.id ? (
     <div>
       <Button
         id="basic-button"
@@ -107,15 +111,29 @@ export default function BasicMenu() {
           "aria-labelledby": "basic-button",
         }}
       >
+        {/* ~~~~~ Home ~~~~~ */}
         <MenuItem onClick={goHome}>Home</MenuItem>
         {/* <MenuItem onClick={goToProfile}>Profile</MenuItem> */}
         <hr style={{ width: "90%" }} />
-        <MenuItem onClick={newFundraiserForm}>New Fundraiser</MenuItem>
-        <MenuItem onClick={archivedOrganizations}>
-          Archived Organizations
-        </MenuItem>
+        {/* ~~~~~ New Fundraiser ~~~~~ */}
+        {user.is_admin && (
+          <MenuItem onClick={newFundraiserForm}>New Fundraiser</MenuItem>
+        )}
+        {/* ~~~~~ Archived Orgs ~~~~~ */}
+        {user.is_admin && (
+          <MenuItem onClick={archivedOrganizations}>
+            Archived Organizations
+          </MenuItem>
+        )}
+        {/* ~~~~~ Coupons ~~~~~ */}
         <MenuItem onClick={coupon}>Coupon</MenuItem>
-        <MenuItem onClick={aboutPage}>About</MenuItem>
+        {(user.is_admin || user.graphic_designer) && (
+          <MenuItem onClick={tasks}>Tasks</MenuItem>
+        )}
+        {/* ~~~~~ Transactions ~~~~~ */}
+        {user.is_admin && (
+          <MenuItem onClick={transactions}>Transactions</MenuItem>
+        )}
         {/* <hr /> */}
         {/* <MenuItem onClick={logOut}>Logout</MenuItem> */}
       </Menu>

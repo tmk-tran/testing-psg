@@ -37,6 +37,17 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 
 router.post("/", rejectUnauthenticated, (req, res) => {
   console.log("From ALLTASKS ROUTER: ", req.body);
+  const category = req.body.category;
+  const task = req.body.task;
+  const merchantId = req.body.merchant_id;
+  const merchantName = req.body.merchant_name;
+  const assign = req.body.assign;
+  const dueDate = req.body.due_date;
+  const description = req.body.description;
+  const taskStatus = req.body.task_status;
+  const couponOffer = req.body.coupon_details;
+  const bookYearId = req.body.book_id;
+
   const queryText = `
           INSERT INTO "merchant_tasks" (
             category, 
@@ -47,17 +58,9 @@ router.post("/", rejectUnauthenticated, (req, res) => {
             due_date, 
             description, 
             task_status, 
-            coupon_details) 
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`;
-  const category = req.body.category;
-  const task = req.body.task;
-  const merchantId = req.body.merchant_id;
-  const merchantName = req.body.merchant_name;
-  const assign = req.body.assign;
-  const dueDate = req.body.due_date;
-  const description = req.body.description;
-  const taskStatus = req.body.task_status;
-  const couponOffer = req.body.coupon_details;
+            coupon_details,
+            book_id) 
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`;
 
   pool
     .query(queryText, [
@@ -70,6 +73,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       description,
       taskStatus,
       couponOffer,
+      bookYearId,
     ])
     .then((result) => {
       res.send(result.rows);

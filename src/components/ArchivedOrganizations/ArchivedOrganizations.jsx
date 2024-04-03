@@ -162,6 +162,7 @@ export default function ArchivedOrganizations() {
             shape="rounded"
             page={currentPage}
             onChange={handlePageChange}
+            color="primary"
           />
         </div>
         <br />

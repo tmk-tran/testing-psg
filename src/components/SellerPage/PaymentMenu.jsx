@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function PaymentMenu({ onPaymentSelect }) {
+export default function PaymentMenu({ isMobile, onPaymentSelect }) {
   const [payment, setPayment] = useState("");
   console.log(payment);
 
@@ -18,8 +18,10 @@ export default function PaymentMenu({ onPaymentSelect }) {
   };
 
   return (
-    <Box sx={{ minWidth: 120, width: "40%" }}>
-      <Typography sx={{ mb: 1 }}>Please choose a method of payment:</Typography>
+    <Box sx={{ minWidth: 120, width: isMobile ? "100%" : "40%" }}>
+      <Typography sx={{ mb: 1, ...(isMobile && { textAlign: "center" }) }}>
+        Please choose a method of payment:
+      </Typography>
       <FormControl fullWidth>
         <InputLabel id="payment-menu-label">Payment</InputLabel>
         <Select

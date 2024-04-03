@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
+  useTheme,
+  useMediaQuery,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +20,8 @@ export default function OrderSummaryTable({
   caseType,
   setPhysicalBooks,
 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   console.log(selectedProducts);
   console.log(caseType);
   const [localQuantities, setLocalQuantities] = useState(

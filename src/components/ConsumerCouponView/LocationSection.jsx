@@ -34,21 +34,27 @@ export default function LocationSection({ coupon }) {
       </AccordionSummary>
       <AccordionDetails>
         <Box>
-          {coupon.locationId.map((locationId, index) => (
-            <Typography
-              key={index}
-              variant="body2"
-              sx={{ textAlign: "center", mb: 1 }}
-            >
-              <strong>{capitalizeWords(coupon.locationName[index])} </strong>
-              <br />
-              {capitalizeWords(coupon.address[index])},{" "}
-              {capitalizeWords(coupon.city[index])},{" "}
-              {capitalizeStateAbbr(coupon.state[index])} {coupon.zip[index]}
-              <br />
-              {formatPhoneNumber(coupon.phoneNumber[index])}{" "}
+          {coupon.locationId[0] !== null ? (
+            coupon.locationId.map((locationId, index) => (
+              <Typography
+                key={locationId}
+                variant="body2"
+                sx={{ textAlign: "center", mb: 1 }}
+              >
+                <strong>{capitalizeWords(coupon.locationName[index])} </strong>
+                <br />
+                {capitalizeWords(coupon.address[index])},{" "}
+                {capitalizeWords(coupon.city[index])},{" "}
+                {capitalizeStateAbbr(coupon.state[index])} {coupon.zip[index]}
+                <br />
+                {formatPhoneNumber(coupon.phoneNumber[index])}{" "}
+              </Typography>
+            ))
+          ) : (
+            <Typography variant="body2" sx={{ textAlign: "center" }}>
+              No Locations Assigned
             </Typography>
-          ))}
+          )}
         </Box>
       </AccordionDetails>
     </Accordion>

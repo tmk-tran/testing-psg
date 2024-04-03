@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Typography, Card, CardContent, Box, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { border } from "../Utils/colors";
+import { border, dueDateHighlight } from "../Utils/colors";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import DenyProofModal from "../DenyProofModal/DenyProofModal";
 import CouponStatusDropdown from "../CouponStatusDropdown/CouponStatusDropdown";
@@ -19,9 +19,9 @@ import EditButton from "../Buttons/EditButton";
 import EditCouponModal from "./EditCouponModal";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import { couponsData, mTasks } from "../../hooks/reduxStore";
+import { couponsData, mTasks, bookYear } from "../../hooks/reduxStore";
 import { centeredStyle, flexCenter, flexRowSpace } from "../Utils/pageStyles";
-import { grayBackground } from "../Utils/colors";
+import { grayBackground, highlightColor } from "../Utils/colors";
 import {
   capitalizeFirstWord,
   capitalizeWords,
@@ -75,6 +75,67 @@ export default function CouponReviewDetails() {
   console.log(isUploaded);
   // ~~~~~~~~~~ View Locations State ~~~~~~~~~~ //
   const [showLocations, setShowLocations] = useState(false);
+  // ~~~~~~~~~~ Book Year State ~~~~~~~~~~ //
+  const [bookId, setBookId] = useState("");
+  const [currentYear, setCurrentYear] = useState("");
+
+  const files = couponsData() || [];
+  console.log(files);
+  const file = files.length > 0 ? files[0] : null;
+  const formattedDate =
+    file && file.expiration ? formatDate(file.expiration) : null;
+
+  console.log(file);
+  const tasks = mTasks() || [];
+  console.log(tasks);
+  // const couponTask = tasks.find((task) => task.coupon_id === Number(couponId));
+  const couponTask = Array.isArray(tasks)
+    ? tasks.find((task) => task.coupon_id === Number(couponId))
+    : null;
+  console.log(couponTask);
+
+  useEffect(() => {
+    // Ensure that merchantId is available before dispatching the action
+    if (merchantId) {
+      // dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: merchantId });
+      // dispatch({ type: "FETCH_COUPON_COMMENTS", payload: file.taskId });
+      dispatch({ type: "FETCH_MERCHANT_TASKS", payload: merchantId });
+    }
+    if (merchantId && file?.taskId !== null) {
+      console.log(file?.taskId);
+      // dispatch({ type: "FETCH_COUPON_COMMENTS", payload: file.taskId });
+      const action2 = {
+        type: "FETCH_COUPON_COMMENTS",
+        payload: file?.taskId,
+      };
+      console.log(action2);
+      dispatch(action2);
+      setBookId(file?.bookId);
+    }
+
+    if (couponId) {
+      dispatch({ type: "FETCH_PDF_FILE", payload: { merchantId, couponId } });
+    }
+
+    setChangesRequested(false);
+    setCompletedCoupon(false);
+    setUploadedFiles(false);
+    setIsUploaded(false);
+    setFrontViewFile(null);
+    setBackViewFile(null);
+  }, [merchantId, commentAdded, uploadedFiles, file?.taskId]);
+
+  useEffect(() => {
+    if (bookId) {
+      const action = {
+        type: "FETCH_YEAR_BY_ID",
+        payload: bookId,
+      };
+      console.log(action);
+      dispatch(action);
+    }
+  }, [bookId]);
+  const year = bookYear();
 
   const handleDenyButtonClick = () => {
     // Open the modal when Deny button is clicked
@@ -113,52 +174,6 @@ export default function CouponReviewDetails() {
   const handleUploadFile = () => {
     setUploadedFiles(true);
   };
-
-  const files = couponsData() || [];
-  console.log(files);
-  // const file = files[0];
-  const file = files.length > 0 ? files[0] : null;
-  const formattedDate =
-    file && file.expiration ? formatDate(file.expiration) : null;
-
-  console.log(file);
-  const tasks = mTasks() || [];
-  console.log(tasks);
-  // const couponTask = tasks.find((task) => task.coupon_id === Number(couponId));
-  const couponTask = Array.isArray(tasks)
-    ? tasks.find((task) => task.coupon_id === Number(couponId))
-    : null;
-  console.log(couponTask);
-
-  useEffect(() => {
-    // Ensure that merchantId is available before dispatching the action
-    if (merchantId) {
-      // dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: merchantId });
-      // dispatch({ type: "FETCH_COUPON_COMMENTS", payload: file.taskId });
-      dispatch({ type: "FETCH_MERCHANT_TASKS", payload: merchantId });
-    }
-    if (merchantId && file.taskId) {
-      console.log(file.taskId);
-      // dispatch({ type: "FETCH_COUPON_COMMENTS", payload: file.taskId });
-      const action2 = {
-        type: "FETCH_COUPON_COMMENTS",
-        payload: file.taskId,
-      };
-      console.log(action2);
-      dispatch(action2);
-    }
-    // couponId &&
-    if (couponId) {
-      dispatch({ type: "FETCH_PDF_FILE", payload: { merchantId, couponId } });
-    }
-
-    setChangesRequested(false);
-    setCompletedCoupon(false);
-    setUploadedFiles(false);
-    setIsUploaded(false);
-    setFrontViewFile(null);
-    setBackViewFile(null);
-  }, [merchantId, commentAdded, uploadedFiles, file.taskId]);
 
   // ~~~~~~~~~~ FRONT VIEW UPLOAD FUNCTIONS ~~~~~~~~~~ //
   const handleFrontViewUpload = (selectedFile, addedFileName) => {
@@ -254,31 +269,34 @@ export default function CouponReviewDetails() {
     <div className={`details-container ${isSmallScreen ? "small-screen" : ""}`}>
       <Box className="details-card">
         <div className="detailsView-container">
-          <div
-            style={{
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "40px",
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~~~~~~ BACK BUTTON ~~~~~~~~~~ */}
+          <BackButton />
+          {/* ~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~ HEADER ~~~~~ */}
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "bold",
+              textAlign: "center",
+              flexGrow: 1,
             }}
           >
-            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            {/* ~~~~~~~~~~ BACK BUTTON ~~~~~~~~~~ */}
-            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            <BackButton />
-            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: "bold",
-                textAlign: "center",
-                flexGrow: 1,
-              }}
-            >
-              Coupon Details
+            Coupon Details
+          </Typography>
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~~~~~~ YEAR DISPLAY ~~~~~~~~~ */}
+          {year ? (
+            year.map((item, i) => (
+              <Typography key={i} sx={{ textAlign: "center" }}>
+                For year: <span style={dueDateHighlight}>{item.year}</span>
+              </Typography>
+            ))
+          ) : (
+            <Typography sx={{ textAlign: "center" }}>
+              Year not available
             </Typography>
-          </div>
-
+          )}
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           <Card style={{ width: "50vw", margin: "0 auto" }} elevation={3}>
             <CardContent>

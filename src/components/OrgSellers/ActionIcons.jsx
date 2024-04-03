@@ -20,7 +20,7 @@ const archiveIconStyle = {
   },
 };
 
-export default function ActionIcons({ seller, onEdit, handleArchive }) {
+export default function ActionIcons({ seller, onEdit, handleArchive, disabled }) {
   return (
     <>
       <ActionButton
@@ -31,6 +31,7 @@ export default function ActionIcons({ seller, onEdit, handleArchive }) {
         onClick={() => onEdit(seller.id)}
         onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.3)")}
         onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        disabled={disabled}
       />
 
       <ActionButton
@@ -40,6 +41,7 @@ export default function ActionIcons({ seller, onEdit, handleArchive }) {
         onClick={() => handleArchive(seller.id)}
         onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
         onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        disabled={disabled}
       />
     </>
   );

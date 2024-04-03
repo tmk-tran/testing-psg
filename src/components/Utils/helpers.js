@@ -73,6 +73,9 @@ export function capitalize(str) {
 }
 
 export function capitalizeStateAbbr(abbr) {
+  if (abbr == null) {
+    return "";
+  }
   return abbr.slice(0, 2).toUpperCase();
 }
 

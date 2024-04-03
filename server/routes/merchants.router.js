@@ -10,7 +10,6 @@ const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage: storage });
 
 router.get("/", rejectUnauthenticated, (req, res) => {
-  // const queryText = `SELECT * FROM merchant;`;
   const queryText = `
   SELECT 
     id,
@@ -78,9 +77,7 @@ router.get("/number", rejectUnauthenticated, (req, res) => {
 
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const merchantId = req.params.id;
-  console.log("FROM MERCHANTS ROUTER: ", merchantId);
 
-  // const queryText = `SELECT * FROM merchant WHERE id = $1;`;
   const queryText = `
   SELECT
     *,
@@ -104,7 +101,6 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 
 router.post("/", upload.single("merchant_logo"), (req, res) => {
   const data = req.body;
-  console.log("from merchants.router POST: ", req.body);
   const merchantLogo = req.file ? req.file.buffer : null;
 
   const merchantName = data.merchant_name;
@@ -117,14 +113,17 @@ router.post("/", upload.single("merchant_logo"), (req, res) => {
   const contactPhoneNumber = data.contact_phone_number;
   const contactEmail = data.contact_email;
   const filename = data.filename ? data.filename : null;
-  const website = data.website ? data.website : null;
+  let website = data.website ? data.website : null;
   const contactMethod = data.contact_method;
 
-  // // Check if the website address already starts with "http://" or "https://"
-  // if (!website.startsWith("http://") && !website.startsWith("https://")) {
-  //   // If it doesn't, prepend "https://"
-  //   website = "https://" + website;
-  // }
+  // Check if the website address already starts with "http://" or "https://"
+  if (
+    website &&
+    !website.startsWith("http://") &&
+    !website.startsWith("https://")
+  ) {
+    website = "https://" + website;
+  }
 
   const queryText = `
       INSERT INTO "merchant" (
@@ -177,7 +176,6 @@ router.put(
   (req, res) => {
     const merchant = req.body;
     const merchantId = req.params.id;
-    console.log("from merchant.router PUT route: ", merchant);
     const merchant_logo = req.file ? req.file.buffer : null;
 
     // Merchant Details
@@ -193,23 +191,18 @@ router.put(
     const phone = merchant.contact_phone_number;
     const email = merchant.contact_email;
     const filename = merchant.filename;
-    const website = merchant.website ? merchant.website : null;
+    let website = merchant.website ? merchant.website : null;
     const contactMethod = merchant.contact_method;
 
-    // // Check if the website address is not empty and does not start with "http://" or "https://"
-    // if (
-    //   website &&
-    //   !website.startsWith("http://") &&
-    //   !website.startsWith("https://")
-    // ) {
-    //   // If it doesn't, prepend "https://"
-    //   website = "https://" + website;
-    // } else if (!website) {
-    //   // If website is empty, set it to null
-    //   website = null;
-    // }
+    // Check if the website address already starts with "http://" or "https://"
+    if (
+      website &&
+      !website.startsWith("http://") &&
+      !website.startsWith("https://")
+    ) {
+      website = "https://" + website;
+    }
 
-    // const user = req.user.id;
     const queryText = `
         UPDATE "merchant" 
         SET 

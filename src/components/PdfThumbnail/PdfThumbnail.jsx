@@ -3,6 +3,8 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { CircularProgress } from "@mui/material";
 import { border } from "../Utils/colors";
 import PdfModal from "./PdfModal";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -64,7 +66,7 @@ const PdfThumbnail = ({ pdf, style, width, caseType }) => {
             <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
               <Page pageNumber={1} width={width ? width : 150} />
             </Document>
-            <img src={pdf} alt="Thumbnail" />
+            {/* <img src={pdf} alt="Thumbnail" /> */}
             {loading && (
               <div
                 style={{

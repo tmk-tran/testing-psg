@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { border } from "../Utils/colors";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { flexCenter, flexEnd, flexRowSpace } from "../Utils/pageStyles";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import PhoneInput from "../LocationsCard/PhoneInput";
@@ -13,6 +19,8 @@ export default function CustomerNameInfo({
   setPageLoad,
 }) {
   const seller = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const refId = seller.refId;
   console.log(refId);
   const [customerLastName, setCustomerLastName] = useState("");
@@ -121,7 +129,7 @@ export default function CustomerNameInfo({
             sx={{
               display: "flex",
               gap: 2,
-              flexDirection: pageLoad ? "column" : "row",
+              flexDirection: isMobile ? "column" : pageLoad ? "column" : "row",
               justifyContent: pageLoad ? "center" : "flex-start",
               alignItems: pageLoad ? "center" : "flex-start",
             }}
@@ -131,7 +139,7 @@ export default function CustomerNameInfo({
             <TextField
               value={customerFirstName}
               fullWidth
-              sx={{ width: pageLoad ? "50%" : "100%" }}
+              sx={{ width: pageLoad ? (isMobile ? "100%" : "50%") : "100%" }}
               label="First Name"
               onChange={handleFirstName}
               error={!!firstNameError}
@@ -142,26 +150,18 @@ export default function CustomerNameInfo({
             <TextField
               value={customerLastName}
               fullWidth
-              sx={{ width: pageLoad ? "50%" : "100%" }}
+              sx={{ width: pageLoad ? (isMobile ? "100%" : "50%") : "100%" }}
               label="Last Name"
               onChange={handleLastName}
               error={!!lastNameError}
               helperText={lastNameError}
             />
-            {/* <TextField
-          value={customerPhoneNumber}
-          fullWidth
-          sx={{ width: pageLoad ? "50%" : "100%" }}
-          label="Phone Number"
-          type="number"
-          error={!!phoneNumberError}
-          helperText={phoneNumberError}
-          onChange={handlePhoneNumber}
-        /> */}
+            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+            {/* ~~~~~~~~~~ Phone Number ~~~~~~~~~~ */}
             <PhoneInput
               phoneNumber={customerPhoneNumber}
               setPhoneNumber={setCustomerPhoneNumber}
-              sx={{ width: pageLoad ? "50%" : "100%" }}
+              sx={{ width: pageLoad ? (isMobile ? "100%" : "50%") : "100%" }}
               setPhoneError={setPhoneNumberError}
               error={phoneNumberError}
               helperText={
@@ -170,7 +170,11 @@ export default function CustomerNameInfo({
             />
           </Box>
           <Box sx={pageLoad ? flexCenter : flexEnd}>
-            {showSkip ? <Button onClick={skipClick}>Skip</Button> : null}
+            {showSkip ? (
+              <Button onClick={skipClick} sx={{ mt: 2 }}>
+                Skip
+              </Button>
+            ) : null}
             {showSaveButton && (
               <Button variant="contained" color="secondary" type="submit">
                 Save Customer Info

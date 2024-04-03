@@ -14,8 +14,6 @@ export default function OrderSummaryDisplay({ customDonation }) {
   const products = location.state?.rows ?? [];
   console.log("Products from previous page: ", products);
   console.log(customDonation);
-  // const caseType = location.state?.caseType?? [];
-  // console.log(caseType);
 
   return (
     <>

@@ -11,6 +11,7 @@ const ActionButton = ({
   onClick,
   onMouseOver,
   onMouseOut,
+  disabled,
 }) => {
   return (
     <Tooltip title={title}>
@@ -29,8 +30,13 @@ const ActionButton = ({
             transition: "transform 0.2s",
             cursor: "pointer",
           },
+          ...(disabled && {
+            opacity: 0.5, // Gray out the button when disabled
+            pointerEvents: "none", // Disable pointer events
+          }),
           ...buttonSx,
         }}
+        disabled={disabled}
       >
         <Icon sx={iconSx} />
       </IconButton>
