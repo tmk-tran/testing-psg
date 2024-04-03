@@ -294,7 +294,20 @@ app.post("/api/orders/:orderID/capture", async (req, res) => {
   }
 });
 
-app.post(`/api/newContact`, async (req, res) => {
+// Active Campaign get route to retreive a user by email
+// app.get(`/api/fetchContact`, async (req, res) => {
+  
+// try {
+//   const checkedResponse = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`);
+//   console.log(checkedResponse)
+//   res.send(response.data.contacts)
+// } catch (error) {
+//   console.log('Error fetching contact from Active Campaign', (error))
+//   res.sendStatus(500)
+// }
+// });
+
+app.post(`/api/contact`, async (req, res) => {
   
 function generatePassword() {
   const length = Math.floor(Math.random() * 4) + 7; 
@@ -310,7 +323,14 @@ function generatePassword() {
 const randomPassword = generatePassword();
 console.log(randomPassword);
 
+const email = req.body
+
  try {
+  const checkedResponse = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`);
+  console.log(checkedResponse)
+
+  if (checkedResponse.data.contacts.length === 0){
+
     const apiKey = process.env.AC_API_KEY;
     const data = {
       "contact": {
@@ -377,7 +397,7 @@ console.log(randomPassword);
     const contactId = response1.data.contact.id;
     console.log(contactId)
 
-    var list = 0;
+    let list = 0;
     switch (req.body.city) {
       case "Fargo":
         list = 10
@@ -408,12 +428,28 @@ console.log(randomPassword);
     );
     console.log('Response from adding contact to list:', response2.data);
 
+    let tag = 0
+    switch (req.body.type) {
+      case "cash":
+        tag = 58
+        break;
+      case "credit":
+        tag = 56
+        break;
+      case "donation":
+        tag = 59
+        break;
+      default:
+        tag = 0
+        break;
+    }
+
     const response3 = await axios.post(
       `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
       JSON.stringify({
         "contactTag": {
         "contact": contactId,
-        "tag": 56,
+        "tag": tag,
         }
       }),
       {
@@ -424,8 +460,133 @@ console.log(randomPassword);
       }
     );
     console.log('Response from adding tag to contact:', response3.data);
-
     res.sendStatus(200)
+
+  } else {
+
+    const apiKey = process.env.AC_API_KEY;
+    const data = {
+      "contact": {
+        "firstName": req.body.firstName,
+        "lastName": req.body.lastName,
+        "phone": req.body.phone,
+        "email": req.body.email,
+        "fieldValues": [
+          {
+            "field": "1",
+            "value": req.body.address
+          },
+          {
+            "field": "2",
+            "value": req.body.city
+          },
+          {
+            "field": "3",
+            "value": req.body.state
+          },
+          {
+            "field": "4",
+            "value": req.body.zip
+          },
+          {
+            "field": "59",
+            "value": req.body.organization
+          },
+          {
+            "field": "60",
+            "value": req.body.url
+          },
+          {
+            "field": "63",
+            "value": req.body.year
+          },
+          {
+            "field": "64",
+            "value": req.body.email
+          },
+          {
+            "field": "66",
+            "value": req.body.donation
+          }
+        ]
+      }
+    }
+  
+    const response1 = await axios.post(
+      `https://${process.env.ac_address}/api/${process.env.version}/contacts`,
+      JSON.stringify(data),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Api-Token': apiKey
+        }
+      }
+    );
+    console.log('Response from ActiveCampaign:', response1.data);
+    const contactId = response1.data.contact.id;
+  
+    var list = 0;
+    switch (req.body.city) {
+      case "Fargo":
+        list = 10
+        break;
+      case "Grand Forks":
+        list = 11
+        break;
+      default:
+        list = 0
+        break;
+    }
+  
+    const response2 = await axios.post(
+      `https://${process.env.ac_address}/api/${process.env.version}/contactLists`,
+      JSON.stringify({
+        "list": list,
+        "contact": contactId,
+        "status": 1
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Api-Token': apiKey
+        }
+      }
+    );
+    console.log('Response from adding contact to list:', response2.data);
+
+    let tag = 0
+    switch (req.body.type) {
+      case "cash":
+        tag = 58
+        break;
+      case "credit":
+        tag = 56
+        break;
+      case "donation":
+        tag = 59
+        break;
+      default:
+        tag = 0
+        break;
+    }
+  
+    const response3 = await axios.post(
+      `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
+      JSON.stringify({
+        "contact": contactId,
+        "tag": tag
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Api-Token': apiKey
+        }
+      }
+    );
+    console.log('Response from adding tag to contact:', response3.data);
+  
+    res.sendStatus(200)
+  };
   } catch (error) {
     console.error('Error sending contact to Active Campaign', error);
     res.sendStatus(500);
@@ -433,117 +594,11 @@ console.log(randomPassword);
 });
 
 
+
 // Active campaign return customer api post route
 app.post(`/api/returningContact`, async (req, res) => {
 try {
-  const apiKey = process.env.AC_API_KEY;
-  const data = {
-    "contact": {
-      "firstName": req.body.firstName,
-      "lastName": req.body.lastName,
-      "phone": req.body.phone,
-      "email": req.body.email,
-      "fieldValues": [
-        {
-          "field": "1",
-          "value": req.body.ac_address
-        },
-        {
-          "field": "2",
-          "value": req.body.city
-        },
-        {
-          "field": "3",
-          "value": req.body.state
-        },
-        {
-          "field": "4",
-          "value": req.body.zip
-        },
-        {
-          "field": "59",
-          "value": req.body.organization
-        },
-        {
-          "field": "60",
-          "value": req.body.url
-        },
-        {
-          "field": "63",
-          "value": req.body.year
-        },
-        {
-          "field": "64",
-          "value": req.body.email
-        },
-        {
-          "field": "66",
-          "value": req.body.donation
-        }
-      ]
-    }
-  }
-
-  const response1 = await axios.post(
-    `https://${process.env.ac_address}/api/${process.env.version}/contacts`,
-    JSON.stringify(data),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Api-Token': apiKey
-      }
-    }
-  );
-  console.log('Response from ActiveCampaign:', response1.data);
-  const contactId = response1.data.contact.id;
-
-  var list = 0;
-  switch (req.body.city) {
-    case "Fargo":
-      list = 10
-      break;
-    case "Grand Forks":
-      list = 11
-      break;
-    default:
-      list = 0
-      break;
-  }
-
-  const response2 = await axios.post(
-    `https://${process.env.ac_address}/api/${process.env.version}/contactLists`,
-    JSON.stringify({
-      "list": list,
-      "contact": contactId,
-      "status": 1
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Api-Token': apiKey
-      }
-    }
-  );
-  console.log('Response from adding contact to list:', response2.data);
-
-// const tag = "";
-
-  const response3 = await axios.post(
-    `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
-    JSON.stringify({
-      "contact": contactId,
-      "tag": "psg"
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Api-Token': apiKey
-      }
-    }
-  );
-  console.log('Response from adding tag to contact:', response3.data);
-
-  res.sendStatus(200)
+  
 } catch (error) {
   console.error('Error sending contact to Active Campaign', error);
   res.sendStatus(500);
