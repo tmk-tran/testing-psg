@@ -29,6 +29,7 @@ import customers from "./customers.reducer";
 import rolesReducer from "./roles.reducer";
 import paypal from "./paypal.reducer";
 import bookYear from "./bookYear.reducer";
+import sellerByRefId from "./sellerByRefId.reducer";
 
 // This is what we get when we use 'state' inside of 'mapStateToProps'
 const rootReducer = combineReducers({
@@ -61,7 +62,8 @@ const rootReducer = combineReducers({
   auth,
   rolesReducer,
   paypal,
-  bookYear
+  bookYear,
+  sellerByRefId
 });
 
 export default rootReducer;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import {
   Box,
@@ -22,7 +22,6 @@ import { historyHook } from "../../hooks/useHistory";
 import { navButtonStyle } from "./checkoutStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
-import axios from "axios";
 
 export const containerStyle = {
   width: "50vw",
@@ -41,7 +40,14 @@ export default function CheckoutPage({ caseType }) {
   const dispatch = dispatchHook();
   console.log(location.state);
   const paramsObject = useParams();
+  const auth = useSelector((store) => store.auth)
+  const seller = useSelector((store) => store.sellerByRefId)
   const refId = paramsObject.refId;
+useEffect(() =>{
+dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
+}, [])
+
+
   // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
   const orderTotal = location.state?.orderTotal ?? 0;
@@ -174,11 +180,12 @@ export default function CheckoutPage({ caseType }) {
       city: city,
       state: stateSelected,
       zip: zip,
-      organization: "",
+      organization: seller.organization_name,
       url: "",
       year: 2024-2025,
       donation: customDonation,
-      type: ""
+      bookType: product.bookType,
+      type: caseType
     }
     dispatch({type: "ADD_CONTACT", payload: data})
   }
@@ -292,6 +299,7 @@ export default function CheckoutPage({ caseType }) {
     if (activeStep === steps.length - 1) {
       // This is the last step, update transactions
       updateTransactions();
+      acInfo();
       // You might also want to redirect the user to a confirmation page
       history.push(`/fargo/seller/${refId}/complete`);
     } else {

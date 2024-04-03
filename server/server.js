@@ -323,14 +323,16 @@ function generatePassword() {
 const randomPassword = generatePassword();
 console.log(randomPassword);
 
-const email = req.body
+const email = req.body.email
 
  try {
   const checkedResponse = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`);
   console.log(checkedResponse)
+  const returnerId = checkedResponse.data.contacts ? checkedResponse.data.contacts.id : null;
 
-  if (checkedResponse.data.contacts.length === 0){
 
+  if (!checkedResponse.data.contacts){
+    // code block runs to adda a new contact if there is no contact response from active campaign
     const apiKey = process.env.AC_API_KEY;
     const data = {
       "contact": {
@@ -429,19 +431,15 @@ const email = req.body
     console.log('Response from adding contact to list:', response2.data);
 
     let tag = 0
-    switch (req.body.type) {
-      case "cash":
-        tag = 58
-        break;
-      case "credit":
-        tag = 56
-        break;
-      case "donation":
-        tag = 59
-        break;
-      default:
-        tag = 0
-        break;
+
+    if (req.body.bookType === "Physical Coupon Book" && req.body.type === "cash"){
+      tag = 58
+    } else if (req.body.booktype === "Physical Coupon Book" && req.body.type === "credit") {
+      tag = 56
+    } else if (req.body.bookType === "Donate" ){
+      tag = 59
+    } else {
+      tag = 0
     }
 
     const response3 = await axios.post(
@@ -463,7 +461,7 @@ const email = req.body
     res.sendStatus(200)
 
   } else {
-
+    // Code block to run if there is already a user in the active campaign database, updates existing information and updates the list a user is added too
     const apiKey = process.env.AC_API_KEY;
     const data = {
       "contact": {
@@ -511,9 +509,9 @@ const email = req.body
         ]
       }
     }
-  
-    const response1 = await axios.post(
-      `https://${process.env.ac_address}/api/${process.env.version}/contacts`,
+  //Updates current active campaign data
+    const response1 = await axios.put(
+      `https://${process.env.ac_address}/api/${process.env.version}/contacts/${returnerId}`,
       JSON.stringify(data),
       {
         headers: {
@@ -523,7 +521,7 @@ const email = req.body
       }
     );
     console.log('Response from ActiveCampaign:', response1.data);
-    const contactId = response1.data.contact.id;
+    // const contactId = response1.data.contact.id;
   
     var list = 0;
     switch (req.body.city) {
@@ -538,11 +536,11 @@ const email = req.body
         break;
     }
   
-    const response2 = await axios.post(
+    const response2 = await axios.put(
       `https://${process.env.ac_address}/api/${process.env.version}/contactLists`,
       JSON.stringify({
         "list": list,
-        "contact": contactId,
+        "contact": returnerId,
         "status": 1
       }),
       {
@@ -555,25 +553,21 @@ const email = req.body
     console.log('Response from adding contact to list:', response2.data);
 
     let tag = 0
-    switch (req.body.type) {
-      case "cash":
-        tag = 58
-        break;
-      case "credit":
-        tag = 56
-        break;
-      case "donation":
-        tag = 59
-        break;
-      default:
-        tag = 0
-        break;
+
+    if (req.body.bookType === "Physical Coupon Book" && req.body.type === "cash"){
+      tag = 58
+    } else if (req.body.booktype === "Physical Coupon Book" && req.body.type === "credit") {
+      tag = 56
+    } else if (req.body.bookType === "Donate" ){
+      tag = 59
+    } else {
+      tag = 0
     }
-  
+
     const response3 = await axios.post(
       `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
       JSON.stringify({
-        "contact": contactId,
+        "contact": returnerId,
         "tag": tag
       }),
       {
@@ -593,17 +587,6 @@ const email = req.body
   }
 });
 
-
-
-// Active campaign return customer api post route
-app.post(`/api/returningContact`, async (req, res) => {
-try {
-  
-} catch (error) {
-  console.error('Error sending contact to Active Campaign', error);
-  res.sendStatus(500);
-}
-});
 
 // Serve index.html //
 app.get("/", (req, res) => {
