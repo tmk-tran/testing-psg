@@ -16,6 +16,7 @@ function* fetchAllMerchantComments(action) {
         user
         task_id
         created_at
+        coupon_id
       }
     }`
 
@@ -56,6 +57,7 @@ function* merchantComments(action) {
         user
         task_id
         created_at
+        coupon_id
       }
     }`
 
@@ -110,6 +112,7 @@ function* addComments(action) {
         user
         task_id
         created_at
+        coupon_id
       }
     }`
 
@@ -127,7 +130,8 @@ function* addComments(action) {
         "merchant_id": Number(newComment.merchant_id),
         "comment_content": newComment.comment_content,
         "user": newComment.user,
-        "task_id": Number(newComment.task_id)
+        "task_id": Number(newComment.task_id),
+        "coupon_id": Number(newComment.coupon_id)
       }
   }));
 

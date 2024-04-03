@@ -50,7 +50,7 @@ function* fetchSeller(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
-    yield put({ ype: "SET_SELLER_PAGEINFO", payload: response.data.sellers })
+    yield put({ type: "SET_SELLER_PAGEINFO", payload: response.data.sellers })
 } catch (err) {
     console.log("error in sellerPage Saga", err);
 }

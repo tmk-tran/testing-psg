@@ -28,6 +28,8 @@ function* fetchSellers(action) {
         organization_id
         is_deleted
         digital_donations
+        books_due
+        coupon_book_id
         organization{
           organization_name
           address
@@ -90,6 +92,8 @@ function* fetchSellerByRefId(action) {
         organization_id
         is_deleted
         digital_donations
+        books_due
+        coupon_book_id
         organization{
           organization_name
           address
@@ -150,6 +154,8 @@ function* addSeller(action) {
         organization_id
         is_deleted
         digital_donations
+        books_due
+        coupon_book_id
       }
     }`;
 
@@ -178,7 +184,9 @@ function* addSeller(action) {
           "donations": Number(donations),
           "notes": newSeller.notes,
           "organization_id": Number(newSeller.organization_id),
-          "digital_donations": Number(newSeller.digital_donations)
+          "digital_donations": Number(newSeller.digital_donations),
+          "books_due": Number(newSeller.books_due),
+          "coupon_book_id": Number(newSeller.coupon_book_id)
         } 
     }));
 
@@ -219,6 +227,8 @@ function* updateSeller(action) {
         organization_id
         is_deleted
         digital_donations
+        books_due
+        coupon_book_id
       }
     }`;
 
@@ -247,7 +257,9 @@ function* updateSeller(action) {
           "donations": Number(donations),
           "notes": editedSeller.notes,
           "organization_id": Number(editedSeller.organization_id),
-          "digital_donations": Number(editedSeller.digital_donations)
+          "digital_donations": Number(editedSeller.digital_donations),
+          "books_due": Number(editedSeller.books_due),
+          "coupon_book_id": Number(editedSeller.coupon_book_id)
         }, 
         "id": Number(editedSeller.id)
     }));
@@ -289,6 +301,8 @@ function* archiveSeller(action) {
         organization_id
         is_deleted
         digital_donations
+        books_due
+        coupon_book_id
       }
     }`;
 
@@ -318,7 +332,9 @@ function* archiveSeller(action) {
           "notes": archivedSeller.notes,
           "organization_id": Number(archivedSeller.organization_id),
           "is_deleted": true,
-          "digital_donations": Number(archivedSeller.digital_donations)
+          "digital_donations": Number(archivedSeller.digital_donations),
+          "books_due": Number(archivedSeller.books_due),
+          "coupon_book_id": Number(archivedSeller.coupon_book_id)
         }, 
         "id": Number(archivedSeller.id)
     }));

@@ -14,6 +14,7 @@ function* fetchAllUsers(action) {
              password
              is_admin
              is_deleted
+             role_id
         }
     }`
 

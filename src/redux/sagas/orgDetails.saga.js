@@ -25,6 +25,7 @@ function* orgDetails(action) {
       primary_contact_email
       is_deleted
       organization_earnings
+      organization_logo
       organization_notes_collection{
       organization_id
       note_date
@@ -88,6 +89,7 @@ function* editOrg(action) {
       primary_contact_email
       is_deleted
       organization_earnings
+      organization_logo
       organization_notes_collection {
         organization_id
         note_date

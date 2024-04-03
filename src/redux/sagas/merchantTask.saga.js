@@ -20,6 +20,9 @@ function* merchantTask(action) {
         task_status
         coupon_details
         is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
       }
     }`
 
@@ -61,6 +64,9 @@ function* fetchAllMerchantTasks(action) {
         task_status
         coupon_details
         is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
       }
     }`
 
@@ -103,6 +109,9 @@ function* addMerchantTask(action) {
         task_status
         coupon_details
         is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
       }
     }`
 
@@ -124,7 +133,10 @@ function* addMerchantTask(action) {
         "assign": newTask.assign,
         "due_date": newTask.due_date,
         "description": newTask.description,
-        "task_status": newTask.task_status
+        "task_status": newTask.task_status,
+        "coupon_id": Number(newTask.coupon_id),
+        "book_id": Number(newTask.book_id)
+        
       }
     }));
 
@@ -155,6 +167,9 @@ function* editMerchantTask(action) {
         task_status
         coupon_details
         is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
       }
     }`
 
