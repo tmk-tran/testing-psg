@@ -615,8 +615,10 @@ app.post('/api/recoverPassword', async (req, res) => {
       }
     );
     console.log('Response from adding tag to contact:', resetAcc.data);
+    res.sendStatus(200)
   } catch (error) {
-
+    console.log("Error adding recover password tag to AC contact", error)
+    res.sendStatus(500)
   }
 })
 

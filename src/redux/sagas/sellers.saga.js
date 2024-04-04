@@ -5,7 +5,7 @@ function* fetchSellers(action) {
  
   try {
     console.log(action.payload);
-    const orgId = action.payload.id
+    const orgId = action.payload.orgId
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
@@ -269,7 +269,7 @@ function* updateSeller(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_SELLERS",
-      payload: {id: editedSeller.organization_id, auth: auth_response}
+      payload: {orgId: editedSeller.organization_id, auth: auth_response}
     });
   } catch (error) {
     console.log("error in updateSeller Saga", error);
@@ -278,7 +278,7 @@ function* updateSeller(action) {
 
 function* archiveSeller(action) {
   try {
-    const archivedSeller = action.payload.archiveSeller;
+    const archivedSeller = action.payload.archivedSeller;
     const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
@@ -327,8 +327,8 @@ function* archiveSeller(action) {
           "books_returned": Number(archivedSeller.books_returned),
           "cash": Number(archivedSeller.cash),
           "checks": Number(archivedSeller.checks),
-          "digital": Number(digital),
-          "donations": Number(donations),
+          "digital": Number(archivedSeller.digital),
+          "donations": Number(archivedSeller.donations),
           "notes": archivedSeller.notes,
           "organization_id": Number(archivedSeller.organization_id),
           "is_deleted": true,
@@ -344,7 +344,7 @@ function* archiveSeller(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_SELLERS",
-      payload: {id: archivedSeller.organization_id, auth: auth_response}
+      payload: {orgId: archivedSeller.organization_id, auth: auth_response}
     });
   } catch (error) {
     console.log("error in updateSeller Saga", error);
