@@ -51,7 +51,7 @@ export default function NotesDisplay({
   // State from popover
   // const [orgId, setOrgId] = useState(details.organization_id);
   const [orgId, setOrgId] = useState(
-    !isMerchantTaskPage ? details.organization_id : details.id
+    !isMerchantTaskPage ? details.id : details.id
   );
   console.log(orgId);
   const [noteDate, setNoteDate] = useState(new Date());
@@ -121,18 +121,18 @@ export default function NotesDisplay({
     setInputValue("");
   };
 
-  const showDeleteConfirmation = (noteId, entityId) => {
+  const showDeleteConfirmation = (note, entityId) => {
     // Sweet Alert
     showDeleteSweetAlert(() => {
       // If the user confirms, call the handleDelete function
-      handleDelete(noteId, entityId);
+      handleDelete(note, entityId);
     }, "delete");
   };
 
-  const handleDelete = (noteId, entityId) => {
-    console.log(noteId);
-    console.log(entityId);
-
+  const handleDelete = (note, entityId) => {
+    console.log(note);
+    console.log(Number(entityId))
+   
     // Assuming you're using Redux for state management
     const actionType = isMerchantTaskPage
       ? "DELETE_MERCHANT_NOTE"
@@ -141,14 +141,19 @@ export default function NotesDisplay({
     dispatch({
       type: actionType,
       payload: {
-        noteId,
-        entityId,
+        deletedNote: {
+          id: note.id,
+          entity_id: Number(entityId),
+          note_date: note.note_date,
+          note_content: note.note_content,
+          is_deleted: true
+        },
         auth: auth
       },
     });
 
     // Call the function to show the confirmation modal
-    showDeleteConfirmation(noteId, entityId);
+    showDeleteConfirmation(note, entityId);
   };
 
   return (
@@ -213,7 +218,7 @@ export default function NotesDisplay({
                                   note.merchant_id
                                 );
                                 showDeleteConfirmation(
-                                  note.id,
+                                  note,
                                   note.merchant_id
                                 );
                               } else {
@@ -224,7 +229,7 @@ export default function NotesDisplay({
                                   note.organization_id
                                 );
                                 showDeleteConfirmation(
-                                  note.id,
+                                  note,
                                   note.organization_id
                                 );
                               }

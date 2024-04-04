@@ -82,7 +82,7 @@ export default function DetailsEdit({
     console.log(detailsInfo);
 
     const orgId = detailsInfo.organization_id;
-    // console.log(orgId);
+    console.log(orgId);
     const merchantId = detailsInfo.id;
     // console.log(merchantId);
 

@@ -43,6 +43,8 @@ export default function NotesPopover({ info }) {
         auth: auth}
     });
 
+    console.log(orgId)
+
     // Reset noteAdded after fetching data
     setNoteAdded(false);
   }, [paramsObject.id, noteAdded]); // Deleted dispatch from dependencies

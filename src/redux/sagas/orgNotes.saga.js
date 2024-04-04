@@ -38,6 +38,7 @@ function* orgNotes(action) {
 
 function* addNotes(action) {
   try {
+    console.log(action.payload)
     const newNote = action.payload.sendNote
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
@@ -100,7 +101,10 @@ function* editNotes(action) {
 
 function* deleteOrgNote(action) {
   try {
+    console.log(action.payload)
     const deletedNote = action.payload.deletedNote
+    const orgId = deletedNote.entity_id
+    console.log(orgId)
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
@@ -125,7 +129,7 @@ function* deleteOrgNote(action) {
     data.append("query", query);
     data.append("variables", JSON.stringify({
       "input": {
-        "organization_id": Number(deletedNote.organization_id),
+        "organization_id": Number(orgId),
         "note_date": deletedNote.note_date,
         "note_content": deletedNote.note_content,
         "is_deleted": deletedNote.is_deleted
@@ -135,7 +139,7 @@ function* deleteOrgNote(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
-    yield put({ type: "FETCH_ORG_NOTES", payload: { id: deletedNote.organization_id, auth: auth_response } });
+    yield put({ type: "FETCH_ORG_NOTES", payload: { id: orgId, auth: auth_response } });
   } catch (error) {
     console.log("error with deleteOrgNotes request", error);
   }

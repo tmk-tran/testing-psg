@@ -24,7 +24,7 @@ export default function ContactDetails({
   isMerchantTaskPage,
   isOrgAdminPage,
 }) {
-  const newInfo = info
+  const newInfo = info[0]
   console.log(newInfo);
   console.log(isMerchantTaskPage);
   console.log(isOrgAdminPage);
@@ -70,6 +70,7 @@ export default function ContactDetails({
     console.log(orgAction);
   };
 
+  console.log(newInfo)
   return (
     <>
       <div className="org-details">

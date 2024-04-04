@@ -27,7 +27,8 @@ export default function BasicPopover({ info, groups, onChange }) {
   // state for the popover
   const [anchorEl, setAnchorEl] = useState(null);
   // state for the add group form
-  const [orgId, setOrgId] = useState(info.organization_id);
+  const [orgId, setOrgId] = useState(info[0].id);
+  console.log(orgId)
   const [groupName, setGroupName] = useState("");
   const [department, setDepartment] = useState("");
   const [subDepartment, setSubDepartment] = useState("");

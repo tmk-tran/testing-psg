@@ -2,7 +2,7 @@ import axios from 'axios';
 import { put, takeLatest } from 'redux-saga/effects';
 
 // worker Saga: will be fired on "FETCH_USER" actions
-function* fetchUser() {
+function* fetchUser(action) {
   try {
     const config = {
       headers: { 'Content-Type': 'application/json' },
@@ -12,11 +12,13 @@ function* fetchUser() {
     const response = yield axios.get('/api/user', config);
 
     yield put({ type: 'SET_USER', payload: response.data });
+    console.log(response.data)
     if (response.data.role_id != 20519){
-      yield put ({ type: 'DEVII_LOGIN', payload: response.data})
+      yield put ({ type: 'DEVII_LOGIN', payload: action.payload})
     } else {
       yield put ({ type: 'ANON_LOGIN' })
     }
+   
     // const auth_response = action.payload
     
     // the config includes credentials which

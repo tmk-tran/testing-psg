@@ -77,11 +77,11 @@ function App() {
     // dispatch({ type: "FETCH_COUPON_BOOKS" });
     const dispatchAction2 = {
       type: "FETCH_BOOK_YEAR",
-      payload: currentSeason,
+      payload: {currentSeason: currentSeason, auth: auth}
     };
     console.log(dispatchAction2);
     dispatch(dispatchAction2);
-  }, []);
+  }, [auth]);
 
   return (
     <Router>

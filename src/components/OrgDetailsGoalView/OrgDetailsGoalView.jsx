@@ -80,7 +80,7 @@ console.log("total goals", totalGoals)
             </center>
           </div>
           <div>
-            <AddGroupPopover info={info} onChange={handleAddGroup} />
+            <AddGroupPopover info={info} groups={groups}onChange={handleAddGroup} />
           </div>
         </CardContent>
       </Card>

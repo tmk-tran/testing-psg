@@ -4,6 +4,7 @@ import { put, takeEvery } from "redux-saga/effects";
 //Saga to log into Devii Api
 function* deviiLogin(action) {
     try {
+      console.log(action.payload)
         const user = action.payload;
         // Login to Devii
         const config = {

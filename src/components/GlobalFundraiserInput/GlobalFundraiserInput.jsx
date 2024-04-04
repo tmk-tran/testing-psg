@@ -9,8 +9,10 @@ import Swal from "sweetalert2";
 export default function GlobalFundraiserInput() {
   const dispatch = useDispatch();
 
-  const organizations = useSelector((store) => store.organizations);
-  const groupList = useSelector((store) => store.allGroups);
+  const organizations = useSelector((store) => store.organizations.organization);
+  console.log(organizations)
+  const groupList = useSelector((store) => store.allGroups.group);
+  console.log(groupList)
   const couponBooks = useSelector((store) => store.couponBooks);
   const auth = useSelector((store) => store.auth)
   console.log(couponBooks);
@@ -38,12 +40,13 @@ export default function GlobalFundraiserInput() {
   const [endDate, setEndDate] = useState("");
   const [couponBookId, setCouponBookId] = useState("");
   const [isCancelButtonDisabled, setCancelButtonDisabled] = useState(true);
-
+console.log(selectedOrganizationId)
   // filter groups based off of organization id
   const filteredGroups = groupList.filter(
-    (group) => group.organization_id === selectedOrganizationId
+    (group) => group.organization_id == selectedOrganizationId
   );
 
+  console.log(filteredGroups)
   const handleChange = (field, value) => {
     console.log(field);
     console.log(value);
@@ -191,7 +194,7 @@ export default function GlobalFundraiserInput() {
                 fullWidth
               >
                 {organizations
-                  .filter((organization) => organization.total_groups > 0)
+                  .filter((organization) => organization.group_collection.length != 0)
                   .map((organization, index) => (
                     <MenuItem key={organization.id} value={organization.id}>
                       {organization.organization_name}

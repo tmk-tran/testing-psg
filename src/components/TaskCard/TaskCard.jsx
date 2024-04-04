@@ -81,7 +81,7 @@ export default function TaskCard({
   // console.log(completedTask);
   const [assignedUser, setAssignedUser] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-
+  const dispatch = dispatchHook();
   console.log(assignedUser);
   const auth = useSelector((store) => store.auth)
   console.log(task)

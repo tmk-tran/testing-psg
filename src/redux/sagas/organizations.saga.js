@@ -115,60 +115,9 @@ function* fetchOrganizationsSaga(action) {
 
 function* addOrganizationSaga(action) {
   try {
-    const newOrg = action.payload.newOrg
-    const auth_response = action.payload.auth
-    const ACCESS_TOKEN = auth_response.data.access_token;
-    const QUERY_URL = auth_response.data.routes.query;
-    console.log(auth_response)
-    const query = ` mutation ($input: organizationInput){create_organization(input: $input){
-    id
-    organization_name
-    type
-    address
-    city
-    state
-    zip
-    primary_contact_first_name
-    primary_contact_last_name
-    primary_contact_phone
-    primary_contact_email
-    organization_logo
-    is_deleted
-    organization_earnings
-    organization_logo
-    filename
-  }
-}`;
-
-    const queryConfig = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-    };
-
-    const data = new FormData();
-    data.append("query", query);
-    data.append("variables", JSON.stringify({
-      "input": {
-        "organization_name": newOrg.organization_name,
-        "type": newOrg.type,
-        "address": newOrg.type,
-        "city": newOrg.city,
-        "state": newOrg.state,
-        "zip": Number(newOrg.zip),
-        "primary_contact_first_name": newOrg.primary_contact_first_name,
-        "primary_contact_last_name": newOrg.primary_contact_last_name,
-        "primary_contact_phone": Number(newOrg.primary_contact_phone),
-        "primary_contact_email": newOrg.primary_contact_email,
-        "organization_logo": newOrg.organization_logo,
-        "organization_earnings": Number(newOrg.organization_earnings)
-      },
-    }));
-
-    const response = yield axios.post(QUERY_URL, data, queryConfig);
-    console.log(response)
-    yield put({ type: "FETCH_ORGANIZATIONS", payload: auth_response });
+    console.log(action.payload);
+    yield axios.post("/api/organizations", action.payload);
+    yield put({ type: "FETCH_ORGANIZATIONS" });
   } catch (error) {
     console.log("error in addOrganizationSaga", error);
   }

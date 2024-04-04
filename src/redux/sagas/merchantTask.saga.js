@@ -135,14 +135,14 @@ function* addMerchantTask(action) {
         "description": newTask.description,
         "task_status": newTask.task_status,
         "coupon_id": Number(newTask.coupon_id),
-        "book_id": Number(newTask.book_id)
+        "book_id": newTask.book_id
         
       }
     }));
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
-    yield put({ type: "FETCH_ALL_MERCHANT_TASKS", payload:  auth_response  });
+    yield put({ type: "FETCH_MERCHANT_TASKS", payload: {id: newTask.merchant_id, auth: auth_response} });
   } catch (error) {
     console.log("error in addNotes Saga", error);
   }

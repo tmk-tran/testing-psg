@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Box, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { allYears } from "../../hooks/reduxStore";
+import { useSelector } from "react-redux";
 
 export default function YearSelect({ year, setYear, labelOutside, sx }) {
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   const [yearSelected, setYearSelected] = useState("");
   console.log(year);
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
   }
 
     const dispatchAction = {
-      type: "FETCH_COUPON_BOOKS",
+      type: "FETCH_COUPON_BOOKS", payload: auth
     };
     dispatch(dispatchAction);
   }, []);
