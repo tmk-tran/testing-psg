@@ -34,6 +34,7 @@ import OrderComplete from "../CheckoutPage/OrderComplete";
 import Transactions from "../Transactions/Transactions";
 import MerchantDetails from "../Details/MerchantDetails";
 import NewBookYear from "../NewBookYear/NewBookYear";
+import RecoverPasswordForm from "../RecoverPasswordForm/RecoverPasswordForm";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
@@ -281,6 +282,10 @@ function App() {
                   // Otherwise, show the login page
                   <LoginPage />
                 )}
+              </Route>
+
+              <Route exact path = "/recover">
+                <RecoverPasswordForm />
               </Route>
 
               <Route exact path="/registration">

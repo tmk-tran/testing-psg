@@ -326,11 +326,11 @@ app.post(`/api/contact`, async (req, res) => {
         }
       }
     )
-    console.log(checkedResponse)
-    const returnerId = checkedResponse.data ? checkedResponse.data.contacts.id : null;
+    console.log(checkedResponse.data.contacts)
+    const returnerId = checkedResponse.data.contacts && checkedResponse.data.contacts.length > 0 ? checkedResponse.data.contacts[0].id : null;
+    console.log(returnerId);
 
-
-    if (checkedResponse.data.message = "No Result found for Subscriber with id 0") {
+if (checkedResponse.data.message === "No Result found for Subscriber with id 0" || returnerId === null) {
       // code block runs to adda a new contact if there is no contact response from active campaign
       const apiKey = process.env.AC_API_KEY;
       const data = {
@@ -433,7 +433,7 @@ app.post(`/api/contact`, async (req, res) => {
 
       if (req.body.bookType === "Physical Coupon Book" && req.body.type === "cash") {
         tag = 58
-      } else if (req.body.booktype === "Physical Coupon Book" && req.body.type === "credit") {
+      } else if (req.body.bookType === "Physical Coupon Book" && req.body.type === "credit") {
         tag = 56
       } else if (req.body.bookType === "Donate") {
         tag = 59
@@ -535,12 +535,14 @@ app.post(`/api/contact`, async (req, res) => {
           break;
       }
 
-      const response2 = await axios.put(
+      const response2 = await axios.post(
         `https://${process.env.ac_address}/api/${process.env.version}/contactLists`,
         JSON.stringify({
+          "contactList": {
           "list": list,
           "contact": returnerId,
           "status": 1
+          }
         }),
         {
           headers: {
@@ -555,7 +557,7 @@ app.post(`/api/contact`, async (req, res) => {
 
       if (req.body.bookType === "Physical Coupon Book" && req.body.type === "cash") {
         tag = 58
-      } else if (req.body.booktype === "Physical Coupon Book" && req.body.type === "credit") {
+      } else if (req.body.bookType === "Physical Coupon Book" && req.body.type === "credit") {
         tag = 56
       } else if (req.body.bookType === "Donate") {
         tag = 59
@@ -566,8 +568,10 @@ app.post(`/api/contact`, async (req, res) => {
       const response3 = await axios.post(
         `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
         JSON.stringify({
+          "contactTag": {
           "contact": returnerId,
           "tag": tag
+          }
         }),
         {
           headers: {
@@ -589,6 +593,7 @@ app.post(`/api/contact`, async (req, res) => {
 app.post('/api/recoverPassword', async (req, res) => {
   try {
     const email = req.body.email
+    console.log(email)
     const apiKey = process.env.AC_API_KEY;
     const emailChecked = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`,
       {
@@ -598,14 +603,16 @@ app.post('/api/recoverPassword', async (req, res) => {
         }
       }
     )
-    console.log(emailChecked)
-    const id = emailChecked.data.contact.id
-
+    console.log(emailChecked.data)
+    const id = emailChecked.data.contacts.length > 0 ? emailChecked.data.contacts[0].id : null
+    console.log(id)
     const resetAcc = await axios.post(
       `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
       JSON.stringify({
+        "contactTag": {
         "contact": id,
         "tag": 64
+        }
       }),
       {
         headers: {

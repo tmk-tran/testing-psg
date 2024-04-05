@@ -22,14 +22,14 @@ function LoginPage() {
           justifyContent: "center",
         }}
       >
-        <Typography>Not a member?&nbsp;</Typography>
+
         <Button
-          style={{ textDecoration: "underline" }}
+          style={{ textDecoration: "underline", textTransform: "none" }}
           onClick={() => {
-            history.push("/registration");
+            history.push("/recover");
           }}
         >
-          Create Account
+          Forgot Password?
         </Button>
       </center>
     </div>

@@ -4,7 +4,11 @@ import { takeEvery, put } from "redux-saga/effects";
 function* addContactSaga(action) {
     console.log(action.payload)
     try {
-        yield axios.post(`/api/contact`, action.payload);
+        yield axios({
+                method: "POST",
+                url: `/api/contact`, 
+                data: action.payload
+            });
       } catch (error) {
         console.log("error in addContact saga", error);
       }
@@ -12,8 +16,13 @@ function* addContactSaga(action) {
 
 function* recoverPassword(action){
     console.log(action.payload)
+    const email = action.payload
     try {
-        yield axios.post(`/api/recoverPassword`, action.payload);
+        yield axios({
+            method: "POST",
+            url: `/api/recoverPassword`, 
+            data: {email: email}
+        });
       } catch (error) {
         console.log("error in recoverPassword saga", error);
       }
