@@ -117,23 +117,22 @@ function ListView({
 
             const archivedMerchant = {
               id: data.id,
-              name: data.merchant_name,
-              type: data.type,
+              merchant_name: data.merchant_name,
               address: data.address,
               city: data.city,
               state: data.state,
               zip: data.zip,
               primary_contact_first_name: data.primary_contact_first_name,
               primary_contact_last_name: data.primary_contact_last_name,
-              primary_contact_phone: data.primary_contact_phone,
-              primary_contact_email: data.primary_contact_email,
-              is_deleted: true
-            
+              contact_phone_number: data.contact_phone,
+              contact_email: data.contact_email,
+              is_deleted: true,
+              archive_reason: archiveReason
             }
 
             dispatch({
               type: `DELETE_${isMerchantList ? "MERCHANT" : "ORGANIZATION"}`,
-              payload: isMerchantList ? { archivedMerchant: archivedMerchant, archiveReason: archiveReason, auth: auth } : { archivedOrg: archivedOrg, auth: auth },
+              payload: isMerchantList ? { archivedMerchant: archivedMerchant, auth: auth } : { archivedOrg: archivedOrg, auth: auth },
             });
 
             dispatch({

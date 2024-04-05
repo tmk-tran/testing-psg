@@ -37,7 +37,7 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
     console.log('Dispatching data fetch action...');
     dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth })
     dispatch({ type: "FETCH_MERCHANTS", payload: auth })
-  }, []);
+  }, [auth]);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isMerchantList, setIsMerchantList] = useState(

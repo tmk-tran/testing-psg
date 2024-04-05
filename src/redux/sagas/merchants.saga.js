@@ -51,7 +51,7 @@ function* allMerchants(action) {
     const auth_response = action.payload
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `{  merchant {
+    const query = `{  merchant (filter: "is_deleted = false") {
       id
       merchant_name
       address
@@ -251,16 +251,62 @@ function* editMerchant(action) {
 }
 
 function* deleteMerchantSaga(action) {
-  const merchantId = action.payload.dataId;
-  const archiveReason = action.payload.archiveReason;
-  console.log(merchantId);
-  console.log(archiveReason);
-
   try {
-    yield axios.delete(`/api/merchants/${merchantId}`, {
-      data: { archiveReason },
-    });
-    yield put({ type: "FETCH_MERCHANTS" });
+    console.log(action.payload)
+    const archivedMerchant = action.payload.archivedMerchant
+    const auth_response = action.payload.auth
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    console.log(auth_response)
+    const query = `
+     mutation ($input: merchantInput, $id: ID!){
+     update_merchant(input: $input id: $id)
+   {
+     id
+     merchant_name
+     address
+     city
+     state
+     zip
+     primary_contact_first_name
+     primary_contact_last_name
+     contact_phone_number
+     contact_email
+     merchant_logo
+     is_deleted
+     archive_reason
+  }
+}`;
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", JSON.stringify({
+      "input": {
+        "merchant_name": archivedMerchant.merchant_name,
+        "address": archivedMerchant.address,
+        "city": archivedMerchant.city,
+        "state": archivedMerchant.state,
+        "zip": Number(archivedMerchant.zip),
+        "primary_contact_first_name": archivedMerchant.primary_contact_first_name,
+        "primary_contact_last_name": archivedMerchant.primary_contact_last_name,
+        "contact_phone_number": archivedMerchant.contact_phone_number,
+        "contact_email": archivedMerchant.contact_email,
+        "is_deleted": Boolean(archivedMerchant.is_deleted),
+        "archive_reason": archivedMerchant.archive_reason
+      },
+      "id": Number(archivedMerchant.id)
+    }));
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "FETCH_MERCHANTS", payload: auth_response });
   } catch (error) {
     console.log("error with deleteMerchantSaga request", error);
   }

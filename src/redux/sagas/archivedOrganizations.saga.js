@@ -171,7 +171,7 @@ function* resetOrganizationSaga(action) {
     yield put({ type: "FETCH_ORGANIZATIONS", payload: auth_response });
     yield put({ type: "FETCH_ARCHIVED_ORGANIZATIONS", payload: auth_response });
   } catch (error) {
-    console.log("error with deleteOrganizationSaga request", error);
+    console.log("error with resetOrganizationSaga request", error);
   }
 }
 
