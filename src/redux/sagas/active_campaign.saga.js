@@ -10,6 +10,16 @@ function* addContactSaga(action) {
       }
 };
 
+function* recoverPassword(action){
+    console.log(action.payload)
+    try {
+        yield axios.post(`/api/recoverPassword`, action.payload);
+      } catch (error) {
+        console.log("error in recoverPassword saga", error);
+      }
+}
+
 export default function* activeCampaignSaga() {
     yield takeEvery("ADD_CONTACT", addContactSaga)
+    yield takeEvery("RECOVER_PASSWORD", recoverPassword)
 }
