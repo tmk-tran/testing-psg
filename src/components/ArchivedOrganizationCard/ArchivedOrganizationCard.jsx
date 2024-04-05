@@ -13,12 +13,13 @@ function ArchivedOrganizationCard({ organization }) {
   const auth = useSelector((store) => store.auth);
   const aggs = useSelector((store) => store.organizations.
   aggs)
+  console.log(organization)
 
   // function to re activate organization and dispatch the data
   // sweet alert to confirm
-  function unArchive(organizationId) {
+  function unArchive(organization) {
     const resetOrg = {  
-      id: organizationId,
+      id: organization.id,
       organization_name: organization.organization_name,
       type: organization.type,
       address: organization.address,
@@ -28,9 +29,8 @@ function ArchivedOrganizationCard({ organization }) {
       primary_contact_first_name: organization.primary_contact_first_name,
       primary_contact_last_name: organization.primary_contact_last_name,
       primary_contact_phone: organization.primary_contact_phone,
-      primary_contact_email: contactEmail,
-      organization_logo: logoUrl,
-      organization_earnings: orgEarnings,
+      primary_contact_email: organization.primary_contact_email,
+      organization_earnings: organization.organization_earnings,
       is_delete: false};
     Swal.fire({
       title: "Are you sure you want to restore this organization?",
@@ -181,13 +181,13 @@ function ArchivedOrganizationCard({ organization }) {
 
           <div
             className="archivedOrganizationActions"
-            style={{ marginTop: "-150px" }}
+            style={{ marginTop: "-80px" }}
           >
             <Button
               sx={{ mr: 2 }}
               onClick={(e) => {
                 e.stopPropagation();
-                unArchive(organization.id);
+                unArchive(organization);
               }}
             >
               Restore

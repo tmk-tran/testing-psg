@@ -58,10 +58,10 @@ function ListView({
         <div className="initialsContainer">
           {data.organization_name
             ? data.organization_name
-                .split(" ")
-                .map((word) => word[0])
-                .join("")
-                .toUpperCase()
+              .split(" ")
+              .map((word) => word[0])
+              .join("")
+              .toUpperCase()
             : null}
         </div>
       )
@@ -72,11 +72,10 @@ function ListView({
     );
   };
 
-  const handleArchive = (dataId) => {
+  const handleArchive = (data) => {
     Swal.fire({
-      title: `Are you sure you want to Archive this ${
-        isMerchantList ? "Merchant" : "Organization"
-      }?`,
+      title: `Are you sure you want to Archive this ${isMerchantList ? "Merchant" : "Organization"
+        }?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: backgroundColor.color,
@@ -101,19 +100,49 @@ function ListView({
             const archiveReason = reasonResult.value;
             console.log(archiveReason);
 
+            const archivedOrg = {
+              id: data.id,
+              name: data.organization_name,
+              type: data.type,
+              address: data.address,
+              city: data.city,
+              state: data.state,
+              zip: data.zip,
+              primary_contact_first_name: data.primary_contact_first_name,
+              primary_contact_last_name: data.primary_contact_last_name,
+              primary_contact_phone: Number(data.primary_contact_phone),
+              primary_contact_email: data.primary_contact_email,
+              is_deleted: true
+            }
+
+            const archivedMerchant = {
+              id: data.id,
+              name: data.merchant_name,
+              type: data.type,
+              address: data.address,
+              city: data.city,
+              state: data.state,
+              zip: data.zip,
+              primary_contact_first_name: data.primary_contact_first_name,
+              primary_contact_last_name: data.primary_contact_last_name,
+              primary_contact_phone: data.primary_contact_phone,
+              primary_contact_email: data.primary_contact_email,
+              is_deleted: true
+            
+            }
+
             dispatch({
               type: `DELETE_${isMerchantList ? "MERCHANT" : "ORGANIZATION"}`,
-              payload: isMerchantList ? { dataId, archiveReason } : { dataId },
+              payload: isMerchantList ? { archivedMerchant: archivedMerchant, archiveReason: archiveReason, auth: auth } : { archivedOrg: archivedOrg, auth: auth },
             });
 
             dispatch({
-              type: `FETCH_${isMerchantList ? "MERCHANTS" : "ORGANIZATIONS"}`,
+              type: `FETCH_${isMerchantList ? "MERCHANTS" : "ORGANIZATIONS"}`, payload: auth
             });
             Swal.fire({
               icon: "success",
-              title: `${
-                isMerchantList ? "Merchant" : "Organization"
-              } Successfully Archived!`,
+              title: `${isMerchantList ? "Merchant" : "Organization"
+                } Successfully Archived!`,
             });
           }
         });
@@ -187,81 +216,81 @@ function ListView({
 
                 {!isMerchantList ? (
                   <div style={{ display: "flex" }}>
-                       {aggs.total_books_sold.map((totalBooksSold) => {
-                    if (totalBooksSold.group_organization_id == data.id) {
-                      return (
-                        <>
-                    <div className="column">
-                      {/* ///////////////////////////////////////// */}
-                      {/* ///////////// ORG INFORMATION /////////// */}
-                      {/* ///////////////////////////////////////// */}
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
-                   
-                      <Typography variant="body2">
-                        {!user.org_admin
-                          ? `Organization Fee: $${data.organization_earnings}`
-                          : null}
-                      </Typography>
+                    {aggs.total_books_sold.map((totalBooksSold) => {
+                      if (totalBooksSold.group_organization_id == data.id) {
+                        return (
+                          <>
+                            <div className="column">
+                              {/* ///////////////////////////////////////// */}
+                              {/* ///////////// ORG INFORMATION /////////// */}
+                              {/* ///////////////////////////////////////// */}
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
 
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
-                      <Typography key={totalBooksSold.id} variant="body2">
-                              Total Books Sold: {totalBooksSold.sum}
-                            </Typography>
+                              <Typography variant="body2">
+                                {!user.org_admin
+                                  ? `Organization Fee: $${data.organization_earnings}`
+                                  : null}
+                              </Typography>
 
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Organization Earnings: ${(data.organization_earnings * totalBooksSold.sum).toLocaleString()}
-                      </Typography>
-                    </div>
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
+                              <Typography key={totalBooksSold.id} variant="body2">
+                                Total Books Sold: {totalBooksSold.sum}
+                              </Typography>
 
-                    <div className="column">
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
-                      {aggs.total_groups.map((total_groups) => {
-                              if (total_groups.organization_id == data.id) {
-                                return (
-                                  <Typography variant="body2">
-                                    Total Groups: {total_groups.count}
-                                  </Typography>
-                                );
-                              }
-                            })}
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
-                      {result.map((totalStandingBooks) => {
-                              if (totalStandingBooks.group_organization_id == data.id) {
-                                return (
-                                  <>
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
+                              <Typography variant="body2">
+                                Organization Earnings: ${(data.organization_earnings * totalBooksSold.sum).toLocaleString()}
+                              </Typography>
+                            </div>
+
+                            <div className="column">
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
+                              {aggs.total_groups.map((total_groups) => {
+                                if (total_groups.organization_id == data.id) {
+                                  return (
                                     <Typography variant="body2">
-                                      Total Outstanding Books: {totalStandingBooks.difference}
+                                      Total Groups: {total_groups.count}
                                     </Typography>
+                                  );
+                                }
+                              })}
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
+                              {result.map((totalStandingBooks) => {
+                                if (totalStandingBooks.group_organization_id == data.id) {
+                                  return (
+                                    <>
+                                      <Typography variant="body2">
+                                        Total Outstanding Books: {totalStandingBooks.difference}
+                                      </Typography>
 
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        {!user.org_admin
-                          ? `PSG Earnings: ${(
-                            (totalBooksSold.sum * 25) -
-                            (data.organization_earnings * totalBooksSold.sum)
-                          ).toLocaleString()}`
-                          : null}
-                      </Typography>
-                      </>
-                                )
-                              }
-                            })}
-                          </div>
-                        </>
-                      );
-                      
-                     
-                    }
-                  })}
-                </div>
-                  
+                                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                                      {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
+                                      <Typography variant="body2">
+                                        {!user.org_admin
+                                          ? `PSG Earnings: ${(
+                                            (totalBooksSold.sum * 25) -
+                                            (data.organization_earnings * totalBooksSold.sum)
+                                          ).toLocaleString()}`
+                                          : null}
+                                      </Typography>
+                                    </>
+                                  )
+                                }
+                              })}
+                            </div>
+                          </>
+                        );
+
+
+                      }
+                    })}
+                  </div>
+
                 ) : (
                   <div
                     style={{
@@ -307,26 +336,26 @@ function ListView({
                 Edit
               </Button>
             )}
-            {aggs.total_open_fundraisers.map((total_active_fundraisers, index) => { 
-    if (total_active_fundraisers.group_organization_id == data.id  && !isOrgAdmin)  {
-        return (
-            <Button
-                key={index}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    handleArchive(data.id);
-                }}
-            >
-                Archive
-            </Button>
-        );
-    }
-})}
+            {aggs.total_open_fundraisers.map((total_active_fundraisers, index) => {
+              if (!isOrgAdmin) {
+                return (
+                  <Button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleArchive(data);
+                    }}
+                  >
+                    Archive
+                  </Button>
+                );
+              }
+            })}
             {isMerchantList && (
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleArchive(data.id);
+                  handleArchive(data);
                 }}
               >
                 Archive

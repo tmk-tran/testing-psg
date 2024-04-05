@@ -8,7 +8,7 @@ function* fetchOrganizationsSaga(action) {
     const QUERY_URL = auth_response.data.routes.query;
     console.log(auth_response)
     const query = `{
-       organization(ordering: "group_collection.organization_id"){
+       organization(ordering: "group_collection.organization_id" filter: "is_deleted = false"){
        id
        organization_name
        type
@@ -125,6 +125,7 @@ function* addOrganizationSaga(action) {
 
 function* deleteOrganizationSaga(action) {
   try {
+    console.log(action.payload)
     const archivedOrg = action.payload.archivedOrg
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
@@ -163,9 +164,9 @@ function* deleteOrganizationSaga(action) {
     data.append("query", query);
     data.append("variables", JSON.stringify({
       "input": {
-        "organization_name": archivedOrg.organization_name,
+        "organization_name": archivedOrg.name,
         "type": archivedOrg.type,
-        "address": archivedOrg.type,
+        "address": archivedOrg.address,
         "city": archivedOrg.city,
         "state": archivedOrg.state,
         "zip": Number(archivedOrg.zip),

@@ -6,7 +6,6 @@ function* fetchArchivedOrganizationsSaga(action) {
     const auth_response = action.payload
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    console.log(auth_response)
     const query = `{
        organization(ordering: "group_collection.organization_id" filter: "is_deleted = true"){
        id
@@ -113,6 +112,7 @@ function* fetchArchivedOrganizationsSaga(action) {
 
 function* resetOrganizationSaga(action) {
   try {
+    console.log(action.payload)
     const resetOrg = action.payload.resetOrg
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
@@ -160,9 +160,8 @@ function* resetOrganizationSaga(action) {
         "primary_contact_last_name": resetOrg.primary_contact_last_name,
         "primary_contact_phone": resetOrg.primary_contact_phone,
         "primary_contact_email": resetOrg.primary_contact_email,
-        "organization_logo": resetOrg.organization_logo,
         "organization_earnings": Number(resetOrg.organization_earnings),
-        "is_deleted": resetOrg.is_deleted
+        "is_deleted": Boolean(resetOrg.is_deleted)
       },
       "id": Number(resetOrg.id)
     }));
