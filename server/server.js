@@ -395,6 +395,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
         }
       );
       console.log('Response from ActiveCampaign:', response1.data.contact);
+      const contactEmail = response1.data.contacts.email;
       const contactId = response1.data.contact.id;
       console.log(contactId)
 
@@ -458,6 +459,8 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
       );
       console.log('Response from adding tag to contact:', response3.data);
       res.sendStatus(200)
+
+      const registerUser = await axios.post('/api/user/register', data = { username: contactEmail, password: randomPassword})
 
     } else {
       // Code block to run if there is already a user in the active campaign database, updates existing information and updates the list a user is added too
