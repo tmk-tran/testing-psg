@@ -5,6 +5,22 @@ const {
   rejectUnauthenticated,
 } = require("../modules/authentication-middleware");
 
+router.get("/", rejectUnauthenticated, (req, res) => {
+  const queryText = `
+          SELECT user_id, show_book 
+          FROM user_coupon;
+        `;
+  pool
+    .query(queryText)
+    .then((result) => {
+      res.send(result.rows);
+    })
+    .catch((error) => {
+      console.log("error in the GET / request for user coupons", error);
+      res.sendStatus(500);
+    });
+});
+
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const userId = req.params.id;
 
@@ -35,8 +51,9 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
           WHERE
             uc.user_id = $1
             AND uc.redeemed = false
+            AND uc.show_book = true
           GROUP BY
-            c.id, m.merchant_name, cl.coupon_id
+            c.id, m.merchant_name, cl.coupon_id, uc.show_book
           ORDER BY
             m.merchant_name ASC;
         `;
@@ -44,7 +61,6 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [userId])
     .then((result) => {
-      console.log("FROM userCoupon.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((error) => {
@@ -74,11 +90,30 @@ router.post("/", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [couponId])
     .then((response) => {
-      console.log("response from POST userCoupon.router: ", response.rows);
       res.sendStatus(200);
     })
     .catch((err) => {
       console.log("error in userCoupon POST route", err);
+      res.sendStatus(500);
+    });
+});
+
+router.put("/:id", rejectUnauthenticated, (req, res) => {
+  console.log("From PUT for user_coupon show book: ", req.body);
+  const userId = req.params.id;
+
+  const queryText = `
+          UPDATE "user_coupon"
+          SET show_book = $1
+          WHERE user_id = $2;
+        `;
+  pool
+    .query(queryText, [req.body.show_book, userId])
+    .then((response) => {
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      console.log("error in userCoupon PUT route", err);
       res.sendStatus(500);
     });
 });

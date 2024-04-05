@@ -12,6 +12,9 @@ import {
 function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  console.log(firstName, lastName);
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
 
@@ -23,6 +26,8 @@ function RegisterForm() {
       payload: {
         username: username,
         password: password,
+        first_name: firstName,
+        last_name: lastName,
       },
     });
   }; // end registerUser
@@ -47,6 +52,28 @@ function RegisterForm() {
             </Typography>
             <br />
             <div style={{ display: "flex", flexDirection: "column" }}>
+              <TextField
+                type="text"
+                label="First Name"
+                name="firstName"
+                required
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+                style={{ marginBottom: "10px" }}
+              >
+                First Name
+              </TextField>
+              <TextField
+                type="text"
+                label="Last Name"
+                name="lastName"
+                required
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+                style={{ marginBottom: "10px" }}
+              >
+                Last Name
+              </TextField>
               <TextField
                 type="text"
                 label="Enter Username"

@@ -14,6 +14,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import CloseButton from "../Buttons/CloseButton";
 import AddFileButton from "../AddFileButton/AddFileButton";
 // ~~~~~~~~~~~ Hooks ~~~~~~~~~~~
+import { choices } from "./contactChoices";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { hoverAccept, primaryColor } from "../Utils/colors";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~
@@ -236,7 +237,7 @@ export default function AddAccountModal({
   };
 
   // Preferred method of contact choices
-  const choices = ["Text", "Email", "Phone", "In-person visit"];
+  // const choices = ["Text", "Email", "Phone", "In-person visit"];
 
   return (
     <div>

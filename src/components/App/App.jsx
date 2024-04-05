@@ -13,27 +13,24 @@ import Details from "../Details/Details";
 import LandingPage from "../LandingPage/LandingPage";
 import LoginPage from "../LoginPage/LoginPage";
 import RegisterPage from "../RegisterPage/RegisterPage";
-import Footer from "../Footer/Footer";
 import GroupDetails from "../GroupDetails/GroupDetails";
 import MenuLinks from "../MenuLinks/MenuLinks";
 import ArchivedOrganizations from "../ArchivedOrganizations/ArchivedOrganizations";
 import GlobalFundraiserInput from "../GlobalFundraiserInput/GlobalFundraiserInput";
 import Header from "../Header/Header";
-import Footer2 from "../Footer2/Footer2";
-import Footer3 from "../Footer3/Footer3";
+import Footer from "../Footer/Footer";
 import TaskTabs from "../TaskTabs/TaskTabs";
 import CouponReviewDetails from "../CouponReviewDetails/CouponReviewDetails";
 import CheckoutPage from "../CheckoutPage/CheckoutPage";
 import OrderPage from "../CheckoutPage/OrderPage";
 import OrgSellers from "../OrgSellers/OrgSellers";
 import ShoppingCart from "../CheckoutPage/ShoppingCart";
-import SellerPage from "../SellerPage/SellerPage";
 import ConsumerCouponView from "../ConsumerCouponView/ConsumerCouponView";
 import SellerLandingPage from "../SellerPage/SellerLandingPage";
 import OrderComplete from "../CheckoutPage/OrderComplete";
 import Transactions from "../Transactions/Transactions";
 import MerchantDetails from "../Details/MerchantDetails";
-import NewBookYear from "../NewBookYear/NewBookYear";
+import UserAdmin from "../UserAdmin/UserAdmin";
 import RecoverPasswordForm from "../RecoverPasswordForm/RecoverPasswordForm";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -210,9 +207,9 @@ function App() {
                 <CouponReviewDetails />
               </ProtectedRoute>
 
-              {/* <ProtectedRoute exact path="/order">
-                <OrderPage />
-              </ProtectedRoute> */}
+              <ProtectedRoute exact path="/fargo/useradmin">
+                <UserAdmin />
+              </ProtectedRoute>
 
               <ProtectedRoute exact path="/fargo/sellers">
                 <OrgSellers />
@@ -310,10 +307,8 @@ function App() {
               </Route>
             </Switch>
           </div>
-          {/* <Footer /> */}
-          {/* <Footer2 /> */}
         </div>
-        <Footer3 />
+        <Footer />
       </ThemeProvider>
     </Router>
   );

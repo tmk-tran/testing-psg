@@ -217,6 +217,23 @@ function* changeAssignedTo(action) {
   }
 }
 
+function* changeDueDate(action) {
+  console.log(action.payload);
+  const taskId = action.payload.id;
+  const merchantId = action.payload.merchantId;
+
+  try {
+    yield axios.put(`/api/merchantTask/duedate/${taskId}`, action.payload);
+    console.log("merchantTask dueDate PUT action.payload = ", action.payload);
+    yield put({
+      type: "FETCH_ALL_MERCHANT_TASKS",
+      payload: merchantId,
+    });
+  } catch (err) {
+    console.log("error in editMerchantTask dueDate Saga", err);
+  }
+}
+
 function* deleteMerchantTask(action) {
   try {
     const items = yield axios.delete(
@@ -243,5 +260,6 @@ export default function* merchantTaskSaga() {
   yield takeEvery("ADD_MERCHANT_TASK", addMerchantTask);
   yield takeEvery("UPDATE_MERCHANT_TASK", editMerchantTask);
   yield takeEvery("CHANGE_ASSIGNED_TO", changeAssignedTo);
+  yield takeEvery("CHANGE_DUE_DATE", changeDueDate);
   yield takeEvery("ARCHIVE_MERCHANT_TASK", deleteMerchantTask);
 }

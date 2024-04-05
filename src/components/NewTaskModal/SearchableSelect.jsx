@@ -4,7 +4,7 @@ import { Autocomplete, TextField, MenuItem } from "@mui/material";
 // Assuming merchants and organizations are arrays with objects having 'id' and 'merchant_name' or 'organization_name' properties.
 // Adjust the structure based on your actual data.
 
-export default function YourComponent({
+export default function SearchableSelect({
   thirdMenuChoice,
   handleAccountChange,
   merchantTab,
@@ -50,7 +50,6 @@ export default function YourComponent({
         return option;
       }}
       renderInput={(params) => {
-        console.log(params);
         console.log("Input Value:", params.inputProps.value);
         // const selectedAccount = params.inputProps.value;
 

@@ -120,18 +120,31 @@ export default function TableTaskDetails({ mId, caseType }) {
               }}
               colSpan={2}
             >
-              <Typography
-                variant="body2"
-                sx={{
-                  ...boldCenter,
-                  ...dueDateHighlight,
-                }}
-              >
-                Due:
-                <span style={{ marginLeft: "15px" }}>
-                  {formatDate(task.due_date)}
-                </span>
-              </Typography>
+              {task.due_date ? (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    ...boldCenter,
+                    ...dueDateHighlight,
+                  }}
+                >
+                  Due:
+                  <span style={{ marginLeft: "15px" }}>
+                    {formatDate(task.due_date)}
+                  </span>
+                </Typography>
+              ) : (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    whiteSpace: "nowrap",
+                    ...boldCenter,
+                    ...dueDateHighlight,
+                  }}
+                >
+                  No due date set
+                </Typography>
+              )}
             </TableCell>
           </TableRow>
         </TableHead>

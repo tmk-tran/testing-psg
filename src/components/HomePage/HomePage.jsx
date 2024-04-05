@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
@@ -10,9 +11,6 @@ import {
 } from "@mui/material";
 import "./HomePage.css";
 import Fuse from "fuse.js";
-import SearchIcon from "@mui/icons-material/Search";
-import ToggleOnIcon from "@mui/icons-material/ToggleOn";
-import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 // ~~~~~~~~~~ Components ~~~~~~~~~~~~~~
 import AddAccountModal from "../AddAccountModal/AddAccountModal.jsx";
@@ -21,7 +19,6 @@ import SearchBar from "../SearchBar/SearchBar.jsx";
 import ToggleButton from "../ToggleButton/ToggleButton.jsx";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { allMerchants, mCoupons } from "../../hooks/reduxStore.js";
-import { border } from "../Utils/colors.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 
 function HomePage({ isOrgAdmin, isGraphicDesigner }) {
@@ -41,7 +38,7 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isMerchantList, setIsMerchantList] = useState(
-    isGraphicDesigner ? true : false
+    Cookies.get("isMerchantList") === "true" || false
   );
   console.log(isMerchantList);
   const organizationsList = useSelector((store) => store.organizations);
@@ -58,14 +55,20 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   const [editComplete, setEditComplete] = useState(false);
   console.log(editComplete);
   const itemsPerPage = 12;
+  const handleToggle = () => {
+    const newIsMerchantList = !isMerchantList;
+    Cookies.set("isMerchantList", newIsMerchantList, { expires: 365 });
+    setIsMerchantList(newIsMerchantList);
+  };
+
+  useEffect(() => {
+    const initialIsMerchantList =
+      Cookies.get("isMerchantList") === "true" || false;
+    setIsMerchantList(initialIsMerchantList);
+  }, []);
 
 
-  //   // Initial data fetch based on isMerchantList
-  //   const fetchDataAction = isMerchantList
-  //     ? "FETCH_MERCHANTS"
-  //     : "FETCH_ORGANIZATIONS";
-  //   dispatch({ type: fetchDataAction, payload: auth });
-  // };
+ 
 
   useEffect(() => {
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
@@ -189,9 +192,8 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
             <ToggleButton
               sxButton={{ margin: 2 }}
               sxIcon={{ mr: 1 }}
-              // onClick={() => setIsMerchantList(!isMerchantList)}
               title="Toggle List View"
-              onClick={() => setIsMerchantList((prevState) => !prevState)}
+              onClick={handleToggle}
               label1="Merchants"
               label2="Organizations"
               toggleState={isMerchantList}
@@ -201,9 +203,8 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
             <ToggleButton
               sxButton={{ margin: 2 }}
               sxIcon={{ mr: 1 }}
-              // onClick={() => setIsMerchantList(!isMerchantList)}
               title="Toggle List View"
-              onClick={() => setIsMerchantList((prevState) => !prevState)}
+              onClick={handleToggle}
               label1="Merchants"
               label2="Organizations"
               toggleState={isMerchantList}

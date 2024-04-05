@@ -248,6 +248,27 @@ router.put(
   }
 );
 
+router.put("/contact/:id", rejectUnauthenticated, (req, res) => {
+  const merchantId = req.params.id;
+  const method = req.body.contact_method;
+
+  const queryText = `
+          UPDATE "merchant"
+          SET contact_method = $1
+          WHERE id = $2;
+        `;
+  pool
+    .query(queryText, [method, merchantId])
+    .then((response) => {
+      console.log("response from EDIT merchants.router: ", response.rows);
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      console.log("error saving to database, from merchants.router", err);
+      res.sendStatus(500);
+    });
+});
+
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
   const { archiveReason } = req.body;

@@ -5,6 +5,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
+import { choices } from "../AddAccountModal/contactChoices";
 import { mDetails, mNotes, mLocations } from "../../hooks/reduxStore";
 import { useCaseType } from "../Utils/useCaseType";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
@@ -15,6 +16,8 @@ import DetailsTaskView from "../DetailsTaskView/DetailsTaskView";
 import LocationsCard from "../LocationsCard/LocationsCard";
 import AddNewCouponModal from "../CouponReviewCard/AddNewCouponModal";
 import CouponReviewCard from "../CouponReviewCard/CouponReviewCard";
+import ContactMethodMenu from "./ContactMethodMenu";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
 export default function MerchantDetails({ isMerchantTaskPage }) {
   const theme = useTheme();
@@ -65,6 +68,19 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
     setLocationAdded(true);
   };
 
+  const handleContactMethod = (newValue) => {
+    console.log(newValue);
+    const dispatchAction = {
+      type: "UPDATE_CONTACT_METHOD",
+      payload: {
+        id: paramsObject.id,
+        contact_method: newValue,
+      },
+    };
+    dispatch(dispatchAction);
+    showSaveSweetAlert({ label: "Contact Method Updated" });
+  };
+
   return (
     <Box className={`details-container ${isSmallScreen ? "small-screen" : ""}`}>
       <div style={{ position: "relative" }}>
@@ -90,16 +106,21 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
                   info={merchantInfo}
                   isMerchantTaskPage={isMerchantTaskPage}
                 />
+                {merchantInfo.contact_method && (
+                  <Typography
+                    key={`contact-method-${merchantInfo.id}`}
+                    sx={{ mt: 2 }}
+                  >
+                    Preferred contact:{" "}
+                    <ContactMethodMenu
+                      id={merchantInfo.id}
+                      methods={choices}
+                      defaultValue={merchantInfo.contact_method}
+                      onChange={handleContactMethod}
+                    />
+                  </Typography>
+                )}
               </center>
-              {merchantInfo.contact_method && (
-                <Typography
-                  key={`contact-method-${merchantInfo.id}`}
-                  sx={{ mt: 1 }}
-                >
-                  Preferred contact:{" "}
-                  <strong>{merchantInfo.contact_method}</strong>
-                </Typography>
-              )}
             </React.Fragment>
           ))}
 

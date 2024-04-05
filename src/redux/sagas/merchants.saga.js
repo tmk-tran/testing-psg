@@ -250,6 +250,21 @@ function* editMerchant(action) {
   }
 }
 
+function* changeContactMethod(action) {
+  console.log(action.payload);
+  const merchantId = action.payload.id;
+  try {
+    const response = yield axios.put(
+      `/api/merchants/contact/${merchantId}`,
+      action.payload
+    );
+    console.log("From user saga: ", response.data);
+    yield put({ type: "FETCH_MERCHANT_DETAILS", payload: merchantId });
+  } catch (error) {
+    console.log("GET for merchant details error: ", error);
+  }
+}
+
 function* deleteMerchantSaga(action) {
   try {
     console.log(action.payload)
@@ -318,5 +333,6 @@ export default function* merchantDetailsSaga() {
   yield takeEvery("FETCH_COUPON_NUMBER", merchantCouponNumber);
   yield takeEvery("ADD_MERCHANT", addMerchantSaga);
   yield takeEvery("EDIT_MERCHANT_DETAILS", editMerchant);
+  yield takeEvery("UPDATE_CONTACT_METHOD", changeContactMethod);
   yield takeEvery("DELETE_MERCHANT", deleteMerchantSaga);
 }

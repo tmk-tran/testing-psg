@@ -35,7 +35,10 @@ const CouponLocations = ({ locations }) => {
       <>
         <Typography label="Locations Accepted:" variant="h6" />
         <br />
-        <Typography label="No locations set" sx={{ mb: 2, ml: 4 }} />
+        <Typography
+          label="Valid at participating locations"
+          sx={{ mb: 2, ml: 4 }}
+        />
       </>
     );
   }

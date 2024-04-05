@@ -52,7 +52,7 @@ export default function LocationSection({ coupon }) {
             ))
           ) : (
             <Typography variant="body2" sx={{ textAlign: "center" }}>
-              No Locations Assigned
+              Valid at participating locations
             </Typography>
           )}
         </Box>

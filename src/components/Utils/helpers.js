@@ -202,8 +202,7 @@ export const getExpirationYear = (bookYearData) => {
   return expirationYear;
 };
 
-// seasonHelper.js
-
+// Season function
 export const getCurrentSeason = () => {
   // Fetch the current year
   const currentYear = new Date().getFullYear();
@@ -224,4 +223,15 @@ export const getCurrentSeason = () => {
   }
 
   return currentSeason;
+};
+
+// Date change function
+export const handleDateChange = (date, setState) => {
+  const formattedDate = date.$d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  setState(formattedDate);
 };

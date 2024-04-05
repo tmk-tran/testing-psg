@@ -64,27 +64,49 @@ const AccountMenu = ({ isMobile }) => {
         ),
         user.is_admin && (
           <MenuItem
+            key="organizations"
+            value="organizations"
+            onClick={() => {
+              history.push("/fargo/home");
+            }}
+          >
+            Home
+          </MenuItem>
+        ),
+        user.is_admin && (
+          <MenuItem
             key="tasks"
             value="tasks"
             onClick={() => {
-              history.push("/tasks");
+              history.push("/fargo/tasks");
             }}
           >
             Tasks
           </MenuItem>
         ),
-        // user.is_admin && <hr key="divider2" style={{ width: "90%" }} />,
         user.is_admin && (
           <MenuItem
-            key="organizations"
-            value="organizations"
+            key="transactions"
+            value="transactions"
             onClick={() => {
-              history.push("/home");
+              history.push("/fargo/transactions");
             }}
           >
-            Accounts
+            Transactions
           </MenuItem>
         ),
+        user.is_admin && (
+          <MenuItem
+            key="users"
+            value="users"
+            onClick={() => {
+              history.push("/fargo/useradmin");
+            }}
+          >
+            User Roles
+          </MenuItem>
+        ),
+        // user.is_admin && <hr key="divider2" style={{ width: "90%" }} />,
         user.is_admin && <hr key="divider2" style={{ width: "90%" }} />,
         <MenuItem
           key="logout"

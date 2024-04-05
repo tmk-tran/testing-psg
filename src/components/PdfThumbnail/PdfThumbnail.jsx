@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CircularProgress } from "@mui/material";
-import { border } from "../Utils/colors";
-import PdfModal from "./PdfModal";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+import { border } from "../Utils/colors";
+import { flexCenter } from "../Utils/pageStyles";
+// ~~~~~~~~~~ Components ~~~~~~~~~ //
+import PdfModal from "./PdfModal";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PdfThumbnail = ({ pdf, style, width, caseType }) => {
+const PdfThumbnail = ({ isMobile, pdf, style, width, caseType }) => {
   console.log(pdf);
   console.log(caseType);
   const [loading, setLoading] = useState(true);
@@ -45,22 +48,31 @@ const PdfThumbnail = ({ pdf, style, width, caseType }) => {
               ...style,
               overflow: "hidden",
               position: "relative",
+              ...flexCenter,
               ...(caseType === "consumer"
                 ? {
                     transition: "transform 0.3s",
-                    transform: hovering ? "scale(.9)" : "scale(1)",
+                    // transform: hovering ? "scale(.9)" : "scale(1)",
+                    // cursor: "zoom-in",
+                    transform: isMobile
+                      ? "scale(1)"
+                      : hovering
+                      ? "scale(.9)"
+                      : "scale(1)",
+                    cursor: isMobile ? "default" : "zoom-in",
                     // margin: hovering ? "3%" : 0,
                     // padding: hovering ? "5%" : 0,
                     // width: hovering ? "500px" : width ? width : "150px",
                     // maxWidth: 250,
                     // height: hovering ? "200px" : "150px",
                     // maxHeight: 150,
-                    cursor: "zoom-in",
                   }
                 : {}),
             }}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            // onMouseEnter={handleMouseEnter}
+            // onMouseLeave={handleMouseLeave}
+            onMouseEnter={!isMobile ? handleMouseEnter : undefined}
+            onMouseLeave={!isMobile ? handleMouseLeave : undefined}
             onClick={handleThumbnailClick}
           >
             <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
@@ -85,7 +97,12 @@ const PdfThumbnail = ({ pdf, style, width, caseType }) => {
               </div>
             )}
           </div>
-          <PdfModal pdf={pdf} isOpen={isModalOpen} onClose={handleCloseModal} />
+          <PdfModal
+            isMobile={isMobile}
+            pdf={pdf}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+          />
         </>
       ) : (
         <p>No files available</p>

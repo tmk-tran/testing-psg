@@ -34,7 +34,6 @@ export default function ConsumerCouponView() {
   useEffect(() => {
     const dispatchAction = {
       type: "FETCH_CONSUMER_COUPONS",
-      // type: "FETCH_COUPON_FILES",
       payload: user.id,
     };
     dispatch(dispatchAction);
@@ -99,7 +98,8 @@ export default function ConsumerCouponView() {
     <Box
       sx={{
         ...centeredStyle,
-        ...containerStyle,
+        // ...containerStyle,
+        ...(isMobile ? {} : containerStyle),
         position: "relative",
       }}
     >
@@ -135,6 +135,7 @@ export default function ConsumerCouponView() {
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~ Search Bar ~~~~~~~~~~ */}
             <SearchBar
+              isMobile={isMobile}
               isCoupon
               isOrganization={false}
               query={query}
@@ -146,7 +147,7 @@ export default function ConsumerCouponView() {
             <Typography
               label={`Valid through September 1, ${expirationYear}`}
               variant={isMobile ? "caption" : "body2"}
-              sx={{ mt: 2 }}
+              sx={{ mt: 2, textAlign: "center" }}
             />
           </Box>
           {/* ~~~~~~~~~~~~~~~~ */}

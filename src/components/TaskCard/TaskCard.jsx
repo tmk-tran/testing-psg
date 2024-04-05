@@ -9,6 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import "./TaskCard.css";
+import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { historyHook } from "../../hooks/useHistory";
@@ -24,6 +25,7 @@ import {
   capitalizeFirstWord,
   capitalizeWords,
   formatDate,
+  handleDateChange,
 } from "../Utils/helpers";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import TaskDropdown from "./TaskDropdown";
@@ -33,6 +35,7 @@ import { useSelector } from "react-redux";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { flexCenter, flexRowSpace } from "../Utils/pageStyles";
 import TaskCardButtons from "./TaskCardButtons";
+import DatePicker from "../DatePicker/DatePicker";
 
 const fullWidth = {
   width: "100%",
@@ -81,7 +84,10 @@ export default function TaskCard({
   // console.log(completedTask);
   const [assignedUser, setAssignedUser] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const dispatch = dispatchHook();
+  const dispatch = dispatchHook();  
+  const [isDateEdit, setIsDateEdit] = useState(false);
+  const [newDueDate, setNewDueDate] = useState("");
+
   console.log(assignedUser);
   const auth = useSelector((store) => store.auth)
   console.log(task)
@@ -159,6 +165,35 @@ export default function TaskCard({
     onTaskUpdate();
     handleCaseTypeChange("Archived");
   };
+
+  const handleDateEdit = () => {
+    setIsDateEdit(true);
+  };
+
+  const returnNewDate = (newDate) => {
+    handleDateChange(newDate, setNewDueDate);
+  };
+
+  const saveNewDueDate = () => {
+    const action = {
+      type: "CHANGE_DUE_DATE",
+      payload: {
+        id: task.id,
+        due_date: newDueDate,
+        merchantId: mId,
+      },
+    };
+    console.log(action);
+    dispatch(action);
+    clearDateField();
+  };
+
+  const clearDateField = () => {
+    setNewDueDate("");
+    setIsDateEdit(false);
+  };
+  console.log(newDueDate);
+  console.log(isDateEdit);
 
   const handleEditMode = () => {
     setIsEditing(true);
@@ -240,17 +275,46 @@ export default function TaskCard({
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~~~~~~~ DATE ~~~~~~~~~~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+
                 <div style={dueDateHighlight}>
-                  <Typography
-                    sx={{
-                      fontWeight: "bold",
-                      width: "12vw",
-                      textAlign: "center",
-                      mt: 0.5,
-                    }}
-                  >
-                    Due: {formatDate(task.due_date)}
-                  </Typography>
+                  {isDateEdit ? (
+                    <>
+                      <DatePicker
+                        initialDate={task.due_date}
+                        onChange={returnNewDate}
+                        hideInputLabel
+                      />
+                      <Box sx={{ backgroundColor: "white" }}>
+                        <TaskCardButtons
+                          onSave={saveNewDueDate}
+                          onCancel={clearDateField}
+                        />
+                      </Box>
+                    </>
+                  ) : (
+                    <Typography
+                      sx={{
+                        fontWeight: "bold",
+                        width: "9vw",
+                        textAlign: "center",
+                        mt: 0.5,
+                        display: "inline-flex",
+                      }}
+                    >
+                      Due: {formatDate(task.due_date)}
+                    </Typography>
+                  )}
+                  {!isDateEdit && (
+                    <IconButton
+                      onClick={handleDateEdit}
+                      sx={{
+                        // ...iconButtonStyle,
+                        display: isEditing ? "none" : "inline-flex", // Hide when editing
+                      }}
+                    >
+                      <EditCalendarIcon sx={{ fontSize: 23 }} />
+                    </IconButton>
+                  )}
                 </div>
                 {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
               </div>
