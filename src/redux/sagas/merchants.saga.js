@@ -143,6 +143,11 @@ function* editMerchant(action) {
       formData.append("filename", action.payload.uploadedFile.name);
     }
 
+    if (action.payload.merchant_logo_base64) {
+      formData.append("merchant_logo", action.payload.merchant_logo_base64);
+      formData.append("filename", action.payload.filename);
+    }
+
     const response = yield axios.put(`/api/merchants/${merchantId}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data", // Set content type to multipart/form-data for file upload

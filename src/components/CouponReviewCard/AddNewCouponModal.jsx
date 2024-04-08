@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~ //
 import AddBox from "../AddBoxIcon/AddBoxIcon";
-import CloseButton from "../Buttons/CloseButton";
 import SelectMenu from "./SelectMenu";
 import AddFileButton from "../AddFileButton/AddFileButton";
 import ModalButtons from "../Modals/ModalButtons";

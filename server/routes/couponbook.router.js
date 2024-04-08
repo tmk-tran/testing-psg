@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
   const queryText = `
             SELECT * 
             FROM "coupon_book"
-            ORDER BY id ASC;
+            ORDER BY id DESC;
             ;
             `;
   pool

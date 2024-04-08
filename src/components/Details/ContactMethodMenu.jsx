@@ -26,7 +26,20 @@ const OrgMenu = ({ methods, defaultValue, onChange }) => {
   };
 
   return (
-    <FormControl sx={{ width: 190 }}>
+    <FormControl sx={{ width: 190, position: "relative" }}>
+      <InputLabel
+        shrink={false}
+        sx={{
+          fontSize: "18px",
+          ml: 2,
+          lineHeight: "1.1",
+          position: "absolute",
+          top: "50%", // Move the label halfway down
+          transform: "translateY(-50%)", // Center vertically
+        }}
+      >
+        Select
+      </InputLabel>
       <Select value={value} onChange={handleChange} sx={{ height: 30 }}>
         {methods.map((contactBy) => (
           <MenuItem key={contactBy} value={contactBy}>

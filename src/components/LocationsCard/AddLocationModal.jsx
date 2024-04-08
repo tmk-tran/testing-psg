@@ -6,7 +6,6 @@ import AddBox from "../AddBoxIcon/AddBoxIcon";
 import ModalButtons from "../Modals/ModalButtons";
 import PhoneInput from "./PhoneInput";
 import StateSelector from "../StateSelector/StateSelector";
-import CloseButton from "../Buttons/CloseButton";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";

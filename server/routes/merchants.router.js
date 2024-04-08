@@ -38,7 +38,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText)
     .then((result) => {
-      console.log("from GET ALL merchants.router: ", result.rows);
+      // console.log("from GET ALL merchants.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -66,7 +66,7 @@ router.get("/number", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText)
     .then((result) => {
-      console.log("from GET /number merchants.router: ", result.rows);
+      // console.log("from GET /number merchants.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -90,7 +90,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [merchantId])
     .then((result) => {
-      console.log("from GET /id merchants.router: ", result.rows);
+      // console.log("from GET /id merchants.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -169,6 +169,11 @@ router.put(
     const merchantId = req.params.id;
     const merchant_logo = req.file ? req.file.buffer : null;
 
+    // If no new file uploaded, retain existing logo from database
+    if (!merchant_logo && !req.file) {
+      merchant_logo = merchant.merchant_logo;
+    }
+
     // Merchant Details
     const merchantName = merchant.merchant_name;
     const address = merchant.address;
@@ -220,7 +225,7 @@ router.put(
         merchantId,
       ])
       .then((response) => {
-        console.log("response from EDIT merchants.router: ", response.rows);
+        console.log("successful PUT to merchants.router");
         res.sendStatus(200);
       })
       .catch((err) => {
@@ -242,7 +247,7 @@ router.put("/contact/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [method, merchantId])
     .then((response) => {
-      console.log("response from EDIT merchants.router: ", response.rows);
+      console.log("successful PUT in merchants.router: ");
       res.sendStatus(200);
     })
     .catch((err) => {
@@ -259,7 +264,7 @@ router.delete("/:id", (req, res) => {
   pool
     .query(queryText, [archiveReason, id])
     .then((response) => {
-      console.log("response from DELETE merchants.router: ", response.rows);
+      console.log("successful DELETE from merchants.router: ");
       res.sendStatus(200);
     })
     .catch((error) => {
