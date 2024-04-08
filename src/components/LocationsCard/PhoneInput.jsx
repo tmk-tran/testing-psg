@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import TextField from "@mui/material/TextField";
 
 const PhoneInput = ({
+  caseType,
   phoneNumber,
   setPhoneNumber,
   sx,
@@ -33,7 +34,7 @@ const PhoneInput = ({
       onChange={handlePhoneNumberChange}
       fullWidth
       sx={sx}
-      // required
+      required={caseType === "addAccount"}
       error={error}
       helperText={helperText}
     />

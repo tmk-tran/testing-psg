@@ -51,7 +51,7 @@ export default function AddAccountModal({
   const [logoFile, setLogoFile] = useState("");
   console.log(logoFile);
   const [orgEarnings, setOrgEarnings] = useState(10);
-  const [selectedChoice, setSelectedChoice] = useState("");
+  const [selectedChoice, setSelectedChoice] = useState(null);
   console.log(selectedChoice);
   // ~~~~~~~~~ Errors ~~~~~~~~~~~ //
   const [organizationNameError, setOrganizationNameError] = useState(false);
@@ -447,6 +447,7 @@ export default function AddAccountModal({
             {/* ~~~~~~~~~~~~ PHONE ~~~~~~~~~~~~~~~~~ */}
             <Grid item xs={6}>
               <PhoneInput
+                caseType={"addAccount"}
                 phoneNumber={contactPhone}
                 setPhoneNumber={setContactPhone}
                 sx={{ mb: 2 }}

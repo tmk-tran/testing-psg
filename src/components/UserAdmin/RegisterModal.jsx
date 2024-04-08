@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Typography, TextField, Box } from "@mui/material";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
 function RegisterModal({ open, onClose }) {
   const [username, setUsername] = useState("");
@@ -23,6 +24,8 @@ function RegisterModal({ open, onClose }) {
         last_name: lastName,
       },
     });
+    showSaveSweetAlert({ label: "New User Registered" });
+    handleClose();
   };
 
   const resetForm = () => {

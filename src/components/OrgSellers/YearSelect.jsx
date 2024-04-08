@@ -23,15 +23,10 @@ export default function YearSelect({
   const dispatch = dispatchHook();
   const auth = useSelector((store) => store.auth)
   const [yearSelected, setYearSelected] = useState("");
-  console.log(year);
-  console.log(helperText);
+
   useEffect(() => {
     // Set the initial selected year to the ID of the active year
 
-    // if (year.length > 0) {
-    //   const activeYearId = year.find((y) => y.active)?.id || "";
-    //   setYearSelected(activeYearId);
-    // }
     if (Array.isArray(year) && year.length > 0) {
       const activeYearId = year.find((y) => y.active)?.id || "";
       setYearSelected(activeYearId);
@@ -44,7 +39,6 @@ export default function YearSelect({
   }, []);
 
   const years = allYears();
-  console.log(years);
 
   const handleChange = (event) => {
     labelOutside && setActiveYearError(false);
