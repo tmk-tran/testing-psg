@@ -1,0 +1,350 @@
+Date : 2024-03-12 16:44:07
+Directory : /Users/jcolago/EDA/Tier3/testing-psg/src
+Total : 240 files,  18245 codes, 1712 comments, 1795 blanks, all 21752 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| JavaScript JSX |        134 |     13,925 |      1,450 |      1,135 |     16,510 |
+| JavaScript     |         75 |      3,464 |        198 |        502 |      4,164 |
+| CSS            |         31 |        856 |         64 |        158 |      1,078 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                      | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                         |        240 |     18,245 |      1,712 |      1,795 |     21,752 |
+| . (Files)                                                                                                 |          1 |         13 |          0 |          5 |         18 |
+| components                                                                                                |        177 |     15,213 |      1,587 |      1,367 |     18,167 |
+| components/AccountMenu                                                                                    |          2 |         90 |          4 |          5 |         99 |
+| components/ActiveFundraiserItem                                                                           |          2 |        598 |         29 |         10 |        637 |
+| components/AddAccountModal                                                                                |          4 |        395 |         54 |         33 |        482 |
+| components/AddBoxIcon                                                                                     |          1 |         11 |          0 |          2 |         13 |
+| components/AddFileButton                                                                                  |          1 |         23 |         45 |          3 |         71 |
+| components/AddGroupPopover                                                                                |          2 |        141 |         32 |         14 |        187 |
+| components/App                                                                                            |          2 |        293 |         55 |         49 |        397 |
+| components/ArchivedOrganizationCard                                                                       |          2 |        296 |          9 |         33 |        338 |
+| components/ArchivedOrganizations                                                                          |          2 |        164 |          6 |         10 |        180 |
+| components/Buttons                                                                                        |          3 |         37 |          3 |          7 |         47 |
+| components/CheckoutPage                                                                                   |         12 |      1,195 |        110 |        108 |      1,413 |
+| components/ClosedFundraiserItem                                                                           |          2 |        171 |          6 |          2 |        179 |
+| components/CommentDisplay                                                                                 |          1 |         69 |         17 |          4 |         90 |
+| components/ConsumerCouponView                                                                             |          2 |         94 |         21 |         11 |        126 |
+| components/ContactDetails                                                                                 |          4 |        336 |         27 |         39 |        402 |
+| components/ContactDetailsList                                                                             |          1 |         73 |         16 |          2 |         91 |
+| components/ContactEdit                                                                                    |          2 |        251 |         34 |         17 |        302 |
+| components/CouponLocations                                                                                |          1 |         67 |          2 |          5 |         74 |
+| components/CouponReviewCard                                                                               |          4 |        505 |         72 |         51 |        628 |
+| components/CouponReviewDetails                                                                            |          9 |        832 |         98 |         92 |      1,022 |
+| components/CouponStatusDropdown                                                                           |          1 |         57 |          3 |          7 |         67 |
+| components/CustomButton                                                                                   |          1 |         25 |          0 |          2 |         27 |
+| components/DatePicker                                                                                     |          1 |         29 |          3 |          4 |         36 |
+| components/DenyProofModal                                                                                 |          2 |         93 |          5 |          9 |        107 |
+| components/Details                                                                                        |          4 |        331 |         93 |         39 |        463 |
+| components/DetailsEdit                                                                                    |          1 |        198 |         15 |         14 |        227 |
+| components/DetailsTaskView                                                                                |          2 |         84 |         13 |         10 |        107 |
+| components/EditAccountModal                                                                               |          1 |        199 |         33 |         11 |        243 |
+| components/Footer                                                                                         |          2 |         75 |          3 |         13 |         91 |
+| components/Footer2                                                                                        |          1 |         82 |          4 |          6 |         92 |
+| components/Footer3                                                                                        |          1 |         47 |          3 |          3 |         53 |
+| components/GlobalFundraiserInput                                                                          |          1 |        392 |          3 |         11 |        406 |
+| components/GroupDetails                                                                                   |          2 |        250 |         14 |         12 |        276 |
+| components/GroupDetailsCard                                                                               |          1 |        387 |          9 |          8 |        404 |
+| components/Header                                                                                         |          2 |         55 |         39 |          4 |         98 |
+| components/HomePage                                                                                       |          2 |        238 |         56 |         26 |        320 |
+| components/ImageRender                                                                                    |          1 |         14 |          0 |          4 |         18 |
+| components/LandingPage                                                                                    |          2 |        122 |          7 |         24 |        153 |
+| components/LinksSocial                                                                                    |          2 |         58 |          0 |          5 |         63 |
+| components/ListView                                                                                       |          2 |        345 |         30 |         40 |        415 |
+| components/LocationsCard                                                                                  |          4 |        460 |         46 |         38 |        544 |
+| components/LoginForm                                                                                      |          1 |         82 |          2 |          7 |         91 |
+| components/LoginPage                                                                                      |          1 |         36 |          1 |          5 |         42 |
+| components/LogoPSG                                                                                        |          2 |         16 |          5 |          4 |         25 |
+| components/MenuLinks                                                                                      |          1 |        108 |          4 |         13 |        125 |
+| components/Modals                                                                                         |          2 |         86 |          1 |          8 |         95 |
+| components/NavLinks                                                                                       |          2 |        152 |         18 |         15 |        185 |
+| components/NewTaskModal                                                                                   |          2 |        360 |         80 |         37 |        477 |
+| components/NoDetailsCard                                                                                  |          1 |         20 |          0 |          2 |         22 |
+| components/NotesDisplay                                                                                   |          2 |        267 |         39 |         37 |        343 |
+| components/OrgDetailsGoalView                                                                             |          2 |         97 |         14 |         11 |        122 |
+| components/OrgGroupInfo                                                                                   |          2 |        148 |          9 |         13 |        170 |
+| components/OrgNotesModal                                                                                  |          2 |        120 |         17 |         18 |        155 |
+| components/OrgSellers                                                                                     |         13 |      1,307 |         96 |         89 |      1,492 |
+| components/PdfThumbnail                                                                                   |          1 |         42 |          0 |          6 |         48 |
+| components/ProtectedRoute                                                                                 |          1 |         20 |         15 |          8 |         43 |
+| components/RegisterForm                                                                                   |          1 |         80 |          0 |          6 |         86 |
+| components/RegisterPage                                                                                   |          1 |         17 |          1 |          6 |         24 |
+| components/SearchBar                                                                                      |          1 |         70 |          0 |          6 |         76 |
+| components/SellerPage                                                                                     |         11 |        684 |         42 |         63 |        789 |
+| components/StateSelector                                                                                  |          1 |        107 |          4 |          7 |        118 |
+| components/SuccessAlert                                                                                   |          2 |         78 |          5 |          9 |         92 |
+| components/TableGroupDetails                                                                              |          2 |         84 |          0 |          4 |         88 |
+| components/TableTaskDetails                                                                               |          2 |        157 |          0 |         14 |        171 |
+| components/TableTemplate                                                                                  |          1 |         52 |          2 |          2 |         56 |
+| components/TaskCard                                                                                       |          3 |        304 |         49 |         26 |        379 |
+| components/TaskList                                                                                       |          4 |        374 |         48 |         27 |        449 |
+| components/TaskTabs                                                                                       |          1 |        143 |         36 |         15 |        194 |
+| components/TemplateClass                                                                                  |          1 |         20 |          6 |          7 |         33 |
+| components/TemplateFunction                                                                               |          1 |         12 |          5 |          4 |         21 |
+| components/ToggleButton                                                                                   |          1 |         30 |          1 |          2 |         33 |
+| components/Typography                                                                                     |          1 |         26 |          0 |          4 |         30 |
+| components/UserMenu                                                                                       |          1 |        116 |          2 |          9 |        127 |
+| components/UserProfile                                                                                    |          1 |        201 |          7 |         14 |        222 |
+| components/UserTable                                                                                      |          2 |        106 |          1 |         12 |        119 |
+| components/UserTableRow                                                                                   |          2 |        197 |          1 |          9 |        207 |
+| components/Utils                                                                                          |          7 |        312 |         57 |         61 |        430 |
+| hooks                                                                                                     |          3 |         63 |          0 |         22 |         85 |
+| redux                                                                                                     |         59 |      2,956 |        125 |        401 |      3,482 |
+| redux (Files)                                                                                             |          1 |         15 |          8 |          6 |         29 |
+| redux/reducers                                                                                            |         30 |        355 |         18 |         49 |        422 |
+| redux/sagas                                                                                               |         28 |      2,586 |         99 |        346 |      3,031 |
++-----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                  | language       | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AccountMenu/AccountMenu.css                           | CSS            |          3 |          0 |          0 |          3 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AccountMenu/AccountMenu.jsx                           | JavaScript JSX |         87 |          4 |          5 |         96 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ActiveFundraiserItem/ActiveFundraiserItem.css         | CSS            |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ActiveFundraiserItem/ActiveFundraiserItem.jsx         | JavaScript JSX |        589 |         29 |          9 |        627 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddAccountModal/AddAccountModal.jsx                   | JavaScript JSX |        306 |         51 |         15 |        372 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddAccountModal/RadioButtons.jsx                      | JavaScript JSX |         31 |          1 |          5 |         37 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddAccountModal/StateFieldInput.jsx                   | JavaScript JSX |         27 |          0 |          7 |         34 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddAccountModal/WebsiteInput.jsx                      | JavaScript JSX |         31 |          2 |          6 |         39 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddBoxIcon/AddBoxIcon.jsx                             | JavaScript JSX |         11 |          0 |          2 |         13 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddFileButton/AddFileButton.jsx                       | JavaScript JSX |         23 |         45 |          3 |         71 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddGroupPopover/AddGroupPopover.css                   | CSS            |         14 |          0 |          3 |         17 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/AddGroupPopover/AddGroupPopover.jsx                   | JavaScript JSX |        127 |         32 |         11 |        170 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/App/App.css                                           | CSS            |         90 |         17 |         19 |        126 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/App/App.jsx                                           | JavaScript JSX |        203 |         38 |         30 |        271 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ArchivedOrganizationCard/ArchivedOrganizationCard.css | CSS            |        116 |          2 |         15 |        133 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ArchivedOrganizationCard/ArchivedOrganizationCard.jsx | JavaScript JSX |        180 |          7 |         18 |        205 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ArchivedOrganizations/ArchivedOrganizations.css       | CSS            |          7 |          0 |          1 |          8 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ArchivedOrganizations/ArchivedOrganizations.jsx       | JavaScript JSX |        157 |          6 |          9 |        172 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Buttons/BackButton.jsx                                | JavaScript JSX |         16 |          2 |          3 |         21 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Buttons/CloseButton.jsx                               | JavaScript JSX |         12 |          1 |          2 |         15 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Buttons/FloatingActionButton.jsx                      | JavaScript JSX |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/CheckoutPage.jsx                         | JavaScript JSX |        226 |         21 |         18 |        265 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/CustomerInfoForm.jsx                     | JavaScript JSX |         74 |         14 |          2 |         90 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/NewOrderButton.jsx                       | JavaScript JSX |         15 |          0 |          4 |         19 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/OrderComplete.jsx                        | JavaScript JSX |         32 |          0 |          3 |         35 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/OrderPage.jsx                            | JavaScript JSX |        166 |         22 |         20 |        208 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/OrderSummaryDisplay.jsx                  | JavaScript JSX |         40 |          5 |          3 |         48 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/OrderSummaryTable.jsx                    | JavaScript JSX |        154 |         10 |         12 |        176 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/OrderTable.jsx                           | JavaScript JSX |        174 |          5 |         14 |        193 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/PayPalButtons.jsx                        | JavaScript JSX |        102 |         13 |         13 |        128 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/ShoppingCart.jsx                         | JavaScript JSX |        183 |         20 |         13 |        216 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/TotalUpdate.jsx                          | JavaScript JSX |         25 |          0 |          5 |         30 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CheckoutPage/checkoutStyles.js                        | JavaScript     |          4 |          0 |          1 |          5 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ClosedFundraiserItem/ClosedFundraiserItem.css         | CSS            |         10 |          0 |          0 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ClosedFundraiserItem/ClosedFundraiserItem.jsx         | JavaScript JSX |        161 |          6 |          2 |        169 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CommentDisplay/CommentDisplay.jsx                     | JavaScript JSX |         69 |         17 |          4 |         90 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ConsumerCouponView/ConsumerCouponView.jsx             | JavaScript JSX |         32 |         19 |          3 |         54 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ConsumerCouponView/CouponCard.jsx                     | JavaScript JSX |         62 |          2 |          8 |         72 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ContactDetails/ContactDetails.jsx                     | JavaScript JSX |        112 |          9 |          8 |        129 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ContactDetails/ContactDetailsCard.jsx                 | JavaScript JSX |         57 |          2 |          6 |         65 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ContactDetails/MerchantContactDetails.jsx             | JavaScript JSX |        108 |          7 |         12 |        127 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ContactDetails/OrgContactDetails.css                  | CSS            |         59 |          9 |         13 |         81 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ContactDetailsList/ContactDetailsList.jsx             | JavaScript JSX |         73 |         16 |          2 |         91 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ContactEdit/ContactEdit.css                           | CSS            |          3 |          0 |          1 |          4 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ContactEdit/ContactEdit.jsx                           | JavaScript JSX |        248 |         34 |         16 |        298 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponLocations/CouponLocations.jsx                   | JavaScript JSX |         67 |          2 |          5 |         74 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewCard/AddNewCouponModal.jsx                | JavaScript JSX |        252 |         38 |         21 |        311 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewCard/AllLocationsButton.jsx               | JavaScript JSX |         22 |          0 |          5 |         27 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewCard/CouponReviewCard.jsx                 | JavaScript JSX |        156 |         30 |         19 |        205 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewCard/SelectMenu.jsx                       | JavaScript JSX |         75 |          4 |          6 |         85 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/CommentInput.jsx                  | JavaScript JSX |        105 |          7 |         15 |        127 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/CouponReviewButtons.jsx           | JavaScript JSX |         96 |         31 |         14 |        141 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/CouponReviewComments.jsx          | JavaScript JSX |         71 |          6 |          8 |         85 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/CouponReviewDetails.css           | CSS            |          3 |          0 |          0 |          3 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/CouponReviewDetails.jsx           | JavaScript JSX |        364 |         49 |         29 |        442 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/FilePreview.jsx                   | JavaScript JSX |        116 |          2 |          9 |        127 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/PdfList.jsx                       | JavaScript JSX |         24 |          1 |          5 |         30 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/UploadFileButton.jsx              | JavaScript JSX |         38 |          2 |          6 |         46 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponReviewDetails/useFileInput.jsx                  | JavaScript JSX |         15 |          0 |          6 |         21 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CouponStatusDropdown/CouponStatusDropdown.jsx         | JavaScript JSX |         57 |          3 |          7 |         67 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/CustomButton/CustomButton.jsx                         | JavaScript JSX |         25 |          0 |          2 |         27 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/DatePicker/DatePicker.jsx                             | JavaScript JSX |         29 |          3 |          4 |         36 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/DenyProofModal/DenyProofForm.jsx                      | JavaScript JSX |         63 |          3 |          4 |         70 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/DenyProofModal/DenyProofModal.jsx                     | JavaScript JSX |         30 |          2 |          5 |         37 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Details/Details.css                                   | CSS            |         49 |          5 |         10 |         64 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Details/Details.jsx                                   | JavaScript JSX |        262 |         63 |         26 |        351 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Details/OrgAdminInfo.jsx                              | JavaScript JSX |         17 |         25 |          2 |         44 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Details/styleDetails.js                               | JavaScript     |          3 |          0 |          1 |          4 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/DetailsEdit/DetailsEdit.jsx                           | JavaScript JSX |        198 |         15 |         14 |        227 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/DetailsTaskView/DetailsTaskView.css                   | CSS            |         13 |          1 |          3 |         17 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/DetailsTaskView/DetailsTaskView.jsx                   | JavaScript JSX |         71 |         12 |          7 |         90 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/EditAccountModal/EditAccountModal.jsx                 | JavaScript JSX |        199 |         33 |         11 |        243 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Footer/Footer.css                                     | CSS            |         50 |          3 |         10 |         63 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Footer/Footer.jsx                                     | JavaScript JSX |         25 |          0 |          3 |         28 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Footer2/Footer2.jsx                                   | JavaScript JSX |         82 |          4 |          6 |         92 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Footer3/Footer3.jsx                                   | JavaScript JSX |         47 |          3 |          3 |         53 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/GlobalFundraiserInput/GlobalFundraiserInput.jsx       | JavaScript JSX |        392 |          3 |         11 |        406 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/GroupDetails/GroupDetails.css                         | CSS            |          6 |          0 |          1 |          7 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/GroupDetails/GroupDetails.jsx                         | JavaScript JSX |        244 |         14 |         11 |        269 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/GroupDetailsCard/GroupDetailsCard.jsx                 | JavaScript JSX |        387 |          9 |          8 |        404 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Header/Header.css                                     | CSS            |          4 |          0 |          0 |          4 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Header/Header.jsx                                     | JavaScript JSX |         51 |         39 |          4 |         94 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/HomePage/HomePage.css                                 | CSS            |         13 |          1 |          2 |         16 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/HomePage/HomePage.jsx                                 | JavaScript JSX |        225 |         55 |         24 |        304 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ImageRender/ImageRender.jsx                           | JavaScript JSX |         14 |          0 |          4 |         18 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LandingPage/LandingPage.css                           | CSS            |         61 |          5 |         15 |         81 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LandingPage/LandingPage.jsx                           | JavaScript JSX |         61 |          2 |          9 |         72 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LinksSocial/LinksSocial.css                           | CSS            |         18 |          0 |          3 |         21 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LinksSocial/LinksSocial.jsx                           | JavaScript JSX |         40 |          0 |          2 |         42 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ListView/ListView.css                                 | CSS            |        111 |          4 |         16 |        131 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ListView/ListView.jsx                                 | JavaScript JSX |        234 |         26 |         24 |        284 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LocationsCard/ActionsSpeedDial.jsx                    | JavaScript JSX |         78 |          5 |          7 |         90 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LocationsCard/AddLocationModal.jsx                    | JavaScript JSX |        207 |         23 |         17 |        247 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LocationsCard/LocationsCard.jsx                       | JavaScript JSX |        107 |         14 |         10 |        131 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LocationsCard/LocationsCardTable.jsx                  | JavaScript JSX |         68 |          4 |          4 |         76 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LoginForm/LoginForm.jsx                               | JavaScript JSX |         82 |          2 |          7 |         91 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LoginPage/LoginPage.jsx                               | JavaScript JSX |         36 |          1 |          5 |         42 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LogoPSG/LogoPSG.css                                   | CSS            |          8 |          5 |          2 |         15 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/LogoPSG/LogoPSG.jsx                                   | JavaScript JSX |          8 |          0 |          2 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/MenuLinks/MenuLinks.jsx                               | JavaScript JSX |        108 |          4 |         13 |        125 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Modals/ModalButtons.jsx                               | JavaScript JSX |         41 |          1 |          4 |         46 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Modals/ModalTemplate.jsx                              | JavaScript JSX |         45 |          0 |          4 |         49 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/NavLinks/NavLinks.css                                 | CSS            |         24 |          0 |          5 |         29 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/NavLinks/NavLinks.jsx                                 | JavaScript JSX |        128 |         18 |         10 |        156 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/NewTaskModal/NewTaskModal.jsx                         | JavaScript JSX |        291 |         51 |         30 |        372 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/NewTaskModal/SearchableSelect.jsx                     | JavaScript JSX |         69 |         29 |          7 |        105 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/NoDetailsCard/NoDetailsCard.jsx                       | JavaScript JSX |         20 |          0 |          2 |         22 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/NotesDisplay/NotesDisplay.css                         | CSS            |         50 |          6 |         11 |         67 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/NotesDisplay/NotesDisplay.jsx                         | JavaScript JSX |        217 |         33 |         26 |        276 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgDetailsGoalView/OrgDetailsGoalView.css             | CSS            |         25 |          3 |          5 |         33 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgDetailsGoalView/OrgDetailsGoalView.jsx             | JavaScript JSX |         72 |         11 |          6 |         89 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgGroupInfo/OrgGroupInfo.css                         | CSS            |         43 |          1 |          7 |         51 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgGroupInfo/OrgGroupInfo.jsx                         | JavaScript JSX |        105 |          8 |          6 |        119 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgNotesModal/OrgNotesModal.css                       | CSS            |         17 |          2 |          4 |         23 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgNotesModal/OrgNotesModal.jsx                       | JavaScript JSX |        103 |         15 |         14 |        132 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/ActionButton.jsx                           | JavaScript JSX |         38 |          1 |          3 |         42 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/ActionIcons.jsx                            | JavaScript JSX |         42 |          0 |          5 |         47 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/BooksSoldForm.jsx                          | JavaScript JSX |         80 |          2 |          8 |         90 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/CopySnackbar.jsx                           | JavaScript JSX |         34 |          0 |          5 |         39 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/OrgSellers.jsx                             | JavaScript JSX |          8 |          0 |          2 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/SellerForm.jsx                             | JavaScript JSX |        416 |         18 |         20 |        454 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/SellerFormHeader.jsx                       | JavaScript JSX |         27 |          0 |          2 |         29 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/SellersTable.jsx                           | JavaScript JSX |        410 |         60 |         27 |        497 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/SellersTableHeader.jsx                     | JavaScript JSX |         15 |          8 |          2 |         25 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/UrlLinkTypography.jsx                      | JavaScript JSX |         14 |          0 |          2 |         16 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/UrlTableView.jsx                           | JavaScript JSX |         53 |          0 |          3 |         56 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/ViewUrl.jsx                                | JavaScript JSX |         75 |          4 |          9 |         88 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/OrgSellers/sellerTableColumns.js                      | JavaScript     |         95 |          3 |          1 |         99 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/PdfThumbnail/PdfThumbnail.jsx                         | JavaScript JSX |         42 |          0 |          6 |         48 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ProtectedRoute/ProtectedRoute.jsx                     | JavaScript JSX |         20 |         15 |          8 |         43 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/RegisterForm/RegisterForm.jsx                         | JavaScript JSX |         80 |          0 |          6 |         86 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/RegisterPage/RegisterPage.jsx                         | JavaScript JSX |         17 |          1 |          6 |         24 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SearchBar/SearchBar.jsx                               | JavaScript JSX |         70 |          0 |          6 |         76 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/CashUpdateModal.jsx                        | JavaScript JSX |        174 |          0 |         12 |        186 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/CustomerNameInfo.jsx                       | JavaScript JSX |        123 |         20 |         10 |        153 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/OrgDetailsSection.jsx                      | JavaScript JSX |         34 |          0 |          3 |         37 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/PaymentMenu.jsx                            | JavaScript JSX |         36 |          0 |          4 |         40 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/RefIdDisplay.jsx                           | JavaScript JSX |          8 |          0 |          1 |          9 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/SellerLandingPage.jsx                      | JavaScript JSX |         63 |          4 |          8 |         75 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/SellerLink.jsx                             | JavaScript JSX |         13 |          0 |          4 |         17 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/SellerPage.jsx                             | JavaScript JSX |        105 |          2 |          7 |        114 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/SellerPageTable.jsx                        | JavaScript JSX |         83 |          2 |          4 |         89 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/UrlDisplay.jsx                             | JavaScript JSX |         39 |          4 |          5 |         48 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SellerPage/sellerUtils.js                             | JavaScript     |          6 |         10 |          5 |         21 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/StateSelector/StateSelector.jsx                       | JavaScript JSX |        107 |          4 |          7 |        118 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SuccessAlert/SuccessAlert.jsx                         | JavaScript JSX |         66 |          2 |          4 |         72 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/SuccessAlert/useAlert.js                              | JavaScript     |         12 |          3 |          5 |         20 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TableGroupDetails/TableGroupDetails.css               | CSS            |          8 |          0 |          2 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TableGroupDetails/TableGroupDetails.jsx               | JavaScript JSX |         76 |          0 |          2 |         78 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TableTaskDetails/TableTaskDetails.css                 | CSS            |          3 |          0 |          0 |          3 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TableTaskDetails/TableTaskDetails.jsx                 | JavaScript JSX |        154 |          0 |         14 |        168 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TableTemplate/TableTemplate.jsx                       | JavaScript JSX |         52 |          2 |          2 |         56 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskCard/TaskCard.css                                 | CSS            |          4 |          0 |          1 |          5 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskCard/TaskCard.jsx                                 | JavaScript JSX |        253 |         48 |         18 |        319 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskCard/TaskDropdown.jsx                             | JavaScript JSX |         47 |          1 |          7 |         55 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskList/TaskList.css                                 | CSS            |          6 |          0 |          0 |          6 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskList/TaskList.jsx                                 | JavaScript JSX |        101 |          7 |         10 |        118 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskList/TaskListMerchant.jsx                         | JavaScript JSX |        136 |         17 |          9 |        162 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskList/TaskListOrg.jsx                              | JavaScript JSX |        131 |         24 |          8 |        163 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TaskTabs/TaskTabs.jsx                                 | JavaScript JSX |        143 |         36 |         15 |        194 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TemplateClass/TemplateClass.jsx                       | JavaScript JSX |         20 |          6 |          7 |         33 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/TemplateFunction/TemplateFunction.jsx                 | JavaScript JSX |         12 |          5 |          4 |         21 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/ToggleButton/ToggleButton.jsx                         | JavaScript JSX |         30 |          1 |          2 |         33 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Typography/Typography.jsx                             | JavaScript JSX |         26 |          0 |          4 |         30 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/UserMenu/UserMenu.jsx                                 | JavaScript JSX |        116 |          2 |          9 |        127 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/UserProfile/UserProfile.jsx                           | JavaScript JSX |        201 |          7 |         14 |        222 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/UserTable/UserTable.css                               | CSS            |         15 |          0 |          5 |         20 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/UserTable/UserTable.jsx                               | JavaScript JSX |         91 |          1 |          7 |         99 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/UserTableRow/UserTableRow.css                         | CSS            |         14 |          0 |          3 |         17 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/UserTableRow/UserTableRow.jsx                         | JavaScript JSX |        183 |          1 |          6 |        190 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Utils/colors.js                                       | JavaScript     |         30 |         10 |         13 |         53 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Utils/helpers.js                                      | JavaScript     |        115 |         38 |         26 |        179 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Utils/modalStyles.js                                  | JavaScript     |         11 |          0 |          3 |         14 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Utils/pageStyles.js                                   | JavaScript     |         34 |          0 |          8 |         42 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Utils/sweetAlerts.js                                  | JavaScript     |         95 |          8 |          5 |        108 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Utils/toasts.js                                       | JavaScript     |         18 |          1 |          2 |         21 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/components/Utils/useCaseType.js                                  | JavaScript     |          9 |          0 |          4 |         13 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/hooks/reduxStore.js                                              | JavaScript     |         55 |          0 |         19 |         74 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/hooks/useDispatch.js                                             | JavaScript     |          4 |          0 |          1 |          5 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/hooks/useHistory.js                                              | JavaScript     |          4 |          0 |          2 |          6 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/index.js                                                         | JavaScript     |         13 |          0 |          5 |         18 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/_root.reducer.js                                  | JavaScript     |         58 |          1 |          4 |         63 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/allGroups.reducer.js                              | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/allUsers.reducer.js                               | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/archivedOrganizations.reducer.js                  | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/auth.reducer.js                                   | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/coupon.reducer.js                                 | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/couponBook.reducer.js                             | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/couponPDF.reducer.js                              | JavaScript     |         11 |          0 |          2 |         13 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/customers.reducer.js                              | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/errors.reducer.js                                 | JavaScript     |         31 |          7 |          4 |         42 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/fundraisers.reducer.js                            | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/group.reducer.js                                  | JavaScript     |          9 |          2 |          0 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/groupAdmin.reducer.js                             | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/locations.reducer.js                              | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/merchantComments.reducer.js                       | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/merchantDetails.reducer.js                        | JavaScript     |         14 |          4 |          2 |         20 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/merchantNotes.reducer.js                          | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/merchantTask.reducer.js                           | JavaScript     |         14 |          2 |          2 |         18 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/merchants.reducer.js                              | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/merchantsCoupon.reducer.js                        | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/orgDetails.reducer.js                             | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/orgFundraiser.js                                  | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/orgGroups.reducer.js                              | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/orgNotes.reducer.js                               | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/organizationTask.reducer.js                       | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/organizations.reducer.js                          | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/roles.reducer.js                                  | JavaScript     |          9 |          0 |          1 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/sellerPage.reducer.js                             | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/sellers.reducer.js                                | JavaScript     |          9 |          0 |          2 |         11 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/reducers/user.reducer.js                                   | JavaScript     |         11 |          2 |          2 |         15 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/_root.saga.js                                        | JavaScript     |         53 |          6 |          4 |         63 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/actions.js                                           | JavaScript     |          8 |          0 |          2 |         10 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/allGroups.saga.js                                    | JavaScript     |         27 |          0 |          8 |         35 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/allTasks.saga.js                                     | JavaScript     |         28 |          1 |          5 |         34 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/allUsers.saga.js                                     | JavaScript     |         39 |          0 |          8 |         47 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/archivedOrganizations.saga.js                        | JavaScript     |        122 |          0 |         12 |        134 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/coupon.saga.js                                       | JavaScript     |        196 |         10 |         41 |        247 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/couponBook.saga.js                                   | JavaScript     |         38 |          0 |          6 |         44 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/customers.saga.js                                    | JavaScript     |         26 |          0 |          5 |         31 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/fundraiser.saga.js                                   | JavaScript     |        349 |          8 |         26 |        383 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/group.saga.js                                        | JavaScript     |        138 |          6 |         16 |        160 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/groupAdmin.saga.js                                   | JavaScript     |         14 |          0 |          4 |         18 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/locations.saga.js                                    | JavaScript     |         76 |          1 |          8 |         85 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/login.saga.js                                        | JavaScript     |         48 |         22 |         16 |         86 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/merchantComments.saga.js                             | JavaScript     |         88 |          0 |         11 |         99 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/merchantNotes.saga.js                                | JavaScript     |         93 |          1 |         13 |        107 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/merchantTask.saga.js                                 | JavaScript     |        190 |          0 |         20 |        210 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/merchants.saga.js                                    | JavaScript     |        199 |         28 |         27 |        254 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/orgDetails.saga.js                                   | JavaScript     |        103 |          0 |         14 |        117 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/orgNotes.saga.js                                     | JavaScript     |        127 |          0 |         16 |        143 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/organizationTask.saga.js                             | JavaScript     |        190 |          0 |         20 |        210 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/organizations.saga.js                                | JavaScript     |        234 |          2 |         20 |        256 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/registration.saga.js                                 | JavaScript     |         17 |          6 |          7 |         30 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/roles_pbac.saga.js                                   | JavaScript     |         23 |          0 |          6 |         29 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/sellerPage.saga.js                                   | JavaScript     |         57 |          0 |          9 |         66 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/sellers.saga.js                                      | JavaScript     |         60 |          0 |          9 |         69 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/transactions.saga.js                                 | JavaScript     |         16 |          0 |          4 |         20 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/sagas/user.saga.js                                         | JavaScript     |         27 |          8 |          9 |         44 |
+| /Users/jcolago/EDA/Tier3/testing-psg/src/redux/store.js                                                   | JavaScript     |         15 |          8 |          6 |         29 |
+| Total                                                                                                     |                |     18,245 |      1,712 |      1,795 |     21,752 |
++-----------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
