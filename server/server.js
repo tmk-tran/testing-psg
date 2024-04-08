@@ -102,11 +102,11 @@ app.use("/api/coupon", couponRouter);
 // const locationsRouter = require("./routes/locations.router");
 // const sellersRouter = require("./routes/sellers.router");
 // const sellerPageRouter = require("./routes/sellerPage.router");
-// const customersRouter = require("./routes/customers.router");
-// const transactionsRouter = require("./routes/transactions.router");
-// const redemptionRouter = require("./routes/couponRedemption.router");
-// const paypalRouter = require("./routes/paypal.router");
-// const userCouponRouter = require("./routes/userCoupon.router");
+const customersRouter = require("./routes/customers.router");
+const transactionsRouter = require("./routes/transactions.router");
+const redemptionRouter = require("./routes/couponRedemption.router");
+const paypalRouter = require("./routes/paypal.router");
+const userCouponRouter = require("./routes/userCoupon.router");
 
 // // Add this middleware to set the CORS headers
 // app.use((req, res, next) => {
@@ -164,11 +164,11 @@ app.use(
 // app.use("/api/locations", locationsRouter);
 // app.use("/api/sellers", sellersRouter);
 // app.use("/api/seller", sellerPageRouter);
-// app.use("/api/customers", customersRouter);
-// app.use("/api/transactions", transactionsRouter);
-// app.use("/api/redeem", redemptionRouter);
-// app.use("/api/paypal", paypalRouter);
-// app.use("/api/userCoupon", userCouponRouter);
+app.use("/api/customers", customersRouter);
+app.use("/api/transactions", transactionsRouter);
+app.use("/api/redeem", redemptionRouter);
+app.use("/api/paypal", paypalRouter);
+app.use("/api/userCoupon", userCouponRouter);
 
 // Serve static files //
 app.use(express.static("build"));

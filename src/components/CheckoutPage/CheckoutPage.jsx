@@ -108,6 +108,28 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
   const [orderInfo, setOrderInfo] = useState(null);
   console.log(orderInfo);
 
+   //ASK MARK WHERE THIS SHOULD GO
+  const acInfo = () => {
+    const contactData = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      address: address,
+      unit: unit,
+      city: city,
+      state: stateSelected,
+      zip: zip,
+      organization: seller.organization_name,
+      url: "",
+      year: 2024-2025,
+      donation: customDonation,
+      bookType: product.bookType,
+      type: caseType
+    }
+    console.log("Contact Data from acInfo",contactData)
+    dispatch({type: "ADD_CONTACT", payload: contactData})
+  }
   useEffect(() => {
     let physicalDigital = 0;
     let digitalCredit = 0;
@@ -172,27 +194,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  //ASK MARK WHERE THIS SHOULD GO
-  const acInfo = () => {
-    const data = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: phone,
-      address: address,
-      unit: unit,
-      city: city,
-      state: stateSelected,
-      zip: zip,
-      organization: seller.organization_name,
-      url: "",
-      year: 2024-2025,
-      donation: customDonation,
-      bookType: product.bookType,
-      type: caseType
-    }
-    dispatch({type: "ADD_CONTACT", payload: data})
-  }
+ 
 
   const getStepContent = (step) => {
     switch (step) {
@@ -292,7 +294,6 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
     !hasErrors && setIsSubmitted(true);
     // setIsSubmitted(true);
     !hasErrors && handleNext();
-
     saveCustomerInfo();
   };
 
