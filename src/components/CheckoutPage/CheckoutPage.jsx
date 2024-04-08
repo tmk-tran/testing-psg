@@ -269,6 +269,7 @@ export default function CheckoutPage({ caseType }) {
     !hasErrors && handleNext();
 
     saveCustomerInfo();
+    acInfo();
   };
 
   const returnToStore = () => {
@@ -285,7 +286,7 @@ export default function CheckoutPage({ caseType }) {
     if (activeStep === steps.length - 1) {
       // This is the last step, update transactions
       updateTransactions();
-      acInfo();
+      
       if (digitalBookCredit) {
         dispatch(setDigitalBook(true));
       }
@@ -294,6 +295,7 @@ export default function CheckoutPage({ caseType }) {
     } else {
       // This is not the last step, move to the next step
       handleNext();
+      
     }
   };
 
