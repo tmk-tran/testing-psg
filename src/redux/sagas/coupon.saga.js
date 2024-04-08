@@ -78,7 +78,7 @@ function* couponFiles(action) {
 }
 
 function* pdfFile(action) {
-  console.log(action);
+  console.log(action.payload);
   const merchantId = action.payload;
   console.log(merchantId);
 

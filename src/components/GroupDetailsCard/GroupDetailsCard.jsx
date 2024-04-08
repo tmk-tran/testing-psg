@@ -23,6 +23,7 @@ export default function GroupDetailsCard({ group }) {
   //Instanciates history and dispatch for use in the component
   const history = useHistory();
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth)
   //Selector for the coupon books. Used to grab the year of the coupon book in the dropdown menu
   const couponBooks = useSelector((store) => store.couponBooks);
   console.log(couponBooks);
@@ -44,7 +45,7 @@ export default function GroupDetailsCard({ group }) {
   const [couponBookId, setCouponBookId] = useState("");
 
   useEffect(() => {
-    dispatch({ type: "FETCH_COUPON_BOOKS" });
+    dispatch({ type: "FETCH_COUPON_BOOKS", payload: auth });
   }, []);
 
   //Function that runs on click of the submit button in add fundraiser form. This creates a new objcet that is sent to the back end to be added to the database and resets the state of the inputs in the form and closes the modal. Also fires sweetalert to let user know that the fundraiser has been added.
@@ -70,7 +71,7 @@ export default function GroupDetailsCard({ group }) {
       "Your fundraiser has been created!",
       "success"
     );
-    dispatch({ type: "ADD_FUNDRAISER", payload: newFundraiser });
+    dispatch({ type: "ADD_FUNDRAISER", payload: {newFundraiser: newFundraiser, auth: auth} });
     setTitle("");
     setDescription("");
     setBooksRequested("");

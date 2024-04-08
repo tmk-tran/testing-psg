@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Card, CardContent, Typography } from "@mui/material";
 import "./ListView.css";
@@ -25,16 +25,21 @@ function ListView({
   numCoupons,
 }) {
   console.log(data);
-  console.log(data.organization_logo_base64);
-  console.log(data.merchant_logo_base64);
+  // console.log(data.organization_logo_base64);
+  // console.log(data.merchant_logo_base64);
   console.log(isMerchantList);
-  console.log(numCoupons);
+  // console.log(numCoupons);
+  console.log(numCoupons)
   const user = User() || {};
   console.log(user);
   const history = useHistory();
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
+  const aggs = useSelector((store) => store.organizations.
+    aggs);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   console.log(editComplete);
+  console.log(aggs)
 
   const handleEdit = () => {
     setEditModalOpen(true);
@@ -53,10 +58,10 @@ function ListView({
         <div className="initialsContainer">
           {data.organization_name
             ? data.organization_name
-                .split(" ")
-                .map((word) => word[0])
-                .join("")
-                .toUpperCase()
+              .split(" ")
+              .map((word) => word[0])
+              .join("")
+              .toUpperCase()
             : null}
         </div>
       )
@@ -67,11 +72,10 @@ function ListView({
     );
   };
 
-  const handleArchive = (dataId) => {
+  const handleArchive = (data) => {
     Swal.fire({
-      title: `Are you sure you want to Archive this ${
-        isMerchantList ? "Merchant" : "Organization"
-      }?`,
+      title: `Are you sure you want to Archive this ${isMerchantList ? "Merchant" : "Organization"
+        }?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: backgroundColor.color,
@@ -96,19 +100,48 @@ function ListView({
             const archiveReason = reasonResult.value;
             console.log(archiveReason);
 
+            const archivedOrg = {
+              id: data.id,
+              name: data.organization_name,
+              type: data.type,
+              address: data.address,
+              city: data.city,
+              state: data.state,
+              zip: data.zip,
+              primary_contact_first_name: data.primary_contact_first_name,
+              primary_contact_last_name: data.primary_contact_last_name,
+              primary_contact_phone: Number(data.primary_contact_phone),
+              primary_contact_email: data.primary_contact_email,
+              is_deleted: true
+            }
+
+            const archivedMerchant = {
+              id: data.id,
+              merchant_name: data.merchant_name,
+              address: data.address,
+              city: data.city,
+              state: data.state,
+              zip: data.zip,
+              primary_contact_first_name: data.primary_contact_first_name,
+              primary_contact_last_name: data.primary_contact_last_name,
+              contact_phone_number: data.contact_phone,
+              contact_email: data.contact_email,
+              is_deleted: true,
+              archive_reason: archiveReason
+            }
+
             dispatch({
               type: `DELETE_${isMerchantList ? "MERCHANT" : "ORGANIZATION"}`,
-              payload: isMerchantList ? { dataId, archiveReason } : { dataId },
+              payload: isMerchantList ? { archivedMerchant: archivedMerchant, auth: auth } : { archivedOrg: archivedOrg, auth: auth },
             });
 
             dispatch({
-              type: `FETCH_${isMerchantList ? "MERCHANTS" : "ORGANIZATIONS"}`,
+              type: `FETCH_${isMerchantList ? "MERCHANTS" : "ORGANIZATIONS"}`, payload: auth
             });
             Swal.fire({
               icon: "success",
-              title: `${
-                isMerchantList ? "Merchant" : "Organization"
-              } Successfully Archived!`,
+              title: `${isMerchantList ? "Merchant" : "Organization"
+                } Successfully Archived!`,
             });
           }
         });
@@ -124,17 +157,44 @@ function ListView({
     );
   }
 
-  const totalOrgEarnings =
-    data.total_org_earnings !== undefined
-      ? parseFloat(data.total_org_earnings)
-      : 0;
+  // formats the money amount to have a comma over $1000
+  const totalOrgEarnings = parseFloat(data.total_org_earnings);
   const formattedEarnings = totalOrgEarnings.toLocaleString();
 
-  const totalCheckedOutBooks = data.total_checked_out_books;
-  const totalCheckedInBooks = data.total_checked_in_books;
-  const totalBooksSold = data.total_books_sold;
+  // variables for the book amounts to be able to do the quick math here
+  const totalCheckedOutBooks = aggs.total_books_checked_out;
+  const totalCheckedInBooks = aggs.total_books_checked_in;
+  const totalBooksSold = aggs.total_books_sold;
   const totalStandingBooks =
     totalCheckedOutBooks - totalCheckedInBooks - totalBooksSold;
+  console.log(totalCheckedOutBooks)
+
+
+  function calculateBooksDifference(checkedOut, checkedIn, sold) {
+    const result = [];
+
+    for (const bookCheckedOut of checkedOut) {
+      for (const bookCheckedIn of checkedIn) {
+        for (const bookSold of sold) {
+          if (bookCheckedOut.group_organization_id === bookCheckedIn.group_organization_id &&
+            bookCheckedOut.group_organization_id === bookSold.group_organization_id) {
+
+            const difference = bookCheckedOut.sum - bookCheckedIn.sum - bookSold.sum;
+            result.push({
+              group_organization_id: bookCheckedOut.group_organization_id,
+              difference: difference
+            });
+
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  const result = calculateBooksDifference(totalCheckedOutBooks, totalCheckedInBooks, totalBooksSold);
+
 
   return (
     <>
@@ -157,58 +217,81 @@ function ListView({
 
                 {!isMerchantList ? (
                   <div style={{ display: "flex" }}>
-                    <div className="column">
-                      {/* ///////////////////////////////////////// */}
-                      {/* ///////////// ORG INFORMATION /////////// */}
-                      {/* ///////////////////////////////////////// */}
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        {!user.org_admin
-                          ? `Organization Fee: $${data.organization_earnings}`
-                          : null}
-                      </Typography>
+                    {aggs.total_books_sold.map((totalBooksSold) => {
+                      if (totalBooksSold.group_organization_id == data.id) {
+                        return (
+                          <>
+                            <div className="column">
+                              {/* ///////////////////////////////////////// */}
+                              {/* ///////////// ORG INFORMATION /////////// */}
+                              {/* ///////////////////////////////////////// */}
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
 
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Books Sold: {data.total_books_sold}
-                      </Typography>
+                              <Typography variant="body2">
+                                {!user.org_admin
+                                  ? `Organization Fee: $${data.organization_earnings}`
+                                  : null}
+                              </Typography>
 
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Organization Earnings: ${formattedEarnings}
-                      </Typography>
-                    </div>
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
+                              <Typography key={totalBooksSold.id} variant="body2">
+                                Total Books Sold: {totalBooksSold.sum}
+                              </Typography>
 
-                    <div className="column">
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Groups: {data.total_groups}
-                      </Typography>
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
+                              <Typography variant="body2">
+                                Organization Earnings: ${(data.organization_earnings * totalBooksSold.sum).toLocaleString()}
+                              </Typography>
+                            </div>
 
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Outstanding Books: {totalStandingBooks}
-                      </Typography>
+                            <div className="column">
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
+                              {aggs.total_groups.map((total_groups) => {
+                                if (total_groups.organization_id == data.id) {
+                                  return (
+                                    <Typography variant="body2">
+                                      Total Groups: {total_groups.count}
+                                    </Typography>
+                                  );
+                                }
+                              })}
+                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                              {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
+                              {result.map((totalStandingBooks) => {
+                                if (totalStandingBooks.group_organization_id == data.id) {
+                                  return (
+                                    <>
+                                      <Typography variant="body2">
+                                        Total Outstanding Books: {totalStandingBooks.difference}
+                                      </Typography>
 
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        {!user.org_admin
-                          ? `PSG Earnings: $${(
-                              data.total_books_sold * 25 -
-                              (data.total_org_earnings !== undefined
-                                ? parseFloat(data.total_org_earnings)
-                                : 0)
-                            ).toLocaleString()}`
-                          : null}
-                      </Typography>
-                    </div>
+                                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                                      {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
+                                      <Typography variant="body2">
+                                        {!user.org_admin
+                                          ? `PSG Earnings: ${(
+                                            (totalBooksSold.sum * 25) -
+                                            (data.organization_earnings * totalBooksSold.sum)
+                                          ).toLocaleString()}`
+                                          : null}
+                                      </Typography>
+                                    </>
+                                  )
+                                }
+                              })}
+                            </div>
+                          </>
+                        );
+
+
+                      }
+                    })}
                   </div>
+
                 ) : (
                   <div
                     style={{
@@ -221,7 +304,15 @@ function ListView({
                     {/* ///////////////////////////////////////////// */}
                     {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                     {/* ~~~~~~~~~~ Display Number of Coupons (active) ~~~~~~~~~~ */}
-                    <Typography>Coupon Count (Active): {numCoupons}</Typography>
+                    {numCoupons.map((count) => {
+                      if (count.merchant === data.id) {
+                        return (
+                          <>
+                            <Typography>Coupon Count (Active): {count.count}</Typography>
+                          </>
+                        );
+                      }
+                    })}
                   </div>
                 )}
               </div>
@@ -246,23 +337,26 @@ function ListView({
                 Edit
               </Button>
             )}
-
-            {data.total_active_fundraisers <= 0 && !isOrgAdmin && (
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleArchive(data.id);
-                }}
-              >
-                Archive
-              </Button>
-            )}
-
+            {aggs.total_open_fundraisers.map((total_active_fundraisers, index) => {
+              if (!isOrgAdmin) {
+                return (
+                  <Button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleArchive(data);
+                    }}
+                  >
+                    Archive
+                  </Button>
+                );
+              }
+            })}
             {isMerchantList && (
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleArchive(data.id);
+                  handleArchive(data);
                 }}
               >
                 Archive

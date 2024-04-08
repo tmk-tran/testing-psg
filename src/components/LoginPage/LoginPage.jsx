@@ -22,11 +22,12 @@ function LoginPage() {
           justifyContent: "center",
         }}
       >
+
         <Button
           style={{ textDecoration: "underline", textTransform: "none" }}
-          // onClick={() => {
-          //   history.push("/");
-          // }}
+          onClick={() => {
+            history.push("/recover");
+          }}
         >
           Forgot Password?
         </Button>

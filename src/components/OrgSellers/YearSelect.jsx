@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { allYears } from "../../hooks/reduxStore";
+import { useSelector } from "react-redux";
 
 export default function YearSelect({
   year,
@@ -20,6 +21,7 @@ export default function YearSelect({
   helperText,
 }) {
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   const [yearSelected, setYearSelected] = useState("");
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function YearSelect({
     }
 
     const dispatchAction = {
-      type: "FETCH_COUPON_BOOKS",
+      type: "FETCH_COUPON_BOOKS", payload: auth
     };
     dispatch(dispatchAction);
   }, []);

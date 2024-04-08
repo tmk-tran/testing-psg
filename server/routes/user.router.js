@@ -113,12 +113,13 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
 
   let queryText = `
           UPDATE "user" 
-          SET ${columnName} = $1 
-          WHERE id = $2;
+          SET ${columnName} = $1,
+          role_id = $2
+          WHERE id = $3;
           `;
 
   pool
-    .query(queryText, [value, userId])
+    .query(queryText, [value, role_id, userId])
     .then((response) => {
       res.sendStatus(200);
     })
@@ -134,8 +135,9 @@ router.put("/org/:id", rejectUnauthenticated, (req, res) => {
 
   const queryText = `
           UPDATE "user"
-          SET org_id = $1
-          WHERE id = $2;
+          SET org_id = $1,
+          role_id = $2,
+          WHERE id = $3;
       `;
 
   pool

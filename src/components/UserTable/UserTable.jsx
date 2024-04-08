@@ -15,10 +15,11 @@ import {
 
 function UserTable() {
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth)
   useEffect(() => {
-    dispatch({ type: "FETCH_GROUP_ADMIN" });
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
-    dispatch({ type: "FETCH_ALL_USERS" });
+    dispatch({ type: "FETCH_GROUP_ADMIN", payload: auth });
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
+    dispatch({ type: "FETCH_ALL_USERS", payload: auth });
   }, []);
 
   const user = useSelector((store) => store.user);

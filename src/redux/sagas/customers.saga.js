@@ -41,8 +41,9 @@ function* addCustomer(action) {
   }
 }
 
-export default function* merchantCommentsSaga() {
+export default function* customersSaga() {
   yield takeEvery("FETCH_CUSTOMERS", fetchCustomers);
   yield takeEvery("FETCH_CUSTOMER_EMAIL", fetchCustomerEmail);
   yield takeEvery("ADD_CUSTOMER", addCustomer);
+  yield takeEvery("FETCH_CUSTOMER_EMAIL", fetchCustomerEmail);
 }

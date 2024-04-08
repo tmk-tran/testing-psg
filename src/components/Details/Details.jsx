@@ -32,6 +32,7 @@ import {
   User,
 } from "../../hooks/reduxStore";
 import { useCaseType } from "../Utils/useCaseType";
+import { useSelector } from "react-redux";
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 export default function Details({
@@ -67,6 +68,7 @@ export default function Details({
     detailsOrg.length > 0 ? detailsOrg[0].organization_id : null;
   // Use organizationId, which will be null if detailsOrg is empty
   console.log(organizationId);
+  console.log(detailsOrg)
   const groups = oGroups();
   console.log(groups);
   const notes = isMerchantTaskPage ? mNotes() : oNotes();
@@ -82,13 +84,15 @@ export default function Details({
   console.log(groupAdded);
   const [locationAdded, setLocationAdded] = useState(false);
   console.log(locationAdded);
+  const auth = useSelector((store) => store.auth);
   const [noteAdded, setNoteAdded] = useState(false);
 
   useEffect(() => {
     console.log("Dispatching FETCH_ORG_DETAILS");
     dispatch({
       type: "FETCH_ORG_DETAILS",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     });
 
     // console.log("Dispatching FETCH_MERCHANT_DETAILS or FETCH_ORG_FUNDRAISERS");
@@ -96,7 +100,8 @@ export default function Details({
       type: isMerchantTaskPage
         ? "FETCH_MERCHANT_DETAILS"
         : "FETCH_ORG_FUNDRAISERS",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     };
     console.log(action);
     dispatch(action);
@@ -107,7 +112,8 @@ export default function Details({
     console.log("Dispatching:", actionType);
     dispatch({
       type: actionType,
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id,
+        auth: auth}
     });
 
     // Fetch locations if MerchantTaskPage is true
@@ -115,7 +121,8 @@ export default function Details({
       console.log("Dispatching FETCH_MERCHANT_LOCATION");
       dispatch({
         type: "FETCH_MERCHANT_LOCATION",
-        payload: paramsObject.id,
+        payload: {id: paramsObject.id,
+          auth: auth}
       });
     }
 
@@ -123,14 +130,15 @@ export default function Details({
       console.log("Dispatching FETCH_ORG_GROUPS");
       dispatch({
         type: "FETCH_ORG_GROUPS",
-        payload: paramsObject.id,
+        payload: {id: paramsObject.id,
+          auth: auth}
       });
     }
 
     console.log("Dispatching FETCH_ORGANIZATIONS");
     dispatch({
       type: "FETCH_ORGANIZATIONS",
-      payload: paramsObject.id,
+      payload: auth
     });
 
     setGroupAdded(false);
@@ -148,27 +156,27 @@ export default function Details({
   ]);
 
   // Create a map to store organization details and associated groups
-  const orgMap = new Map();
+  // const orgMap = new Map();
 
   // Populate the map with unique organizations and associated groups
-  detailsOrg.forEach((info) => {
-    const orgId = info.organization_id;
+  // detailsOrg.forEach((info) => {
+  //   const orgId = info.organization_id;
 
-    if (!orgMap.has(orgId)) {
-      orgMap.set(orgId, { orgDetails: info, groups: [] });
-    }
+  //   if (!orgMap.has(orgId)) {
+  //     orgMap.set(orgId, { orgDetails: info, groups: [] });
+  //   }
 
-    // Add group details to the associated organization
-    orgMap.get(orgId).groups.push({
-      group_id: info.group_id,
-      department: info.department,
-      sub_department: info.sub_department,
-      group_nickname: info.group_nickname,
-      group_photo: info.group_photo,
-      group_description: info.group_description,
-      goal: info.sum,
-    });
-  });
+  //   // Add group details to the associated organization
+  //   orgMap.get(orgId).groups.push({
+  //     group_id: info.group_id,
+  //     department: info.department,
+  //     sub_department: info.sub_department,
+  //     group_nickname: info.group_nickname,
+  //     group_photo: info.group_photo,
+  //     group_description: info.group_description,
+  //     goal: info.sum,
+  //   });
+  // });
 
   const handleAddGroup = () => {
     setGroupAdded(true);
@@ -200,8 +208,8 @@ export default function Details({
       {/* ~~~~~~~~~~~~~~~~~ Main Container ~~~~~~~~~~~~~~~~~~~ */}
       <div className="details-card" style={{ marginTop: 40 }}>
         <div className="detailsView-container">
-          {[...orgMap.values()].map(({ orgDetails, groups }) => (
-            <React.Fragment key={orgDetails.organization_id}>
+          {detailsOrg.map(( orgDetails ) => (
+            <React.Fragment key={orgDetails?.id}>
               {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
                 <NotesDisplay notes={notes} details={orgDetails} />
               )}
@@ -241,7 +249,7 @@ export default function Details({
                 ) : (
                   // <OrgContactDetails info={orgDetails} isMerchantTaskPage={isMerchantTaskPage} />
                   <ContactDetails
-                    info={orgDetails}
+                    info={detailsOrg}
                     isOrgAdminPage={isOrgAdminPage}
                   />
                 )}
@@ -259,7 +267,7 @@ export default function Details({
               {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
                 <>
                   <OrgDetailsGoalView
-                    info={orgDetails}
+                    info={detailsOrg}
                     groups={groups}
                     handleAddGroup={handleAddGroup}
                   />
@@ -270,7 +278,7 @@ export default function Details({
                       groups.some((group) => group.group_id !== null) ? (
                         groups.map((groupInfo, i) => (
                           <OrgGroupInfo
-                            key={groupInfo.group_id}
+                            key={groupInfo.id}
                             groupInfo={groupInfo}
                             groupNumber={i + 1}
                           />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import {
   useTheme,
@@ -43,7 +44,14 @@ export default function CheckoutPage({ caseType }) {
   const dispatch = dispatchHook();
   console.log(location.state);
   const paramsObject = useParams();
+  const auth = useSelector((store) => store.auth)
+  const seller = useSelector((store) => store.sellerByRefId)
   const refId = paramsObject.refId;
+useEffect(() =>{
+dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
+}, [])
+
+
   // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
   const orderTotal = location.state?.orderTotal ?? 0;
@@ -82,6 +90,28 @@ export default function CheckoutPage({ caseType }) {
   // ~~~~~~~~~~ Order Info ~~~~~~~~~~ //
   const [orderInfo, setOrderInfo] = useState(null);
 
+   //ASK MARK WHERE THIS SHOULD GO
+  const acInfo = () => {
+    const contactData = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      address: address,
+      unit: unit,
+      city: city,
+      state: stateSelected,
+      zip: zip,
+      organization: seller.organization_name,
+      url: "https://testpsg.fly.dev/#/fargo/coupon",
+      year: 2024-2025,
+      donation: customDonation,
+      bookType: product.bookType,
+      type: caseType
+    }
+    console.log("Contact Data from acInfo",contactData)
+    dispatch({type: "ADD_CONTACT", payload: contactData})
+  }
   useEffect(() => {
     let physicalDigital = 0;
     let digitalCredit = 0;
@@ -146,6 +176,8 @@ export default function CheckoutPage({ caseType }) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+ 
+
   const getStepContent = (step) => {
     switch (step) {
       case 0:
@@ -187,6 +219,7 @@ export default function CheckoutPage({ caseType }) {
               selectedProducts={selectedProducts}
               customDonation={customDonation}
               orderSuccess={handleOrderInfo}
+              submitContact={acInfo}
             />
           </Box>
         );
@@ -243,7 +276,6 @@ export default function CheckoutPage({ caseType }) {
     !hasErrors && setIsSubmitted(true);
     // setIsSubmitted(true);
     !hasErrors && handleNext();
-
     saveCustomerInfo();
   };
 

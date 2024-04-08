@@ -10,6 +10,7 @@ import { historyHook } from "../../hooks/useHistory";
 import OrgDetailsSection from "./OrgDetailsSection";
 import RefIdDisplay from "./RefIdDisplay";
 import PaymentMenu from "./PaymentMenu";
+import { useSelector } from "react-redux";
 
 const flexCenter = {
   display: "flex",
@@ -18,6 +19,7 @@ const flexCenter = {
 
 export default function SellerLandingPage() {
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth);
   const history = historyHook();
   const paramsObject = useParams();
   const theme = useTheme();
@@ -29,7 +31,7 @@ export default function SellerLandingPage() {
   console.log(paymentType);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: paramsObject.refId });
+    dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: {refId: paramsObject.refId, auth: auth} });
   }, []);
 
   const sellerData = sellerPageInfo() || [];

@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import errors from "./errors.reducer";
 import user from "./user.reducer";
-
+import auth from "./auth.reducer";
 import orgDetails from "./orgDetails.reducer";
 import organizations from "./organizations.reducer.js";
 import group from "./group.reducer";
@@ -26,8 +26,10 @@ import locations from "./locations.reducer";
 import sellers from "./sellers.reducer";
 import sellerPage from "./sellerPage.reducer";
 import customers from "./customers.reducer";
+import rolesReducer from "./roles.reducer";
 import paypal from "./paypal.reducer";
 import bookYear from "./bookYear.reducer";
+import sellerByRefId from "./sellerByRefId.reducer";
 import userTable from "./userTable.reducer";
 import userBooks from "./userCoupon.reducer.js";
 import digitalBook from "./digitalBook.reducer";
@@ -60,11 +62,14 @@ const rootReducer = combineReducers({
   sellers,
   sellerPage,
   customers,
+  auth,
+  rolesReducer,
   paypal,
   bookYear,
   userTable,
   userBooks,
   digitalBook,
+  sellerByRefId
 });
 
 export default rootReducer;

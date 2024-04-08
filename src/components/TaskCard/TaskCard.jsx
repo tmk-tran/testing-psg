@@ -33,6 +33,7 @@ import {
 import TaskDropdown from "./TaskDropdown";
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import AssignSelect from "./AssignSelect";
+import { useSelector } from "react-redux";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { flexCenter, flexRowSpace } from "../Utils/pageStyles";
 import TaskCardButtons from "./TaskCardButtons";
@@ -66,32 +67,32 @@ export default function TaskCard({
   onTaskUpdate,
   handleCaseTypeChange,
 }) {
-  console.log(id);
-  console.log(taskType);
-  const history = historyHook();
-  const dispatch = dispatchHook();
+  // console.log(id);
+  // console.log(taskType);
   const [selectedTask, setSelectedTask] = useState(null);
-  console.log(task);
-  console.log(task.id);
-  console.log(task.merchant_id);
-  console.log(task.organization_id);
+  // console.log(task);
+  // console.log(task.id);
+  // console.log(task.merchant_id);
+  // console.log(task.organization_id);
   const oId = task.organization_id;
   const mId = task.merchant_id;
-  console.log(mId);
-  console.log(oId);
-  console.log(index);
-  console.log(task.task_status);
+  // console.log(mId);
+  // console.log(oId);
+  // console.log(index);
+  // console.log(task.task_status);
   const complete = task.task_status;
-  console.log(complete);
+  // console.log(complete);
   const [completedTask, setCompletedTask] = useState(complete === "Complete");
-  console.log(completedTask);
+  // console.log(completedTask);
   const [assignedUser, setAssignedUser] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const dispatch = dispatchHook();  
   const [isDateEdit, setIsDateEdit] = useState(false);
   const [newDueDate, setNewDueDate] = useState("");
 
   console.log(assignedUser);
-
+  const auth = useSelector((store) => store.auth)
+  console.log(task)
   // Comments
   const merchantComments = mComments(mId) || [];
   console.log(merchantComments);
@@ -126,12 +127,16 @@ export default function TaskCard({
     console.log(task.id);
     console.log(selectedTask);
 
+    
     const dispatchAction = {
       type: updateActionType,
-      payload: {
+      payload: { updatedTask: {
         id: task.id,
         task: task.task,
-        task_status: selectedTask,
+        assign: task.assign,
+        due_date: task.due_date,
+        task_status: selectedTask},
+        auth: auth,
       },
     };
     console.log(dispatchAction);
@@ -156,6 +161,7 @@ export default function TaskCard({
       type: archiveActionType,
       payload: {
         id: task.id,
+        auth: auth
       },
     });
     onTaskUpdate();

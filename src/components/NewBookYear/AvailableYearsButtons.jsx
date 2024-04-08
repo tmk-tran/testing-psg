@@ -13,16 +13,18 @@ import { allYears } from "../../hooks/reduxStore";
 import { centeredStyle } from "../Utils/pageStyles";
 import ConfirmNewYearModal from "./ConfirmNewYearModal";
 import { highlightColor } from "../Utils/colors";
+import { useSelector } from "react-redux";
 
 const AvailableYearsButtons = ({ activeYear }) => {
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   const [yearSelected, setYearSelected] = useState(null);
   const [selectedYearId, setSelectedYearId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const dispatchAction = {
-      type: "FETCH_COUPON_BOOKS",
+      type: "FETCH_COUPON_BOOKS", payload: auth
     };
     dispatch(dispatchAction);
   }, []);

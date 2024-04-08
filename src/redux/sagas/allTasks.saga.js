@@ -3,6 +3,8 @@ import axios from "axios";
 import { fetchAllMerchantTasks } from "./merchantTask.saga";
 import { fetchAllOrganizationTasks } from "./organizationTask.saga";
 
+//REWRITE THIS
+
 function* fetchAllTasks(action) {
   const { type } = action.payload;
 

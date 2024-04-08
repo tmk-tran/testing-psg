@@ -25,6 +25,8 @@ import DatePicker from "../DatePicker/DatePicker";
 import SearchableSelect from "../NewTaskModal/SearchableSelect";
 import ModalButtons from "../Modals/ModalButtons";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { useSelector } from "react-redux";
+import { formatDate } from "../Utils/helpers";
 import YearSelect from "../OrgSellers/YearSelect";
 
 const style = {
@@ -67,6 +69,7 @@ export default function BasicModal({
   console.log(merchantTab);
   console.log(caseType);
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   // ~~~~~~~~~~ All Merchants from store ~~~~~~~~~~
   const merchants = allMerchants();
   console.log(merchants);
@@ -95,10 +98,10 @@ export default function BasicModal({
     // Conditional logic based on merchantTab
     merchantTab
       ? /* Logic for merchantTab being true */
-        (dispatch({ type: "FETCH_MERCHANTS" }),
+        (dispatch({ type: "FETCH_MERCHANTS", payload: auth }),
         console.log("Merchant Tab is true"))
       : /* Logic for merchantTab being false */
-        (dispatch({ type: "FETCH_ORGANIZATIONS" }),
+        (dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth }),
         console.log("Merchant Tab is false"));
 
     // Cleanup function or dependencies for useEffect
@@ -163,7 +166,7 @@ export default function BasicModal({
     } else {
       // Logic for merchantTab being false (organizations logic)
       const selectedId =
-        organizations.find(
+        organizations.organization.find(
           (organization) => organization.organization_name === selectedName
         )?.id || "";
 
@@ -175,14 +178,11 @@ export default function BasicModal({
   };
 
   const handleDateChange = (date) => {
-    const formattedDate = date.$d.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-
+    const formattedDate = date.$d.toISOString().split('T')[0];
+  
     setDueDate(formattedDate);
   };
+  
 
   const addNewTask = () => {
     const actionType = merchantTab
@@ -206,7 +206,7 @@ export default function BasicModal({
             book_id: bookYearId,
           }
         : merchantTab
-        ? {
+        ?  {
             category: firstMenuChoice,
             task: secondMenuChoice,
             merchant_id: merchantId,
@@ -218,7 +218,7 @@ export default function BasicModal({
             coupon_details: couponDetails,
             book_id: bookYearId,
           }
-        : {
+        :   {
             // Adjust the payload properties for organization logic
             // Example:
             category: firstMenuChoice,
@@ -228,13 +228,14 @@ export default function BasicModal({
             assign: fourthMenuChoice,
             due_date: dueDate,
             description: additionalDetails,
-            task_status: "New",
+            task_status: "New"
             // Adjust other properties as needed
           };
 
     dispatch({
       type: actionType,
-      payload: payload,
+      payload: {newTask: payload,
+        auth: auth}
     });
 
     showSaveSweetAlert({ label: "Task Added" });
@@ -379,7 +380,7 @@ export default function BasicModal({
             {/* ~~~~~~~~~~~~~ DATE SECTION ~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             <div>
-              <DatePicker initialDate={dueDate} onChange={handleDateChange} />
+              <DatePicker value={dueDate} initialDate={dueDate} onChange={handleDateChange} />
             </div>
             {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
           </div>

@@ -9,9 +9,11 @@ import SuccessAlert from "../SuccessAlert/SuccessAlert";
 import { mTasks } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { useAlert } from "../SuccessAlert/useAlert";
+import { useSelector } from "react-redux";
 
 export default function TaskListMerchant() {
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
   const [selectedTasks, setSelectedTasks] = useState({
     newTask: "",
     inProgressTask: "",
@@ -27,7 +29,7 @@ export default function TaskListMerchant() {
   console.log(merchantTasks);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_ALL_MERCHANT_COMMENTS" });
+    dispatch({ type: "FETCH_ALL_MERCHANT_COMMENTS", payload: auth });
   }, []);
 
   // Group tasks by task_status (case-insensitive)

@@ -33,6 +33,7 @@ import ActionButton from "./ActionButton";
 import SellersTableHeader from "./SellersTableHeader";
 import BooksSoldForm from "./BooksSoldForm";
 import YearSelect from "./YearSelect";
+import { useSelector } from "react-redux";
 
 const evenRowColor = {
   backgroundColor: "#f9f9f9",
@@ -66,6 +67,7 @@ console.log(refId);
 export default function SellersTable() {
   const dispatch = dispatchHook();
   const paramsObject = useParams();
+  const auth = useSelector((store) => store.auth);
   const orgId = paramsObject.id;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -101,6 +103,7 @@ export default function SellersTable() {
       payload: {
         orgId: paramsObject.id,
         yearId: yearId,
+        auth: auth
       },
     };
     console.log(dispatchAction);
@@ -114,6 +117,7 @@ export default function SellersTable() {
         payload: {
           orgId: paramsObject.id,
           yearId: viewYearId,
+          auth: auth
         },
       };
       console.log(dispatchAction2);
@@ -164,19 +168,39 @@ export default function SellersTable() {
 
     const action = {
       type: "ADD_SELLER",
-      payload: formDataWithId,
+      payload: { newSeller: formDataWithId, auth: auth }
     };
     console.log("Dispatching action:", action);
     dispatch(action);
     showSaveSweetAlert({ label: "Seller Added" });
   };
 
+  //FIGURE OUT WHERE EDITEDSELLER IS LOCATED------
+
   const handleEditSeller = (editedSeller) => {
     console.log(editedSeller);
-
+    const archivedSeller = {
+      id: editedSeller.id,
+      refId: editedSeller.refId,
+      lastname: editedSeller.lastname,
+      firtname: editedSeller.firstname,
+      level: editedSeller.level,
+      teacher: editedSeller.teacher,
+      initial_books: editedSeller.initial_books,
+      additional_books: editedSeller.additional_books,
+      books_returned: editedSeller.books_returned,
+      cash: editedSeller.cash,
+      checks: editedSeller.checks,
+      digital: editedSeller.digital,
+      note: editedSeller.note,
+      organization_id: orgId,
+      digital_donations: editedSeller.digital_donations,
+      books_due: editedSeller.books_due,
+      coupon_book_id: editedSeller.coupon_book_id
+    }
     const editAction = {
       type: "EDIT_SELLER",
-      payload: editedSeller,
+      payload: { editedSeller: editedSeller, auth: auth }
     };
     dispatch(editAction);
     console.log("Dispatching action:", editAction);
@@ -192,13 +216,35 @@ export default function SellersTable() {
     showSaveSweetAlert({ label: "Seller Updated" });
   };
 
-  const handleArchive = (sellerId) => {
+  //REWRITE THIS TO WORK WITH DEVII-------
+  const handleArchive = (seller) => {
+    console.log(seller)
     const orgId = paramsObject.id;
+    const archivedSeller = {
+      id: seller.id,
+      refId: seller.refId,
+      lastname: seller.lastname,
+      firtname: seller.firstname,
+      level: seller.level,
+      teacher: seller.teacher,
+      initial_books: seller.initial_books,
+      additional_books: seller.additional_books,
+      books_returned: seller.books_returned,
+      cash: seller.cash,
+      checks: seller.checks,
+      digital: seller.digital,
+      note: seller.note,
+      organization_id: orgId,
+      digital_donations: seller.digital_donations,
+      books_due: seller.books_due,
+      coupon_book_id: seller.coupon_book_id
+    }
+    console.log(archivedSeller)
     // Use showDeleteSweetAlert and pass a callback function to execute upon confirmation
     showDeleteSweetAlert(() => {
       const archiveAction = {
         type: "ARCHIVE_SELLER",
-        payload: { sellerId, orgId },
+        payload: { archivedSeller: archivedSeller, auth: auth },
       };
       console.log("Dispatching action:", archiveAction);
       dispatch(archiveAction);
@@ -408,12 +454,12 @@ export default function SellersTable() {
                                   iconSx={{ fontSize: "25px" }}
                                   onClick={() => handleViewUrl(value)}
                                   onMouseOver={(e) =>
-                                    (e.currentTarget.style.transform =
-                                      "scale(1.3)")
+                                  (e.currentTarget.style.transform =
+                                    "scale(1.3)")
                                   }
                                   onMouseOut={(e) =>
-                                    (e.currentTarget.style.transform =
-                                      "scale(1)")
+                                  (e.currentTarget.style.transform =
+                                    "scale(1)")
                                   }
                                   disabled={!isYearActive}
                                 />
@@ -450,12 +496,12 @@ export default function SellersTable() {
                                       openEditBooksSold(seller.refId, value)
                                     }
                                     onMouseOver={(e) =>
-                                      (e.currentTarget.style.transform =
-                                        "scale(1.3)")
+                                    (e.currentTarget.style.transform =
+                                      "scale(1.3)")
                                     }
                                     onMouseOut={(e) =>
-                                      (e.currentTarget.style.transform =
-                                        "scale(1)")
+                                    (e.currentTarget.style.transform =
+                                      "scale(1)")
                                     }
                                     disabled={!isYearActive}
                                   />
@@ -513,15 +559,15 @@ export default function SellersTable() {
                           {isTotalCell
                             ? "Totals:"
                             : displaySum
-                            ? column.id === "cash" ||
-                              column.id === "checks" ||
-                              column.id === "donations" ||
-                              column.id === "digital_donations" ||
-                              column.id === "digital" ||
-                              column.id === "seller_earnings"
-                              ? "$" + parseFloat(sum).toFixed(2)
-                              : sum
-                            : null}
+                              ? column.id === "cash" ||
+                                column.id === "checks" ||
+                                column.id === "donations" ||
+                                column.id === "digital_donations" ||
+                                column.id === "digital" ||
+                                column.id === "seller_earnings"
+                                ? "$" + parseFloat(sum).toFixed(2)
+                                : sum
+                              : null}
                         </TableCell>
                       ) : (
                         <TableCell

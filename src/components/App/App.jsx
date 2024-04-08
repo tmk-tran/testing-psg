@@ -31,12 +31,14 @@ import OrderComplete from "../CheckoutPage/OrderComplete";
 import Transactions from "../Transactions/Transactions";
 import MerchantDetails from "../Details/MerchantDetails";
 import UserAdmin from "../UserAdmin/UserAdmin";
+import RecoverPasswordForm from "../RecoverPasswordForm/RecoverPasswordForm";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
 import { User } from "../../hooks/reduxStore";
+import { useSelector } from "react-redux";
 import { getCurrentSeason } from "../Utils/helpers";
 
 // ~~~~~ Theme establishing global color for MUI ~~~~~
@@ -61,6 +63,7 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
+  const auth = useSelector((store) => store.auth)
   console.log(user);
   const [orgAdminId, setOrgAdminId] = useState(null);
   console.log(orgAdminId);
@@ -70,15 +73,15 @@ function App() {
     const currentSeason = getCurrentSeason();
     console.log(currentSeason);
 
-    dispatch({ type: "FETCH_USER" });
+    dispatch({ type: "FETCH_USER", payload: auth });
     // dispatch({ type: "FETCH_COUPON_BOOKS" });
     const dispatchAction2 = {
       type: "FETCH_BOOK_YEAR",
-      payload: currentSeason,
+      payload: {currentSeason: currentSeason, auth: auth}
     };
     console.log(dispatchAction2);
     dispatch(dispatchAction2);
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     if (user.org_admin) {
@@ -273,6 +276,16 @@ function App() {
                 <OrderComplete />
               </Route>
 
+
+              <ProtectedRoute exact path="/user">
+                {!user.org_admin ? (
+                  <HomePage isOrgAdmin={false} />
+                ) : (
+                  <HomePage isOrgAdmin={true} />
+                )}
+                {!user.is_admin && !user.org_admin && <Redirect to="/coupon" />}
+              </ProtectedRoute>
+
               <Route exact path="/login">
                 {user.id ? (
                   // If the user is already logged in,
@@ -282,6 +295,10 @@ function App() {
                   // Otherwise, show the login page
                   <LoginPage />
                 )}
+              </Route>
+
+              <Route exact path = "/recover">
+                <RecoverPasswordForm />
               </Route>
 
               <Route exact path="/registration">

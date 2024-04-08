@@ -10,6 +10,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import "./DetailsTaskView.css";
 // ~~~~~~~~~~ Utils ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
+import { useSelector } from "react-redux";
 
 export default function DetailsTaskView({ caseType }) {
   const dispatch = dispatchHook();
@@ -20,16 +21,18 @@ export default function DetailsTaskView({ caseType }) {
   console.log(merchantId);
   const mId = merchantId.id;
   console.log(mId);
+  const auth = useSelector((store) => store.auth);
 
   useEffect(() => {
     if (caseType === "orgTaskView") {
       dispatch({
         type: "FETCH_ORGANIZATION_TASKS",
-        payload: mId,
+        payload: {id: mId,
+          auth: auth}
       });
     } else {
-      dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: mId });
-      dispatch({ type: "FETCH_MERCHANT_TASKS", payload: mId });
+      dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: {id: mId, auth: auth} });
+      dispatch({ type: "FETCH_MERCHANT_TASKS", payload: {id: mId, auth: auth} });
     }
   }, [mId, caseType]);
 

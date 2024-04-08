@@ -27,6 +27,7 @@ export default function GroupDetails() {
   const id = Number(useParams().id);
   //Instanciates dispatch for use in component
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
   //Store used to get the group and fundraiser data
   const groupDetails = useSelector((store) => store.group);
   const fundraisers = useSelector((store) => store.fundraisers);
@@ -53,11 +54,11 @@ export default function GroupDetails() {
 
   //Use Effect that runs on page load to fetch the group details
   useEffect(() => {
-    dispatch({ type: "FETCH_GROUP_DETAILS", payload: id });
+    dispatch({ type: "FETCH_GROUP_DETAILS", payload: {id: id, auth: auth} });
   }, []);
   //Use Effect that runs after group details are fetched. Grabs the fundraisers tied to the group id number
   useEffect(() => {
-    dispatch({ type: "FETCH_FUNDRAISERS", payload: id });
+    dispatch({ type: "FETCH_FUNDRAISERS", payload: {id: id, auth: auth} });
   }, [groupDetails]);
   //Console logs for testing
   console.log(groupDetails);

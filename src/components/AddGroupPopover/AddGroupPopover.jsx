@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // Style
 import {
   Box,
@@ -23,10 +23,12 @@ export default function BasicPopover({ info, groups, onChange }) {
   console.log(info);
   console.log(groups);
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
   // state for the popover
   const [anchorEl, setAnchorEl] = useState(null);
   // state for the add group form
-  const [orgId, setOrgId] = useState(info.organization_id);
+  const [orgId, setOrgId] = useState(info[0].id);
+  console.log(orgId)
   const [groupName, setGroupName] = useState("");
   const [department, setDepartment] = useState("");
   const [subDepartment, setSubDepartment] = useState("");
@@ -56,7 +58,9 @@ export default function BasicPopover({ info, groups, onChange }) {
       group_description: description,
     };
 
-    dispatch({ type: "ADD_GROUP", payload: groupInfo });
+    
+
+    dispatch({ type: "ADD_GROUP", payload: {newGroup: groupInfo, auth: auth} });
 
     setGroupName("");
     setDepartment("");

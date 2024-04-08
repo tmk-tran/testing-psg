@@ -1,12 +1,36 @@
 import axios from "axios";
 import { takeEvery, put } from "redux-saga/effects";
 
-function* fetchCouponBooksSaga() {
+function* fetchCouponBooksSaga(action) {
   try {
-    const response = yield axios.get("/api/couponbook");
-    console.log("FETCH request fetchCouponBooksSaga", response.data);
-    yield put({ type: "SET_COUPON_BOOKS", payload: response.data });
-  } catch (err) {
+    console.log(action.payload)
+    const auth_response = action.payload
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{
+      coupon_book{
+        id
+        year
+        active
+      }
+  }`;
+
+    const queryConfig = {
+      headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+  };
+
+  const data = new FormData();
+  data.append("query", query);
+  data.append("variables", `{}`);
+
+  const response = yield axios.post(QUERY_URL, data, queryConfig);
+  console.log(response)
+
+    yield put({ type: "SET_COUPON_BOOKS", payload: response.data.coupon_book });
+  } catch(err) {
     console.log("error in fetching coupon books", err);
   }
 }
@@ -24,13 +48,36 @@ function* fetchByIdSaga(action) {
 // Reducer is bookYear.reducer here
 function* fetchByYearSaga(action) {
   try {
-    console.log(action.payload);
-    const response = yield axios.get(
-      `/api/couponbook/season/${action.payload}`
-    );
-    yield put({ type: "SET_BOOK_YEAR", payload: response.data });
-  } catch (err) {
-    console.log("Error fetching book year", err);
+    console.log(action.payload)
+    const currentSeason = action.payload.currentSeason;
+    const auth_response = action.payload.auth;
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{
+      coupon_book (filter: "year = '${currentSeason}'"){
+        id
+        year
+        active
+      }
+  }`;
+
+    const queryConfig = {
+      headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+  };
+
+  const data = new FormData();
+  data.append("query", query);
+  data.append("variables", `{}`);
+
+  const response = yield axios.post(QUERY_URL, data, queryConfig);
+  console.log(response)
+
+    yield put({ type: "SET_BOOK_YEAR", payload: response.data.coupon_book });
+  } catch(err) {
+    console.log("error in fetching coupon book year", err);
   }
 }
 

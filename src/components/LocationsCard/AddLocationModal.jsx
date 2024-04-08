@@ -16,6 +16,7 @@ import {
   capitalizeStateAbbr,
   capitalizeWords,
 } from "../Utils/helpers";
+import { useSelector } from "react-redux";
 
 const style = {
   position: "absolute",
@@ -40,6 +41,7 @@ export default function AddLocationModal({
   console.log(editId);
   console.log(locationToEdit);
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth);
   const paramsObject = useParams();
   console.log(paramsObject);
 
@@ -123,6 +125,7 @@ export default function AddLocationModal({
     zip: zip,
     merchant_id: merchantId,
     additional_details: additionalDetails,
+    
   };
 
   const addLocation = () => {
@@ -161,7 +164,7 @@ export default function AddLocationModal({
     ) {
       dispatch({
         type: "ADD_LOCATION",
-        payload: newLocationPayload,
+        payload: {newLocation: newLocationPayload, auth: auth}
       });
     }
 
@@ -174,7 +177,7 @@ export default function AddLocationModal({
   const editLocation = () => {
     const action = {
       type: "EDIT_LOCATION",
-      payload: { editId, ...newLocationPayload },
+      payload: {editedLocation: { editId, ...newLocationPayload }, auth: auth}
     };
     console.log("Dispatching action:", action);
     dispatch(action);

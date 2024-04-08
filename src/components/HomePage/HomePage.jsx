@@ -28,17 +28,24 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   const dispatch = useDispatch();
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~ Store ~~~~~~~~~~~~~~~~~~~~
-  const organizationsList = useSelector((store) => store.organizations);
-  console.log(organizationsList);
-  const merchants = allMerchants() || [];
-  console.log(merchants);
+
+  const auth = useSelector((store) => store.auth)
+  const user = useSelector((store) => store.user)
+  useEffect(() => {
+    console.log('Dispatching data fetch action...');
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth })
+    dispatch({ type: "FETCH_MERCHANTS", payload: auth })
+  }, [auth]);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isMerchantList, setIsMerchantList] = useState(
     Cookies.get("isMerchantList") === "true" || false
   );
   console.log(isMerchantList);
-
+  const organizationsList = useSelector((store) => store.organizations);
+  console.log(organizationsList);
+  const merchants = allMerchants() || [];
+  console.log(merchants);
   // state for the search and modal and pagination
   const [query, setQuery] = useState(" ");
   console.log(query);
@@ -49,7 +56,6 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   const [editComplete, setEditComplete] = useState(false);
   console.log(editComplete);
   const itemsPerPage = 12;
-
   const handleToggle = () => {
     const newIsMerchantList = !isMerchantList;
     Cookies.set("isMerchantList", newIsMerchantList, { expires: 365 });
@@ -62,25 +68,25 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     setIsMerchantList(initialIsMerchantList);
   }, []);
 
-  useEffect(() => {
-    // Initial data fetch based on isMerchantList
-    const fetchDataAction = isMerchantList
-      ? "FETCH_MERCHANTS"
-      : "FETCH_ORGANIZATIONS";
-    dispatch({ type: fetchDataAction });
 
+ 
+
+  useEffect(() => {
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
-    dispatch({ type: dispatchAction });
+    dispatch({ type: dispatchAction, payload: auth });
 
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
-      dispatch({ type: fetchDataAction });
+      dispatch({ type: fetchDataAction, payload: auth });
       setEditComplete(false);
     }
   }, [isMerchantList, editComplete]);
 
   const couponNumbers = mCoupons() || [];
   console.log(couponNumbers);
+
+
+  
 
   // fuzzy search information
   const listToSearch = !isMerchantList ? organizationsList : merchants;
@@ -132,8 +138,9 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     searchResult.length > 0
       ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
       : isMerchantList
-      ? merchants.slice(indexOfFirstItem, indexOfLastItem)
-      : organizationsList.slice(indexOfFirstItem, indexOfLastItem);
+        ? merchants.slice(indexOfFirstItem, indexOfLastItem)
+        : organizationsList?.organization?.slice(indexOfFirstItem, indexOfLastItem) || [];
+
 
   console.log(currentItems);
 
@@ -141,8 +148,8 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     searchResult.length > 0
       ? searchResult.length
       : !isMerchantList
-      ? organizationsList.length
-      : merchants.length;
+        ? organizationsList?.organization?.length || 0
+        : merchants.length;
   const pageCount = Math.ceil(totalItems / itemsPerPage);
 
   const handlePageChange = (event, value) => {
@@ -152,6 +159,28 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   const handleEdit = () => {
     setEditComplete(true);
   };
+
+  function createCouponCount(merchants, coupons) {
+    const couponCount = [];
+
+    for (const merchant of merchants) {
+      console.log(merchant);
+      for (const coupon of coupons) {
+        console.log(coupon)
+        if (merchant.id == coupon.merchant_id) {
+          console.log("Merchant ID:", merchant.id, "Coupon Merchant ID:", coupon.merchant_id);
+          couponCount.push({
+            merchant: merchant.id,
+            count: coupon.count
+          });
+        }
+      }
+    }
+    return couponCount;
+  }
+
+  const couponCount = createCouponCount(merchants, couponNumbers);
+  console.log(couponCount)
 
   return (
     <div className="organizationsContainer">
@@ -255,8 +284,9 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
           {/* ~~~~~~~~~~~~~~~~~~ List Cards ~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
 
-          {isMerchantList
-            ? currentItems.map((merchant, index) => (
+          {
+            isMerchantList
+              ? currentItems.map((merchant, index) => (
                 <ListView
                   key={index}
                   data={merchant}
@@ -265,27 +295,23 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
                   editComplete={editComplete}
                   setEditComplete={setEditComplete}
                   numCoupons={
-                    couponNumbers.find(
-                      (coupon) => coupon.merchant_id === merchant.id
-                    )?.num_coupons || 0
+                    couponCount || 0
                   }
                 />
               ))
-            : currentItems.map(
-                (organization, index) =>
-                  (!isOrgAdmin ||
-                    (isOrgAdmin && organization.id === orgAdminId)) && (
-                    <ListView
-                      key={index}
-                      data={organization}
-                      isMerchantList={false}
-                      onChange={handleEdit}
-                      editComplete={editComplete}
-                      setEditComplete={setEditComplete}
-                      isOrgAdmin={isOrgAdmin}
-                    />
-                  )
-              )}
+              : currentItems.map((organization, index) => (
+                <ListView
+                  key={index}
+                  data={organization}
+                  isMerchantList={false}
+                  onChange={handleEdit}
+                  editComplete={editComplete}
+                  setEditComplete={setEditComplete}
+                  isOrgAdmin={isOrgAdmin}
+                />
+              ))
+            // <div>Not Merchant List</div>
+          }
         </div>
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~~ Add New Org ~~~~~~~~~~~~~~~~~~~~~~ */}
