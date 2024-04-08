@@ -301,18 +301,25 @@ app.post("/api/orders/:orderID/capture", async (req, res) => {
 
 app.post(`/api/contact`, async (req, res) => {
 
-  function generatePassword() {
-    const length = Math.floor(Math.random() * 4) + 7;
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let password = '';
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      password += charset[randomIndex];
+  function generatePassword(lastName, firstName) {
+    if (!lastName || !firstName) {
+      throw new Error('Missing required arguments: lastName and firstName');
     }
-    return password;
+  
+   
+    const sanitizedLastName = lastName.toLowerCase().replace(/\W/g, '');
+  
+   
+    const firstInitial = firstName[0].toLowerCase();
+  
+    const randomNumber1 = Math.floor(Math.random() * 10);
+    const randomNumber2 = Math.floor(Math.random() * 10);
+  
+    
+    return `${sanitizedLastName}${firstInitial}${randomNumber1}${randomNumber2}`;
   }
 
-  const randomPassword = generatePassword();
+  const randomPassword = generatePassword(req.body.firstName,req.body.lastName);
   console.log(randomPassword);
 
   try {
