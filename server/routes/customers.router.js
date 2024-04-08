@@ -51,7 +51,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
     });
 });
 
-router.post("/", (req, res) => {
+router.post("/", rejectUnauthenticated, (req, res) => {
   console.log(req.body);
   const customer = req.body;
   const refId = customer.refId;
@@ -84,7 +84,8 @@ router.post("/", (req, res) => {
           "state",
           "zip"
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        RETURNING "id";
         `;
 
   pool
@@ -102,7 +103,7 @@ router.post("/", (req, res) => {
     ])
     .then((response) => {
       console.log("response from POST customers.router: ", response.rows);
-      res.sendStatus(201);
+      res.send(response.rows).status(201);
     })
     .catch((err) => {
       console.log("error in customers POST route", err);

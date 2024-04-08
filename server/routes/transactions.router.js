@@ -116,7 +116,6 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, values)
     .then((response) => {
-      console.log("response from PUT transactions.router: ", response.rows);
       res.sendStatus(200);
     })
     .catch((err) => {

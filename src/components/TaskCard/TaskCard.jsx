@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import "./TaskCard.css";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
@@ -20,6 +21,7 @@ import {
   hoverAccept,
   primaryColor,
   dueDateHighlight,
+  whiteBackground,
 } from "../Utils/colors";
 import {
   capitalizeFirstWord,
@@ -276,7 +278,7 @@ export default function TaskCard({
                 {/* ~~~~~~~~~~~~~~~~ DATE ~~~~~~~~~~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
 
-                <div style={dueDateHighlight}>
+                <div style={isDateEdit ? whiteBackground : dueDateHighlight}>
                   {isDateEdit ? (
                     <>
                       <DatePicker
@@ -305,15 +307,17 @@ export default function TaskCard({
                     </Typography>
                   )}
                   {!isDateEdit && (
-                    <IconButton
-                      onClick={handleDateEdit}
-                      sx={{
-                        // ...iconButtonStyle,
-                        display: isEditing ? "none" : "inline-flex", // Hide when editing
-                      }}
-                    >
-                      <EditCalendarIcon sx={{ fontSize: 23 }} />
-                    </IconButton>
+                    <Tooltip title="Select a Due Date">
+                      <IconButton
+                        onClick={handleDateEdit}
+                        sx={{
+                          // ...iconButtonStyle,
+                          display: isEditing ? "none" : "inline-flex", // Hide when editing
+                        }}
+                      >
+                        <EditCalendarIcon sx={{ fontSize: 23 }} />
+                      </IconButton>
+                    </Tooltip>
                   )}
                 </div>
                 {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
@@ -357,15 +361,17 @@ export default function TaskCard({
                       </Typography>
                     )}
                     {!isEditing && (
-                      <IconButton
-                        onClick={handleEditMode}
-                        sx={{
-                          ...iconButtonStyle,
-                          display: isEditing ? "none" : "inline-flex", // Hide when editing
-                        }}
-                      >
-                        <EditIcon sx={{ fontSize: 23 }} />
-                      </IconButton>
+                      <Tooltip title="Change Assignment">
+                        <IconButton
+                          onClick={handleEditMode}
+                          sx={{
+                            ...iconButtonStyle,
+                            display: isEditing ? "none" : "inline-flex", // Hide when editing
+                          }}
+                        >
+                          <EditIcon sx={{ fontSize: 23 }} />
+                        </IconButton>
+                      </Tooltip>
                     )}
                   </Box>
                 </div>

@@ -20,15 +20,17 @@ const OrgMenu = ({ userId, organizations, defaultValue, onChange }) => {
   };
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth sx={{ position: "relative" }}>
       {(!defaultValue || defaultValue === null) && itemSelected === false && (
         <InputLabel
           shrink={false}
           sx={{
             fontSize: "18px",
-            display: "block",
-            marginBottom: "8px",
+            ml: 2,
             lineHeight: "1.1",
+            position: "absolute",
+            top: "50%", // Move the label halfway down
+            transform: "translateY(-50%)", //
           }}
         >
           Select Organization

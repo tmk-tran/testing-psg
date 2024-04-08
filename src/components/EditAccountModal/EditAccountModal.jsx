@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Modal,
   Box,
   TextField,
-  Button,
   Typography,
   Grid,
   Divider,
@@ -12,16 +11,9 @@ import {
 import Swal from "sweetalert2";
 import InputAdornment from "@mui/material/InputAdornment";
 // ~~~~~~~~~~~ Hooks ~~~~~~~~~~~
-import { border, primaryColor } from "../Utils/colors";
 import { modalHeaderStyle, lineDivider } from "../Utils/modalStyles";
-import {
-  capitalizeWords,
-  capitalizeFirstWord,
-  capitalizeStateAbbr,
-  capitalize,
-} from "../Utils/helpers";
+import { capitalize, capitalizeStateAbbr } from "../Utils/helpers";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~
-import CloseButton from "../Buttons/CloseButton";
 import AddFileButton from "../AddFileButton/AddFileButton";
 import StateSelector from "../StateSelector/StateSelector";
 import ModalButtons from "../Modals/ModalButtons";
@@ -30,10 +22,7 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
   const dispatch = useDispatch();
   const auth = useSelector((store) => store.auth);
   const [editedAccount, setEditedAccount] = useState(data);
-  console.log(editedAccount);
-
   const [selectedState, setSelectedState] = useState(data.state);
-  console.log(selectedState);
 
   useEffect(() => {
     setEditedAccount(data);
@@ -55,14 +44,9 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
   const handleEditSave = (editedAccount) => {
     console.log(editedAccount);
     if (!isMerchantList) {
-      // const payload = { editedAccount };
-      const payload = editedAccount;
-      console.log(payload);
       dispatch({ type: "EDIT_ORGANIZATION", payload: {editedAccount: editedAccount, auth: auth} });
       dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
     } else {
-      const payload = editedAccount;
-      console.log(payload);
       dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedAccount: editedAccount, auth: auth} });
       dispatch({ type: "FETCH_MERCHANTS", payload: auth });
     }
@@ -93,7 +77,6 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
     mb: 5,
   };
 
-  // NEED TO ADD THE LOGO TO THE STATE OF THE MODAL SO IT DOESNT ERASE WHEN EDITING
   return (
     <div>
       <Modal
@@ -196,15 +179,9 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~~~~~~~~ STATE ~~~~~~~~~~~~~~ */}
             <Grid item xs={4}>
-              {/* <TextField
-                label="State"
-                fullWidth
-                value={capitalizeStateAbbr(editedAccount.state)}
-                onChange={(e) => handleChange("state", e.target.value)}
-              /> */}
               <StateSelector
                 onChange={handleChange}
-                stateSelected={selectedState}
+                stateSelected={capitalizeStateAbbr(selectedState)}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -229,7 +206,7 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
           </Grid>
           <br />
           {/* ~~~~~~~~~~~~~~~~~~~~~ */}
-          {/* ///~~~ BUTTONS ~~~/// */}
+          {/* ~~~~~~ BUTTONS ~~~~~~ */}
           <ModalButtons
             label="Save"
             editedAccount={editedAccount}

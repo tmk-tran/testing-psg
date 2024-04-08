@@ -3,7 +3,6 @@ import { Box } from "@mui/material";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import OrderSummaryTable from "./OrderSummaryTable";
 import Typography from "../Typography/Typography";
-import { border } from "../Utils/colors";
 import TotalUpdate from "./TotalUpdate";
 
 export default function OrderSummaryDisplay({ customDonation }) {

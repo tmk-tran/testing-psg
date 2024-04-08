@@ -50,3 +50,8 @@ export const highlightColor = {
 export const grayBackground = {
   backgroundColor: "rgba(96, 96, 96, 0.1)",
 };
+
+export const whiteBackground = {
+  backgroundColor: "white",
+  borderRadius: "4px",
+};

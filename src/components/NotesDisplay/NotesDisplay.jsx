@@ -20,12 +20,7 @@ import { formatDate, hrStyle } from "../Utils/helpers";
 import { showSaveSweetAlert, showDeleteSweetAlert } from "../Utils/sweetAlerts";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-
-// ~~~~~~~~~~ Toasts (INACTIVE, MAY USE LATER) ~~~~~~~~~~
-import { showToast } from "../Utils/toasts";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { border, disabledColor } from "../Utils/colors";
+import { disabledColor } from "../Utils/colors";
 import { useSelector } from "react-redux";
 
 export default function NotesDisplay({

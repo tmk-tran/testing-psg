@@ -4,7 +4,6 @@ import { CircularProgress } from "@mui/material";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
-import { border } from "../Utils/colors";
 import { flexCenter } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import PdfModal from "./PdfModal";

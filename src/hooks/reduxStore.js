@@ -72,8 +72,16 @@ export const allYears = () => {
   return useSelector((store) => store.couponBooks);
 };
 
+export const customerList = () => {
+  return useSelector((store) => store.customers);
+};
+
 export const paypalTransactions = () => {
   return useSelector((store) => store.paypal);
+};
+
+export const digitalBookSold = () => {
+  return useSelector((store) => store.digitalBook);
 };
 
 export const userTableData = () => {

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Grid, TextField } from "@mui/material";
-import StateSelector from "../StateSelector/StateSelector";
-import Typography from "../Typography/Typography";
-import { border } from "../Utils/colors";
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { flexRowSpace } from "../Utils/pageStyles";
 import { capitalizeWords } from "../Utils/helpers";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import PhoneInput from "../LocationsCard/PhoneInput";
+import StateSelector from "../StateSelector/StateSelector";
+import Typography from "../Typography/Typography";
 
 export default function CustomerInfoForm({
   isMobile,

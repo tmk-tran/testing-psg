@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
   const queryText = `
             SELECT * 
             FROM "coupon_book"
-            ORDER BY id ASC;
+            ORDER BY id DESC;
             ;
             `;
   pool
@@ -68,22 +68,6 @@ router.get("/season/:season", (req, res) => {
 });
 
 //Post route to add a new coupon book
-// router.post("/", (req, res) => {
-//   const year = req.body;
-//   const queryText = `INSERT INTO "coupon_book" ("year")
-//     VALUES ($1);`;
-
-//   pool
-//     .query(queryText, [year])
-//     .then(() => {
-//       res.sendStatus(201);
-//     })
-//     .catch((err) => {
-//       console.log("Error adding new coupon book", err);
-//       res.sendStatus(500);
-//     });
-// });
-
 router.post("/", (req, res) => {
   console.log("from couponBook.saga = ", req.body);
   const queryText = `SELECT year FROM coupon_book ORDER BY year DESC LIMIT 1`;

@@ -13,9 +13,7 @@ export default function StateSelector({
   stateSelected,
   isSubmitted,
 }) {
-  console.log(states);
   const [state, setState] = useState("");
-  console.log(state);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -27,17 +25,16 @@ export default function StateSelector({
   }, [isSubmitted, stateSelected, setError]);
 
   useEffect(() => {
-    console.log(stateSelected);
     if (stateSelected) {
-      const selectedState = states.find((state) => state.abbreviation === stateSelected);
-      console.log(selectedState);
+      const selectedState = states.find(
+        (state) => state.abbreviation === stateSelected
+      );
       setState(selectedState);
     } else {
       setState("");
     }
   }, []);
-  
-  
+
   const handleChange = (event) => {
     const selectedAbbreviation = event.target.value;
     const newState = states.find(

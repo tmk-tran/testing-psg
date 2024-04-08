@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { TextField, Button, InputAdornment } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import CheckIcon from "@mui/icons-material/Check";
-import { border } from "../Utils/colors";
 
 export default function AddFileButton({ filename, onFileSelect }) {
-  console.log(filename);
   const [file, setFile] = useState(null);
   console.log(file);
   const [isDisabled, setIsDisabled] = useState(true);

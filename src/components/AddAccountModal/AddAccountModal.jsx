@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import InputAdornment from "@mui/material/InputAdornment";
-import CloseButton from "../Buttons/CloseButton";
 import AddFileButton from "../AddFileButton/AddFileButton";
 // ~~~~~~~~~~~ Hooks ~~~~~~~~~~~
 import { choices } from "./contactChoices";
@@ -235,9 +234,6 @@ export default function AddAccountModal({
   const handleSelectionChange = (choice) => {
     setSelectedChoice(choice);
   };
-
-  // Preferred method of contact choices
-  // const choices = ["Text", "Email", "Phone", "In-person visit"];
 
   return (
     <div>

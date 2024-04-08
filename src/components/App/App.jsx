@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HashRouter as Router,
   Redirect,
@@ -65,6 +65,8 @@ function App() {
   const user = User();
   const auth = useSelector((store) => store.auth)
   console.log(user);
+  const [orgAdminId, setOrgAdminId] = useState(null);
+  console.log(orgAdminId);
 
   useEffect(() => {
     // Set the current season
@@ -80,6 +82,16 @@ function App() {
     console.log(dispatchAction2);
     dispatch(dispatchAction2);
   }, [auth]);
+
+  useEffect(() => {
+    if (user.org_admin) {
+      setOrgAdminId(user.org_id);
+    }
+    return () => {
+      // Cleanup function to reset orgAdminId to null when component unmounts
+      setOrgAdminId(null);
+    };
+  }, [user.org_id]);
 
   return (
     <Router>
@@ -105,13 +117,17 @@ function App() {
                 {user.is_admin && <HomePage />}
                 {/* {user.org_admin && <HomePage isOrgAdmin={true} />} */}
                 {user.org_admin && user.graphic_designer && (
-                  <HomePage isOrgAdmin={true} isGraphicDesigner={true} />
+                  <HomePage
+                    isOrgAdmin={true}
+                    orgAdminId={orgAdminId}
+                    isGraphicDesigner={true}
+                  />
                 )}
                 {/* {!user.org_admin && !user.graphic_designer && (
                   <HomePage isOrgAdmin={false} />
                 )} */}
                 {user.org_admin && !user.graphic_designer && (
-                  <HomePage isOrgAdmin={true} />
+                  <HomePage isOrgAdmin={true} orgAdminId={orgAdminId} />
                 )}
                 {/* {user.graphic_designer && <HomePage isGraphicDesigner={true} />} */}
                 {!user.org_admin && user.graphic_designer && (

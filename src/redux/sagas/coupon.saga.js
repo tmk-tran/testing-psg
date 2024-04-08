@@ -8,11 +8,14 @@ const fetchPdfRequest = (couponId) => ({
 });
 
 function* couponFiles(action) {
-  console.log(action);
+  const userId = action.payload.id;
+  const yearId = action.payload.yearId;
 
   try {
     // const response = yield axios.get(`/api/coupon`);
-    const response = yield axios.get(`/api/userCoupon/${action.payload}`);
+    const response = yield axios.get(
+      `/api/userCoupon/${userId}?yearId=${yearId}`
+    );
     console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store

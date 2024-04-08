@@ -33,7 +33,7 @@ const PhoneInput = ({
       onChange={handlePhoneNumberChange}
       fullWidth
       sx={sx}
-      required
+      // required
       error={error}
       helperText={helperText}
     />

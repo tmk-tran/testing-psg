@@ -6,29 +6,20 @@ router.get("/:refId", (req, res) => {
   console.log("from GET /id seller.router: ", req.params.refId);
   const refId = req.params.refId;
 
-  //   const queryText = `
-  //       SELECT
-  //         *
-  //       FROM
-  //         sellers
-  //       WHERE
-  //         "refId" = $1
-  //       ;`;
-
   const queryText = `
-  SELECT
-      s.*,
-      o.organization_name,
-      o.address,
-      o.city,
-      o.state,
-      o.zip
-  FROM
-      sellers s
-  INNER JOIN
-      organization o ON s.organization_id = o.id
-  WHERE
-      s."refId" = $1;`;
+          SELECT
+            s.*,
+            o.organization_name,
+            o.address,
+            o.city,
+            o.state,
+            o.zip
+          FROM
+            sellers s
+          INNER JOIN
+            organization o ON s.organization_id = o.id
+          WHERE
+            s."refId" = $1;`;
 
   pool
     .query(queryText, [refId])

@@ -236,12 +236,22 @@ export default function UserAdmin() {
                       No
                     </Typography>
                   )}
-                  <ActionSwitch
-                    isChecked={row.graphic_designer}
-                    onChange={(newValue) =>
-                      handleSwitch(row.id, "graphic_designer", newValue)
-                    }
-                  />
+                  {row.id === 3 || row.id === 4 ? (
+                    <ActionSwitch
+                      disabled={true}
+                      isChecked={row.graphic_designer}
+                      onChange={(newValue) =>
+                        handleSwitch(row.id, "graphic_designer", newValue)
+                      }
+                    />
+                  ) : (
+                    <ActionSwitch
+                      isChecked={row.graphic_designer}
+                      onChange={(newValue) =>
+                        handleSwitch(row.id, "graphic_designer", newValue)
+                      }
+                    />
+                  )}
                 </TableCell>
                 <TableCell sx={{ ...shortCellSx, ...centerMe }}>
                   {/* ~~~~~~~~~ Org Admin Column ~~~~~~~~~~ */}
@@ -262,12 +272,22 @@ export default function UserAdmin() {
                       No
                     </Typography>
                   )}
-                  <ActionSwitch
-                    isChecked={row.org_admin}
-                    onChange={(newValue) =>
-                      handleSwitch(row.id, "org_admin", newValue)
-                    }
-                  />
+                  {row.id === 3 || row.id === 4 ? (
+                    <ActionSwitch
+                      disabled={true}
+                      isChecked={row.org_admin}
+                      onChange={(newValue) =>
+                        handleSwitch(row.id, "org_admin", newValue)
+                      }
+                    />
+                  ) : (
+                    <ActionSwitch
+                      isChecked={row.org_admin}
+                      onChange={(newValue) =>
+                        handleSwitch(row.id, "org_admin", newValue)
+                      }
+                    />
+                  )}
                 </TableCell>
                 <TableCell sx={{ ...wideCellSx, ...centerMe, maxWidth: 150 }}>
                   {row.org_admin ? (

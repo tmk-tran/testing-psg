@@ -1,17 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Box, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
+import {
+  Box,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Typography,
+} from "@mui/material";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { allYears } from "../../hooks/reduxStore";
 import { useSelector } from "react-redux";
 
-export default function YearSelect({ year, setYear, labelOutside, sx }) {
+export default function YearSelect({
+  year,
+  setYear,
+  labelOutside,
+  sx,
+  setActiveYearError,
+  error,
+  helperText,
+}) {
   const dispatch = dispatchHook();
   const auth = useSelector((store) => store.auth)
   const [yearSelected, setYearSelected] = useState("");
   console.log(year);
+  console.log(helperText);
   useEffect(() => {
     // Set the initial selected year to the ID of the active year
-    
+
     // if (year.length > 0) {
     //   const activeYearId = year.find((y) => y.active)?.id || "";
     //   setYearSelected(activeYearId);
@@ -19,7 +35,7 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
     if (Array.isArray(year) && year.length > 0) {
       const activeYearId = year.find((y) => y.active)?.id || "";
       setYearSelected(activeYearId);
-  }
+    }
 
     const dispatchAction = {
       type: "FETCH_COUPON_BOOKS", payload: auth
@@ -28,9 +44,10 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
   }, []);
 
   const years = allYears();
-  console.log(years); 
+  console.log(years);
 
   const handleChange = (event) => {
+    labelOutside && setActiveYearError(false);
     setYearSelected(event.target.value);
     setYear(event.target.value);
   };
@@ -45,6 +62,8 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
               value={yearSelected}
               label="Book Year"
               onChange={handleChange}
+              error={error}
+              helperText={error ? helperText : ""}
             >
               {years.map((year) => (
                 <MenuItem key={year.id} value={year.id}>
@@ -52,6 +71,11 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
                 </MenuItem>
               ))}
             </Select>
+            {error && (
+              <Typography variant="caption" sx={{ color: "red" }}>
+                {helperText}
+              </Typography>
+            )}
           </FormControl>
         </>
       ) : (

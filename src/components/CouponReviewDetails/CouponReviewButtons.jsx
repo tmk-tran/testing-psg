@@ -2,11 +2,6 @@ import React, { useState } from "react";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { Button } from "@mui/material";
 import { errorColor, successColor } from "../Utils/colors";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~
-import { border } from "../Utils/colors";
-// ~~~~~~~~~~ Icons ~~~~~~~~~~
-import CheckIcon from "@mui/icons-material/Check";
-import CancelIcon from "@mui/icons-material/Cancel";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import { flexRowSpace } from "../Utils/pageStyles";
 import { dispatchHook } from "../../hooks/useDispatch";
@@ -79,15 +74,15 @@ export default function CouponReviewButtons({
       const dispatchAction2 = {
         type: "ADD_TO_CONSUMER_LIST",
         payload: {
-          id: couponId
+          id: couponId,
         },
       };
       console.log(dispatchAction2);
       dispatch(dispatchAction2);
-    };
+    }
 
     setIsTaskUpdate(false);
-    showSaveSweetAlert({ label: "Task updated" })
+    showSaveSweetAlert({ label: "Task updated" });
   };
 
   return (
@@ -116,30 +111,6 @@ export default function CouponReviewButtons({
       ) : (
         // <div style={{ height: "4vh", ...border }}></div>
         <>
-          {/* <Button
-            variant="contained"
-            sx={{
-              width: "10vw",
-              ...hoverDeny,
-              backgroundColor: errorColor.color,
-            }}
-            onClick={handleDenyClick}
-          >
-            Deny &nbsp;
-            <CancelIcon />
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: successColor.color,
-              width: "10vw",
-              ...hoverAccept,
-            }}
-          >
-            <CheckIcon />
-            &nbsp; Accept
-          </Button> */}
-
           <Button variant="contained" sx={buttonWidth} disabled>
             Cancel
           </Button>

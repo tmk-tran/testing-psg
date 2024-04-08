@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
 import { Box, Button, Card, CardContent, Typography } from "@mui/material";
-import { border, borderPrimaryColor } from "../Utils/colors";
+import { borderPrimaryColor } from "../Utils/colors";
 // ~~~~~~~~~~ Component ~~~~~~~~~~ //
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import FilePreview from "../CouponReviewDetails/FilePreview";
@@ -15,7 +15,7 @@ import { couponsData, mComments, mTasks } from "../../hooks/reduxStore";
 import { flexCenter, textCenter } from "../Utils/pageStyles";
 import { grayBackground } from "../Utils/colors";
 import { thumbnailSize } from "../CouponReviewDetails/FilePreview";
-import { capitalizeFirstWord, capitalizeWords } from "../Utils/helpers";
+import { capitalizeWords } from "../Utils/helpers";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
 const thumbnailHeaderStyle = {
@@ -32,6 +32,7 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
 
   const [taskId, setTaskId] = useState("");
   console.log(taskId);
+  const [couponId, setCouponId] = useState("");
   const [taskStatus, setTaskStatus] = useState("");
   console.log(taskStatus);
   const [newTaskStatus, setNewTaskStatus] = useState("");
@@ -42,7 +43,6 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   console.log(changesRequested);
   const [completedCoupon, setCompletedCoupon] = useState(false);
   console.log(completedCoupon);
-  const [bookYears, setBookYears] = useState([]);
 
   const dispatch = dispatchHook();
   const history = historyHook();
@@ -105,7 +105,17 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
       dispatch(dispatchAction);
     }
 
-    // onTaskUpdate();
+    if (completedCoupon) {
+      const dispatchAction2 = {
+        type: "ADD_TO_CONSUMER_LIST",
+        payload: {
+          id: couponId,
+        },
+      };
+      console.log(dispatchAction2);
+      dispatch(dispatchAction2);
+    }
+
     showSaveSweetAlert({ label: "Task Updated" });
   };
 
@@ -114,24 +124,27 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
     event.stopPropagation();
   };
 
-  const handleUpdateTask = (taskId, choice, taskStatus) => {
+  const handleUpdateTask = (taskId, couponId, choice, taskStatus) => {
     console.log(taskId);
+    console.log(couponId);
     console.log(choice);
     console.log(taskStatus);
     setTaskId(taskId);
+    setCouponId(couponId);
     setNewTaskStatus(choice);
     setTaskStatus(taskStatus);
     setIsTaskUpdate(true);
   };
 
-  const handleChangeRequest = (newValue) => {
-    // setChangesRequested(newValue);
+  const handleChangeRequest = (boolean) => {
+    console.log(boolean);
+    setChangesRequested(boolean);
     console.log("Changes requested: ", changesRequested);
   };
 
-  const handleCompletedCoupon = () => {
-    // setCompletedCoupon(true);
-    console.log("Completed coupon: ", completedCoupon);
+  const handleCompletedCoupon = (boolean) => {
+    console.log(boolean);
+    setCompletedCoupon(boolean);
   };
 
   const handleCardClick = (couponId) => {
@@ -166,7 +179,6 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
               }}
             >
               <CardContent>
-                {/* <SuccessAlert isOpen={isAlertOpen} onClose={handleAlertClose} /> */}
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~ HEADER ~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -180,13 +192,13 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                 >
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                   {/* ~~~~~~~~~~ Status Menu ~~~~~~~~~~ */}
-                  {/* Need to add onChange prop here to resolve error */}
                   {file.taskId ? (
                     <>
                       <Box sx={flexCenter}>
                         <Typography sx={{ mr: 2 }}>#{file.id}</Typography>
                       </Box>
                       <CouponStatusDropdown
+                        couponId={file.id}
                         task={couponTask}
                         handleUpdateTask={handleUpdateTask}
                         onChange={handleChangeRequest}
@@ -207,8 +219,6 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                 <hr />
 
                 <div style={{ display: "flex", flexDirection: "row", gap: 5 }}>
-                  {/* REMOVE BORDERS AND PLACEHOLDERS UPON HOOKUP TO DB ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                   {/* ~~~~~~ FRONT OF COUPON ~~~~~~ */}
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -277,7 +287,7 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                       {/* <CommentDisplay comment={mostRecentComment} /> */}
                       {relatedComments.length > 0 ? (
                         relatedComments.map((comment, index) => (
-                          <CommentDisplay key={index} comment={comment} />
+                          <CommentDisplay key={index} comment={comment} showAllComments={false} />
                         ))
                       ) : (
                         <Typography

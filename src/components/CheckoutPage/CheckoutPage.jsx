@@ -22,7 +22,7 @@ import CustomButton from "../CustomButton/CustomButton";
 import { border } from "../Utils/colors";
 import { historyHook } from "../../hooks/useHistory";
 import { navButtonStyle } from "./checkoutStyles";
-import { sellerPageInfo } from "../../hooks/reduxStore";
+import { sellerPageInfo, bookYear } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 
 export const containerStyle = {
@@ -56,32 +56,24 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
   const selectedProducts = location.state?.selectedProducts ?? [];
   const orderTotal = location.state?.orderTotal ?? 0;
   const customDonation = location.state?.customDonation ?? 0;
-  console.log("Selected Products in CheckoutPage:", selectedProducts);
-  console.log(orderTotal);
-  console.log(customDonation);
   // Access digital payment amount //
   let digitalPayment;
   digitalPayment = orderTotal - customDonation;
   console.log(digitalPayment);
   // Number of books sold //
   const [physicalBookDigital, setPhysicalBookDigital] = useState(0);
-  console.log(physicalBookDigital);
   const [digitalBookCredit, setDigitalBookCredit] = useState(0);
-  console.log(digitalBookCredit);
   const [digitalDonation, setDigitalDonation] = useState(0);
 
-  const [activeStep, setActiveStep] = useState(2);
-  console.log(activeStep);
+  const [activeStep, setActiveStep] = useState(0);
   const [stateSelected, setStateSelected] = useState(false);
-  console.log(stateSelected);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  console.log(isSubmitted);
 
   const sellerData = sellerPageInfo() || [];
-  console.log(sellerData);
   const orgId = sellerData[0].organization_id;
-  console.log(orgId);
   const sellerId = sellerData[0].id;
+  const currentYear = bookYear() || [];
+  const activeYearId = currentYear[0].id;
 
   // ~~~~~~~~~~ Form state ~~~~~~~~~~ //
   const [firstName, setFirstName] = useState("");
@@ -92,21 +84,11 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
   const [unit, setUnit] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
-  console.log(firstName);
-  console.log(lastName);
-  console.log(email);
-  console.log(phone);
-  console.log(address);
-  console.log(unit);
-  console.log(city);
-  console.log(stateSelected);
-  console.log(zip);
   // ~~~~~ Error State ~~~~~ //
   const [errors, setErrors] = useState({});
 
   // ~~~~~~~~~~ Order Info ~~~~~~~~~~ //
   const [orderInfo, setOrderInfo] = useState(null);
-  console.log(orderInfo);
 
    //ASK MARK WHERE THIS SHOULD GO
   const acInfo = () => {
@@ -301,13 +283,21 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
     history.push(`/fargo/seller/${refId}/${caseType}`);
   };
 
+  const setDigitalBook = (value) => ({
+    type: "SET_DIGITAL_BOOK",
+    payload: value,
+  });
+
   const handleSubmit = () => {
     // Check if this is the last step in the process
     if (activeStep === steps.length - 1) {
       // This is the last step, update transactions
       updateTransactions();
       acInfo();
-      // You might also want to redirect the user to a confirmation page
+      if (digitalBookCredit) {
+        dispatch(setDigitalBook(true));
+      }
+      // Redirect the user to a confirmation page
       history.push(`/fargo/seller/${refId}/complete`);
     } else {
       // This is not the last step, move to the next step
@@ -321,6 +311,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
       payload: {
         refId: refId,
         orgId: orgId,
+        yearId: activeYearId,
         physical_book_cash: 0,
         physical_book_digital: physicalBookDigital,
         digital_book_credit: digitalBookCredit,
@@ -347,6 +338,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
           id: sellerId,
           refId: refId,
           digital: digitalPayment,
+          orgId: orgId,
         },
       });
 

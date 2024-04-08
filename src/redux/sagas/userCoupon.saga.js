@@ -23,7 +23,7 @@ function* addCoupon(action) {
       response
     );
     yield put({
-      type: "FETCH_CONSUMER_COUPONS",
+      type: "FETCH_CONSUMER_BOOKS",
       payload: action.payload.userId,
     });
   } catch (error) {

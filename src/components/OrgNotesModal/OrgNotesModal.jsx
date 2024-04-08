@@ -15,8 +15,6 @@ import "./OrgNotesModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~ //
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
-// For Toast (INACTIVE)
-import { showToast } from "../Utils/toasts";
 import { flexRowSpace } from "../Utils/pageStyles";
 
 export default function NotesPopover({ info }) {
@@ -64,8 +62,6 @@ export default function NotesPopover({ info }) {
       setNoteAdded(true);
     };
 
-    // Toast
-    // showToast();
     saveCall();
     // Sweet Alert
     showSaveSweetAlert({ label: "Note Added" });

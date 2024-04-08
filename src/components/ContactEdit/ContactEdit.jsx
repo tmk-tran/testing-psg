@@ -13,17 +13,11 @@ import "./ContactEdit.css";
 // ~~~~~~~~~~ Utils ~~~~~~~~~~
 import {
   capitalizeFirstWord,
-  formatPhoneNumber,
   validateEmail,
-  validatePhoneNumber,
   validateWebsiteFormat,
 } from "../Utils/helpers";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
-import { showToast } from "../Utils/toasts";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
-import CloseButton from "../Buttons/CloseButton";
-import { hoverAccept } from "../Utils/colors";
-import { saveBtnWidth } from "../Utils/helpers";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import ModalButtons from "../Modals/ModalButtons";
 import PhoneInput from "../LocationsCard/PhoneInput";
@@ -35,51 +29,35 @@ export default function ContactEdit({
   onSaveChanges,
   isMerchantTaskPage,
 }) {
-  // const [name, setName] = useState(info.organization_name);
-  console.log(isOpen);
-  console.log(isMerchantTaskPage);
   const [name, setName] = useState(
     !isMerchantTaskPage ? info.organization_name : info.merchant_name
   );
-  console.log(name);
   const [orgType, setOrgType] = useState(info.type);
-  console.log(orgType);
   const [address, setAddress] = useState(info.address);
-  console.log(address);
   const [city, setCity] = useState(info.city);
-  console.log(city);
   const [state, setState] = useState(info.state);
-  console.log(state);
   const [zip, setZip] = useState(info.zip);
-  console.log(zip);
   const [editedFirstName, setEditedFirstName] = useState(
     info.primary_contact_first_name
   );
-  console.log(editedFirstName);
   const [editedLastName, setEditedLastName] = useState(
     info.primary_contact_last_name
   );
-  console.log(editedLastName);
   const [editedPhone, setEditedPhone] = useState(
     isMerchantTaskPage
       ? Number(info.contact_phone_number)
       : Number(info.primary_contact_phone)
   );
-  console.log(editedPhone);
   const [phoneError, setPhoneError] = useState(false);
-  console.log(phoneError);
-  // const [editedEmail, setEditedEmail] = useState(info.primary_contact_email);
   const [editedEmail, setEditedEmail] = useState(
     !isMerchantTaskPage
       ? info.primary_contact_email || ""
       : info.contact_email || ""
   );
-  console.log(editedEmail);
   const [emailError, setEmailError] = useState(false);
-  console.log(emailError);
-  console.log(name);
-  const [editedWebsite, setEditedWebsite] = useState(info.website);
-  console.log(editedWebsite);
+  const [editedWebsite, setEditedWebsite] = useState(
+    info.website ? info.website : null
+  );
   const [websiteError, setWebsiteError] = useState(false);
 
   useEffect(() => {
@@ -102,12 +80,9 @@ export default function ContactEdit({
     const contactInfo = {
       ...info,
     };
-    console.log(contactInfo);
 
     const orgId = contactInfo.organization_id;
-    console.log(orgId);
     const merchantId = contactInfo.id;
-    console.log(merchantId);
 
     // Validate phone number before saving
     // if (!/^[0-9]*$/.test(editedPhone)) {
@@ -157,9 +132,6 @@ export default function ContactEdit({
           website: editedWebsite,
         };
 
-    // from Utils
-    // showToast();
-
     // Sweet Alert
     showSaveSweetAlert({ label: "Contact Updated" });
 
@@ -169,28 +141,6 @@ export default function ContactEdit({
     setPhoneError(false);
 
     onSaveChanges(editedItem);
-    console.log(editedItem);
-  };
-
-  const handleReset = () => {
-    // Reset form fields to their original values
-    setEditedFirstName(info.primary_contact_first_name);
-    setEditedLastName(info.primary_contact_last_name);
-    setEditedPhone(
-      !isMerchantTaskPage
-        ? info.primary_contact_phone
-        : info.contact_phone_number
-    );
-    setEditedEmail(
-      !isMerchantTaskPage ? info.primary_contact_email : info.contact_email
-    );
-    setEmailError(false);
-    setPhoneError(false);
-  };
-
-  const handleClose = () => {
-    handleReset(); // Reset form fields before closing
-    onClose();
   };
 
   return (
@@ -217,7 +167,6 @@ export default function ContactEdit({
           gap: 2,
         }}
       >
-        {/* <CloseButton handleClose={handleClose} /> */}
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~ HEADER ~~~~~~~~ */}
         <Typography variant="h6" sx={modalHeaderStyle}>

@@ -3,7 +3,6 @@ import Fuse from "fuse.js";
 import { Box, useMediaQuery, Pagination } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
-import { border } from "../Utils/colors";
 import {
   containerStyle,
   centeredStyle,
@@ -31,19 +30,24 @@ export default function ConsumerCouponView() {
   const [filteredCoupons, setFilteredCoupons] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const coupons = couponsData() || [];
+  // For Coupon Book Year
+  const activeYear = bookYear();
+  const expirationYear =
+    activeYear && activeYear[0] ? activeYear[0].year.split("-")[1] : "";
+  // Year ID //
+  const activeYearId = activeYear && activeYear[0] ? activeYear[0].id : "";
+
   useEffect(() => {
     const dispatchAction = {
       type: "FETCH_CONSUMER_COUPONS",
-      payload: user.id,
+      payload: {
+        id: user.id,
+        yearId: activeYearId,
+      },
     };
     dispatch(dispatchAction);
-  }, []);
-
-  const coupons = couponsData() || [];
-  const activeYear = bookYear();
-
-  const years = activeYear[0].year;
-  const expirationYear = years.split("-")[1];
+  }, [activeYear]);
 
   const fuse = new Fuse(coupons, {
     keys: ["merchant_name"], // The 'merchant' field is used for searching

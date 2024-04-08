@@ -21,8 +21,9 @@ import ToggleButton from "../ToggleButton/ToggleButton.jsx";
 import { allMerchants, mCoupons } from "../../hooks/reduxStore.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 
-function HomePage({ isOrgAdmin, isGraphicDesigner }) {
+function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   console.log(isOrgAdmin);
+  console.log(orgAdminId);
   console.log(isGraphicDesigner);
   const dispatch = useDispatch();
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

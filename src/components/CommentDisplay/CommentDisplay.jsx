@@ -23,7 +23,7 @@ export default function CommentDisplay({ comment, showAllComments }) {
     );
   }
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+  console.log(comment);
   const content = comment.comment_content;
   console.log(content);
   const user = comment.user;

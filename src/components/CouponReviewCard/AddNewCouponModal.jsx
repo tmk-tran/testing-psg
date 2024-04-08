@@ -10,9 +10,7 @@ import {
 } from "@mui/material";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~ //
 import AddBox from "../AddBoxIcon/AddBoxIcon";
-import CloseButton from "../Buttons/CloseButton";
 import SelectMenu from "./SelectMenu";
-import AddFileButton from "../AddFileButton/AddFileButton";
 import ModalButtons from "../Modals/ModalButtons";
 import AllLocationsButton from "./AllLocationsButton";
 import PhoneInput from "../LocationsCard/PhoneInput";
@@ -60,6 +58,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   const [websiteError, setWebsiteError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [offerError, setOfferError] = useState(false);
+  const [activeYearError, setActiveYearError] = useState(false);
 
   console.log(phoneError);
   console.log(couponOffer);
@@ -89,14 +88,18 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   };
 
   const addCoupon = () => {
-    if (!phone) {
-      setPhoneError(true);
-      return;
-    }
+    // if (!phone) {
+    //   setPhoneError(true);
+    //   return;
+    // }
 
     // Validate phone number before saving
-    if (!/^\d{10}$/.test(phone)) {
-      setPhoneError(true);
+    // if (phone && !/^\d{10}$/.test(phone)) {
+    //   setPhoneError(true);
+    //   return;
+    // }
+    if (!seasonIdSelected) {
+      setActiveYearError(true);
       return;
     }
 
@@ -127,7 +130,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
     setAdditionalInfo("");
     setExclusions("");
     setSelectAllLocations(false);
-    setPhoneError(false);
+    setActiveYearError(false);
     setLocationsError(false);
 
     handleClose();
@@ -178,7 +181,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <SelectMenu
-                label="Participating Location*"
+                label="Participating Location"
                 locations={locations}
                 selectAllLocations={selectAllLocations}
                 onLocationChange={handleLocationChange}
@@ -192,6 +195,9 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                 labelOutside
                 sx={{ mb: 2 }}
                 setYear={setSeasonIdSelected}
+                setActiveYearError={setActiveYearError}
+                error={activeYearError}
+                helperText={activeYearError ? "Please select a book year" : ""}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -218,17 +224,15 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                 fullWidth
                 sx={{ mb: 2 }}
               />
-              {/* </Grid> */}
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~ VALUE ~~~~~~~~~~~~ */}
-              {/* <Grid item={6}> */}
-              <TextField
+              {/* <TextField
                 label="Coupon Value"
                 value={couponValue}
                 onChange={(e) => setCouponValue(e.target.value)}
                 fullWidth
                 sx={{ mb: 2 }}
-              />
+              /> */}
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~ EXCLUSIONS ~~~~~~~~~ */}
               <TextField
@@ -244,13 +248,22 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
               {/* <Divider sx={{ mt: 2, mb: 2, ...lineDivider}} /> */}
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~~ PHONE ~~~~~~~~~~~~ */}
-              <PhoneInput
+              {/* <PhoneInput
                 phoneNumber={phone}
                 setPhoneNumber={setPhone}
                 sx={{ mb: 2 }}
                 setPhoneError={setPhoneError}
                 error={phoneError}
                 helperText={phoneError ? "Invalid phone number" : ""}
+              /> */}
+              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+              {/* ~~~~~~~~~~ VALUE ~~~~~~~~~~~~ */}
+              <TextField
+                label="Coupon Value"
+                value={couponValue}
+                onChange={(e) => setCouponValue(e.target.value)}
+                fullWidth
+                sx={{ mb: 2 }}
               />
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~~ WEBSITE ~~~~~~~~~~~~ */}
@@ -281,7 +294,6 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                 onChange={(e) => setAdditionalInfo(e.target.value)}
                 fullWidth
                 multiline
-                rows={3.6}
                 sx={{ mb: 2 }}
               />
             </Grid>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch } from "@mui/material";
 
-const ActionSwitch = ({ isChecked, onChange }) => {
+const ActionSwitch = ({ disabled, isChecked, onChange }) => {
   const handleChange = (event) => {
     const newValue = event.target.checked;
     onChange(newValue);
@@ -9,6 +9,7 @@ const ActionSwitch = ({ isChecked, onChange }) => {
 
   return (
     <Switch
+      disabled={disabled}
       checked={isChecked}
       onChange={handleChange}
       inputProps={{

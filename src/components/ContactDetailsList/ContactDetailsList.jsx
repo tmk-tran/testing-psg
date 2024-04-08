@@ -10,17 +10,21 @@ import { capitalizeWords, centerStyle } from "../Utils/helpers";
 import { centeredStyle } from "../Utils/pageStyles";
 import { primaryColor } from "../Utils/colors";
 
+const typographySx = {
+  mr: 2,
+};
+
 export default function ContactDetailsList({
   info,
   contactPhone,
   isMerchantTaskPage,
 }) {
   return (
-    <List style={{ padding: "15px", width: "70%", marginTop: "5px" }}>
+    <List style={{ padding: "15px", marginTop: "5px" }}>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ CONTACT NAME ~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-      <ListItem disablePadding style={centerStyle}>
+      <ListItem disablePadding>
         <ListItemIcon style={centeredStyle}>
           <AccountBoxIcon style={primaryColor} />
         </ListItemIcon>
@@ -45,7 +49,7 @@ export default function ContactDetailsList({
           <EmailIcon style={primaryColor} />
         </ListItemIcon>
         {isMerchantTaskPage ? (
-          <Typography style={{ maxWidth: "90%", overflowWrap: "break-word" }}>
+          <Typography sx={typographySx}>
             {info.contact_email ? (
               <a href={`mailto:${info.contact_email}`}>{info.contact_email}</a>
             ) : (
@@ -53,7 +57,7 @@ export default function ContactDetailsList({
             )}
           </Typography>
         ) : (
-          <Typography>
+          <Typography sx={typographySx}>
             {info.primary_contact_email ? (
               <a href={`mailto:${info.primary_contact_email}`}>
                 {info.primary_contact_email}
@@ -73,9 +77,13 @@ export default function ContactDetailsList({
           <ListItemIcon style={centeredStyle}>
             <PublicIcon style={primaryColor} />
           </ListItemIcon>
-          <Typography>
+          <Typography sx={typographySx}>
             {info.website ? (
-              <a href={info.website} target="_blank" rel="noopener noreferrer">
+              <a
+                href={`https://${info.website}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {info.website}
               </a>
             ) : (

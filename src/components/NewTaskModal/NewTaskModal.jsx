@@ -23,7 +23,6 @@ import { capitalizeFirstWord, saveBtnWidth } from "../Utils/helpers";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import DatePicker from "../DatePicker/DatePicker";
 import SearchableSelect from "../NewTaskModal/SearchableSelect";
-import CloseButton from "../Buttons/CloseButton";
 import ModalButtons from "../Modals/ModalButtons";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { useSelector } from "react-redux";
@@ -107,7 +106,7 @@ export default function BasicModal({
 
     // Cleanup function or dependencies for useEffect
   }, [merchantTab]);
-  
+
   const resetForm = () => {
     // Reset form fields
     setFirstMenuChoice("");
@@ -320,9 +319,7 @@ export default function BasicModal({
             {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
 
             {/* ~~~~~ Year Select, Offer field ~~~~~ */}
-            {showDetailsInput && (
-              <YearSelect setYear={setBookYearId} />
-            )}
+            {showDetailsInput && <YearSelect setYear={setBookYearId} />}
 
             {showDetailsInput && (
               <TextField

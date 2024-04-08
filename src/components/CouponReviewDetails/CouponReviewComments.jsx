@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 // ~~~~~~~~~~ Style ~~~~~~~~~
-import { Typography, TextField } from "@mui/material";
+import { Typography } from "@mui/material";
 import { border, primaryColor } from "../Utils/colors";
 // ~~~~~~~~~~ Component ~~~~~~~~~
 import CommentDisplay from "../CommentDisplay/CommentDisplay";

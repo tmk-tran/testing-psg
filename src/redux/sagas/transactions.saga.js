@@ -5,10 +5,14 @@ function* updateTransaction(action) {
   console.log(action.payload);
   const refId = action.payload.refId;
   const orgId = action.payload.orgId;
+  const yearId = action.payload.yearId;
 
   try {
     yield axios.put(`/api/transactions/${refId}`, action.payload);
-    yield put({ type: "FETCH_SELLERS", payload: orgId });
+    yield put({
+      type: "FETCH_SELLERS",
+      payload: { orgId, yearId },
+    });
   } catch (error) {
     console.log("error in updateSeller Saga", error);
   }

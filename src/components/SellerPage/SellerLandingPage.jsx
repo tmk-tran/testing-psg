@@ -71,7 +71,10 @@ export default function SellerLandingPage() {
           <Divider />
           <br />
           {/* ~~~~~ Payment Method ~~~~~ */}
-          <PaymentMenu isMobile={isMobile} onPaymentSelect={handlePaymentSelect} />
+          <PaymentMenu
+            isMobile={isMobile}
+            onPaymentSelect={handlePaymentSelect}
+          />
           <br />
           {showGoButton && (
             <Box sx={{ width: "40%", ...flexEnd }}>

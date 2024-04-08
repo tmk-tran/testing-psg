@@ -2,7 +2,7 @@ import React from "react";
 import { Typography as MuiTypography } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const Typography = ({ label, sx, variant, gutterBottom, to, newTab, icon }) => {
+const Typography = ({ customKey, label, sx, variant, gutterBottom, to, newTab, icon }) => {
   console.log(newTab);
   if (to) {
     return (
@@ -20,7 +20,7 @@ const Typography = ({ label, sx, variant, gutterBottom, to, newTab, icon }) => {
   }
 
   return (
-    <MuiTypography sx={sx} variant={variant} gutterBottom={gutterBottom}>
+    <MuiTypography key={customKey} sx={sx} variant={variant} gutterBottom={gutterBottom}>
       {icon && icon} {label}
     </MuiTypography>
   );

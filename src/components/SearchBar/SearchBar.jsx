@@ -59,7 +59,7 @@ const SearchBar = ({
     <div style={isMobile ? stickyStyle : {}}>
       {isUserAdmin && !isOrganization && !isCoupon && (
         <TextField
-          label="Search Users"
+          label="Search by Last Name"
           variant="outlined"
           size="small"
           value={query}
