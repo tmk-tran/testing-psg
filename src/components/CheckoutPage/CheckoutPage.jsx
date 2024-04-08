@@ -103,7 +103,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
       state: stateSelected,
       zip: zip,
       organization: seller.organization_name,
-      url: "",
+      url: "https://testpsg.fly.dev/#/fargo/coupon",
       year: 2024-2025,
       donation: customDonation,
       bookType: product.bookType,
@@ -293,7 +293,6 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
     if (activeStep === steps.length - 1) {
       // This is the last step, update transactions
       updateTransactions();
-      acInfo();
       if (digitalBookCredit) {
         dispatch(setDigitalBook(true));
       }
