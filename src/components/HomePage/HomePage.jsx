@@ -42,7 +42,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
      false || Cookies.get("isMerchantList") === "true"
   );
   console.log(isMerchantList);
-  const organizationsList = useSelector((store) => store.organizations);
+  const organizationsList = useSelector((store) => store.organizations.organization);
   console.log(organizationsList);
   const merchants = allMerchants() || [];
   console.log(merchants);
@@ -139,7 +139,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
       ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
       : isMerchantList
         ? merchants.slice(indexOfFirstItem, indexOfLastItem)
-        : organizationsList?.organization?.slice(indexOfFirstItem, indexOfLastItem) || [];
+        : organizationsList?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
 
   console.log(currentItems);
@@ -148,7 +148,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     searchResult.length > 0
       ? searchResult.length
       : !isMerchantList
-        ? organizationsList?.organization?.length || 0
+        ? organizationsList?.length || 0
         : merchants.length;
   const pageCount = Math.ceil(totalItems / itemsPerPage);
 
