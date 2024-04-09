@@ -8,7 +8,7 @@ function* fetchOrganizationsSaga(action) {
     const QUERY_URL = auth_response.data.routes.query;
     console.log(auth_response)
     const query = `{
-       organization(ordering: "group_collection.organization_id" filter: "is_deleted = false"){
+       organization(ordering: "organization_name ASC" filter: "is_deleted = false"){
        id
        organization_name
        type

@@ -39,7 +39,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isMerchantList, setIsMerchantList] = useState(
-    Cookies.get("isMerchantList") === "true" || false
+     false || Cookies.get("isMerchantList") === "true"
   );
   console.log(isMerchantList);
   const organizationsList = useSelector((store) => store.organizations);
@@ -64,7 +64,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
 
   useEffect(() => {
     const initialIsMerchantList =
-      Cookies.get("isMerchantList") === "true" || false;
+     false || Cookies.get("isMerchantList") === "true";
     setIsMerchantList(initialIsMerchantList);
   }, []);
 
