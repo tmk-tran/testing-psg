@@ -52,8 +52,8 @@ function ListView({
 
   const renderLogoOrInitials = () => {
     return !isMerchantList ? (
-      data.organization_logo_base64 ? (
-        <ImageRender base64Logo={data.organization_logo_base64} />
+      data.organization_logo ? (
+        <ImageRender base64Logo={data.organization_logo} />
       ) : (
         <div className="initialsContainer">
           {data.organization_name
@@ -65,8 +65,8 @@ function ListView({
             : null}
         </div>
       )
-    ) : data.merchant_logo_base64 ? (
-      <ImageRender base64Logo={data.merchant_logo_base64} />
+    ) : data.merchant_logo ? (
+      <ImageRender base64Logo={data.merchant_logo} />
     ) : (
       <div className="initialsContainer">Merchant Logo</div>
     );
@@ -229,9 +229,8 @@ function ListView({
                               {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
 
                               <Typography variant="body2">
-                                {!user.org_admin
-                                  ? `Organization Fee: $${data.organization_earnings}`
-                                  : null}
+                                 Organization Fee: $${data.organization_earnings}
+                                  
                               </Typography>
 
                               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
