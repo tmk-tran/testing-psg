@@ -17,7 +17,7 @@ export const oFundraisers = () => {
 };
 
 export const allOrganizations = () => {
-  return useSelector((store) => store.organizations);
+  return useSelector((store) => store.organizations.organization);
 };
 
 export const allMerchants = () => {
