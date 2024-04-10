@@ -6,11 +6,12 @@ function* fetchSellers(action) {
   try {
     console.log(action.payload);
     const orgId = action.payload.orgId
+    const yearId = action.payload.yearId
     const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
-      sellers(filter: "organization_id = ${orgId}"){
+      sellers(filter: "organization_id = ${orgId} AND coupon_book_id = ${yearId}"){
         id
         refId
         lastname

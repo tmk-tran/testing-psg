@@ -94,9 +94,12 @@ export default function SellersTable() {
   const sellers = oSellers() || [];
   console.log(sellers);
   const year = bookYear() || [];
+  console.log(year);
   const yearId = year[0].id;
+  console.log(yearId);
   const availableYears = allYears();
   const [viewYearId, setViewYearId] = useState(year ? yearId : null);
+  console.log(viewYearId);
 
   useEffect(() => {
     const dispatchAction = {

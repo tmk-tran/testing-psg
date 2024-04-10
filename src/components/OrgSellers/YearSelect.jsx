@@ -39,6 +39,7 @@ export default function YearSelect({
   }, []);
 
   const years = allYears();
+  console.log(years);
 
   const handleChange = (event) => {
     labelOutside && setActiveYearError(false);
