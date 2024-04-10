@@ -46,38 +46,81 @@ function* fetchByIdSaga(action) {
 }
 
 // Reducer is bookYear.reducer here
+// function* fetchByYearSaga(action) {
+//   try {
+//     console.log(action.payload)
+//     const currentSeason = action.payload.currentSeason;
+//     const auth_response = action.payload.auth;
+//     const ACCESS_TOKEN = auth_response.data.access_token;
+//     const QUERY_URL = auth_response.data.routes.query;
+//     const query = `{
+//       coupon_book (filter: "year = '${currentSeason}'"){
+//         id
+//         year
+//         active
+//       }
+//   }`;
+
+//     const queryConfig = {
+//       headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${ACCESS_TOKEN}`,
+//       },
+//   };
+
+//   const data = new FormData();
+//   data.append("query", query);
+//   data.append("variables", `{}`);
+
+//   const response = yield axios.post(QUERY_URL, data, queryConfig);
+//   console.log(response)
+
+//     yield put({ type: "SET_BOOK_YEAR", payload: response.data.coupon_book });
+//   } catch(err) {
+//     console.log("error in fetching coupon book year", err);
+//   }
+// }
+
 function* fetchByYearSaga(action) {
   try {
-    console.log(action.payload)
+    console.log(action.payload);
     const currentSeason = action.payload.currentSeason;
-    const auth_response = action.payload.auth;
-    const ACCESS_TOKEN = auth_response.data.access_token;
-    const QUERY_URL = auth_response.data.routes.query;
-    const query = `{
-      coupon_book (filter: "year = '${currentSeason}'"){
-        id
-        year
-        active
-      }
-  }`;
+    if (action.payload.auth && Object.keys(action.payload.auth).length > 0) {
+      // Auth exists and is not empty
+      const auth_response = action.payload.auth;
+      const ACCESS_TOKEN = auth_response.data.access_token;
+      const QUERY_URL = auth_response.data.routes.query;
+      const query = `{
+        coupon_book (filter: "year = '${currentSeason}'"){
+          id
+          year
+          active
+        }
+      }`;
 
-    const queryConfig = {
-      headers: {
+      const queryConfig = {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-  };
+        },
+      };
 
-  const data = new FormData();
-  data.append("query", query);
-  data.append("variables", `{}`);
+      const data = new FormData();
+      data.append("query", query);
+      data.append("variables", `{}`);
 
-  const response = yield axios.post(QUERY_URL, data, queryConfig);
-  console.log(response)
+      const response = yield axios.post(QUERY_URL, data, queryConfig);
+      console.log(response);
 
-    yield put({ type: "SET_BOOK_YEAR", payload: response.data.coupon_book });
+      yield put({ type: "SET_BOOK_YEAR", payload: response.data.coupon_book });
+    } else {
+      // Auth is empty or does not exist
+      const response = yield axios.get(`/api/couponbook/season/${currentSeason}`);
+      console.log(response.data);
+      yield put({ type: "SET_BOOK_YEAR", payload: response.data });
+    }
   } catch(err) {
-    console.log("error in fetching coupon book year", err);
+    console.log("Error in fetching book year", err);
   }
 }
 

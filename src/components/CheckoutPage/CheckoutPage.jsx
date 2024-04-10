@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import {
   useTheme,
@@ -44,14 +43,7 @@ export default function CheckoutPage({ caseType }) {
   const dispatch = dispatchHook();
   console.log(location.state);
   const paramsObject = useParams();
-  const auth = useSelector((store) => store.auth)
-  const seller = useSelector((store) => store.sellerByRefId)
   const refId = paramsObject.refId;
-useEffect(() =>{
-dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
-}, [])
-
-
   // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
   const orderTotal = location.state?.orderTotal ?? 0;
@@ -69,36 +61,14 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
   const [stateSelected, setStateSelected] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const [orgIdForPayload, setOrgIdForPayload] = useState(null);
-  const [sellerIdForPayload, setSellerIdForPayload] = useState(null);
-  const [activeYearIdForPayload, setActiveYearIdForPayload] = useState(null);
-
   const sellerData = sellerPageInfo() || [];
   console.log(sellerData);
-
-  if (sellerData.length > 0) {
   const orgId = sellerData[0].organization_id;
-  console.log(orgId);
-  setOrgIdForPayload(orgId);
-
   const sellerId = sellerData[0].id;
-  console.log(sellerId);
-  setSellerIdForPayload(sellerId);
-
-  }
-
-  console.log(orgIdForPayload);
-  console.log(sellerIdForPayload);
-  console.log(activeYearIdForPayload);
-  
-
   const currentYear = bookYear() || [];
   console.log(currentYear);
-  if (currentYear.length > 0) {
   const activeYearId = currentYear[0].id;
   console.log(activeYearId);
-  setActiveYearIdForPayload(activeYearId);
-  }
 
   // ~~~~~~~~~~ Form state ~~~~~~~~~~ //
   const [firstName, setFirstName] = useState("");
@@ -115,28 +85,6 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
   // ~~~~~~~~~~ Order Info ~~~~~~~~~~ //
   const [orderInfo, setOrderInfo] = useState(null);
 
-   //ASK MARK WHERE THIS SHOULD GO
-  const acInfo = () => {
-    const contactData = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: phone,
-      address: address,
-      unit: unit,
-      city: city,
-      state: stateSelected,
-      zip: zip,
-      organization: seller.organization_name,
-      url: "https://testpsg.fly.dev/#/fargo/coupon",
-      year: 2024-2025,
-      donation: customDonation,
-      bookType: product.bookType,
-      type: caseType
-    }
-    console.log("Contact Data from acInfo",contactData)
-    dispatch({type: "ADD_CONTACT", payload: contactData})
-  }
   useEffect(() => {
     let physicalDigital = 0;
     let digitalCredit = 0;
@@ -201,8 +149,6 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
- 
-
   const getStepContent = (step) => {
     switch (step) {
       case 0:
@@ -244,7 +190,6 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
               selectedProducts={selectedProducts}
               customDonation={customDonation}
               orderSuccess={handleOrderInfo}
-              submitContact={acInfo}
             />
           </Box>
         );
@@ -301,6 +246,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
     !hasErrors && setIsSubmitted(true);
     // setIsSubmitted(true);
     !hasErrors && handleNext();
+
     saveCustomerInfo();
   };
 
@@ -334,7 +280,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
       type: "UPDATE_BOOKS_SOLD",
       payload: {
         refId: refId,
-        orgId: orgIdForPayload,
+        orgId: orgId,
         yearId: activeYearId,
         physical_book_cash: 0,
         physical_book_digital: physicalBookDigital,
