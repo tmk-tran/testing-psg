@@ -151,8 +151,7 @@ function ListView({
 
   function goToDetails() {
     history.push(
-      `/fargo/${isMerchantList ? "merchantTaskDetails" : "orgDetails"}/${
-        data.id
+      `/fargo/${isMerchantList ? "merchantTaskDetails" : "orgDetails"}/${data.id
       }`
     );
   }
@@ -168,6 +167,7 @@ function ListView({
   const totalStandingBooks =
     totalCheckedOutBooks - totalCheckedInBooks - totalBooksSold;
   console.log(totalCheckedOutBooks)
+  console.log(totalBooksSold)
 
 
   function calculateBooksDifference(checkedOut, checkedIn, sold) {
@@ -217,78 +217,106 @@ function ListView({
 
                 {!isMerchantList ? (
                   <div style={{ display: "flex" }}>
-                    {aggs.total_books_sold.map((totalBooksSold) => {
-                      if (totalBooksSold.group_organization_id == data.id) {
-                        return (
-                          <>
-                            <div className="column">
-                              {/* ///////////////////////////////////////// */}
-                              {/* ///////////// ORG INFORMATION /////////// */}
-                              {/* ///////////////////////////////////////// */}
-                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                              {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
+                    {aggs.total_books_sold.some(totalBooksSold => totalBooksSold.group_organization_id == data.id) && (
 
-                              <Typography variant="body2">
-                                 Organization Fee: $${data.organization_earnings}
-                                  
-                              </Typography>
+                      <>
+                        <div className="column">
+                          {/* ///////////////////////////////////////// */}
+                          {/* ///////////// ORG INFORMATION /////////// */}
+                          {/* ///////////////////////////////////////// */}
+                          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                          {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
 
-                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                              {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
-                              <Typography key={totalBooksSold.id} variant="body2">
-                                Total Books Sold: {totalBooksSold.sum}
-                              </Typography>
+                          <Typography variant="body2">
+                            Organization Fee: ${data.organization_earnings}
 
-                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                              {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
-                              <Typography variant="body2">
-                                Organization Earnings: ${(data.organization_earnings * totalBooksSold.sum).toLocaleString()}
-                              </Typography>
-                            </div>
+                          </Typography>
 
-                            <div className="column">
-                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                              {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
-                              {aggs.total_groups.map((total_groups) => {
-                                if (total_groups.organization_id == data.id) {
-                                  return (
-                                    <Typography variant="body2">
-                                      Total Groups: {total_groups.count}
-                                    </Typography>
-                                  );
-                                }
-                              })}
-                              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                              {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
-                              {result.map((totalStandingBooks) => {
-                                if (totalStandingBooks.group_organization_id == data.id) {
-                                  return (
-                                    <>
-                                      <Typography variant="body2">
-                                        Total Outstanding Books: {totalStandingBooks.difference}
-                                      </Typography>
+                          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                          {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
+                          {totalBooksSold.map((totalBooks, index) => (
+                            totalBooks.group_organization_id == data.id && ( // Check for matching ID
+                              <>
+                                <Typography key={totalBooks.id} variant="body2">
+                                  Total Books Sold: {totalBooks.sum}
+                                </Typography>
 
-                                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                                      {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
-                                      <Typography variant="body2">
-                                        {!user.org_admin
-                                          ? `PSG Earnings: ${(
-                                            (totalBooksSold.sum * 25) -
-                                            (data.organization_earnings * totalBooksSold.sum)
-                                          ).toLocaleString()}`
-                                          : null}
-                                      </Typography>
-                                    </>
-                                  )
-                                }
-                              })}
-                            </div>
-                          </>
-                        );
+                                <Typography variant="body2">
+                                  Organization Earnings: ${(data.organization_earnings * totalBooks.sum).toLocaleString() || 0}
+                                </Typography>
+                              </>
+                            )
+                          ))}
+                        </div>
 
+                        <div className="column">
+                          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                          {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
+                          {aggs.total_groups.map((total_groups) => {
+                            if (total_groups.organization_id == data.id) {
+                              return (
+                                <Typography variant="body2">
+                                  Total Groups: {total_groups.count || 0}
+                                </Typography>
+                              )
+                            }
+                          })}
+                          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                          {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
+                          {result.map((totalStandingBooks, index) => {
+                            if (totalStandingBooks.group_organization_id == data.id) {
+                              return (
+                                <>
+                                  <Typography variant="body2"
+                                    key={index}>
+                                    Total Outstanding Books: {totalStandingBooks.difference}
+                                  </Typography>
 
-                      }
-                    })}
+                                  {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                                  {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
+                                  <Typography variant="body2"
+                                    key={index}>
+                                    {!user.org_admin
+                                      ? `PSG Earnings: ${(
+                                        (totalBooksSold[index].sum * 25) -
+                                        (data.organization_earnings * totalBooksSold[index].sum)
+                                      ).toLocaleString() || 0}`
+                                      : null}
+                                  </Typography>
+                                </>
+                              )
+                            }
+                          })}
+
+                        </div>
+                      </>
+                    )}
+                    {!aggs.total_books_sold.some(totalBooksSold => totalBooksSold.group_organization_id == data.id) && (
+                      <>
+                        <div className="column">
+                          <Typography variant="body2">
+                            Organization Fee: ${data.organization_earnings}
+                          </Typography>
+                          <Typography variant="body2">
+                            Total Books Sold: 0
+                          </Typography>
+                          <Typography variant="body2">
+                            Organization Earnings: $0
+                          </Typography>
+                        </div>
+                        <div className="column">
+                          <Typography variant="body2">
+                            Total Groups: 0
+                          </Typography>
+                          <Typography variant="body2">
+                            Total Outstanding Books: 0
+                          </Typography>
+                          <Typography variant="body2">
+                            PSG Earnings: $0
+                          </Typography>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                 ) : (
@@ -307,17 +335,23 @@ function ListView({
                       if (count.merchant === data.id) {
                         return (
                           <>
-                            <Typography>Coupon Count (Active): {count.count}</Typography>
+                            <Typography>Coupon Count (Active): {count.count || 0}</Typography>
                           </>
                         );
+                      } else {
+                        return (
+                          <>
+                            <Typography>Coupon Count (Active): 0</Typography>
+                          </>
+                        )
                       }
                     })}
                   </div>
-                )}
+                )
+                }
               </div>
             </div>
           </div>
-
           <div
             className="mainListActions"
             style={{
@@ -362,6 +396,8 @@ function ListView({
               </Button>
             )}
           </div>
+
+
         </CardContent>
 
         <EditAccountModal
@@ -375,4 +411,9 @@ function ListView({
   );
 }
 
+
 export default ListView;
+
+
+
+

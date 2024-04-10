@@ -1,27 +1,34 @@
 import React from "react";
 
+
 const ImageRender = ({ base64Logo }) => {
   if (!base64Logo) {
     return null; // Return null if logo is not available
   }
   
-  const hexToBase64 = (hexInput) => {
-    return btoa(
-      (hexInput.replace('\\x', '').match(/\w{2}/g) || [])
-      .map(a => String.fromCharCode(parseInt(a, 16)))
-      .join('')
-    );
-  };
-  
-var hexString = base64Logo; 
-var base64String = hexToBase64(hexString);
+
+// OPTION 1 TO TRY!!!
+
+const imageUrl = decodeJpegFromBytea(base64Logo)
+
+function decodeJpegFromBytea(byteArray) {
+  const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+  const imageUrl = URL.createObjectURL(blob);
+
+  return imageUrl;
+}
+// console.log(imageUrl)
+
+// console.log(base64Logo)
 
 
   return (
     <img
       className="logoImage"
-      src={`data:image/jpeg;base64,${base64String}`}
-      alt="Organization Logo"
+      // src={`data:image/jpeg;base64,${base64Logo}`}
+      src={imageUrl}
+      alt="Logo file"
     />
   );
 }
