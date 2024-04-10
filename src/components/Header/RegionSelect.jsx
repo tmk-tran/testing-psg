@@ -6,39 +6,45 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
+import { headerMenuStyle } from "../AccountMenu/AccountMenu";
 
-const RegionSelect = ({ regions, defaultValue, onChange }) => {
-  const [value, setValue] = useState(defaultValue);
+const RegionSelect = ({ isMobile, regions, defaultValue, onChange }) => {
+  const [value, setValue] = useState(defaultValue ? defaultValue : null);
   console.log(value);
 
   const handleChange = (event) => {
     const newValue = event.target.value;
     console.log(newValue);
     setValue(newValue);
-    onChange(newValue);
+    // onChange(newValue);
   };
 
   return (
     <FormControl sx={{ width: 190, position: "relative" }}>
-      {!defaultValue && (
+      {/* {!defaultValue && ( */}
+      {!value && (
         <InputLabel
           shrink={false}
           sx={{
-            fontSize: "18px",
+            fontSize: "0.8rem",
             ml: 2,
-            lineHeight: "1.1",
             position: "absolute",
-            top: "50%", // Move the label halfway down
+            top: "40%", // Move the label halfway down
             transform: "translateY(-50%)", // Center vertically
+            color: "white",
           }}
         >
-          Select
+          Select Region
         </InputLabel>
       )}
-      <Select value={value} onChange={handleChange} sx={{ height: 30 }}>
+      <Select
+        value={value}
+        onChange={handleChange}
+        sx={{ color: "white", ...headerMenuStyle }}
+      >
         {regions.map((region) => (
-          <MenuItem key={region} value={region}>
-            {region}
+          <MenuItem key={region.id} value={region.id}>
+            {region.region_name}
           </MenuItem>
         ))}
       </Select>

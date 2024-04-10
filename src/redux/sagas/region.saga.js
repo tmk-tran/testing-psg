@@ -2,8 +2,6 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* fetchRegion(action) {
-  console.log("From region saga: ");
-
   try {
     const items = yield axios.get(`/api/region`);
     console.log("FETCH request from region.saga, ITEMS = ", items.data);
