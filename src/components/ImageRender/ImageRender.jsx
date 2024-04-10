@@ -28,11 +28,11 @@ function hexToBase64(hexString) {
 const hexString = base64Logo; 
 const base64Data = hexToBase64(hexString);
 
-if (base64Data) {
-  console.log("Base64 encoded data:", base64Data);
-} else {
-  console.error("Error: Invalid hexadecimal data");
-}
+// if (base64Data) {
+//   console.log("Base64 encoded data:", base64Data);
+// } else {
+//   console.error("Error: Invalid hexadecimal data");
+// }
 
   const byteArray = atob(base64Data);
 
@@ -47,9 +47,9 @@ function decodeJpegFromBytea(byteArray) {
   return imageUrl;
 }
 
-console.log(imageUrl)
+// console.log(imageUrl)
 
-console.log(base64Logo)
+// console.log(base64Logo)
 
 
   return (

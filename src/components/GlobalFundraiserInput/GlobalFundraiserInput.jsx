@@ -11,7 +11,7 @@ export default function GlobalFundraiserInput() {
 
   const organizations = useSelector((store) => store.organizations.organization);
   console.log(organizations)
-  const groupList = useSelector((store) => store.allGroups.group);
+  const groupList = useSelector((store) => store.allGroups);
   console.log(groupList)
   const couponBooks = useSelector((store) => store.couponBooks);
   const auth = useSelector((store) => store.auth)
@@ -42,7 +42,7 @@ export default function GlobalFundraiserInput() {
   const [isCancelButtonDisabled, setCancelButtonDisabled] = useState(true);
 console.log(selectedOrganizationId)
   // filter groups based off of organization id
-  const filteredGroups = groupList.filter(
+  const filteredGroups = groupList.group.filter(
     (group) => group.organization_id == selectedOrganizationId
   );
 
