@@ -69,20 +69,35 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
   const [stateSelected, setStateSelected] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const [orgIdForPayload, setOrgIdForPayload] = useState(null);
+  const [sellerIdForPayload, setSellerIdForPayload] = useState(null);
+  const [activeYearIdForPayload, setActiveYearIdForPayload] = useState(null);
+
   const sellerData = sellerPageInfo() || [];
   console.log(sellerData);
+
   if (sellerData.length > 0) {
   const orgId = sellerData[0].organization_id;
   console.log(orgId);
+  setOrgIdForPayload(orgId);
+
   const sellerId = sellerData[0].id;
   console.log(sellerId);
+  setSellerIdForPayload(sellerId);
+
   }
+
+  console.log(orgIdForPayload);
+  console.log(sellerIdForPayload);
+  console.log(activeYearIdForPayload);
+  
 
   const currentYear = bookYear() || [];
   console.log(currentYear);
   if (currentYear.length > 0) {
   const activeYearId = currentYear[0].id;
   console.log(activeYearId);
+  setActiveYearIdForPayload(activeYearId);
   }
 
   // ~~~~~~~~~~ Form state ~~~~~~~~~~ //
@@ -319,7 +334,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
       type: "UPDATE_BOOKS_SOLD",
       payload: {
         refId: refId,
-        orgId: orgId,
+        orgId: orgIdForPayload,
         yearId: activeYearId,
         physical_book_cash: 0,
         physical_book_digital: physicalBookDigital,
