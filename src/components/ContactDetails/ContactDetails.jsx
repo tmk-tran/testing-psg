@@ -24,7 +24,12 @@ export default function ContactDetails({
   isMerchantTaskPage,
   isOrgAdminPage,
 }) {
-  const newInfo = info[0]
+  let newInfo = ""
+  if (isMerchantTaskPage) {
+    newInfo = info;
+} else {
+    newInfo = info[0];
+}
   console.log(newInfo);
   console.log(isMerchantTaskPage);
   console.log(isOrgAdminPage);

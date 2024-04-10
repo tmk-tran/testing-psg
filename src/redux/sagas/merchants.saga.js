@@ -50,7 +50,7 @@ function* allMerchants(action) {
     const auth_response = action.payload
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    const query = `{  merchant (filter: "is_deleted = false") {
+    const query = `{  merchant (filter: "is_deleted = false" ordering: "merchant_name ASC") {
       id
       merchant_name
       address

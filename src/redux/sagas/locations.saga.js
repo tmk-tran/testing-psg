@@ -37,7 +37,7 @@ function* fetchLocations(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
-    yield put({ type: "SET_LOCATIONS", payload: result.data.location })
+    yield put({ type: "SET_LOCATIONS", payload: response.data.location })
   } catch (err) {
       console.log("error in locations Saga", err)
   }
@@ -80,7 +80,7 @@ function* fetchMerchantLocation(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
-    yield put({ type: "SET_LOCATIONS", payload: result.data.location })
+    yield put({ type: "SET_LOCATIONS", payload: response.data.location })
   } catch (err) {
       console.log("error in locations Saga", err)
   }

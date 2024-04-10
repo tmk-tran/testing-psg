@@ -18,10 +18,12 @@ import AddNewCouponModal from "../CouponReviewCard/AddNewCouponModal";
 import CouponReviewCard from "../CouponReviewCard/CouponReviewCard";
 import ContactMethodMenu from "./ContactMethodMenu";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { useSelector } from "react-redux";
 
 export default function MerchantDetails({ isMerchantTaskPage }) {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const auth = useSelector((store) => store.auth)
   const dispatch = dispatchHook();
   const paramsObject = useParams();
   // ~~~~~~~~~~ State ~~~~~~~~~~ //
@@ -32,26 +34,26 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
   useEffect(() => {
     const action = {
       type: "FETCH_MERCHANT_DETAILS",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id, auth: auth}
     };
     dispatch(action);
 
     const action2 = {
       type: "FETCH_MERCHANT_NOTES",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id, auth: auth}
     };
     dispatch(action2);
 
     const action3 = {
       type: "FETCH_MERCHANT_LOCATION",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id, auth: auth}
     };
     isMerchantTaskPage && dispatch(action3);
     console.log(action3);
 
     const action4 = {
       type: "FETCH_MERCHANT_TASKS",
-      payload: paramsObject.id,
+      payload: {id: paramsObject.id, auth: auth}
     };
     dispatch(action4);
 
