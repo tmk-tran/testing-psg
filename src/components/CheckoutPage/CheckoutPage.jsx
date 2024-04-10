@@ -71,7 +71,7 @@ dispatch({ type: "SET_SELLER_BY_REFID", payload: {refId: refId, auth: auth}})
 
   const sellerData = sellerPageInfo() || [];
   console.log(sellerData);
-  if (sellerData) {
+  if (sellerData.length > 0) {
   const orgId = sellerData[0].organization_id;
   console.log(orgId);
   const sellerId = sellerData[0].id;
