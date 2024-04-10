@@ -331,21 +331,11 @@ function ListView({
                     {/* ///////////////////////////////////////////// */}
                     {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                     {/* ~~~~~~~~~~ Display Number of Coupons (active) ~~~~~~~~~~ */}
-                    {numCoupons.map((count) => {
-                      if (count.merchant === data.id) {
-                        return (
-                          <>
-                            <Typography>Coupon Count (Active): {count.count || 0}</Typography>
-                          </>
-                        );
-                      } else {
-                        return (
-                          <>
-                            <Typography>Coupon Count (Active): 0</Typography>
-                          </>
-                        )
-                      }
-                    })}
+                    {numCoupons.some((count) => count.merchant === data.id) ? (
+  <Typography>Coupon Count (Active): {numCoupons.find((count) => count.merchant === data.id)?.count || 0}</Typography>
+) : (
+  <Typography>Coupon Count (Active): 0</Typography>
+)}
                   </div>
                 )
                 }
