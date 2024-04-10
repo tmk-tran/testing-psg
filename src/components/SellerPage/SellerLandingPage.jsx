@@ -23,7 +23,6 @@ export default function SellerLandingPage() {
   console.log("auth", auth);
   const history = historyHook();
   const paramsObject = useParams();
-  console.log("paramsObject", paramsObject);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   console.log(paramsObject);
