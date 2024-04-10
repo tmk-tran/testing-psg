@@ -101,7 +101,7 @@ app.use("/api/coupon", couponRouter);
 // const merchantCommentsRouter = require("./routes/merchantComments.router");
 // const locationsRouter = require("./routes/locations.router");
 // const sellersRouter = require("./routes/sellers.router");
-// const sellerPageRouter = require("./routes/sellerPage.router");
+const sellerPageRouter = require("./routes/sellerPage.router");
 const customersRouter = require("./routes/customers.router");
 const transactionsRouter = require("./routes/transactions.router");
 const redemptionRouter = require("./routes/couponRedemption.router");
@@ -163,7 +163,7 @@ app.use(
 // app.use("/api/merchantComments", merchantCommentsRouter);
 // app.use("/api/locations", locationsRouter);
 // app.use("/api/sellers", sellersRouter);
-// app.use("/api/seller", sellerPageRouter);
+app.use("/api/seller", sellerPageRouter);
 app.use("/api/customers", customersRouter);
 app.use("/api/transactions", transactionsRouter);
 app.use("/api/redeem", redemptionRouter);

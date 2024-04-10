@@ -23,6 +23,7 @@ export default function SellerLandingPage() {
   console.log("auth", auth);
   const history = historyHook();
   const paramsObject = useParams();
+  console.log("paramsObject", paramsObject);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   console.log(paramsObject);
@@ -32,7 +33,8 @@ export default function SellerLandingPage() {
   console.log(paymentType);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: {refId: paramsObject.refId, auth: auth} });
+    // dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: {refId: paramsObject.refId, auth: auth} });
+    dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: paramsObject.refId });
   }, []);
 
   const sellerData = sellerPageInfo() || [];
