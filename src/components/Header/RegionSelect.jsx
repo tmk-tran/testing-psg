@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const ContactMethodMenu = ({ methods, defaultValue, onChange }) => {
+const RegionSelect = ({ regions, defaultValue, onChange }) => {
   const [value, setValue] = useState(defaultValue);
   console.log(value);
 
@@ -36,9 +36,9 @@ const ContactMethodMenu = ({ methods, defaultValue, onChange }) => {
         </InputLabel>
       )}
       <Select value={value} onChange={handleChange} sx={{ height: 30 }}>
-        {methods.map((contactBy) => (
-          <MenuItem key={contactBy} value={contactBy}>
-            {contactBy}
+        {regions.map((region) => (
+          <MenuItem key={region} value={region}>
+            {region}
           </MenuItem>
         ))}
       </Select>
@@ -46,4 +46,4 @@ const ContactMethodMenu = ({ methods, defaultValue, onChange }) => {
   );
 };
 
-export default ContactMethodMenu;
+export default RegionSelect;
