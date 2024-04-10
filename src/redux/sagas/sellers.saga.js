@@ -56,6 +56,7 @@ function* fetchSellers(action) {
     const data = new FormData();
     data.append("query", query);
     data.append("variables", `{}`);
+    console.log(data);
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)

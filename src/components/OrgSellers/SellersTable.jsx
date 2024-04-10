@@ -92,6 +92,7 @@ export default function SellersTable() {
 
   const user = User() || [];
   const sellers = oSellers() || [];
+  console.log(sellers);
   const year = bookYear() || [];
   const yearId = year[0].id;
   const availableYears = allYears();
@@ -103,7 +104,7 @@ export default function SellersTable() {
       payload: {
         orgId: paramsObject.id,
         yearId: yearId,
-        auth: auth
+        auth: auth,
       },
     };
     console.log(dispatchAction);
@@ -117,7 +118,7 @@ export default function SellersTable() {
         payload: {
           orgId: paramsObject.id,
           yearId: viewYearId,
-          auth: auth
+          auth: auth,
         },
       };
       console.log(dispatchAction2);
@@ -168,7 +169,7 @@ export default function SellersTable() {
 
     const action = {
       type: "ADD_SELLER",
-      payload: { newSeller: formDataWithId, auth: auth }
+      payload: { newSeller: formDataWithId, auth: auth },
     };
     console.log("Dispatching action:", action);
     dispatch(action);
@@ -196,11 +197,11 @@ export default function SellersTable() {
       organization_id: orgId,
       digital_donations: editedSeller.digital_donations,
       books_due: editedSeller.books_due,
-      coupon_book_id: editedSeller.coupon_book_id
-    }
+      coupon_book_id: editedSeller.coupon_book_id,
+    };
     const editAction = {
       type: "EDIT_SELLER",
-      payload: { editedSeller: editedSeller, auth: auth }
+      payload: { editedSeller: editedSeller, auth: auth },
     };
     dispatch(editAction);
     console.log("Dispatching action:", editAction);
@@ -218,7 +219,7 @@ export default function SellersTable() {
 
   //REWRITE THIS TO WORK WITH DEVII-------
   const handleArchive = (seller) => {
-    console.log(seller)
+    console.log(seller);
     const orgId = paramsObject.id;
     const archivedSeller = {
       id: seller.id,
@@ -237,9 +238,9 @@ export default function SellersTable() {
       organization_id: orgId,
       digital_donations: seller.digital_donations,
       books_due: seller.books_due,
-      coupon_book_id: seller.coupon_book_id
-    }
-    console.log(archivedSeller)
+      coupon_book_id: seller.coupon_book_id,
+    };
+    console.log(archivedSeller);
     // Use showDeleteSweetAlert and pass a callback function to execute upon confirmation
     showDeleteSweetAlert(() => {
       const archiveAction = {
@@ -417,7 +418,9 @@ export default function SellersTable() {
                       }}
                     >
                       {columns.map((column) => {
+                        console.log(seller);
                         const value = seller[column.id];
+                        console.log(value);
                         return (
                           <TableCell
                             key={column.id}
@@ -454,12 +457,12 @@ export default function SellersTable() {
                                   iconSx={{ fontSize: "25px" }}
                                   onClick={() => handleViewUrl(value)}
                                   onMouseOver={(e) =>
-                                  (e.currentTarget.style.transform =
-                                    "scale(1.3)")
+                                    (e.currentTarget.style.transform =
+                                      "scale(1.3)")
                                   }
                                   onMouseOut={(e) =>
-                                  (e.currentTarget.style.transform =
-                                    "scale(1)")
+                                    (e.currentTarget.style.transform =
+                                      "scale(1)")
                                   }
                                   disabled={!isYearActive}
                                 />
@@ -484,9 +487,20 @@ export default function SellersTable() {
                                   />
                                   {/* <SellerLink seller={seller} /> */}
                                 </>
+                              ) : column.id === "seller_earnings" ? (
+                                <>
+                                  {
+                                    seller.transactions_collection[0]
+                                      .seller_earnings
+                                  }
+                                </>
                               ) : column.id === "physical_book_cash" ? (
                                 <>
-                                  {value}
+                                  {
+                                    seller.transactions_collection[0]
+                                      .physical_book_cash
+                                  }
+
                                   <ActionButton
                                     title="Edit Books Sold"
                                     Icon={EditIcon}
@@ -496,16 +510,30 @@ export default function SellersTable() {
                                       openEditBooksSold(seller.refId, value)
                                     }
                                     onMouseOver={(e) =>
-                                    (e.currentTarget.style.transform =
-                                      "scale(1.3)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1.3)")
                                     }
                                     onMouseOut={(e) =>
-                                    (e.currentTarget.style.transform =
-                                      "scale(1)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1)")
                                     }
                                     disabled={!isYearActive}
                                   />
                                   {/* {value} */}
+                                </>
+                              ) : column.id === "physical_book_digital" ? (
+                                <>
+                                  {
+                                    seller.transactions_collection[0]
+                                      .physical_book_digital
+                                  }
+                                </>
+                              ) : column.id === "digital_book_credit" ? (
+                                <>
+                                  {
+                                    seller.transactions_collection[0]
+                                      .digital_book_credit
+                                  }
                                 </>
                               ) : column.format && typeof value === "number" ? (
                                 column.format(value)
@@ -559,15 +587,15 @@ export default function SellersTable() {
                           {isTotalCell
                             ? "Totals:"
                             : displaySum
-                              ? column.id === "cash" ||
-                                column.id === "checks" ||
-                                column.id === "donations" ||
-                                column.id === "digital_donations" ||
-                                column.id === "digital" ||
-                                column.id === "seller_earnings"
-                                ? "$" + parseFloat(sum).toFixed(2)
-                                : sum
-                              : null}
+                            ? column.id === "cash" ||
+                              column.id === "checks" ||
+                              column.id === "donations" ||
+                              column.id === "digital_donations" ||
+                              column.id === "digital" ||
+                              column.id === "seller_earnings"
+                              ? "$" + parseFloat(sum).toFixed(2)
+                              : sum
+                            : null}
                         </TableCell>
                       ) : (
                         <TableCell
