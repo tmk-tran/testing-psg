@@ -64,6 +64,7 @@ function App() {
   const dispatch = dispatchHook();
   const user = User();
   const auth = useSelector((store) => store.auth)
+  console.log("auth", auth);
   console.log(user);
   const [orgAdminId, setOrgAdminId] = useState(null);
   console.log(orgAdminId);

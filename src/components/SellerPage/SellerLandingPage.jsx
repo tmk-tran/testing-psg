@@ -20,6 +20,7 @@ const flexCenter = {
 export default function SellerLandingPage() {
   const dispatch = dispatchHook();
   const auth = useSelector((store) => store.auth);
+  console.log("auth", auth);
   const history = historyHook();
   const paramsObject = useParams();
   const theme = useTheme();
