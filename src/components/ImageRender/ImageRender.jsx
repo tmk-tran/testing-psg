@@ -34,19 +34,20 @@ if (base64Data) {
   console.error("Error: Invalid hexadecimal data");
 }
 
-//   const byteArray = atob(base64Logo);
+  const byteArray = atob(base64Data);
 
-//   const imageUrl = decodeJpegFromBytea(byteArray);
+  const imageUrl = decodeJpegFromBytea(byteArray);
 
-// // OPTION 1 TO TRY!!!
+// OPTION 1 TO TRY!!!
 
-// function decodeJpegFromBytea(byteArray) {
-//   // Existing logic to convert byte array to image URL
-//   const blob = new Blob([byteArray], { type: "image/jpeg" });
-//   const imageUrl = URL.createObjectURL(blob);
-//   return imageUrl;
+function decodeJpegFromBytea(byteArray) {
+  // Existing logic to convert byte array to image URL
+  const blob = new Blob([byteArray], { type: "image/jpeg" });
+  const imageUrl = URL.createObjectURL(blob);
+  return imageUrl;
+}
 
-// console.log(imageUrl)
+console.log(imageUrl)
 
 console.log(base64Logo)
 
@@ -54,8 +55,8 @@ console.log(base64Logo)
   return (
     <img
       className="logoImage"
-      src={`data:image/jpeg;base64,${base64Data}`}
-      // src={imageUrl}
+      // src={`data:image/jpeg;base64,${base64Data}`}
+      src={imageUrl}
       alt="Logo file"
     />
   );
