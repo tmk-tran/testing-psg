@@ -45,34 +45,50 @@ const wideCellSx = {
   border: "1px solid #ddd",
 };
 
+const userNameCellSx = {
+  maxWidth: 175,
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  transition: "max-width 0.5s",
+  cursor: "pointer",
+  ...wideCellSx,
+};
+
 const shortCellSx = {
   width: 120,
   border: "1px solid #ddd",
 };
 
 export default function UserAdmin() {
-  const auth = useSelector((store) => store.auth)
-  const roles = useSelector((store) => store.roles)
+  const auth = useSelector((store) => store.auth);
+  const roles = useSelector((store) => store.roles);
   const dispatch = dispatchHook();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isHovered, setIsHovered] = useState(false);
+  console.log(isHovered);
+
+  isHovered
+    ? (userNameCellSx.maxWidth = "none")
+    : (userNameCellSx.maxWidth = 175);
 
   useEffect(() => {
     const action = {
       type: "FETCH_USER_TABLE",
-      payload: auth
+      payload: auth,
     };
     dispatch(action);
     const action2 = {
       type: "FETCH_ORGANIZATIONS",
-      payload: auth
+      payload: auth,
     };
     dispatch(action2);
     const action3 = {
       type: "FETCH_CONSUMER_BOOKS",
-      payload: auth
+      payload: auth,
     };
     dispatch(action3);
   }, []);
@@ -98,7 +114,7 @@ export default function UserAdmin() {
           id: id,
           [type === "graphic_designer" ? "graphic_designer" : "org_admin"]:
             newValue,
-            role_id
+          role_id,
         },
       };
       console.log(action);
@@ -126,7 +142,7 @@ export default function UserAdmin() {
       payload: {
         id: userId,
         org_id: id,
-        role_id: 2
+        role_id: 2,
       },
     };
     console.log(dispatchAction);
@@ -223,7 +239,11 @@ export default function UserAdmin() {
               >
                 <TableCell sx={wideCellSx}>{row.last_name}</TableCell>
                 <TableCell sx={wideCellSx}>{row.first_name}</TableCell>
-                <TableCell sx={wideCellSx}>
+                <TableCell
+                  sx={userNameCellSx}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
                   <strong>{row.username}</strong>
                 </TableCell>
                 <TableCell sx={{ ...shortCellSx, ...centerMe }}>
@@ -308,7 +328,7 @@ export default function UserAdmin() {
                     />
                   ) : null}
                 </TableCell>
-                <TableCell sx={centerMe}>
+                <TableCell sx={{ ...shortCellSx, ...centerMe }}>
                   {row.show_book ? (
                     <Typography
                       component="span"
