@@ -97,7 +97,7 @@ export default function CheckoutPage({ caseType }) {
       city: city,
       state: stateSelected,
       zip: zip,
-      organization: seller.organization_name,
+      organization: sellerData[0].organization_name,
       url: "",
       year: 2024-2025,
       donation: customDonation,
