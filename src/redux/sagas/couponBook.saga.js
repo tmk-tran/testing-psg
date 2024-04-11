@@ -8,7 +8,7 @@ function* fetchCouponBooksSaga(action) {
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
-      coupon_book{
+      coupon_book (ordering: "id desc"){
         id
         year
         active
