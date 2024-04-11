@@ -5,46 +5,46 @@ const ImageRender = ({ base64Logo }) => {
     return null; // Return null if logo is not available
   }
 
-//ANOTHER OPTION THAT I HOPE WORKS
-function hexToBase64(hexString) {
-  if (!hexString || hexString.length % 2 !== 0) {
-    return null; // Input validation: check for empty string and odd length
-  }
-  try {
-    // Convert hex string to byte array (Uint8Array)
-    const byteArray = new Uint8Array(hexString.length / 2);
-    for (let i = 0; i < byteArray.length; i++) {
-      byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16);
-    }
-    // Encode byte array to base64 string
-    return btoa(String.fromCharCode(...byteArray));
-  } catch (error) {
-    console.error("Error decoding hex data:", error);
-    return null;
-  }
-}
-
-const hexString = base64Logo;
-const base64Data = hexToBase64(hexString);
-
-// if (base64Data) {
-//   console.log("Base64 encoded data:", base64Data);
-// } else {
-//   console.error("Error: Invalid hexadecimal data");
+// //ANOTHER OPTION THAT I HOPE WORKS
+// function hexToBase64(hexString) {
+//   if (!hexString || hexString.length % 2 !== 0) {
+//     return null; // Input validation: check for empty string and odd length
+//   }
+//   try {
+//     // Convert hex string to byte array (Uint8Array)
+//     const byteArray = new Uint8Array(hexString.length / 2);
+//     for (let i = 0; i < byteArray.length; i++) {
+//       byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16);
+//     }
+//     // Encode byte array to base64 string
+//     return btoa(String.fromCharCode(...byteArray));
+//   } catch (error) {
+//     console.error("Error decoding hex data:", error);
+//     return null;
+//   }
 // }
 
-  const byteArray = atob(base64Data);
+// const hexString = base64Logo;
+// const base64Data = hexToBase64(hexString);
 
-  const imageUrl = decodeJpegFromBytea(byteArray);
+// // if (base64Data) {
+// //   console.log("Base64 encoded data:", base64Data);
+// // } else {
+// //   console.error("Error: Invalid hexadecimal data");
+// // }
 
-// OPTION 1 TO TRY!!!
+//   const byteArray = atob(base64Data);
 
-function decodeJpegFromBytea(byteArray) {
-  // Existing logic to convert byte array to image URL
-  const blob = new Blob([byteArray], { type: "image/jpeg" });
-  const imageUrl = URL.createObjectURL(blob);
-  return imageUrl;
-}
+//   const imageUrl = decodeJpegFromBytea(byteArray);
+
+// // OPTION 1 TO TRY!!!
+
+// function decodeJpegFromBytea(byteArray) {
+//   // Existing logic to convert byte array to image URL
+//   const blob = new Blob([byteArray], { type: "image/jpeg" });
+//   const imageUrl = URL.createObjectURL(blob);
+//   return imageUrl;
+
 
 // console.log(imageUrl)
 
@@ -53,12 +53,12 @@ function decodeJpegFromBytea(byteArray) {
   return (
     <img
       className="logoImage"
-      // src={`data:image/jpeg;base64,${base64Data}`}
-      src={imageUrl}
+      src={`data:image/jpeg;base64,${base64Logo}`}
+      // src={imageUrl}
       alt="Logo file"
     />
   );
-  }
+}
 
 export default ImageRender;
 
