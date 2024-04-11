@@ -4,7 +4,21 @@ import { put, takeEvery } from "redux-saga/effects";
 function* orgNotes(action) {
   console.log(action.payload);
   try {
-    const auth_response = action.payload.auth
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{organization_notes(filter: "organization_id = ${action.payload.id}") {
@@ -38,9 +52,23 @@ function* orgNotes(action) {
 
 function* addNotes(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     console.log(action.payload)
     const newNote = action.payload.sendNote
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation ($input: organization_notesInput){
@@ -101,11 +129,25 @@ function* editNotes(action) {
 
 function* deleteOrgNote(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     console.log(action.payload)
     const deletedNote = action.payload.deletedNote
     const orgId = deletedNote.entity_id
     console.log(orgId)
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = ` mutation ($input: organization_notesInput, $id: ID!){
@@ -134,7 +176,7 @@ function* deleteOrgNote(action) {
         "note_content": deletedNote.note_content,
         "is_deleted": deletedNote.is_deleted
       },
-        "id": Number(deletedNote.id)
+      "id": Number(deletedNote.id)
     }));
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);

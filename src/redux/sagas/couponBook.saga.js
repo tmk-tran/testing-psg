@@ -3,8 +3,21 @@ import { takeEvery, put } from "redux-saga/effects";
 
 function* fetchCouponBooksSaga(action) {
   try {
-    console.log(action.payload)
-    const auth_response = action.payload
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -17,20 +30,20 @@ function* fetchCouponBooksSaga(action) {
 
     const queryConfig = {
       headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
-  };
+    };
 
-  const data = new FormData();
-  data.append("query", query);
-  data.append("variables", `{}`);
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
 
-  const response = yield axios.post(QUERY_URL, data, queryConfig);
-  console.log(response)
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
 
     yield put({ type: "SET_COUPON_BOOKS", payload: response.data.coupon_book });
-  } catch(err) {
+  } catch (err) {
     console.log("error in fetching coupon books", err);
   }
 }
@@ -83,11 +96,24 @@ function* fetchByIdSaga(action) {
 
 function* fetchByYearSaga(action) {
   try {
-    console.log(action.payload);
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const currentSeason = action.payload.currentSeason;
-    if (action.payload.auth && Object.keys(action.payload.auth).length > 0) {
+    if (auth_response && Object.keys(auth_response).length > 0) {
       // Auth exists and is not empty
-      const auth_response = action.payload.auth;
       const ACCESS_TOKEN = auth_response.data.access_token;
       const QUERY_URL = auth_response.data.routes.query;
       const query = `{
@@ -119,7 +145,7 @@ function* fetchByYearSaga(action) {
       console.log(response.data);
       yield put({ type: "SET_BOOK_YEAR", payload: response.data });
     }
-  } catch(err) {
+  } catch (err) {
     console.log("Error in fetching book year", err);
   }
 }

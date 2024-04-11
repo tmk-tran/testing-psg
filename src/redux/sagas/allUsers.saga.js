@@ -3,7 +3,21 @@ import { takeEvery, put } from "redux-saga/effects";
 
 function* fetchAllUsers(action) {
     try {
-        const auth_response = action.payload
+        const refreshToken = localStorage.psg_token;
+        console.log(refreshToken)
+        // Login to Devii
+        const config = {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        };
+
+        const AUTH_URL = "https://api.devii.io/auth";
+
+        const auth_response = yield axios.get(AUTH_URL, config);
+        console.log(auth_response)
+
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         console.log(auth_response)
@@ -41,7 +55,7 @@ function* fetchAllUsers(action) {
 function* editAdminStatus(action) {
     try {
         const response = yield axios.put("api/allUsers", action.payload);
-        console.log("EDIT ADMIN STATUS");
+        console.log("EDIT ADMIN STATUS", response);
         yield put({ type: "FETCH_ALL_USERS" });
     } catch (err) {
         console.log("error in editing admin status", err);

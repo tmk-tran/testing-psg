@@ -4,7 +4,21 @@ import { put, takeEvery } from "redux-saga/effects";
 function* merchantTask(action) {
   console.log(action.payload);
   try {
-    const auth_response = action.payload.auth
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -48,7 +62,21 @@ function* merchantTask(action) {
 function* fetchAllMerchantTasks(action) {
   console.log(action.payload);
   try {
-    const auth_response = action.payload
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -92,8 +120,22 @@ function* fetchAllMerchantTasks(action) {
 function* addMerchantTask(action) {
   console.log(action.payload);
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const newTask = action.payload.newTask
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation($input: merchant_tasksInput){
@@ -136,13 +178,13 @@ function* addMerchantTask(action) {
         "task_status": newTask.task_status,
         "coupon_id": Number(newTask.coupon_id),
         "book_id": newTask.book_id
-        
+
       }
     }));
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
-    yield put({ type: "FETCH_MERCHANT_TASKS", payload: {id: newTask.merchant_id, auth: auth_response} });
+    yield put({ type: "FETCH_MERCHANT_TASKS", payload: { id: newTask.merchant_id, auth: auth_response } });
   } catch (error) {
     console.log("error in addNotes Saga", error);
   }
@@ -150,8 +192,23 @@ function* addMerchantTask(action) {
 
 function* editMerchantTask(action) {
   try {
+
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const updatedTask = action.payload.updatedTask
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = ` mutation ($input: merchant_tasksInput, $id: ID!){

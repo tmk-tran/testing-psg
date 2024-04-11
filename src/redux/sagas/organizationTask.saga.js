@@ -4,7 +4,21 @@ import { put, takeEvery } from "redux-saga/effects";
 function* organizationTask(action) {
   console.log(action.payload);
   try {
-    const auth_response = action.payload.auth
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -43,7 +57,21 @@ function* organizationTask(action) {
 function* fetchAllOrganizationTasks(action) {
   console.log(action.payload);
   try {
-    const auth_response = action.payload
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -80,12 +108,26 @@ function* fetchAllOrganizationTasks(action) {
 }
 
 function* addOrganizationTask(action) {
-    try {
-      const newTask = action.payload.newTask
-      const auth_response = action.payload.auth
-      const ACCESS_TOKEN = auth_response.data.access_token;
-      const QUERY_URL = auth_response.data.routes.query;
-      const query = `mutation($input: organization_tasksInput){
+  try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const newTask = action.payload.newTask
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `mutation($input: organization_tasksInput){
         create_organization_tasks (input: $input){
           id
           category
@@ -98,42 +140,56 @@ function* addOrganizationTask(action) {
           task_status
         }
       }`
-  
-      const queryConfig = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      };
-  
-      const data = new FormData();
-      data.append("query", query);
-      data.append("variables", JSON.stringify({
-        "input": {
-          "category": newTask.category,
-          "task": newTask.task,
-          "organization_id": Number(newTask.organization_id),
-          "organization_name": newTask.organization_name,
-          "assign": newTask.assign,
-          "due_date": newTask.due_date,
-          "description": newTask.description,
-          "task_status": newTask.task_status
-        }
-      }));
-  
-      const response = yield axios.post(QUERY_URL, data, queryConfig);
-      console.log(response)
-      yield put({ type: "FETCH_ALL_ORGANIZATION_TASKS", payload:  auth_response  });
-    } catch (error) {
-      console.log("error in addNotes Saga", error);
-    }
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", JSON.stringify({
+      "input": {
+        "category": newTask.category,
+        "task": newTask.task,
+        "organization_id": Number(newTask.organization_id),
+        "organization_name": newTask.organization_name,
+        "assign": newTask.assign,
+        "due_date": newTask.due_date,
+        "description": newTask.description,
+        "task_status": newTask.task_status
+      }
+    }));
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "FETCH_ALL_ORGANIZATION_TASKS", payload: auth_response });
+  } catch (error) {
+    console.log("error in addNotes Saga", error);
+  }
 }
 
 function* editOrganizationTask(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const updatedTask = action.payload.updatedTask
     console.log(updatedTask)
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = ` mutation($input: organization_tasksInput, $id: ID!){
@@ -170,7 +226,7 @@ function* editOrganizationTask(action) {
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
-    yield put({ type: "FETCH_ALL_ORGANIZATION_TASKS", payload: auth_response  });
+    yield put({ type: "FETCH_ALL_ORGANIZATION_TASKS", payload: auth_response });
   } catch (error) {
     console.log("error with updateOrgTask request", error);
   }
