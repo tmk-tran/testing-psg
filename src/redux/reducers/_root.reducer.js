@@ -69,7 +69,7 @@ const rootReducer = combineReducers({
   userTable,
   userBooks,
   digitalBookType,
-  sellerByRefId
+  sellerByRefId,
 });
 
 export default rootReducer;

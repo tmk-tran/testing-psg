@@ -23,12 +23,7 @@ router.get("/", (req, res) => {
 
 router.get("/id/:id", (req, res) => {
   const bookId = req.params.id;
-
-  //   const queryText = `
-  //         SELECT *
-  //         FROM coupon_book
-  //         WHERE id = $1;
-  //     `;
+  
   const queryText = `
             SELECT *
             FROM coupon_book

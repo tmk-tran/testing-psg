@@ -63,7 +63,7 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
-  const auth = useSelector((store) => store.auth)
+  const auth = useSelector((store) => store.auth);
   console.log("auth", auth);
   console.log(user);
   const [orgAdminId, setOrgAdminId] = useState(null);
@@ -75,10 +75,10 @@ function App() {
     console.log(currentSeason);
 
     dispatch({ type: "FETCH_USER", payload: auth });
-    // dispatch({ type: "FETCH_COUPON_BOOKS" });
+    
     const dispatchAction2 = {
       type: "FETCH_BOOK_YEAR",
-      payload: {currentSeason: currentSeason, auth: auth}
+      payload: { currentSeason: currentSeason, auth: auth },
     };
     console.log(dispatchAction2);
     dispatch(dispatchAction2);
@@ -277,7 +277,6 @@ function App() {
                 <OrderComplete />
               </Route>
 
-
               <ProtectedRoute exact path="/user">
                 {!user.org_admin ? (
                   <HomePage isOrgAdmin={false} />
@@ -298,7 +297,7 @@ function App() {
                 )}
               </Route>
 
-              <Route exact path = "/recover">
+              <Route exact path="/recover">
                 <RecoverPasswordForm />
               </Route>
 
