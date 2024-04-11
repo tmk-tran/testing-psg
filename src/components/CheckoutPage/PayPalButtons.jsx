@@ -9,7 +9,7 @@ function Message({ content }) {
   return <p>{content}</p>;
 }
 
-function PayPalButton({ selectedProducts, customDonation, orderSuccess }) {
+function PayPalButton({ selectedProducts, customDonation, orderSuccess, acInfo }) {
   console.log(selectedProducts);
   console.log(customDonation);
   console.log(process.env.REACT_APP_PAYPAL_CLIENT_ID);
@@ -258,6 +258,7 @@ function PayPalButton({ selectedProducts, customDonation, orderSuccess }) {
                 };
                 console.log(dispatchAction);
                 dispatch(dispatchAction);
+                acInfo();
 
                 // await axios.post("/api/transactions", transactionData, {
                 //   headers: {

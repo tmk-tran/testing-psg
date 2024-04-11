@@ -86,6 +86,28 @@ export default function CheckoutPage({ caseType }) {
   // ~~~~~~~~~~ Order Info ~~~~~~~~~~ //
   const [orderInfo, setOrderInfo] = useState(null);
 
+  const acInfo = () => {
+    const contactData = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      address: address,
+      unit: unit,
+      city: city,
+      state: stateSelected,
+      zip: zip,
+      organization: sellerData[0].organization_name,
+      url: "",
+      year: 2024-2025,
+      donation: customDonation,
+      bookType: product.bookType,
+      type: caseType
+    }
+    console.log("Contact Data from acInfo",contactData)
+    dispatch({type: "ADD_CONTACT", payload: contactData})
+  }
+
   useEffect(() => {
     let physicalDigital = 0;
     let donationAmount = 0;
@@ -191,6 +213,7 @@ export default function CheckoutPage({ caseType }) {
               selectedProducts={selectedProducts}
               customDonation={customDonation}
               orderSuccess={handleOrderInfo}
+              acInfo={acInfo}
             />
           </Box>
         );
