@@ -5,8 +5,21 @@ import { takeEvery, put } from "redux-saga/effects";
 //Fetches fundraiser data based on the group id
 function* fetchFundraisersSaga(action) {
     try {
-        console.log(action.payload.auth)
-        const auth_response = action.payload.auth
+        console.log(action.payload)
+        const refreshToken = localStorage.psg_token;
+        // Login to Devii
+        const config = {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        };
+
+        const AUTH_URL = "https://api.devii.io/auth";
+
+        const auth_response = yield axios.get(AUTH_URL, config);
+        console.log(auth_response);
+
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         const query = `{
@@ -56,7 +69,6 @@ function* fetchFundraisersSaga(action) {
         }
     }
 }`
-
         const queryConfig = {
             headers: {
                 "Content-Type": "application/json",
@@ -80,7 +92,21 @@ function* fetchFundraisersSaga(action) {
 // Fetches fundraiser data based on organization id
 function* fetchOrgFundraisersSaga(action) {
     try {
-        const auth_response = action.payload.auth
+        const refreshToken = localStorage.psg_token;
+        console.log(refreshToken)
+        // Login to Devii
+        const config = {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        };
+
+        const AUTH_URL = "https://api.devii.io/auth";
+
+        const auth_response = yield axios.get(AUTH_URL, config);
+        console.log(auth_response)
+
         const orgId = action.payload.id
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
@@ -153,8 +179,23 @@ function* fetchOrgFundraisersSaga(action) {
 //Saga used to add a fundraiser, will then fetch the updated list of fundraisers
 function* addFundraiserSaga(action) {
     try {
+        const refreshToken = localStorage.psg_token;
+        console.log(refreshToken)
+        // Login to Devii
+        const config = {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        };
+
+        const AUTH_URL = "https://api.devii.io/auth";
+
+        const auth_response = yield axios.get(AUTH_URL, config);
+        console.log(auth_response)
+
         const newFundraiser = action.payload.newFundraiser
-        const auth_response = action.payload.auth
+        
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
 
@@ -221,10 +262,24 @@ function* addFundraiserSaga(action) {
 //Saga used to update the amounts in a fundraiser, will then fetch the updated fundraiser data
 function* updatedFundraiserAmountsSaga(action) {
     try {
-        console.log(action.payload)
+        const refreshToken = localStorage.psg_token;
+        console.log(refreshToken)
+        // Login to Devii
+        const config = {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        };
+
+        const AUTH_URL = "https://api.devii.io/auth";
+
+        const auth_response = yield axios.get(AUTH_URL, config);
+        console.log(auth_response)
+
         const updatedFundraiser = action.payload.updatedAmount
         console.log(updatedFundraiser)
-        const auth_response = action.payload.auth
+        
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         const query = ` mutation ($input: fundraiserInput , $id: ID!){
@@ -287,9 +342,24 @@ function* updatedFundraiserAmountsSaga(action) {
 //Saga used to update a fundraiser to closed, will then fetch updated fundraisers data
 function* closeFundraiserSaga(action) {
     try {
+
+        const refreshToken = localStorage.psg_token;
+        console.log(refreshToken)
+        // Login to Devii
+        const config = {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        };
+
+        const AUTH_URL = "https://api.devii.io/auth";
+
+        const auth_response = yield axios.get(AUTH_URL, config);
+        console.log(auth_response)
+
         console.log(action.payload)
         const closedFundraiser = action.payload.closedFundraiser
-        const auth_response = action.payload.auth
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         const query = ` mutation ($input: fundraiserInput , $id: ID!){
@@ -353,10 +423,23 @@ function* closeFundraiserSaga(action) {
 //Saga used to update a fundraiser to open, will then fetch updated fundraisers data
 function* openFundraiserSaga(action) {
     try {
+        const refreshToken = localStorage.psg_token;
+        console.log(refreshToken)
+        // Login to Devii
+        const config = {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        };
+
+        const AUTH_URL = "https://api.devii.io/auth";
+
+        const auth_response = yield axios.get(AUTH_URL, config);
+        console.log(auth_response)
 
         console.log(action.payload)
         const openedFundraiser = action.payload.openedFundraiser
-        const auth_response = action.payload.auth
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         const query = `mutation($input: fundraiserInput, $id: ID!){

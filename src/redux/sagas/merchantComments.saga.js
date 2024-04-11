@@ -3,7 +3,21 @@ import { put, takeEvery } from "redux-saga/effects";
 
 function* fetchAllMerchantComments(action) {
   try {
-    const auth_response = action.payload
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     console.log(auth_response)
@@ -44,7 +58,21 @@ function* fetchAllMerchantComments(action) {
 function* merchantComments(action) {
   console.log(action.payload);
   try {
-    const auth_response = action.payload.auth
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     console.log(auth_response)
@@ -98,8 +126,23 @@ function* couponComments(action) {
 
 function* addComments(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const newComment = action.payload.newComment;
-    const auth_response = action.payload.auth;
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     console.log(auth_response)
@@ -133,12 +176,12 @@ function* addComments(action) {
         "task_id": Number(newComment.task_id),
         "coupon_id": Number(newComment.coupon_id)
       }
-  }));
+    }));
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
     console.log(response)
     console.log("FETCH request to merchantComments");
-    yield put({ type: "FETCH_MERCHANT_COMMENTS", payload: {id: newComment.merchant_id, auth: auth_response} });
+    yield put({ type: "FETCH_MERCHANT_COMMENTS", payload: { id: newComment.merchant_id, auth: auth_response } });
   } catch (err) {
     console.log("error in addComments Merchant Saga", err);
   }

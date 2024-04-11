@@ -3,8 +3,21 @@ import { put, takeEvery } from "redux-saga/effects";
 
 function* fetchLocations(action) {
   try {
-    console.log(action.payload)
-    const auth_response = action.payload.auth
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -25,10 +38,10 @@ function* fetchLocations(action) {
   }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
 
     const data = new FormData();
@@ -39,15 +52,29 @@ function* fetchLocations(action) {
     console.log(response)
     yield put({ type: "SET_LOCATIONS", payload: response.data.location })
   } catch (err) {
-      console.log("error in locations Saga", err)
+    console.log("error in locations Saga", err)
   }
 }
 
 function* fetchMerchantLocation(action) {
   try {
-    console.log(action.payload)
+
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const id = action.payload.id;
-    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -68,10 +95,10 @@ function* fetchMerchantLocation(action) {
   }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
 
     const data = new FormData();
@@ -82,14 +109,28 @@ function* fetchMerchantLocation(action) {
     console.log(response)
     yield put({ type: "SET_LOCATIONS", payload: response.data.location })
   } catch (err) {
-      console.log("error in locations Saga", err)
+    console.log("error in locations Saga", err)
   }
 }
 
 function* addLocations(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const newLocation = action.payload.newLocation;
-    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation ($input: locationInput) {
@@ -110,10 +151,10 @@ function* addLocations(action) {
     }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
     const data = new FormData();
     data.append("query", query);
@@ -121,15 +162,15 @@ function* addLocations(action) {
     data.append("variables", JSON.stringify({
       "input": {
         "location_name": newLocation.name,
-         "phone_number": Number(newLocation.phone_number),
-         "address": newLocation.address,
-         "city": newLocation.city,
-         "state": newLocation.state,
-         "zip": Number(newLocation.zit),
-         "region_id": Number(newLocation.region_id),
-         "merchant_id": Number(newLocation.merchant_id),
-         "additional_details": newLocation.additional_details
-       }
+        "phone_number": Number(newLocation.phone_number),
+        "address": newLocation.address,
+        "city": newLocation.city,
+        "state": newLocation.state,
+        "zip": Number(newLocation.zit),
+        "region_id": Number(newLocation.region_id),
+        "merchant_id": Number(newLocation.merchant_id),
+        "additional_details": newLocation.additional_details
+      }
     }));
 
     console.log(data);
@@ -137,7 +178,7 @@ function* addLocations(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_MERCHANT_LOCATIONS",
-      payload: {id: newLocation.merchant_id, auth: auth_response}
+      payload: { id: newLocation.merchant_id, auth: auth_response }
     });
   } catch (error) {
     console.log("error in addLocations Saga", error);
@@ -146,8 +187,22 @@ function* addLocations(action) {
 
 function* updateLocation(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const editedLocation = action.payload.editedLocation;
-    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation ($input: locationInput $id: ID!) {
@@ -168,10 +223,10 @@ function* updateLocation(action) {
     }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
     const data = new FormData();
     data.append("query", query);
@@ -179,16 +234,16 @@ function* updateLocation(action) {
     data.append("variables", JSON.stringify({
       "input": {
         "location_name": editedLocation.name,
-         "phone_number": Number(editedLocation.phone_number),
-         "address": editedLocation.address,
-         "city": editedLocation.city,
-         "state": editedLocation.state,
-         "zip": Number(editedLocation.zit),
-         "region_id": Number(editedLocation.region_id),
-         "merchant_id": Number(editedLocation.merchant_id),
-         "additional_details": editedLocation.additional_details
-       },
-       "id": Number(editedLocation.id)
+        "phone_number": Number(editedLocation.phone_number),
+        "address": editedLocation.address,
+        "city": editedLocation.city,
+        "state": editedLocation.state,
+        "zip": Number(editedLocation.zit),
+        "region_id": Number(editedLocation.region_id),
+        "merchant_id": Number(editedLocation.merchant_id),
+        "additional_details": editedLocation.additional_details
+      },
+      "id": Number(editedLocation.id)
     }));
 
     console.log(data);
@@ -196,7 +251,7 @@ function* updateLocation(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_MERCHANT_LOCATIONS",
-      payload: {id: editedLocation.merchant_id, auth: auth_response}
+      payload: { id: editedLocation.merchant_id, auth: auth_response }
     });
   } catch (error) {
     console.log("error in updateLocation Saga", error);
@@ -205,8 +260,22 @@ function* updateLocation(action) {
 
 function* deleteLocation(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const archivedLocation = action.payload.archivedLocation;
-    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation ($input: locationInput $id: ID!) {
@@ -227,10 +296,10 @@ function* deleteLocation(action) {
     }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
     const data = new FormData();
     data.append("query", query);
@@ -238,17 +307,17 @@ function* deleteLocation(action) {
     data.append("variables", JSON.stringify({
       "input": {
         "location_name": archivedLocation.name,
-         "phone_number": Number(archivedLocation.phone_number),
-         "address": archivedLocation.address,
-         "city": archivedLocation.city,
-         "state": archivedLocation.state,
-         "zip": Number(archivedLocation.zit),
-         "region_id": Number(archivedLocation.region_id),
-         "merchant_id": Number(archivedLocation.merchant_id),
-         "additional_details": archivedLocation.additional_details,
-         "is_deleted": Boolean(archivedLocation.is_deleted)
-       },
-       "id": Number(archivedLocation.id)
+        "phone_number": Number(archivedLocation.phone_number),
+        "address": archivedLocation.address,
+        "city": archivedLocation.city,
+        "state": archivedLocation.state,
+        "zip": Number(archivedLocation.zit),
+        "region_id": Number(archivedLocation.region_id),
+        "merchant_id": Number(archivedLocation.merchant_id),
+        "additional_details": archivedLocation.additional_details,
+        "is_deleted": Boolean(archivedLocation.is_deleted)
+      },
+      "id": Number(archivedLocation.id)
     }));
 
     console.log(data);
@@ -256,7 +325,7 @@ function* deleteLocation(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_MERCHANT_LOCATIONS",
-      payload: {id: archivedLocation.merchant_id, auth: auth_response}
+      payload: { id: archivedLocation.merchant_id, auth: auth_response }
     });
   } catch (error) {
     console.log("error with deleteLocation request", error);

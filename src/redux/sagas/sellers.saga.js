@@ -2,12 +2,26 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* fetchSellers(action) {
- 
   try {
+
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     console.log(action.payload);
     const orgId = action.payload.orgId
     const yearId = action.payload.yearId
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -48,10 +62,10 @@ function* fetchSellers(action) {
 }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
 
     const data = new FormData();
@@ -63,16 +77,30 @@ function* fetchSellers(action) {
     console.log(response)
     yield put({ type: "SET_SELLERS", payload: response.data.sellers })
   } catch (err) {
-      console.log("error in sellers Saga", err)
+    console.log("error in sellers Saga", err)
   }
 }
 
 function* fetchSellerByRefId(action) {
 
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     console.log(action.payload);
     const refId = action.payload.refId;
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -113,10 +141,10 @@ function* fetchSellerByRefId(action) {
 }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
 
     const data = new FormData();
@@ -127,14 +155,28 @@ function* fetchSellerByRefId(action) {
     console.log(response)
     yield put({ type: "SET_SELLER_BY_REFID", payload: response.data.sellers })
   } catch (err) {
-      console.log("error in fetching seller by refId", err)
+    console.log("error in fetching seller by refId", err)
   }
 }
 
 function* addSeller(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const newSeller = action.payload.newSeller;
-    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation ($input: sellersInput) {
@@ -162,34 +204,34 @@ function* addSeller(action) {
     }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
     const data = new FormData();
     data.append("query", query);
 
     data.append("variables", JSON.stringify({
-        "input": {
-          "refId": newSeller.refId,
-          "lastname": newSeller.lastname,
-          "firstname": newSeller.firstname,
-          "level": newSeller.level,
-          "teacher": newSeller.teacher,
-          "initial_books": Number(newSeller.initial_books),
-          "additional_books": Number(newSeller.additional_books),
-          "books_returned": Number(newSeller.books_returned),
-          "cash": Number(newSeller.cash),
-          "checks": Number(newSeller.checks),
-          "digital": Number(newSeller.digital),
-          "donations": Number(newSeller.donations),
-          "notes": newSeller.notes,
-          "organization_id": Number(newSeller.organization_id),
-          "digital_donations": Number(newSeller.digital_donations),
-          "books_due": Number(newSeller.books_due),
-          "coupon_book_id": Number(newSeller.coupon_book_id)
-        } 
+      "input": {
+        "refId": newSeller.refId,
+        "lastname": newSeller.lastname,
+        "firstname": newSeller.firstname,
+        "level": newSeller.level,
+        "teacher": newSeller.teacher,
+        "initial_books": Number(newSeller.initial_books),
+        "additional_books": Number(newSeller.additional_books),
+        "books_returned": Number(newSeller.books_returned),
+        "cash": Number(newSeller.cash),
+        "checks": Number(newSeller.checks),
+        "digital": Number(newSeller.digital),
+        "donations": Number(newSeller.donations),
+        "notes": newSeller.notes,
+        "organization_id": Number(newSeller.organization_id),
+        "digital_donations": Number(newSeller.digital_donations),
+        "books_due": Number(newSeller.books_due),
+        "coupon_book_id": Number(newSeller.coupon_book_id)
+      }
     }));
 
     console.log(data);
@@ -197,7 +239,7 @@ function* addSeller(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_SELLERS",
-      payload: {id: newSeller.organization_id, auth: auth_response}
+      payload: { id: newSeller.organization_id, auth: auth_response }
     });
   } catch (error) {
     console.log("error in addSeller Saga", error);
@@ -206,8 +248,22 @@ function* addSeller(action) {
 
 function* updateSeller(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const editedSeller = action.payload.editedSeller;
-    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation ($input: sellersInput $id: ID!) {
@@ -235,35 +291,35 @@ function* updateSeller(action) {
     }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
     const data = new FormData();
     data.append("query", query);
 
     data.append("variables", JSON.stringify({
-        "input": {
-          "refId": editedSeller.refId,
-          "lastname": editedSeller.lastname,
-          "firstname": editedSeller.firstname,
-          "level": editedSeller.level,
-          "teacher": editedSeller.teacher,
-          "initial_books": Number(editedSeller.initial_books),
-          "additional_books": Number(editedSeller.additional_books),
-          "books_returned": Number(editedSeller.books_returned),
-          "cash": Number(editedSeller.cash),
-          "checks": Number(editedSeller.checks),
-          "digital": Number(digital),
-          "donations": Number(donations),
-          "notes": editedSeller.notes,
-          "organization_id": Number(editedSeller.organization_id),
-          "digital_donations": Number(editedSeller.digital_donations),
-          "books_due": Number(editedSeller.books_due),
-          "coupon_book_id": Number(editedSeller.coupon_book_id)
-        }, 
-        "id": Number(editedSeller.id)
+      "input": {
+        "refId": editedSeller.refId,
+        "lastname": editedSeller.lastname,
+        "firstname": editedSeller.firstname,
+        "level": editedSeller.level,
+        "teacher": editedSeller.teacher,
+        "initial_books": Number(editedSeller.initial_books),
+        "additional_books": Number(editedSeller.additional_books),
+        "books_returned": Number(editedSeller.books_returned),
+        "cash": Number(editedSeller.cash),
+        "checks": Number(editedSeller.checks),
+        "digital": Number(digital),
+        "donations": Number(donations),
+        "notes": editedSeller.notes,
+        "organization_id": Number(editedSeller.organization_id),
+        "digital_donations": Number(editedSeller.digital_donations),
+        "books_due": Number(editedSeller.books_due),
+        "coupon_book_id": Number(editedSeller.coupon_book_id)
+      },
+      "id": Number(editedSeller.id)
     }));
 
     console.log(data);
@@ -271,7 +327,7 @@ function* updateSeller(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_SELLERS",
-      payload: {orgId: editedSeller.organization_id, auth: auth_response}
+      payload: { orgId: editedSeller.organization_id, auth: auth_response }
     });
   } catch (error) {
     console.log("error in updateSeller Saga", error);
@@ -280,8 +336,22 @@ function* updateSeller(action) {
 
 function* archiveSeller(action) {
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const archivedSeller = action.payload.archivedSeller;
-    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation ($input: sellersInput $id: ID!) {
@@ -309,36 +379,36 @@ function* archiveSeller(action) {
     }`;
 
     const queryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
     };
     const data = new FormData();
     data.append("query", query);
 
     data.append("variables", JSON.stringify({
-        "input": {
-          "refId": archivedSeller.refId,
-          "lastname": archivedSeller.lastname,
-          "firstname": archivedSeller.firstname,
-          "level": archivedSeller.level,
-          "teacher": archivedSeller.teacher,
-          "initial_books": Number(archivedSeller.initial_books),
-          "additional_books": Number(archivedSeller.additional_books),
-          "books_returned": Number(archivedSeller.books_returned),
-          "cash": Number(archivedSeller.cash),
-          "checks": Number(archivedSeller.checks),
-          "digital": Number(archivedSeller.digital),
-          "donations": Number(archivedSeller.donations),
-          "notes": archivedSeller.notes,
-          "organization_id": Number(archivedSeller.organization_id),
-          "is_deleted": true,
-          "digital_donations": Number(archivedSeller.digital_donations),
-          "books_due": Number(archivedSeller.books_due),
-          "coupon_book_id": Number(archivedSeller.coupon_book_id)
-        }, 
-        "id": Number(archivedSeller.id)
+      "input": {
+        "refId": archivedSeller.refId,
+        "lastname": archivedSeller.lastname,
+        "firstname": archivedSeller.firstname,
+        "level": archivedSeller.level,
+        "teacher": archivedSeller.teacher,
+        "initial_books": Number(archivedSeller.initial_books),
+        "additional_books": Number(archivedSeller.additional_books),
+        "books_returned": Number(archivedSeller.books_returned),
+        "cash": Number(archivedSeller.cash),
+        "checks": Number(archivedSeller.checks),
+        "digital": Number(archivedSeller.digital),
+        "donations": Number(archivedSeller.donations),
+        "notes": archivedSeller.notes,
+        "organization_id": Number(archivedSeller.organization_id),
+        "is_deleted": true,
+        "digital_donations": Number(archivedSeller.digital_donations),
+        "books_due": Number(archivedSeller.books_due),
+        "coupon_book_id": Number(archivedSeller.coupon_book_id)
+      },
+      "id": Number(archivedSeller.id)
     }));
 
     console.log(data);
@@ -346,7 +416,7 @@ function* archiveSeller(action) {
     yield axios.post(QUERY_URL, data, queryConfig);
     yield put({
       type: "FETCH_SELLERS",
-      payload: {orgId: archivedSeller.organization_id, auth: auth_response}
+      payload: { orgId: archivedSeller.organization_id, auth: auth_response }
     });
   } catch (error) {
     console.log("error in updateSeller Saga", error);

@@ -4,7 +4,21 @@ import { put, takeEvery } from "redux-saga/effects";
 function* merchantNotes(action) {
   console.log(action.payload);
   try {
-    const auth_response = action.payload.auth
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `{
@@ -38,10 +52,23 @@ function* merchantNotes(action) {
 
 function* addNotes(action) {
   console.log(action.payload);
-
   try {
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
     const newNote = action.payload.newNote
-    const auth_response = action.payload.auth
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
     const query = `mutation($input: merchant_notesInput){
@@ -79,7 +106,7 @@ function* addNotes(action) {
   }
 }
 
-//REWRITE THIS SAGA
+
 
 function* deleteMerchantNote(action) {
   console.log(action.payload);
