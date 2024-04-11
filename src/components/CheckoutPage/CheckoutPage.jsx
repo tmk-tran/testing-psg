@@ -98,7 +98,7 @@ export default function CheckoutPage({ caseType }) {
       state: stateSelected,
       zip: zip,
       organization: sellerData[0].organization_name,
-      url: "",
+      url: "testpsg.fly.dev/fargo/coupon",
       year: 2024-2025,
       donation: customDonation,
       bookType: product.bookType,
