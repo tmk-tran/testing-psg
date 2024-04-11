@@ -286,7 +286,12 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
           {/* ~~~~~~~~~~~~~~~~~~ List Cards ~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~ Loading Page Spinner ~~~~~ */}
-          {isLoading && <LoadingSpinner text="Loading from database..." finalText="Oops! ...unexpected error. Please logout, then login again" />}
+          {isLoading && (
+            <LoadingSpinner
+              text="Loading from database..."
+              finalText="Oops! ...unexpected error. Please logout, then login again"
+            />
+          )}
           {!isLoading &&
             (isMerchantList
               ? currentItems.map((merchant, index) => (
