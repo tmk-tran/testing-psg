@@ -2,11 +2,21 @@ import axios from "axios";
 import { takeEvery, put } from "redux-saga/effects";
 
 function* fetchOrganizationsSaga(action) {
+  function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
   try {
-    const auth_response = action.payload
+    const auth_response = action.payload;
     const ACCESS_TOKEN = auth_response.data.access_token;
+    console.log(ACCESS_TOKEN);
     const QUERY_URL = auth_response.data.routes.query;
-    console.log(auth_response)
+    console.log(auth_response);
     const query = `{
        organization(ordering: "organization_name ASC" filter: "is_deleted = false"){
        id
@@ -104,10 +114,21 @@ function* fetchOrganizationsSaga(action) {
     data.append("variables", `{}`);
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
-    console.log(response)
-    console.log("FETCH request fetchOrganizationsSaga");
+    console.log(queryConfig);
+    console.log("FETCH request fetchOrganizationsSaga", response.data);
 
-    yield put({ type: "SET_ORGANIZATIONS", payload: { organization: response.data.organization, aggs: response.data.Aggregates } });
+    const organizationLogos = response.data.organization.map(org => {
+      const organizationLogoBase64 = org.organization_logo ? arrayBufferToBase64(org.organization_logo.data) : null;
+      return organizationLogoBase64;
+    });
+
+    const payload = {
+      organization: response.data.organization,
+      aggs: response.data.Aggregates,
+      organization_logo: organizationLogos,
+    };
+    console.log(payload);
+    yield put({ type: "SET_ORGANIZATIONS", payload });
   } catch (error) {
     console.log("error in fetchOrganizationsSaga", error);
   }
@@ -125,12 +146,12 @@ function* addOrganizationSaga(action) {
 
 function* deleteOrganizationSaga(action) {
   try {
-    console.log(action.payload)
-    const archivedOrg = action.payload.archivedOrg
-    const auth_response = action.payload.auth
+    console.log(action.payload);
+    const archivedOrg = action.payload.archivedOrg;
+    const auth_response = action.payload.auth;
     const ACCESS_TOKEN = auth_response.data.access_token;
     const QUERY_URL = auth_response.data.routes.query;
-    console.log(auth_response)
+    console.log(auth_response);
     const query = `mutation ($input: organizationInput, $id: ID!){
      update_organization(input: $input, id: $id)
    {
@@ -162,25 +183,28 @@ function* deleteOrganizationSaga(action) {
 
     const data = new FormData();
     data.append("query", query);
-    data.append("variables", JSON.stringify({
-      "input": {
-        "organization_name": archivedOrg.name,
-        "type": archivedOrg.type,
-        "address": archivedOrg.address,
-        "city": archivedOrg.city,
-        "state": archivedOrg.state,
-        "zip": Number(archivedOrg.zip),
-        "primary_contact_first_name": archivedOrg.primary_contact_first_name,
-        "primary_contact_last_name": archivedOrg.primary_contact_last_name,
-        "primary_contact_phone": Number(archivedOrg.primary_contact_phone),
-        "primary_contact_email": archivedOrg.primary_contact_email,
-        "is_deleted": Boolean(archivedOrg.is_deleted)
-      },
-      "id": Number(archivedOrg.id)
-    }));;
+    data.append(
+      "variables",
+      JSON.stringify({
+        input: {
+          organization_name: archivedOrg.name,
+          type: archivedOrg.type,
+          address: archivedOrg.address,
+          city: archivedOrg.city,
+          state: archivedOrg.state,
+          zip: Number(archivedOrg.zip),
+          primary_contact_first_name: archivedOrg.primary_contact_first_name,
+          primary_contact_last_name: archivedOrg.primary_contact_last_name,
+          primary_contact_phone: Number(archivedOrg.primary_contact_phone),
+          primary_contact_email: archivedOrg.primary_contact_email,
+          is_deleted: Boolean(archivedOrg.is_deleted),
+        },
+        id: Number(archivedOrg.id),
+      })
+    );
 
     const response = yield axios.post(QUERY_URL, data, queryConfig);
-    console.log(response)
+    console.log(response);
     yield put({ type: "FETCH_ORGANIZATIONS", payload: auth_response });
   } catch (error) {
     console.log("error with deleteOrganizationSaga request", error);
@@ -195,10 +219,7 @@ function* editOrganizationSaga(action) {
 
     // Create a FormData object to send the file data
     const formData = new FormData();
-    formData.append(
-      "organization_name",
-      action.payload.organization_name
-    );
+    formData.append("organization_name", action.payload.organization_name);
     formData.append("type", action.payload.type);
     formData.append("address", action.payload.address);
     formData.append("city", action.payload.city);
@@ -227,14 +248,8 @@ function* editOrganizationSaga(action) {
 
     // Check if a file is uploaded
     if (action.payload.uploadedFile) {
-      formData.append(
-        "organization_logo",
-        action.payload.uploadedFile
-      );
-      formData.append(
-        "filename",
-        action.payload.uploadedFile.name
-      );
+      formData.append("organization_logo", action.payload.uploadedFile);
+      formData.append("filename", action.payload.uploadedFile.name);
     }
 
     const response = yield axios.put(`/api/organizations/${orgId}`, formData, {

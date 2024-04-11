@@ -25,7 +25,7 @@ function ListView({
   numCoupons,
 }) {
   console.log(data);
-  // console.log(data.organization_logo_base64);
+  // console.log(data.organization_logo);
   // console.log(data.merchant_logo_base64);
   console.log(isMerchantList);
   // console.log(numCoupons);

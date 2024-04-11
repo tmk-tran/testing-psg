@@ -1,11 +1,10 @@
 import React from "react";
 
-
 const ImageRender = ({ base64Logo }) => {
   if (!base64Logo) {
     return null; // Return null if logo is not available
   }
-  
+
 //ANOTHER OPTION THAT I HOPE WORKS
 function hexToBase64(hexString) {
   if (!hexString || hexString.length % 2 !== 0) {
@@ -25,7 +24,7 @@ function hexToBase64(hexString) {
   }
 }
 
-const hexString = base64Logo; 
+const hexString = base64Logo;
 const base64Data = hexToBase64(hexString);
 
 // if (base64Data) {
@@ -51,7 +50,6 @@ function decodeJpegFromBytea(byteArray) {
 
 // console.log(base64Logo)
 
-
   return (
     <img
       className="logoImage"
@@ -62,6 +60,19 @@ function decodeJpegFromBytea(byteArray) {
   );
   }
 
-
-
 export default ImageRender;
+
+// import React from "react";
+
+// const ImageRender = ({ base64Logo }) => {
+//   console.log(base64Logo);
+
+//   // Verify if base64Logo is a valid base64 string
+//   if (!base64Logo.startsWith("data:image/png;base64,")) {
+//     return <div>Invalid base64 format</div>;
+//   }
+
+//   return <img className="logoImage" src={`data:image/png;base64,${base64Logo}`} alt="Logo file" />;
+// };
+
+// export default ImageRender;
