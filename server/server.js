@@ -605,7 +605,8 @@ app.post('/api/recoverPassword', async (req, res) => {
     const email = req.body.email
     console.log(email)
     const apiKey = process.env.AC_API_KEY;
-    const emailChecked = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`,
+    // const emailChecked = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`,
+    const emailChecked = await axios.get(`https://northpointeinsure57220.api-us1.com/api/3/contacts?filters[email]=${email}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -617,7 +618,8 @@ app.post('/api/recoverPassword', async (req, res) => {
     const id = emailChecked.data.contacts.length > 0 ? emailChecked.data.contacts[0].id : null
     console.log(id)
     const resetAcc = await axios.post(
-      `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
+      // `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
+      `https://northpointeinsure57220.api-us1.com/api/3/contactTags`,
       JSON.stringify({
         "contactTag": {
         "contact": id,
