@@ -60,6 +60,11 @@ const shortCellSx = {
   border: "1px solid #ddd",
 };
 
+const disabledCellSx = {
+  backgroundColor: "#eaeaea",
+  color: "gray",
+};
+
 export default function UserAdmin() {
   const auth = useSelector((store) => store.auth);
   const roles = useSelector((store) => store.roles);
@@ -246,7 +251,13 @@ export default function UserAdmin() {
                 >
                   <strong>{row.username}</strong>
                 </TableCell>
-                <TableCell sx={{ ...shortCellSx, ...centerMe }}>
+                <TableCell
+                  sx={{
+                    ...shortCellSx,
+                    ...centerMe,
+                    ...(row.id === 3 || row.id === 4 ? disabledCellSx : {}),
+                  }}
+                >
                   {/* ~~~~~~~~~ Graphic Designer Column ~~~~~~~~~~ */}
                   {row.graphic_designer ? (
                     <Typography
@@ -282,7 +293,13 @@ export default function UserAdmin() {
                     />
                   )}
                 </TableCell>
-                <TableCell sx={{ ...shortCellSx, ...centerMe }}>
+                <TableCell
+                  sx={{
+                    ...shortCellSx,
+                    ...centerMe,
+                    ...(row.id === 3 || row.id === 4 ? disabledCellSx : {}),
+                  }}
+                >
                   {/* ~~~~~~~~~ Org Admin Column ~~~~~~~~~~ */}
                   {row.org_admin ? (
                     <Typography
