@@ -306,17 +306,21 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
                     numCoupons={couponCount || 0}
                   />
                 ))
-              : currentItems.map((organization, index) => (
-                  <ListView
-                    key={index}
-                    data={organization}
-                    isMerchantList={false}
-                    onChange={handleEdit}
-                    editComplete={editComplete}
-                    setEditComplete={setEditComplete}
-                    isOrgAdmin={isOrgAdmin}
-                  />
-                )))}
+              : currentItems.map(
+                  (organization, index) =>
+                    isOrgAdmin &&
+                    organization.id == orgAdminId && (
+                      <ListView
+                        key={index}
+                        data={organization}
+                        isMerchantList={false}
+                        onChange={handleEdit}
+                        editComplete={editComplete}
+                        setEditComplete={setEditComplete}
+                        isOrgAdmin={isOrgAdmin}
+                      />
+                    )
+                ))}
         </div>
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~~ Add New Org ~~~~~~~~~~~~~~~~~~~~~~ */}
