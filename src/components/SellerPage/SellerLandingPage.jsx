@@ -38,9 +38,6 @@ export default function SellerLandingPage() {
 
   const sellerData = sellerPageInfo() || [];
   console.log(sellerData);
-  // Extract the seller ID //
-  const [firstSeller] = sellerData;
-  const sellerId = firstSeller ? firstSeller.id : null;
 
   // Props to PaymentMenu //
   const handlePaymentSelect = (paymentType) => {
