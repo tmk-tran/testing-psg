@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
-import { Tab, Tabs, Box, Typography, Card, CardContent } from "@mui/material";
+import { Tab, Tabs, Box, Typography } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import TaskListOrg from "../TaskList/TaskListOrg";
@@ -10,12 +10,16 @@ import NewTaskModal from "../NewTaskModal/NewTaskModal";
 import NewBookYear from "../NewBookYear/NewBookYear";
 import SuccessAlert from "../SuccessAlert/SuccessAlert";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
-import { border } from "../Utils/colors";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { User, mComments } from "../../hooks/reduxStore";
 import { useAlert } from "../SuccessAlert/useAlert";
 import { tabWidth } from "../Utils/helpers";
 import { useSelector } from "react-redux";
+
+export const spinnerSx = {
+  ml: 1,
+  verticalAlign: "middle",
+};
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -49,12 +53,11 @@ function a11yProps(index) {
 export default function BasicTabs() {
   const dispatch = dispatchHook();
   const user = User();
-  const auth = useSelector((store) => store.auth)
+  const auth = useSelector((store) => store.auth);
   const [value, setValue] = useState(0);
   const [merchantTab, setMerchantTab] = useState(false);
-  console.log(merchantTab);
   const [activeTab, setActiveTab] = useState("organization"); // Set the default tab
-  console.log(activeTab);
+  const [isLoading, setIsLoading] = useState(true);
   // ~~~~~~~~~~ Alert ~~~~~~~~~~
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
 
@@ -66,11 +69,12 @@ export default function BasicTabs() {
     } else if (activeTab === "merchant") {
       dispatch({ type: "FETCH_ALL_MERCHANT_TASKS", payload: auth });
     }
-  }, [dispatch, activeTab]);
+  }, [activeTab]);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  const merchantComments = mComments() || [];
-  console.log(merchantComments);
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
 
   const styleTaskHeaders = {
     fontWeight: "bold",
@@ -168,11 +172,17 @@ export default function BasicTabs() {
         {/* ~~~~~~~~~~~~~~ Tab Body ~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         <TabPanel value={value} index={0}>
-          <TaskListOrg />
+          <TaskListOrg
+            isLoading={isLoading}
+            loadComplete={handleLoadingComplete}
+          />
         </TabPanel>
 
         <TabPanel value={value} index={1}>
-          <TaskListMerchant />
+          <TaskListMerchant
+            isLoading={isLoading}
+            loadComplete={handleLoadingComplete}
+          />
         </TabPanel>
         {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
 
