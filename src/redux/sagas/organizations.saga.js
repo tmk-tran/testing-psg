@@ -2,15 +2,15 @@ import axios from "axios";
 import { takeEvery, put } from "redux-saga/effects";
 
 function* fetchOrganizationsSaga(action) {
-  function arrayBufferToBase64(buffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-  }
+  // function arrayBufferToBase64(buffer) {
+  //   let binary = '';
+  //   const bytes = new Uint8Array(buffer);
+  //   const len = bytes.byteLength;
+  //   for (let i = 0; i < len; i++) {
+  //     binary += String.fromCharCode(bytes[i]);
+  //   }
+  //   return btoa(binary);
+  // }
   try {
     const auth_response = action.payload;
     const ACCESS_TOKEN = auth_response.data.access_token;
@@ -117,15 +117,15 @@ function* fetchOrganizationsSaga(action) {
     console.log(queryConfig);
     console.log("FETCH request fetchOrganizationsSaga", response.data);
 
-    const organizationLogos = response.data.organization.map(org => {
-      const organizationLogoBase64 = org.organization_logo ? arrayBufferToBase64(org.organization_logo.data) : null;
-      return organizationLogoBase64;
-    });
+    // const organizationLogos = response.data.organization.map(org => {
+    //   const organizationLogoBase64 = org.organization_logo ? arrayBufferToBase64(org.organization_logo.data) : null;
+    //   return organizationLogoBase64;
+    // });
 
     const payload = {
       organization: response.data.organization,
       aggs: response.data.Aggregates,
-      organization_logo: organizationLogos,
+      // organization_logo: organizationLogos,
     };
     console.log(payload);
     yield put({ type: "SET_ORGANIZATIONS", payload });
