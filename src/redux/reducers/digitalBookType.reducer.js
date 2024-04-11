@@ -1,4 +1,5 @@
 const initialState = {
+  physicalBookCash: false, // Initial value
   digitalBookCredit: false, // Initial value
 };
 
@@ -8,6 +9,11 @@ const digitalBookReducer = (state = initialState, action) => {
       return {
         ...state,
         digitalBookCredit: action.payload,
+      };
+    case "SET_PHYSICAL_BOOK":
+      return {
+        ...state,
+        physicalBookCash: action.payload,
       };
     default:
       return state;

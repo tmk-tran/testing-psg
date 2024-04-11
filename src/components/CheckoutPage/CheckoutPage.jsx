@@ -52,6 +52,7 @@ export default function CheckoutPage({ caseType }) {
   let digitalPayment;
   digitalPayment = orderTotal - customDonation;
   console.log(digitalPayment);
+  const [physicalCouponBook, setPhysicalCouponBook] = useState(false);
   // Number of books sold //
   const [physicalBookDigital, setPhysicalBookDigital] = useState(0);
   const [digitalBookCredit, setDigitalBookCredit] = useState(0);
@@ -87,16 +88,17 @@ export default function CheckoutPage({ caseType }) {
 
   useEffect(() => {
     let physicalDigital = 0;
-    let digitalCredit = 0;
     let donationAmount = 0;
+    let digitalCredit = 0;
 
     selectedProducts.forEach((product) => {
       if (product.bookType === "Physical Coupon Book") {
         switch (caseType) {
-          case "cash":
-            physicalCash += product.quantity;
-            break;
+          // case "cash":
+          //   setPhysicalBook(true);
+          //   break;
           case "credit":
+            setPhysicalCouponBook(true);
             physicalDigital += product.quantity;
             break;
           default:
@@ -121,13 +123,12 @@ export default function CheckoutPage({ caseType }) {
       }
     });
 
-    // setPhysicalBookCash(physicalCash);
     setPhysicalBookDigital(physicalDigital);
     setDigitalBookCredit(digitalCredit);
     setDigitalDonation(donationAmount);
   }, [selectedProducts, caseType]);
 
-  // console.log(physicalBookCash);
+  console.log(physicalCouponBook);
   console.log(physicalBookDigital);
   console.log(digitalBookCredit);
   console.log(digitalDonation);
@@ -259,13 +260,22 @@ export default function CheckoutPage({ caseType }) {
     payload: value,
   });
 
+  const setPhysicalBook = (value) => ({
+    type: "SET_PHYSICAL_BOOK",
+    payload: value,
+  });
+
   const handleSubmit = () => {
     // Check if this is the last step in the process
     if (activeStep === steps.length - 1) {
       // This is the last step, update transactions
       updateTransactions();
       if (digitalBookCredit) {
+
         dispatch(setDigitalBook(true));
+      }
+      if (physicalCouponBook) {
+        dispatch(setPhysicalBook(true));
       }
       // Redirect the user to a confirmation page
       history.push(`/fargo/seller/${refId}/complete`);

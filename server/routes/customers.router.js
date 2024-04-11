@@ -32,7 +32,12 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 
   const queryText = `
           SELECT
-            email
+            email,
+            address,
+            unit,
+            city,
+            state,
+            zip
           FROM
             customers
           WHERE
