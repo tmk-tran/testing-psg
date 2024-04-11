@@ -78,7 +78,8 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
 
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
-      dispatch({ type: fetchDataAction, payload: auth });
+      dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
+      dispatch({ type: "FETCH_MERCHANTS", payload: auth });
       setEditComplete(false);
     }
   }, [isMerchantList, editComplete]);
