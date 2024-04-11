@@ -16,7 +16,6 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
-import EditAttributesIcon from "@mui/icons-material/EditAttributes";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
@@ -95,7 +94,7 @@ export default function SellersTable() {
   console.log(sellers);
   const year = bookYear() || [];
   console.log(year);
-  const yearId = year[0].id;
+  const yearId = year ? year[0].id : null;
   console.log(yearId);
   const availableYears = allYears();
   const [viewYearId, setViewYearId] = useState(year ? yearId : null);
