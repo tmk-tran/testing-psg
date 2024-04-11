@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  Paper,
-  Pagination,
-  Typography,
-  Fab,
-  Tooltip,
-} from "@mui/material";
+import { Button, Paper, Pagination, Typography, Tooltip } from "@mui/material";
 import "./HomePage.css";
 import Fuse from "fuse.js";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-// ~~~~~~~~~~ Components ~~~~~~~~~~~~~~
+// ~~~~~~~~~~ Components ~~~~~~~~~~~~~~ //
 import AddAccountModal from "../AddAccountModal/AddAccountModal.jsx";
 import ListView from "../ListView/ListView.jsx";
 import SearchBar from "../SearchBar/SearchBar.jsx";
 import ToggleButton from "../ToggleButton/ToggleButton.jsx";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~
+import LoadingSpinner from "./LoadingSpinner.jsx";
+// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { allMerchants, mCoupons } from "../../hooks/reduxStore.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 
@@ -29,20 +23,17 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~ Store ~~~~~~~~~~~~~~~~~~~~
 
-  const auth = useSelector((store) => store.auth)
-  const user = useSelector((store) => store.user)
-  useEffect(() => {
-    console.log('Dispatching data fetch action...');
-    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth })
-    dispatch({ type: "FETCH_MERCHANTS", payload: auth })
-  }, [auth]);
+  const auth = useSelector((store) => store.auth);
+  const user = useSelector((store) => store.user);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  const [isLoading, setIsLoading] = useState(true);
   const [isMerchantList, setIsMerchantList] = useState(
-     false || Cookies.get("isMerchantList") === "true"
+    false || Cookies.get("isMerchantList") === "true"
   );
   console.log(isMerchantList);
-  const organizationsList = useSelector((store) => store.organizations.organization) || [];
+  const organizationsList =
+    useSelector((store) => store.organizations.organization) || [];
   console.log(organizationsList);
   const merchants = allMerchants() || [];
   console.log(merchants);
@@ -63,13 +54,23 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   };
 
   useEffect(() => {
+    console.log("Dispatching data fetch action...");
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
+    dispatch({ type: "FETCH_MERCHANTS", payload: auth });
+  }, [auth]);
+
+  useEffect(() => {
+    if (organizationsList.length > 0 && merchants.length > 0) {
+      setIsLoading(false);
+    }
+  }, [organizationsList, merchants]);
+  console.log(isLoading);
+
+  useEffect(() => {
     const initialIsMerchantList =
-     false || Cookies.get("isMerchantList") === "true";
+      false || Cookies.get("isMerchantList") === "true";
     setIsMerchantList(initialIsMerchantList);
   }, []);
-
-
- 
 
   useEffect(() => {
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
@@ -85,11 +86,8 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   const couponNumbers = mCoupons() || [];
   console.log(couponNumbers);
 
-
-  
-
   // fuzzy search information
-  const listToSearch = !isMerchantList ? organizationsList: merchants;
+  const listToSearch = !isMerchantList ? organizationsList : merchants;
   console.log(listToSearch);
   const keys = !isMerchantList ? ["organization_name"] : ["merchant_name"];
   console.log(keys);
@@ -113,8 +111,6 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     }
     setCurrentPage(1); // Reset to the first page when searching
   };
-
-
 
   // clears out the input field
   const clearInput = () => {
@@ -140,9 +136,8 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     searchResult.length > 0
       ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
       : isMerchantList
-        ? merchants.slice(indexOfFirstItem, indexOfLastItem)
-        : organizationsList?.slice(indexOfFirstItem, indexOfLastItem) || [];
-
+      ? merchants.slice(indexOfFirstItem, indexOfLastItem)
+      : organizationsList?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
   console.log(currentItems);
 
@@ -150,8 +145,8 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     searchResult.length > 0
       ? searchResult.length
       : !isMerchantList
-        ? organizationsList?.length || 0
-        : merchants.length;
+      ? organizationsList?.length || 0
+      : merchants.length;
   const pageCount = Math.ceil(totalItems / itemsPerPage);
 
   const handlePageChange = (event, value) => {
@@ -168,12 +163,17 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     for (const merchant of merchants) {
       console.log(merchant);
       for (const coupon of coupons) {
-        console.log(coupon)
+        console.log(coupon);
         if (merchant.id == coupon.merchant_id) {
-          console.log("Merchant ID:", merchant.id, "Coupon Merchant ID:", coupon.merchant_id);
+          console.log(
+            "Merchant ID:",
+            merchant.id,
+            "Coupon Merchant ID:",
+            coupon.merchant_id
+          );
           couponCount.push({
             merchant: merchant.id,
-            count: coupon.count
+            count: coupon.count,
           });
         }
       }
@@ -182,8 +182,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   }
 
   const couponCount = createCouponCount(merchants, couponNumbers);
-  console.log(couponCount)
-
+  console.log(couponCount);
 
   return (
     <div className="organizationsContainer">
@@ -286,35 +285,32 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~~~~~~~~~ List Cards ~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-
-          {
-            isMerchantList
+          {/* ~~~~~ Loading Page Spinner ~~~~~ */}
+          {isLoading && <LoadingSpinner text="Loading from database..." finalText="Oops! ...unexpected error. Please logout, then login again" />}
+          {!isLoading &&
+            (isMerchantList
               ? currentItems.map((merchant, index) => (
-                <ListView
-                  key={index}
-                  data={merchant}
-                  isMerchantList={true}
-                  onChange={handleEdit}
-                  editComplete={editComplete}
-                  setEditComplete={setEditComplete}
-                  numCoupons={
-                    couponCount || 0
-                  }
-                />
-              ))
+                  <ListView
+                    key={index}
+                    data={merchant}
+                    isMerchantList={true}
+                    onChange={handleEdit}
+                    editComplete={editComplete}
+                    setEditComplete={setEditComplete}
+                    numCoupons={couponCount || 0}
+                  />
+                ))
               : currentItems.map((organization, index) => (
-                <ListView
-                  key={index}
-                  data={organization}
-                  isMerchantList={false}
-                  onChange={handleEdit}
-                  editComplete={editComplete}
-                  setEditComplete={setEditComplete}
-                  isOrgAdmin={isOrgAdmin}
-                />
-              ))
-            // <div>Not Merchant List</div>
-          }
+                  <ListView
+                    key={index}
+                    data={organization}
+                    isMerchantList={false}
+                    onChange={handleEdit}
+                    editComplete={editComplete}
+                    setEditComplete={setEditComplete}
+                    isOrgAdmin={isOrgAdmin}
+                  />
+                )))}
         </div>
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~~~~~~ Add New Org ~~~~~~~~~~~~~~~~~~~~~~ */}
