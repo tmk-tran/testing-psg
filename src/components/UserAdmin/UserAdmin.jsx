@@ -51,7 +51,6 @@ const userNameCellSx = {
   overflow: "hidden",
   textOverflow: "ellipsis",
   transition: "max-width 0.5s",
-  cursor: "col-resize",
   ...wideCellSx,
 };
 
