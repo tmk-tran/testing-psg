@@ -476,9 +476,9 @@ app.post(`/api/contact`, async (req, res) => {
       );
       console.log("Response from adding tag to contact:", response3.data);
 
-      let registerUser = await axios.post(
+    await axios.post(
         "/api/user/register",
-        (data = {
+        (user = {
           username: contactEmail,
           password: randomPassword,
           firstName: req.body.firstName,

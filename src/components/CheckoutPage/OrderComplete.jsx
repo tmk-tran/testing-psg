@@ -43,7 +43,7 @@ export default function OrderComplete() {
               </>
             )}
             <br />
-            {digitalBookType.physicalBookCash === true && (
+            {/* {digitalBookType.physicalBookCash === true && (
               <>
                 Your physical coupon book will be sent to:{" "}
                 <Typography
@@ -58,7 +58,7 @@ export default function OrderComplete() {
                   sx={boldCenter}
                 />
               </>
-            )}
+            )} */}
           </MuiTypography>
         ))}
         <Typography
