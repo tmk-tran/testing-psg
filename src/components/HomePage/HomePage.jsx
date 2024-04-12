@@ -12,40 +12,36 @@ import SearchBar from "../SearchBar/SearchBar.jsx";
 import ToggleButton from "../ToggleButton/ToggleButton.jsx";
 import LoadingSpinner from "./LoadingSpinner.jsx";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
-import { allMerchants, mCoupons } from "../../hooks/reduxStore.js";
+import {
+  User,
+  allMerchants,
+  allOrganizations,
+  mCoupons,
+} from "../../hooks/reduxStore.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 
 function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
-  console.log(isOrgAdmin);
-  console.log(orgAdminId);
-  console.log(isGraphicDesigner);
   const dispatch = useDispatch();
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // ~~~~~~~~~~~~~~~~~~~~ Store ~~~~~~~~~~~~~~~~~~~~
-
-  const auth = useSelector((store) => store.auth);
-  const user = useSelector((store) => store.user);
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [isLoading, setIsLoading] = useState(true);
   const [isMerchantList, setIsMerchantList] = useState(
     false || Cookies.get("isMerchantList") === "true"
   );
-  console.log(isMerchantList);
-  const organizationsList =
-    useSelector((store) => store.organizations.organization) || [];
-  console.log(organizationsList);
-  const merchants = allMerchants() || [];
-  console.log(merchants);
-  // state for the search and modal and pagination
+  // state for the search, modal, and pagination //
   const [query, setQuery] = useState(" ");
-  console.log(query);
   const [showInput, setShowInput] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  console.log(currentPage);
   const [editComplete, setEditComplete] = useState(false);
-  console.log(editComplete);
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+  // ~~~~~~~~~~~~~~~~~~~~ Store ~~~~~~~~~~~~~~~~~~~~ //
+  const auth = useSelector((store) => store.auth);
+  const user = User();
+  const organizationsList = allOrganizations() || [];
+  const merchants = allMerchants() || [];
+  const couponNumbers = mCoupons() || [];
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
   const itemsPerPage = 12;
   const handleToggle = () => {
     const newIsMerchantList = !isMerchantList;
@@ -64,7 +60,6 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
       setIsLoading(false);
     }
   }, [organizationsList, merchants]);
-  console.log(isLoading);
 
   useEffect(() => {
     const initialIsMerchantList =
@@ -84,15 +79,9 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     }
   }, [isMerchantList, editComplete]);
 
-  const couponNumbers = mCoupons() || [];
-  console.log(couponNumbers);
-
-  // fuzzy search information
+  // ~~~~~~~~~~~ For fuzzy search ~~~~~~~~~ //
   const listToSearch = !isMerchantList ? organizationsList : merchants;
-  console.log(listToSearch);
   const keys = !isMerchantList ? ["organization_name"] : ["merchant_name"];
-  console.log(keys);
-
   const fuse = new Fuse(listToSearch, {
     keys: keys,
     includeScore: true,
@@ -100,9 +89,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     minMatchCharLength: 2,
   });
   const results = fuse.search(query);
-  console.log(results);
   const searchResult = results.map((result) => result.item);
-  console.log(searchResult);
 
   const handleOnSearch = (value) => {
     console.log(value);
@@ -112,6 +99,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
     }
     setCurrentPage(1); // Reset to the first page when searching
   };
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
   // clears out the input field
   const clearInput = () => {
@@ -139,8 +127,6 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
       : isMerchantList
       ? merchants.slice(indexOfFirstItem, indexOfLastItem)
       : organizationsList?.slice(indexOfFirstItem, indexOfLastItem) || [];
-
-  console.log(currentItems);
 
   const totalItems =
     searchResult.length > 0
@@ -306,20 +292,19 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
                     numCoupons={couponCount || 0}
                   />
                 ))
-              : currentItems.map(
-                  (organization, index) =>
-                    isOrgAdmin &&
-                    organization.id == orgAdminId && (
-                      <ListView
-                        key={index}
-                        data={organization}
-                        isMerchantList={false}
-                        onChange={handleEdit}
-                        editComplete={editComplete}
-                        setEditComplete={setEditComplete}
-                        isOrgAdmin={isOrgAdmin}
-                      />
-                    )
+              : currentItems.map((organization, index) =>
+                  (isOrgAdmin && organization.id == orgAdminId) ||
+                  (!isOrgAdmin && user.is_admin) ? (
+                    <ListView
+                      key={index}
+                      data={organization}
+                      isMerchantList={false}
+                      onChange={handleEdit}
+                      editComplete={editComplete}
+                      setEditComplete={setEditComplete}
+                      isOrgAdmin={isOrgAdmin && organization.id == orgAdminId}
+                    />
+                  ) : null
                 ))}
         </div>
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
