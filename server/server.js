@@ -325,7 +325,7 @@ app.post(`/api/contact`, async (req, res) => {
   try {
     const email = req.body.email
     const apiKey = process.env.AC_API_KEY;
-    const checkedResponse = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`,
+    const checkedResponse = await axios.get(`https://northpointeinsure57220.api-us1.com/api/3/contacts?filters[email]=${email}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -392,7 +392,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
       }
 
       const response1 = await axios.post(
-        `https://${process.env.ac_address}/api/${process.env.version}/contacts`,
+        `https://northpointeinsure57220.api-us1.com/api/3/contacts`,
         JSON.stringify(data),
         {
           headers: {
@@ -420,7 +420,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
       }
 
       const response2 = await axios.post(
-        `https://${process.env.ac_address}/api/${process.env.version}/contactLists`,
+        `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
         JSON.stringify({
           "contactList": {
             "list": list,
@@ -450,7 +450,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
       }
 
       const response3 = await axios.post(
-        `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
+        `https://northpointeinsure57220.api-us1.com/api/3/contactTags`,
         JSON.stringify({
           "contactTag": {
             "contact": contactId,
@@ -520,7 +520,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
       }
       //Updates current active campaign data
       const response1 = await axios.put(
-        `https://${process.env.ac_address}/api/${process.env.version}/contacts/${returnerId}`,
+        `https://northpointeinsure57220.api-us1.com/api/3/contacts/${returnerId}`,
         JSON.stringify(data),
         {
           headers: {
@@ -546,7 +546,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
       }
 
       const response2 = await axios.post(
-        `https://${process.env.ac_address}/api/${process.env.version}/contactLists`,
+        `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
         JSON.stringify({
           "contactList": {
           "list": list,
@@ -576,7 +576,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
       }
 
       const response3 = await axios.post(
-        `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
+        `https://northpointeinsure57220.api-us1.com/api/3/contactTags`,
         JSON.stringify({
           "contactTag": {
           "contact": returnerId,
