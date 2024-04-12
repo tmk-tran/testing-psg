@@ -449,7 +449,7 @@ app.post(`/api/contact`, async (req, res) => {
       ) {
         tag = 58;
       } else if (
-        req.body.bookType === "Physical Coupon Book" &&
+        req.body.bookType === "Physical Coupon Book" || "Fargo - Moorhead (Digital Coupon Book)" &&
         req.body.type === "credit"
       ) {
         tag = 56;
@@ -587,7 +587,7 @@ app.post(`/api/contact`, async (req, res) => {
       ) {
         tag = 58;
       } else if (
-        req.body.bookType === "Physical Coupon Book" &&
+        req.body.bookType === "Physical Coupon Book" || "Fargo - Moorhead (Digital Coupon Book)" &&
         req.body.type === "credit"
       ) {
         tag = 56;
