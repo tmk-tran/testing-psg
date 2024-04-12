@@ -27,19 +27,13 @@ function ListView({
   console.log(data);
   // console.log(data.organization_logo);
   // console.log(data.merchant_logo_base64);
-  console.log(isMerchantList);
-  // console.log(numCoupons);
-  console.log(numCoupons)
-  const user = User() || {};
-  console.log(user);
   const history = useHistory();
   const dispatch = useDispatch();
+  const user = User() || {};
   const auth = useSelector((store) => store.auth);
-  const aggs = useSelector((store) => store.organizations.
-    aggs);
+  const aggs = useSelector((store) => store.organizations.aggs);
+  // console.log(aggs);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  console.log(editComplete);
-  console.log(aggs)
 
   const handleEdit = () => {
     setEditModalOpen(true);
@@ -58,10 +52,10 @@ function ListView({
         <div className="initialsContainer">
           {data.organization_name
             ? data.organization_name
-              .split(" ")
-              .map((word) => word[0])
-              .join("")
-              .toUpperCase()
+                .split(" ")
+                .map((word) => word[0])
+                .join("")
+                .toUpperCase()
             : null}
         </div>
       )
@@ -74,8 +68,9 @@ function ListView({
 
   const handleArchive = (data) => {
     Swal.fire({
-      title: `Are you sure you want to Archive this ${isMerchantList ? "Merchant" : "Organization"
-        }?`,
+      title: `Are you sure you want to Archive this ${
+        isMerchantList ? "Merchant" : "Organization"
+      }?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: backgroundColor.color,
@@ -112,8 +107,8 @@ function ListView({
               primary_contact_last_name: data.primary_contact_last_name,
               primary_contact_phone: Number(data.primary_contact_phone),
               primary_contact_email: data.primary_contact_email,
-              is_deleted: true
-            }
+              is_deleted: true,
+            };
 
             const archivedMerchant = {
               id: data.id,
@@ -127,21 +122,25 @@ function ListView({
               contact_phone_number: data.contact_phone,
               contact_email: data.contact_email,
               is_deleted: true,
-              archive_reason: archiveReason
-            }
+              archive_reason: archiveReason,
+            };
 
             dispatch({
               type: `DELETE_${isMerchantList ? "MERCHANT" : "ORGANIZATION"}`,
-              payload: isMerchantList ? { archivedMerchant: archivedMerchant, auth: auth } : { archivedOrg: archivedOrg, auth: auth },
+              payload: isMerchantList
+                ? { archivedMerchant: archivedMerchant, auth: auth }
+                : { archivedOrg: archivedOrg, auth: auth },
             });
 
             dispatch({
-              type: `FETCH_${isMerchantList ? "MERCHANTS" : "ORGANIZATIONS"}`, payload: auth
+              type: `FETCH_${isMerchantList ? "MERCHANTS" : "ORGANIZATIONS"}`,
+              payload: auth,
             });
             Swal.fire({
               icon: "success",
-              title: `${isMerchantList ? "Merchant" : "Organization"
-                } Successfully Archived!`,
+              title: `${
+                isMerchantList ? "Merchant" : "Organization"
+              } Successfully Archived!`,
             });
           }
         });
@@ -151,7 +150,8 @@ function ListView({
 
   function goToDetails() {
     history.push(
-      `/fargo/${isMerchantList ? "merchantTaskDetails" : "orgDetails"}/${data.id
+      `/fargo/${isMerchantList ? "merchantTaskDetails" : "orgDetails"}/${
+        data.id
       }`
     );
   }
@@ -166,9 +166,8 @@ function ListView({
   const totalBooksSold = aggs.total_books_sold;
   const totalStandingBooks =
     totalCheckedOutBooks - totalCheckedInBooks - totalBooksSold;
-  console.log(totalCheckedOutBooks)
-  console.log(totalBooksSold)
-
+  console.log(totalCheckedOutBooks);
+  console.log(totalBooksSold);
 
   function calculateBooksDifference(checkedOut, checkedIn, sold) {
     const result = [];
@@ -176,15 +175,18 @@ function ListView({
     for (const bookCheckedOut of checkedOut) {
       for (const bookCheckedIn of checkedIn) {
         for (const bookSold of sold) {
-          if (bookCheckedOut.group_organization_id === bookCheckedIn.group_organization_id &&
-            bookCheckedOut.group_organization_id === bookSold.group_organization_id) {
-
-            const difference = bookCheckedOut.sum - bookCheckedIn.sum - bookSold.sum;
+          if (
+            bookCheckedOut.group_organization_id ===
+              bookCheckedIn.group_organization_id &&
+            bookCheckedOut.group_organization_id ===
+              bookSold.group_organization_id
+          ) {
+            const difference =
+              bookCheckedOut.sum - bookCheckedIn.sum - bookSold.sum;
             result.push({
               group_organization_id: bookCheckedOut.group_organization_id,
-              difference: difference
+              difference: difference,
             });
-
           }
         }
       }
@@ -193,8 +195,11 @@ function ListView({
     return result;
   }
 
-  const result = calculateBooksDifference(totalCheckedOutBooks, totalCheckedInBooks, totalBooksSold);
-
+  const result = calculateBooksDifference(
+    totalCheckedOutBooks,
+    totalCheckedInBooks,
+    totalBooksSold
+  );
 
   return (
     <>
@@ -217,8 +222,10 @@ function ListView({
 
                 {!isMerchantList ? (
                   <div style={{ display: "flex" }}>
-                    {aggs.total_books_sold.some(totalBooksSold => totalBooksSold.group_organization_id == data.id) && (
-
+                    {aggs.total_books_sold.some(
+                      (totalBooksSold) =>
+                        totalBooksSold.group_organization_id == data.id
+                    ) && (
                       <>
                         <div className="column">
                           {/* ///////////////////////////////////////// */}
@@ -229,24 +236,31 @@ function ListView({
 
                           <Typography variant="body2">
                             Organization Fee: ${data.organization_earnings}
-
                           </Typography>
 
                           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                           {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
-                          {totalBooksSold.map((totalBooks, index) => (
-                            totalBooks.group_organization_id == data.id && ( // Check for matching ID
-                              <>
-                                <Typography key={totalBooks.id} variant="body2">
-                                  Total Books Sold: {totalBooks.sum}
-                                </Typography>
+                          {totalBooksSold.map(
+                            (totalBooks, index) =>
+                              totalBooks.group_organization_id == data.id && ( // Check for matching ID
+                                <>
+                                  <Typography
+                                    key={totalBooks.id}
+                                    variant="body2"
+                                  >
+                                    Total Books Sold: {totalBooks.sum}
+                                  </Typography>
 
-                                <Typography variant="body2">
-                                  Organization Earnings: ${(data.organization_earnings * totalBooks.sum).toLocaleString() || 0}
-                                </Typography>
-                              </>
-                            )
-                          ))}
+                                  <Typography variant="body2">
+                                    Organization Earnings: $
+                                    {(
+                                      data.organization_earnings *
+                                      totalBooks.sum
+                                    ).toLocaleString() || 0}
+                                  </Typography>
+                                </>
+                              )
+                          )}
                         </div>
 
                         <div className="column">
@@ -258,40 +272,46 @@ function ListView({
                                 <Typography variant="body2">
                                   Total Groups: {total_groups.count || 0}
                                 </Typography>
-                              )
+                              );
                             }
                           })}
                           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                           {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
-                          {result.map((totalStandingBooks, index) => {
-                            if (totalStandingBooks.group_organization_id == data.id) {
+                          {result.map((outstandingBooks, index) => {
+                            if (
+                              outstandingBooks.group_organization_id == data.id
+                            ) {
                               return (
                                 <>
-                                  <Typography variant="body2"
-                                    key={index}>
-                                    Total Outstanding Books: {totalStandingBooks.difference}
+                                  <Typography variant="body2" key={index}>
+                                    Total Outstanding Books:{" "}
+                                    {outstandingBooks.difference}
                                   </Typography>
 
                                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                                   {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
-                                  <Typography variant="body2"
-                                    key={index}>
+                                  <Typography variant="body2" key={index}>
                                     {!user.org_admin
-                                      ? `PSG Earnings: ${(
-                                        (totalBooksSold[index].sum * 25) -
-                                        (data.organization_earnings * totalBooksSold[index].sum)
-                                      ).toLocaleString() || 0}`
+                                      ? `PSG Earnings: ${
+                                          (
+                                            totalBooksSold[index].sum * 25 -
+                                            data.organization_earnings *
+                                              totalBooksSold[index].sum
+                                          ).toLocaleString() || 0
+                                        }`
                                       : null}
                                   </Typography>
                                 </>
-                              )
+                              );
                             }
                           })}
-
                         </div>
                       </>
                     )}
-                    {!aggs.total_books_sold.some(totalBooksSold => totalBooksSold.group_organization_id == data.id) && (
+                    {!aggs.total_books_sold.some(
+                      (totalBooksSold) =>
+                        totalBooksSold.group_organization_id == data.id
+                    ) && (
                       <>
                         <div className="column">
                           <Typography variant="body2">
@@ -318,7 +338,6 @@ function ListView({
                       </>
                     )}
                   </div>
-
                 ) : (
                   <div
                     style={{
@@ -332,13 +351,16 @@ function ListView({
                     {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                     {/* ~~~~~~~~~~ Display Number of Coupons (active) ~~~~~~~~~~ */}
                     {numCoupons.some((count) => count.merchant === data.id) ? (
-  <Typography>Coupon Count (Active): {numCoupons.find((count) => count.merchant === data.id)?.count || 0}</Typography>
-) : (
-  <Typography>Coupon Count (Active): 0</Typography>
-)}
+                      <Typography>
+                        Coupon Count (Active):{" "}
+                        {numCoupons.find((count) => count.merchant === data.id)
+                          ?.count || 0}
+                      </Typography>
+                    ) : (
+                      <Typography>Coupon Count (Active): 0</Typography>
+                    )}
                   </div>
-                )
-                }
+                )}
               </div>
             </div>
           </div>
@@ -360,21 +382,23 @@ function ListView({
                 Edit
               </Button>
             )}
-            {aggs.total_open_fundraisers.map((total_active_fundraisers, index) => {
-              if (!isOrgAdmin) {
-                return (
-                  <Button
-                    key={index}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleArchive(data);
-                    }}
-                  >
-                    Archive
-                  </Button>
-                );
+            {aggs.total_open_fundraisers.map(
+              (total_active_fundraisers, index) => {
+                if (!isOrgAdmin) {
+                  return (
+                    <Button
+                      key={index}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleArchive(data);
+                      }}
+                    >
+                      Archive
+                    </Button>
+                  );
+                }
               }
-            })}
+            )}
             {isMerchantList && (
               <Button
                 onClick={(e) => {
@@ -386,8 +410,6 @@ function ListView({
               </Button>
             )}
           </div>
-
-
         </CardContent>
 
         <EditAccountModal
@@ -401,9 +423,4 @@ function ListView({
   );
 }
 
-
 export default ListView;
-
-
-
-

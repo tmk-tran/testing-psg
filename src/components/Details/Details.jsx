@@ -64,11 +64,13 @@ export default function Details({
   const user = User();
   console.log(user);
   const detailsOrg = oDetails();
+  console.log(detailsOrg);
+  // const organizationId =
+  //   detailsOrg.length > 0 ? detailsOrg[0].organization_id : null;
   const organizationId =
-    detailsOrg.length > 0 ? detailsOrg[0].organization_id : null;
+  detailsOrg.length > 0 ? Number(detailsOrg[0].id) : null;
   // Use organizationId, which will be null if detailsOrg is empty
   console.log(organizationId);
-  console.log(detailsOrg)
   const groups = oGroups();
   console.log(groups);
   const notes = isMerchantTaskPage ? mNotes() : oNotes();

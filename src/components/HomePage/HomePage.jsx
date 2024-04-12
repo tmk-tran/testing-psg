@@ -37,6 +37,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   const auth = useSelector((store) => store.auth);
   const user = User();
   const organizationsList = allOrganizations() || [];
+  console.log(organizationsList);
   const merchants = allMerchants() || [];
   const couponNumbers = mCoupons() || [];
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
@@ -293,7 +294,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
                   />
                 ))
               : currentItems.map((organization, index) =>
-                  (isOrgAdmin && organization.id == orgAdminId) ||
+                  (isOrgAdmin && Number(organization.id) === orgAdminId) ||
                   (!isOrgAdmin && user.is_admin) ? (
                     <ListView
                       key={index}
@@ -302,7 +303,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
                       onChange={handleEdit}
                       editComplete={editComplete}
                       setEditComplete={setEditComplete}
-                      isOrgAdmin={isOrgAdmin && organization.id == orgAdminId}
+                      isOrgAdmin={isOrgAdmin && Number(organization.id) === orgAdminId}
                     />
                   ) : null
                 ))}
