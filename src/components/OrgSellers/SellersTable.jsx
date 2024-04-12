@@ -20,7 +20,13 @@ import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User, oSellers, bookYear, allYears, Loading } from "../../hooks/reduxStore";
+import {
+  User,
+  oSellers,
+  bookYear,
+  allYears,
+  Loading,
+} from "../../hooks/reduxStore";
 import { primaryColor } from "../Utils/colors";
 import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { setLoading } from "../../redux/sagas/actions";
@@ -73,7 +79,8 @@ export default function SellersTable() {
   const orgId = paramsObject.id;
   // const [isLoading, setIsLoading] = useState(loading.isLoading);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [yearsLoading, setYearsLoading] = useState(true);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [open, setOpen] = useState(false);
@@ -96,7 +103,6 @@ export default function SellersTable() {
   console.log(viewYearId);
 
   useEffect(() => {
-
     const dispatchAction = {
       type: "FETCH_SELLERS",
       payload: {
@@ -113,8 +119,8 @@ export default function SellersTable() {
     dispatch(setLoading(false));
   }, [isLoading]);
 
-console.log(loading);
-console.log(isLoading);
+  console.log(loading);
+  console.log(isLoading);
 
   useEffect(() => {
     if (sellers.length > 0) {
@@ -136,6 +142,10 @@ console.log(isLoading);
       dispatch(dispatchAction2);
     }
   }, [viewYearId]);
+
+  const handleLoadComplete = () => {
+    setYearsLoading(false);
+  };
 
   // Get only active year ID
   const activeYears = availableYears
@@ -311,6 +321,8 @@ console.log(isLoading);
     }, 0);
   }
 
+  console.log(yearsLoading);
+
   return (
     <Box sx={{ mt: 3 }}>
       <Box
@@ -323,6 +335,8 @@ console.log(isLoading);
       >
         {/* ~~~~~ Year View ~~~~~ */}
         <YearSelect
+          yearsLoading={yearsLoading}
+          loadComplete={handleLoadComplete}
           sx={{ minWidth: 150, p: 1 }}
           year={year}
           setYear={setViewYearId}
