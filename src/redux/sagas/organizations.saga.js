@@ -241,6 +241,7 @@ function* editOrganizationSaga(action) {
     console.log(action.payload);
     const orgId = Number(action.payload.editedAccount.id);
     console.log(orgId);
+    console.log(action.payload.editedAccount.organization_earnings);
 
     // Create a FormData object to send the file data
     const formData = new FormData();
