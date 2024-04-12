@@ -43,7 +43,6 @@ export default function NotesDisplay({
   const paramsObject = useParams();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
   // State for showing notes
   const [inputValue, setInputValue] = useState("");
   // State from popover

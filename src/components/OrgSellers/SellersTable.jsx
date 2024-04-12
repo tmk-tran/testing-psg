@@ -20,9 +20,10 @@ import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User, oSellers, bookYear, allYears } from "../../hooks/reduxStore";
+import { User, oSellers, bookYear, allYears, Loading } from "../../hooks/reduxStore";
 import { primaryColor } from "../Utils/colors";
 import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { setLoading } from "../../redux/sagas/actions";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import SellerForm from "./SellerForm";
 import CustomButton from "../CustomButton/CustomButton";
@@ -67,8 +68,12 @@ export default function SellersTable() {
   const dispatch = dispatchHook();
   const paramsObject = useParams();
   const auth = useSelector((store) => store.auth);
+  const loading = Loading() || [];
+  console.log(loading);
   const orgId = paramsObject.id;
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(loading.isLoading);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [open, setOpen] = useState(false);
@@ -91,6 +96,7 @@ export default function SellersTable() {
   console.log(viewYearId);
 
   useEffect(() => {
+
     const dispatchAction = {
       type: "FETCH_SELLERS",
       payload: {
@@ -101,7 +107,14 @@ export default function SellersTable() {
     };
     console.log(dispatchAction);
     dispatch(dispatchAction);
-  }, []);
+
+    // This will be called when the GraphQL query completes (or encounters an error)
+    // Update the loading state to false
+    dispatch(setLoading(false));
+  }, [isLoading]);
+
+console.log(loading);
+console.log(isLoading);
 
   useEffect(() => {
     if (sellers.length > 0) {

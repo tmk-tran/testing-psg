@@ -71,13 +71,6 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
     }
   }, [merchantDetails]);
 
-  // For Notes loading
-  useEffect(() => {
-    if (notes.length > 0) {
-      setIsNotesLoading(false);
-    }
-  }, [notes]);
-
   const handleAddLocation = () => {
     setLocationAdded(true);
   };
@@ -117,7 +110,6 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
               <React.Fragment key={merchantInfo.id}>
                 <NotesDisplay
                   key={`notes-${merchantInfo.id}`}
-                  isNotesLoading={isNotesLoading}
                   notes={notes}
                   details={merchantInfo}
                   isMerchantTaskPage={isMerchantTaskPage}

@@ -84,7 +84,7 @@ export default function Details({
   console.log(locations);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isNotesLoading, setIsNotesLoading] = useState(true);
+  // const [isNotesLoading, setIsNotesLoading] = useState(true);
   const [groupAdded, setGroupAdded] = useState(false);
   console.log(groupAdded);
   const [locationAdded, setLocationAdded] = useState(false);
@@ -162,12 +162,18 @@ export default function Details({
     }
   }, [detailsOrg]);
 
-  // For Notes loading
-  useEffect(() => {
-    if (notes.length > 0) {
-      setIsNotesLoading(false);
-    }
-  }, [notes]);
+  // // For Notes loading
+  // useEffect(() => {
+  //   if (notes.length > 0) {
+  //     setIsNotesLoading(false);
+  //   }
+  // }, [notes]);
+  
+  // console.log(notes);
+  // console.log(isNotesLoading);
+
+
+  
 
   // Create a map to store organization details and associated groups
   // const orgMap = new Map();
@@ -233,7 +239,7 @@ export default function Details({
               <React.Fragment key={orgDetails?.id}>
                 {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
                   <NotesDisplay
-                    isNotesLoading={isNotesLoading}
+                    // isNotesLoading={isNotesLoading}
                     notes={notes}
                     details={orgDetails}
                   />
@@ -241,7 +247,7 @@ export default function Details({
 
                 {isTaskPage && !isOrgAdminPage && (
                   <NotesDisplay
-                    isNotesLoading={isNotesLoading}
+                    // isNotesLoading={isNotesLoading}
                     notes={notes}
                     details={orgDetails}
                     caseType={1}
@@ -257,7 +263,7 @@ export default function Details({
                     <React.Fragment key={merchantInfo.id}>
                       <NotesDisplay
                         key={merchantInfo.id}
-                        isNotesLoading={isNotesLoading}
+                        // isNotesLoading={isNotesLoading}
                         notes={notes}
                         details={merchantInfo}
                         isMerchantTaskPage={isMerchantTaskPage}

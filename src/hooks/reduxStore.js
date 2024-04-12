@@ -96,6 +96,10 @@ export const User = () => {
   return useSelector((store) => store.user);
 };
 
+export const Loading = () => {
+  return useSelector((store) => store.loading);
+};
+
 export const Errors = () => {
   return useSelector((store) => store.errors);
 };
