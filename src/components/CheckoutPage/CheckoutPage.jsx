@@ -213,7 +213,6 @@ export default function CheckoutPage({ caseType }) {
               selectedProducts={selectedProducts}
               customDonation={customDonation}
               orderSuccess={handleOrderInfo}
-              acInfo={acInfo}
             />
           </Box>
         );
@@ -300,6 +299,7 @@ export default function CheckoutPage({ caseType }) {
       if (physicalCouponBook) {
         dispatch(setPhysicalBook(true));
       }
+      acInfo();
       // Redirect the user to a confirmation page
       history.push(`/fargo/seller/${refId}/complete`);
     } else {

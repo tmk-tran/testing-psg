@@ -9,7 +9,7 @@ function Message({ content }) {
   return <p>{content}</p>;
 }
 
-function PayPalButton({ selectedProducts, customDonation, orderSuccess, acInfo }) {
+function PayPalButton({ selectedProducts, customDonation, orderSuccess }) {
   console.log(selectedProducts);
   console.log(customDonation);
   console.log(process.env.REACT_APP_PAYPAL_CLIENT_ID);
