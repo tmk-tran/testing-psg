@@ -100,7 +100,7 @@ export default function CheckoutPage({ caseType }) {
       zip: zip,
       organization: sellerData[0].organization_name,
       url: "testpsg.fly.dev/fargo/coupon",
-      year: currentYear,
+      year: currentYear[0].year,
       donation: customDonation,
       bookType: selectedProducts[0].bookType,
       type: caseType
