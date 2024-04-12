@@ -13,7 +13,6 @@ import "./TaskCard.css";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
-import { historyHook } from "../../hooks/useHistory";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { mComments } from "../../hooks/reduxStore";
 import {
@@ -34,8 +33,7 @@ import TaskDropdown from "./TaskDropdown";
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import AssignSelect from "./AssignSelect";
 import { useSelector } from "react-redux";
-import { showSaveSweetAlert } from "../Utils/sweetAlerts";
-import { flexCenter, flexRowSpace } from "../Utils/pageStyles";
+import { flexCenter } from "../Utils/pageStyles";
 import TaskCardButtons from "./TaskCardButtons";
 import DatePicker from "../DatePicker/DatePicker";
 
@@ -67,32 +65,20 @@ export default function TaskCard({
   onTaskUpdate,
   handleCaseTypeChange,
 }) {
-  // console.log(id);
-  // console.log(taskType);
-  const [selectedTask, setSelectedTask] = useState(null);
-  // console.log(task);
-  // console.log(task.id);
-  // console.log(task.merchant_id);
-  // console.log(task.organization_id);
+  const dispatch = dispatchHook();
+
   const oId = task.organization_id;
   const mId = task.merchant_id;
-  // console.log(mId);
-  // console.log(oId);
-  // console.log(index);
-  // console.log(task.task_status);
   const complete = task.task_status;
-  // console.log(complete);
+
+  const [selectedTask, setSelectedTask] = useState(null);
   const [completedTask, setCompletedTask] = useState(complete === "Complete");
-  // console.log(completedTask);
   const [assignedUser, setAssignedUser] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const dispatch = dispatchHook();  
   const [isDateEdit, setIsDateEdit] = useState(false);
   const [newDueDate, setNewDueDate] = useState("");
 
-  console.log(assignedUser);
-  const auth = useSelector((store) => store.auth)
-  console.log(task)
+  const auth = useSelector((store) => store.auth);
   // Comments
   const merchantComments = mComments(mId) || [];
   console.log(merchantComments);
@@ -127,15 +113,16 @@ export default function TaskCard({
     console.log(task.id);
     console.log(selectedTask);
 
-    
     const dispatchAction = {
       type: updateActionType,
-      payload: { updatedTask: {
-        id: task.id,
-        task: task.task,
-        assign: task.assign,
-        due_date: task.due_date,
-        task_status: selectedTask},
+      payload: {
+        updatedTask: {
+          id: task.id,
+          task: task.task,
+          assign: task.assign,
+          due_date: task.due_date,
+          task_status: selectedTask,
+        },
         auth: auth,
       },
     };
@@ -161,7 +148,7 @@ export default function TaskCard({
       type: archiveActionType,
       payload: {
         id: task.id,
-        auth: auth
+        auth: auth,
       },
     });
     onTaskUpdate();
@@ -194,8 +181,6 @@ export default function TaskCard({
     setNewDueDate("");
     setIsDateEdit(false);
   };
-  console.log(newDueDate);
-  console.log(isDateEdit);
 
   const handleEditMode = () => {
     setIsEditing(true);
