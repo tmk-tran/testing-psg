@@ -288,8 +288,6 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
                     data={merchant}
                     isMerchantList={true}
                     onChange={handleEdit}
-                    editComplete={editComplete}
-                    setEditComplete={setEditComplete}
                     numCoupons={couponCount || 0}
                   />
                 ))
@@ -301,9 +299,9 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
                       data={organization}
                       isMerchantList={false}
                       onChange={handleEdit}
-                      editComplete={editComplete}
-                      setEditComplete={setEditComplete}
-                      isOrgAdmin={isOrgAdmin && Number(organization.id) === orgAdminId}
+                      isOrgAdmin={
+                        isOrgAdmin && Number(organization.id) === orgAdminId
+                      }
                     />
                   ) : null
                 ))}

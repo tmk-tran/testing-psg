@@ -16,17 +16,8 @@ import { User } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import ImageRender from "../ImageRender/ImageRender";
 
-function ListView({
-  data,
-  isMerchantList,
-  onChange,
-  editComplete,
-  isOrgAdmin,
-  numCoupons,
-}) {
+function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
   console.log(data);
-  // console.log(data.organization_logo);
-  // console.log(data.merchant_logo_base64);
   const history = useHistory();
   const dispatch = useDispatch();
   const user = User() || {};
