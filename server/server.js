@@ -465,7 +465,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
         }
       );
       console.log('Response from adding tag to contact:', response3.data);
-      res.sendStatus(200)
+      
 
       const registerUser = await axios.post('/api/user/register', data = { username: contactEmail, password: randomPassword})
 
