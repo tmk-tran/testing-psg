@@ -118,6 +118,7 @@ export default function CustomerInfoForm({
               helperText={errors.phone}
             /> */}
             <PhoneInput
+              caseType="addAccount"
               phoneNumber={phone}
               setPhoneNumber={setPhone}
               setPhoneError={() =>
@@ -190,6 +191,7 @@ export default function CustomerInfoForm({
           {/* ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~~ */}
           <Grid item xs={12} sm={3}>
             <StateSelector
+              inputLabel="State*"
               onChange={handleStateChange}
               stateSelected={stateSelected}
               isSubmitted={isSubmitted}
