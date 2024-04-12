@@ -9,15 +9,15 @@ function* addContactSaga(action) {
             url: `/api/contact`,
             data: action.payload
         });
-        console.log(response)
-        yield put({
-            type: "REGISTER", payload: {
-                username: response.data.user.email, 
-                password: response.data.password,
-                first_name: response.data.user.firstName,
-                last_name: response.data.user.lastName
-            }
-        })
+        console.log("Successful response: ", response)
+        // yield put({
+        //     type: "REGISTER", payload: {
+        //         username: response.data.user.email, 
+        //         password: response.data.password,
+        //         first_name: response.data.user.firstName,
+        //         last_name: response.data.user.lastName
+        //     }
+        // })
     } catch (error) {
         console.log("error in addContact saga", error);
     }
