@@ -475,7 +475,7 @@ app.post(`/api/contact`, async (req, res) => {
         }
       );
       console.log("Response from adding tag to contact:", response3.data);
-      res.sendStatus(200);
+      res.send(randomPassword);
 
     // await axios.post(
     //     "/api/user/register",

@@ -11,18 +11,25 @@ function* addContactSaga(action) {
         // });
         const response = yield axios.post("/api/contact", action.payload);
         console.log("Response: ", response);
-        console.log("Successful response: ", response.data);
-        // yield put({
-        //     type: "REGISTER", payload: {
-        //         username: response.data.user.email, 
-        //         password: response.data.password,
-        //         first_name: response.data.user.firstName,
-        //         last_name: response.data.user.lastName
-        //     }
-        // })
+        
+        if (response.data === "OK") {
+            console.log("Contact created successfully (no password returned)");
+          } else { 
+            (typeof response.data === "string" && response.data.length > 0) 
+            
+            const user = {
+              username: action.payload.email,
+              password: response.data,
+              first_name: action.payload.firstName,
+              last_name: action.payload.lastName
+            };
+      
+            yield put({ type: "REGISTER", payload: user });
+        }
     } catch (error) {
         console.log("error in addContact saga", error);
     }
+
 };
 
 function* recoverPassword(action) {
