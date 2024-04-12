@@ -4,12 +4,14 @@ import { takeEvery, put } from "redux-saga/effects";
 function* addContactSaga(action) {
     console.log("payload from ac saga", action.payload)
     try {
-        const response = yield axios({
-            method: "POST",
-            url: `/api/contact`,
-            data: action.payload
-        });
-        console.log("Successful response: ", response)
+        // const response = yield axios({
+        //     method: "POST",
+        //     url: `/api/contact`,
+        //     data: action.payload
+        // });
+        const response = yield axios.post("/api/contact", action.payload);
+        console.log("Response: ", response);
+        console.log("Successful response: ", response.data);
         // yield put({
         //     type: "REGISTER", payload: {
         //         username: response.data.user.email, 

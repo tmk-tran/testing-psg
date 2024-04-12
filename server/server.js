@@ -475,16 +475,17 @@ app.post(`/api/contact`, async (req, res) => {
         }
       );
       console.log("Response from adding tag to contact:", response3.data);
+      res.sendStatus(200);
 
-    await axios.post(
-        "/api/user/register",
-        (user = {
-          username: contactEmail,
-          password: randomPassword,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-        })
-      );
+    // await axios.post(
+    //     "/api/user/register",
+    //     (user = {
+    //       username: contactEmail,
+    //       password: randomPassword,
+    //       firstName: req.body.firstName,
+    //       lastName: req.body.lastName,
+    //     })
+    //   );
     } else {
       // Code block to run if there is already a user in the active campaign database, updates existing information and updates the list a user is added too
       const apiKey = process.env.AC_API_KEY;
