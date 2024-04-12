@@ -222,7 +222,7 @@ function* addMerchantSaga(action) {
 function* editMerchant(action) {
   console.log(action.payload);
   try {
-    const merchantId = action.payload.editedAccount.id;
+    const merchantId = Number(action.payload.editedAccount.id);
     console.log("MERCHANT ID IS", merchantId);
     // console.log("ACTION PAYLOAD IS", action.payload);
 
@@ -260,6 +260,8 @@ function* editMerchant(action) {
       formData.append("filename", action.payload.filename);
     }
 
+    console.log(formData);
+
     const response = yield axios.put(`/api/merchants/${merchantId}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data", // Set content type to multipart/form-data for file upload
@@ -268,7 +270,7 @@ function* editMerchant(action) {
 
     console.log("RESPONSE IS", response);
 
-    yield put({ type: "FETCH_MERCHANT_DETAILS", payload: merchantId });
+    // yield put({ type: "FETCH_MERCHANT_DETAILS", payload: merchantId });
   } catch (error) {
     console.log("error in edit invoice", error);
   }
