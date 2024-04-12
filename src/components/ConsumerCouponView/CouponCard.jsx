@@ -1,10 +1,10 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { User } from "../../hooks/reduxStore";
-import { border, borderPrimaryColor } from "../Utils/colors";
+import { borderPrimaryColor } from "../Utils/colors";
 import { redeemCouponSweetAlert } from "../Utils/sweetAlerts";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { centeredStyle, flexRowSpace } from "../Utils/pageStyles";
+import { centeredStyle } from "../Utils/pageStyles";
 import { capitalizeWords } from "../Utils/helpers";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import BottomSection from "./BottomSection";
