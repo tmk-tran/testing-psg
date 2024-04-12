@@ -32,7 +32,7 @@ const style = {
   p: 4,
 };
 
-export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
+export default function AddNewCouponModal({ locations }) {
   const dispatch = dispatchHook();
   const paramsObject = useParams();
 
@@ -86,7 +86,6 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
     console.log(dispatchAction);
     dispatch(dispatchAction);
 
-    handleCaseTypeChange("New Coupon");
     showSaveSweetAlert({ label: "Coupon Added" });
     resetForm();
   };

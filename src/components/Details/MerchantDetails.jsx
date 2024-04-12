@@ -7,8 +7,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { choices } from "../AddAccountModal/contactChoices";
 import { mDetails, mNotes, mLocations } from "../../hooks/reduxStore";
-import { useCaseType } from "../Utils/useCaseType";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
+import LoadingSpinner from "../HomePage/LoadingSpinner";
 import BackButton from "../Buttons/BackButton";
 import NotesDisplay from "../NotesDisplay/NotesDisplay";
 import ContactDetails from "../ContactDetails/ContactDetails";
@@ -23,48 +23,51 @@ import { useSelector } from "react-redux";
 export default function MerchantDetails({ isMerchantTaskPage }) {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const auth = useSelector((store) => store.auth)
+  const auth = useSelector((store) => store.auth);
   const dispatch = dispatchHook();
   const paramsObject = useParams();
   // ~~~~~~~~~~ State ~~~~~~~~~~ //
+  const [isLoading, setIsLoading] = useState(true);
   const [locationAdded, setLocationAdded] = useState(false);
-  console.log(locationAdded);
-  const { caseType, handleCaseTypeChange } = useCaseType("default");
+  // ~~~~~~~~~~ Store ~~~~~~~~~~ //
+  const merchantDetails = mDetails() || [];
+  const notes = mNotes() || [];
+  const locations = mLocations() || [];
 
   useEffect(() => {
     const action = {
       type: "FETCH_MERCHANT_DETAILS",
-      payload: {id: paramsObject.id, auth: auth}
+      payload: { id: paramsObject.id, auth: auth },
     };
     dispatch(action);
 
     const action2 = {
       type: "FETCH_MERCHANT_NOTES",
-      payload: {id: paramsObject.id, auth: auth}
+      payload: { id: paramsObject.id, auth: auth },
     };
     dispatch(action2);
 
     const action3 = {
       type: "FETCH_MERCHANT_LOCATION",
-      payload: {id: paramsObject.id, auth: auth}
+      payload: { id: paramsObject.id, auth: auth },
     };
     isMerchantTaskPage && dispatch(action3);
     console.log(action3);
 
     const action4 = {
       type: "FETCH_MERCHANT_TASKS",
-      payload: {id: paramsObject.id, auth: auth}
+      payload: { id: paramsObject.id, auth: auth },
     };
     dispatch(action4);
 
     setLocationAdded(false);
   }, [paramsObject.id, locationAdded]);
 
-  const merchantDetails = mDetails() || [];
-  console.log(merchantDetails);
-  const notes = mNotes() || [];
-  console.log(notes);
-  const locations = mLocations() || [];
+  useEffect(() => {
+    if (merchantDetails.length > 0) {
+      setIsLoading(false);
+    }
+  }, [merchantDetails]);
 
   const handleAddLocation = () => {
     setLocationAdded(true);
@@ -94,77 +97,79 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
       {/* ~~~~~~~~~~~~~~~~~ Main Container ~~~~~~~~~~~~~~~~~~~ */}
       <div className="details-card" style={{ marginTop: 40 }}>
         <div className="detailsView-container">
-          {merchantDetails.map((merchantInfo) => (
-            <React.Fragment key={merchantInfo.id}>
-              <NotesDisplay
-                key={`notes-${merchantInfo.id}`}
-                notes={notes}
-                details={merchantInfo}
-                isMerchantTaskPage={isMerchantTaskPage}
-              />
-              <center>
-                <ContactDetails
-                  key={`contact-${merchantInfo.id}`}
-                  info={merchantInfo}
+          {isLoading && (
+            <LoadingSpinner
+              text="Loading from database..."
+              finalText="Oops! ...unexpected error. Please refesh the page, or try again later"
+            />
+          )}
+          {!isLoading &&
+            merchantDetails.map((merchantInfo) => (
+              <React.Fragment key={merchantInfo.id}>
+                <NotesDisplay
+                  key={`notes-${merchantInfo.id}`}
+                  notes={notes}
+                  details={merchantInfo}
                   isMerchantTaskPage={isMerchantTaskPage}
                 />
-                {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                {/* ~~~~~~~~~~ Preferred Contact Method ~~~~~~~~~~ */}
-                <Typography
-                  key={`contact-method-${merchantInfo.id}`}
-                  sx={{ mt: 2 }}
-                >
-                  Preferred contact:{" "}
-                  <ContactMethodMenu
-                    id={merchantInfo.id}
-                    methods={choices}
-                    defaultValue={merchantInfo.contact_method}
-                    onChange={handleContactMethod}
+                <center>
+                  <ContactDetails
+                    key={`contact-${merchantInfo.id}`}
+                    info={merchantInfo}
+                    isMerchantTaskPage={isMerchantTaskPage}
                   />
-                </Typography>
-              </center>
-            </React.Fragment>
-          ))}
-
-          {isMerchantTaskPage && (
-            <>
-              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-              {/* ~~~~~~~~~~ TASK SECTION ~~~~~~~~~~ */}
-              <DetailsTaskView caseType={"merchantView"} />
-              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-              {/* ~~~~~~~~~~ LOCATION INFO ~~~~~~~~~ */}
-              {locations ? (
-                <LocationsCard
-                  locations={locations}
-                  handleCaseTypeChange={handleCaseTypeChange}
-                  handleAddLocation={handleAddLocation}
-                />
-              ) : null}
-              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-              {/* ~~~~~ COUPON REVIEW CARDS ~~~~~ */}
-              <div className="MerchantDetailsCard-container">
-                <div
-                  style={{
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                  }}
-                >
-                  {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                  {/* ~~~~~~~~~~ ADD COUPON BUTTON ~~~~~~~~~~ */}
-                  <AddNewCouponModal
-                    handleCaseTypeChange={handleCaseTypeChange}
-                    locations={locations}
-                  />
-                </div>
-                {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                {/* ~~~~~~~~ COUPON PREVIEW CARDS ~~~~~~~~~ */}
-                {merchantDetails.map((merchant, i) => (
-                  <CouponReviewCard key={i} merchant={merchant} />
-                ))}
-              </div>
-            </>
-          )}
+                  {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                  {/* ~~~~~~~~~~ Preferred Contact Method ~~~~~~~~~~ */}
+                  <Typography
+                    key={`contact-method-${merchantInfo.id}`}
+                    sx={{ mt: 2 }}
+                  >
+                    Preferred contact:{" "}
+                    <ContactMethodMenu
+                      id={merchantInfo.id}
+                      methods={choices}
+                      defaultValue={merchantInfo.contact_method}
+                      onChange={handleContactMethod}
+                    />
+                  </Typography>
+                </center>
+                {isMerchantTaskPage && (
+                  <>
+                    {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                    {/* ~~~~~~~~~~ TASK SECTION ~~~~~~~~~~ */}
+                    <DetailsTaskView caseType={"merchantView"} />
+                    {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                    {/* ~~~~~~~~~~ LOCATION INFO ~~~~~~~~~ */}
+                    {locations ? (
+                      <LocationsCard
+                        locations={locations}
+                        handleAddLocation={handleAddLocation}
+                      />
+                    ) : null}
+                    {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                    {/* ~~~~~ COUPON REVIEW CARDS ~~~~~ */}
+                    <div className="MerchantDetailsCard-container">
+                      <div
+                        style={{
+                          position: "absolute",
+                          left: 0,
+                          top: 0,
+                        }}
+                      >
+                        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                        {/* ~~~~~~~~~~ ADD COUPON BUTTON ~~~~~~~~~~ */}
+                        <AddNewCouponModal locations={locations} />
+                      </div>
+                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                      {/* ~~~~~~~~ COUPON PREVIEW CARDS ~~~~~~~~~ */}
+                      {merchantDetails.map((merchant, i) => (
+                        <CouponReviewCard key={i} merchant={merchant} />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </React.Fragment>
+            ))}
         </div>
       </div>
     </Box>

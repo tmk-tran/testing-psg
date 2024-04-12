@@ -378,7 +378,8 @@ export default function SellersTable() {
       {isLoading && (
         <LoadingSpinner
           text="Loading from database..."
-          finalText="Oops! ...unexpected error. Please logout, then login again"
+          finalText="We're sorry, but the page is taking longer to load than expected. Please try again later"
+          timeout={8000}
         />
       )}
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  */}
