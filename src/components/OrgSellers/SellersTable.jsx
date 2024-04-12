@@ -22,7 +22,6 @@ import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { User, oSellers, bookYear, allYears } from "../../hooks/reduxStore";
 import { primaryColor } from "../Utils/colors";
-import { border } from "../Utils/colors";
 import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import SellerForm from "./SellerForm";
@@ -74,30 +73,19 @@ export default function SellersTable() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
-  console.log(mode);
   const [sellerToEdit, setSellerToEdit] = useState(null);
   const [showSellerUrl, setShowSellerUrl] = useState(false);
-  console.log(showSellerUrl);
   const [sellerRefId, setSellerRefId] = useState(null);
-  console.log(sellerRefId);
   const [viewUrlTable, setViewUrlTable] = useState(false);
-  console.log(viewUrlTable);
   const [modeEditBooks, setModeEditBooks] = useState(false);
-  console.log(modeEditBooks);
   const [booksSold, setBooksSold] = useState(0);
-  console.log(booksSold);
   const [editingRefId, setEditingRefId] = useState(null);
-  console.log(editingRefId);
   const [updateActions, setUpdateActions] = useState([]);
-  console.log(updateActions);
 
   const user = User() || [];
   const sellers = oSellers() || [];
-  console.log(sellers);
   const year = bookYear() || [];
-  console.log(year);
   const yearId = year.length > 0 ? year[0].id : null;
-  console.log(yearId);
   const availableYears = allYears();
   const [viewYearId, setViewYearId] = useState(yearId);
   console.log(viewYearId);
