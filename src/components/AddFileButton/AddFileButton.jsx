@@ -31,19 +31,12 @@ export default function AddFileButton({ filename, onFileSelect }) {
       <TextField
         // disabled
         fullWidth
-        // value={
-        //   file
-        //     ? file.name
-        //     : isDisabled
-        //     ? "Please upload a high resolution logo"
-        //     : ""
-        // }
         value={
           file
             ? file.name
-            : (!filename || filename === '')
-              ? "Please upload a high resolution logo"
-              : filename
+            : !filename || filename === ""
+            ? "Please upload a high resolution logo"
+            : filename
         }
         sx={{ fontSize: 12, mb: 2 }}
         disabled={isDisabled}
