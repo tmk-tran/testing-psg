@@ -100,9 +100,9 @@ export default function CheckoutPage({ caseType }) {
       zip: zip,
       organization: sellerData[0].organization_name,
       url: "testpsg.fly.dev/fargo/coupon",
-      year: 2024-2025,
+      year: currentYear,
       donation: customDonation,
-      bookType: product.bookType,
+      bookType: selectedProducts[0].bookType,
       type: caseType
     }
     console.log("Contact Data from acInfo",contactData)
