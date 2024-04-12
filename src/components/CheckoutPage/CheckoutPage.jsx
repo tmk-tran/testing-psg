@@ -46,6 +46,7 @@ export default function CheckoutPage({ caseType }) {
   const refId = paramsObject.refId;
   // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
+  console.log(selectedProducts);
   const orderTotal = location.state?.orderTotal ?? 0;
   const customDonation = location.state?.customDonation ?? 0;
   // Access digital payment amount //
