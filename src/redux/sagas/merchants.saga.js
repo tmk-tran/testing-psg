@@ -225,6 +225,7 @@ function* editMerchant(action) {
     const merchantId = Number(action.payload.editedAccount.id);
     console.log("MERCHANT ID IS", merchantId);
     // console.log("ACTION PAYLOAD IS", action.payload);
+    console.log(action.payload.editedAccount);
 
     // Create a FormData object to send the file data
     const formData = new FormData();
@@ -246,7 +247,7 @@ function* editMerchant(action) {
       action.payload.editedAccount.contact_phone_number
     );
     formData.append("contact_email", action.payload.editedAccount.contact_email);
-    formData.append("website", action.editedAccount.payload.website);
+    formData.append("website", action.payload.editedAccount.website);
     formData.append("contact_method", action.payload.editedAccount.contact_method);
 
     // Check if a file is uploaded
