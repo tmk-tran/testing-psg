@@ -44,10 +44,10 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
   const handleEditSave = (editedAccount) => {
     console.log(editedAccount);
     if (!isMerchantList) {
-      dispatch({ type: "EDIT_ORGANIZATION", payload: {editedAccount: editedAccount, auth: auth} });
+      dispatch({ type: "EDIT_ORGANIZATION", payload: {editedAccount: editedAccount} });
       dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
     } else {
-      dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedAccount: editedAccount, auth: auth} });
+      dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedAccount: editedAccount} });
       dispatch({ type: "FETCH_MERCHANTS", payload: auth });
     }
     Swal.fire({
