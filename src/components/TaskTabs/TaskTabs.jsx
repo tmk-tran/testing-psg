@@ -11,7 +11,7 @@ import NewBookYear from "../NewBookYear/NewBookYear";
 import SuccessAlert from "../SuccessAlert/SuccessAlert";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User, mComments } from "../../hooks/reduxStore";
+import { User, mComments, mTasks } from "../../hooks/reduxStore";
 import { useAlert } from "../SuccessAlert/useAlert";
 import { tabWidth } from "../Utils/helpers";
 import { useSelector } from "react-redux";
@@ -61,6 +61,8 @@ export default function BasicTabs() {
   // ~~~~~~~~~~ Alert ~~~~~~~~~~
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
 
+  const merchantTasks = mTasks() || [];
+  console.log(merchantTasks);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   useEffect(() => {
     // Dispatch actions based on the active tab
@@ -70,6 +72,13 @@ export default function BasicTabs() {
       dispatch({ type: "FETCH_ALL_MERCHANT_TASKS", payload: auth });
     }
   }, [activeTab]);
+
+  // Set isLoading to false when the tasks are loaded
+  useEffect(() => {
+    if (merchantTasks.length > 0) {
+      setIsLoading(false);
+    }
+  }, [merchantTasks]);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const handleLoadingComplete = () => {
@@ -181,6 +190,7 @@ export default function BasicTabs() {
         <TabPanel value={value} index={1}>
           <TaskListMerchant
             isLoading={isLoading}
+            setIsLoading={setIsLoading}
             loadComplete={handleLoadingComplete}
           />
         </TabPanel>

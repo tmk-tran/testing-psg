@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import {
@@ -32,7 +33,7 @@ import ActionButton from "./ActionButton";
 import SellersTableHeader from "./SellersTableHeader";
 import BooksSoldForm from "./BooksSoldForm";
 import YearSelect from "./YearSelect";
-import { useSelector } from "react-redux";
+import LoadingSpinner from "../HomePage/LoadingSpinner";
 
 const evenRowColor = {
   backgroundColor: "#f9f9f9",
@@ -68,6 +69,7 @@ export default function SellersTable() {
   const paramsObject = useParams();
   const auth = useSelector((store) => store.auth);
   const orgId = paramsObject.id;
+  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [open, setOpen] = useState(false);
@@ -94,10 +96,10 @@ export default function SellersTable() {
   console.log(sellers);
   const year = bookYear() || [];
   console.log(year);
-  const yearId = year ? year[0].id : null;
+  const yearId = year.length > 0 ? year[0].id : null;
   console.log(yearId);
   const availableYears = allYears();
-  const [viewYearId, setViewYearId] = useState(year ? yearId : null);
+  const [viewYearId, setViewYearId] = useState(yearId);
   console.log(viewYearId);
 
   useEffect(() => {
@@ -112,6 +114,12 @@ export default function SellersTable() {
     console.log(dispatchAction);
     dispatch(dispatchAction);
   }, []);
+
+  useEffect(() => {
+    if (sellers.length > 0) {
+      setIsLoading(false);
+    }
+  }, [sellers]);
 
   useEffect(() => {
     if (viewYearId !== null) {
@@ -366,151 +374,106 @@ export default function SellersTable() {
         close={handleCloseViewUrl}
         sellerRefId={sellerRefId}
       />
+      {/* ~~~~~ Loading Page Spinner ~~~~~ */}
+      {isLoading && (
+        <LoadingSpinner
+          text="Loading from database..."
+          finalText="Oops! ...unexpected error. Please logout, then login again"
+        />
+      )}
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  */}
       {/* ~~~~~~~~~~ Seller Table ~~~~~~~~~~ */}
-      <Paper elevation={3} sx={{ width: "100%" }}>
-        <TableContainer sx={{ maxHeight: 600, overflowX: "auto" }}>
-          {/* {!viewUrlTable ? ( */}
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    sx={{
-                      minWidth: column.minWidth ? column.minWidth : "auto",
-                      width: column.width,
-                      // height: 50,
-                      // wordWrap: "break-word",
-                      // whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      border: "1px solid #f0f0f0",
-                      backgroundColor: "#d9d9d9",
-                      lineHeight: 1,
-                      fontSize: "1.1rem",
-                      maxWidth: 75, // Add this line to force ellipsis
-                    }}
-                    title={column.label}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            {/* ~~~~~ Table Body ~~~~~~~~~~ */}
-            <TableBody>
-              {sellers
-                .filter((seller) => !seller.is_deleted) // Filter out deleted sellers
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((seller, index) => {
-                  isEvenRow = !isEvenRow; // Toggle the variable for each row
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={index}
+      {!isLoading && (
+        <Paper elevation={3} sx={{ width: "100%" }}>
+          <TableContainer sx={{ maxHeight: 600, overflowX: "auto" }}>
+            {/* {!viewUrlTable ? ( */}
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
                       sx={{
-                        ...(isEvenRow
-                          ? { backgroundColor: evenRowColor }
-                          : null),
+                        minWidth: column.minWidth ? column.minWidth : "auto",
+                        width: column.width,
+                        // height: 50,
+                        // wordWrap: "break-word",
+                        // whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        border: "1px solid #f0f0f0",
+                        backgroundColor: "#d9d9d9",
+                        lineHeight: 1,
+                        fontSize: "1.1rem",
+                        maxWidth: 75, // Add this line to force ellipsis
                       }}
+                      title={column.label}
                     >
-                      {columns.map((column) => {
-                        console.log(seller);
-                        const value = seller[column.id];
-                        console.log(value);
-                        return (
-                          <TableCell
-                            key={column.id}
-                            align={column.align}
-                            sx={{
-                              border: "1px solid #e0e0e0",
-                              padding: "8px",
-                              ...(column.id === "notes" && {
-                                maxWidth: "250px",
-                                maxHeight: "50px",
-                                // overflow: "hidden",
-                                overflowWrap: "break-word",
-                                // textOverflow: "ellipsis",
-                                // whiteSpace: "no-wrap",
-                              }),
-                              ...(column.id === "books_due" && {
-                                backgroundColor: "rgba(111, 160, 216, 0.1)",
-                              }),
-                            }}
-                          >
-                            {column.id === "refId" && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                {value}
-                                {/* ~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                                {/* ~~~~~ View URL Icon ~~~~~ */}
-                                <ActionButton
-                                  title="View URL"
-                                  Icon={LaunchIcon}
-                                  iconSx={{ fontSize: "25px" }}
-                                  onClick={() => handleViewUrl(value)}
-                                  onMouseOver={(e) =>
-                                    (e.currentTarget.style.transform =
-                                      "scale(1.3)")
-                                  }
-                                  onMouseOut={(e) =>
-                                    (e.currentTarget.style.transform =
-                                      "scale(1)")
-                                  }
-                                  disabled={!isYearActive}
-                                />
-                              </div>
-                            )}
-                            {/* ~~~~~ Cash Cell ~~~~~ */}
-                            {column.id === "donations" && <>$</>}
-                            {column.id === "digital_donations" && <>$</>}
-                            {column.id === "digital" && <>$</>}
-                            {column.id === "checks" && <>$</>}
-                            {column.id === "cash" && <>$</>}
-                            {column.id === "seller_earnings" && <>$</>}
-                            {/* ~~~~~ Action Icons ~~~~~ */}
-                            {column.id !== "refId" &&
-                              (column.id === "actions" ? (
-                                <>
-                                  <ActionIcons
-                                    seller={seller}
-                                    onEdit={(id) => handleEditOpen(id, "edit")}
-                                    handleArchive={handleArchive}
-                                    disabled={!isYearActive}
-                                  />
-                                  {/* <SellerLink seller={seller} /> */}
-                                </>
-                              ) : column.id === "seller_earnings" ? (
-                                <>
-                                  {
-                                    seller.transactions_collection[0]
-                                      .seller_earnings
-                                  }
-                                </>
-                              ) : column.id === "physical_book_cash" ? (
-                                <>
-                                  {
-                                    seller.transactions_collection[0]
-                                      .physical_book_cash
-                                  }
-
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+              {/* ~~~~~ Table Body ~~~~~~~~~~ */}
+              <TableBody>
+                {sellers
+                  .filter((seller) => !seller.is_deleted) // Filter out deleted sellers
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((seller, index) => {
+                    isEvenRow = !isEvenRow; // Toggle the variable for each row
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={index}
+                        sx={{
+                          ...(isEvenRow
+                            ? { backgroundColor: evenRowColor }
+                            : null),
+                        }}
+                      >
+                        {columns.map((column) => {
+                          console.log(seller);
+                          const value = seller[column.id];
+                          console.log(value);
+                          return (
+                            <TableCell
+                              key={column.id}
+                              align={column.align}
+                              sx={{
+                                border: "1px solid #e0e0e0",
+                                padding: "8px",
+                                ...(column.id === "notes" && {
+                                  maxWidth: "250px",
+                                  maxHeight: "50px",
+                                  // overflow: "hidden",
+                                  overflowWrap: "break-word",
+                                  // textOverflow: "ellipsis",
+                                  // whiteSpace: "no-wrap",
+                                }),
+                                ...(column.id === "books_due" && {
+                                  backgroundColor: "rgba(111, 160, 216, 0.1)",
+                                }),
+                              }}
+                            >
+                              {column.id === "refId" && (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  {value}
+                                  {/* ~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                                  {/* ~~~~~ View URL Icon ~~~~~ */}
                                   <ActionButton
-                                    title="Edit Books Sold"
-                                    Icon={EditIcon}
-                                    iconSx={{ fontSize: "large" }}
-                                    buttonSx={{ ml: 1 }}
-                                    onClick={() =>
-                                      openEditBooksSold(seller.refId, value)
-                                    }
+                                    title="View URL"
+                                    Icon={LaunchIcon}
+                                    iconSx={{ fontSize: "25px" }}
+                                    onClick={() => handleViewUrl(value)}
                                     onMouseOver={(e) =>
                                       (e.currentTarget.style.transform =
                                         "scale(1.3)")
@@ -521,117 +484,174 @@ export default function SellersTable() {
                                     }
                                     disabled={!isYearActive}
                                   />
-                                  {/* {value} */}
-                                </>
-                              ) : column.id === "physical_book_digital" ? (
-                                <>
-                                  {
-                                    seller.transactions_collection[0]
-                                      .physical_book_digital
-                                  }
-                                </>
-                              ) : column.id === "digital_book_credit" ? (
-                                <>
-                                  {
-                                    seller.transactions_collection[0]
-                                      .digital_book_credit
-                                  }
-                                </>
-                              ) : column.format && typeof value === "number" ? (
-                                column.format(value)
-                              ) : (
-                                value
-                              ))}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            {/* ~~~~~~~~~~ Table Footer ~~~~~~~~~~ */}
-            <TableFooter
-              sx={{ position: "sticky", bottom: 0, background: "white" }}
-            >
-              <TableRow>
-                {/* <TableCell>Total:</TableCell> */}
-                {columns.map((column) => {
-                  const sum = calculateColumnSum(sellers, column.id);
-                  const displaySum = !isNaN(sum); // Check if sum is a valid number and not zero
-                  const isExcludedColumn =
-                    column.id === "refId" ||
-                    column.id === "lastname" ||
-                    column.id === "firstname" ||
-                    column.id === "level" ||
-                    // column.id === "teacher" ||
-                    column.id === "notes" ||
-                    column.id === "actions"; // Add conditions to exclude columns
-                  const isTotalCell = column.id === "teacher"; // Specify the column to show 'Total'
+                                </div>
+                              )}
+                              {/* ~~~~~ Cash Cell ~~~~~ */}
+                              {column.id === "donations" && <>$</>}
+                              {column.id === "digital_donations" && <>$</>}
+                              {column.id === "digital" && <>$</>}
+                              {column.id === "checks" && <>$</>}
+                              {column.id === "cash" && <>$</>}
+                              {column.id === "seller_earnings" && <>$</>}
+                              {/* ~~~~~ Action Icons ~~~~~ */}
+                              {column.id !== "refId" &&
+                                (column.id === "actions" ? (
+                                  <>
+                                    <ActionIcons
+                                      seller={seller}
+                                      onEdit={(id) =>
+                                        handleEditOpen(id, "edit")
+                                      }
+                                      handleArchive={handleArchive}
+                                      disabled={!isYearActive}
+                                    />
+                                    {/* <SellerLink seller={seller} /> */}
+                                  </>
+                                ) : column.id === "seller_earnings" ? (
+                                  <>
+                                    {
+                                      seller.transactions_collection[0]
+                                        .seller_earnings
+                                    }
+                                  </>
+                                ) : column.id === "physical_book_cash" ? (
+                                  <>
+                                    {
+                                      seller.transactions_collection[0]
+                                        .physical_book_cash
+                                    }
 
-                  return (
-                    <React.Fragment key={column.id}>
-                      {!isExcludedColumn ? (
-                        <TableCell
-                          key={column.id}
-                          sx={{
-                            minWidth: column.minWidth,
-                            width: column.width,
-                            border: "1px solid #f0f0f0",
-                            backgroundColor: "#d9d9d9",
-                            lineHeight: 1,
-                            fontSize: "1.1rem",
-                            textAlign: "right",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {/* ~~~~~~ Cells to display Totals ~~~~~~ */}
-                          {isTotalCell
-                            ? "Totals:"
-                            : displaySum
-                            ? column.id === "cash" ||
-                              column.id === "checks" ||
-                              column.id === "donations" ||
-                              column.id === "digital_donations" ||
-                              column.id === "digital" ||
-                              column.id === "seller_earnings"
-                              ? "$" + parseFloat(sum).toFixed(2)
-                              : sum
-                            : null}
-                        </TableCell>
-                      ) : (
-                        <TableCell
-                          sx={{
-                            minWidth: column.minWidth,
-                            width: column.width,
-                            // height: 50,
-                            border: "1px solid #f0f0f0",
-                            backgroundColor: "#d9d9d9",
-                            lineHeight: 1,
-                            fontSize: "1.1rem",
-                            textAlign: "right",
-                            fontWeight: "bold",
-                          }}
-                        />
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </TableRow>
-            </TableFooter>
-          </Table>
-          {/* ) : null} */}
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={sellers.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+                                    <ActionButton
+                                      title="Edit Books Sold"
+                                      Icon={EditIcon}
+                                      iconSx={{ fontSize: "large" }}
+                                      buttonSx={{ ml: 1 }}
+                                      onClick={() =>
+                                        openEditBooksSold(seller.refId, value)
+                                      }
+                                      onMouseOver={(e) =>
+                                        (e.currentTarget.style.transform =
+                                          "scale(1.3)")
+                                      }
+                                      onMouseOut={(e) =>
+                                        (e.currentTarget.style.transform =
+                                          "scale(1)")
+                                      }
+                                      disabled={!isYearActive}
+                                    />
+                                    {/* {value} */}
+                                  </>
+                                ) : column.id === "physical_book_digital" ? (
+                                  <>
+                                    {
+                                      seller.transactions_collection[0]
+                                        .physical_book_digital
+                                    }
+                                  </>
+                                ) : column.id === "digital_book_credit" ? (
+                                  <>
+                                    {
+                                      seller.transactions_collection[0]
+                                        .digital_book_credit
+                                    }
+                                  </>
+                                ) : column.format &&
+                                  typeof value === "number" ? (
+                                  column.format(value)
+                                ) : (
+                                  value
+                                ))}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+              {/* ~~~~~~~~~~ Table Footer ~~~~~~~~~~ */}
+              <TableFooter
+                sx={{ position: "sticky", bottom: 0, background: "white" }}
+              >
+                <TableRow>
+                  {/* <TableCell>Total:</TableCell> */}
+                  {columns.map((column) => {
+                    const sum = calculateColumnSum(sellers, column.id);
+                    const displaySum = !isNaN(sum); // Check if sum is a valid number and not zero
+                    const isExcludedColumn =
+                      column.id === "refId" ||
+                      column.id === "lastname" ||
+                      column.id === "firstname" ||
+                      column.id === "level" ||
+                      // column.id === "teacher" ||
+                      column.id === "notes" ||
+                      column.id === "actions"; // Add conditions to exclude columns
+                    const isTotalCell = column.id === "teacher"; // Specify the column to show 'Total'
+
+                    return (
+                      <React.Fragment key={column.id}>
+                        {!isExcludedColumn ? (
+                          <TableCell
+                            key={column.id}
+                            sx={{
+                              minWidth: column.minWidth,
+                              width: column.width,
+                              border: "1px solid #f0f0f0",
+                              backgroundColor: "#d9d9d9",
+                              lineHeight: 1,
+                              fontSize: "1.1rem",
+                              textAlign: "right",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {/* ~~~~~~ Cells to display Totals ~~~~~~ */}
+                            {isTotalCell
+                              ? "Totals:"
+                              : displaySum
+                              ? column.id === "cash" ||
+                                column.id === "checks" ||
+                                column.id === "donations" ||
+                                column.id === "digital_donations" ||
+                                column.id === "digital" ||
+                                column.id === "seller_earnings"
+                                ? "$" + parseFloat(sum).toFixed(2)
+                                : sum
+                              : null}
+                          </TableCell>
+                        ) : (
+                          <TableCell
+                            sx={{
+                              minWidth: column.minWidth,
+                              width: column.width,
+                              // height: 50,
+                              border: "1px solid #f0f0f0",
+                              backgroundColor: "#d9d9d9",
+                              lineHeight: 1,
+                              fontSize: "1.1rem",
+                              textAlign: "right",
+                              fontWeight: "bold",
+                            }}
+                          />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </TableRow>
+              </TableFooter>
+            </Table>
+            {/* ) : null} */}
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={sellers.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      )}
     </Box>
   );
 }

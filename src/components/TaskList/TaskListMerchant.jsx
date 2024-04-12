@@ -12,7 +12,11 @@ import { useAlert } from "../SuccessAlert/useAlert";
 import { useSelector } from "react-redux";
 import { spinnerSx } from "../TaskTabs/TaskTabs";
 
-export default function TaskListMerchant({ isLoading, loadComplete }) {
+export default function TaskListMerchant({
+  isLoading,
+  setIsLoading,
+  loadComplete,
+}) {
   const dispatch = dispatchHook();
   const auth = useSelector((store) => store.auth);
   const [selectedTasks, setSelectedTasks] = useState({
@@ -21,7 +25,7 @@ export default function TaskListMerchant({ isLoading, loadComplete }) {
     completeTask: "",
   });
   const [caseType, setCaseType] = useState("");
-
+  // ~~~~~~~~~~ Toast ~~~~~~~~~~ //
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
 
   // Tasks
@@ -33,8 +37,9 @@ export default function TaskListMerchant({ isLoading, loadComplete }) {
 
   // Set isLoading to false when the tasks are loaded
   useEffect(() => {
+    setIsLoading(merchantTasks.length === 0); // Set isLoading to true if merchantTasks is empty
     if (merchantTasks.length > 0) {
-      loadComplete();
+      loadComplete(); // Notify parent that loading is complete
     }
   }, [merchantTasks]);
 
