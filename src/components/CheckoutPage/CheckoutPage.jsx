@@ -272,7 +272,6 @@ export default function CheckoutPage({ caseType }) {
     !hasErrors && handleNext();
 
     saveCustomerInfo();
-    acInfo()
   };
 
   const returnToStore = () => {
