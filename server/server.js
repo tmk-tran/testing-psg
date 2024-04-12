@@ -402,7 +402,7 @@ if (checkedResponse.data.message === "No Result found for Subscriber with id 0" 
         }
       );
       console.log('Response from ActiveCampaign:', response1.data.contact);
-      const contactEmail = response1.data.contacts.email;
+      const contactEmail = response1.data.contact.email;
       const contactId = response1.data.contact.id;
       console.log(contactId)
 
