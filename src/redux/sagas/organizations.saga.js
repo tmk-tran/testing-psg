@@ -239,7 +239,7 @@ function* editOrganizationSaga(action) {
   try {
     console.log("ACTION PAYLOAD IS", action.payload);
     console.log(action.payload);
-    const orgId = Number(action.payload.editedAccount.id);
+    const orgId = action.payload.editedAccount.id;
     console.log(orgId);
     console.log(action.payload.editedAccount.organization_earnings);
 
@@ -283,7 +283,7 @@ function* editOrganizationSaga(action) {
         "Content-Type": "multipart/form-data", // Set content type to multipart/form-data for file upload
       },
     });
-
+    
     console.log("RESPONSE IS", response);
 
     yield put({ type: "FETCH_ORGANIZATIONS", payload: action.payload });

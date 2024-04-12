@@ -247,7 +247,8 @@ router.delete("/:id", (req, res) => {
 
 router.put("/:id", upload.single("organization_logo"), (req, res) => {
   const organizationId = req.params.id;
-  const organization = req.body;
+  console.log("org ID = ", organizationId);
+  const organization = Object.assign({}, req.body);
   console.log(organization);
   const organization_logo = req.file ? req.file.buffer : null;
 

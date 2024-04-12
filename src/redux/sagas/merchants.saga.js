@@ -2,6 +2,7 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* merchantDetails(action) {
+  console.log(action.payload);
   try {
     const refreshToken = localStorage.psg_token;
     console.log(refreshToken)
@@ -219,32 +220,34 @@ function* addMerchantSaga(action) {
 }
 
 function* editMerchant(action) {
+  console.log(action.payload);
   try {
+    const merchantId = action.payload.editedAccount.id;
+    console.log("MERCHANT ID IS", merchantId);
     // console.log("ACTION PAYLOAD IS", action.payload);
-    const merchantId = action.payload.id;
 
     // Create a FormData object to send the file data
     const formData = new FormData();
-    formData.append("merchant_name", action.payload.merchant_name);
-    formData.append("address", action.payload.address);
-    formData.append("city", action.payload.city);
-    formData.append("state", action.payload.state);
-    formData.append("zip", action.payload.zip);
+    formData.append("merchant_name", action.payload.editedAccount.merchant_name);
+    formData.append("address", action.payload.editedAccount.address);
+    formData.append("city", action.payload.editedAccount.city);
+    formData.append("state", action.payload.editedAccount.state);
+    formData.append("zip", action.payload.editedAccount.zip);
     formData.append(
       "primary_contact_first_name",
-      action.payload.primary_contact_first_name
+      action.payload.editedAccount.primary_contact_first_name
     );
     formData.append(
       "primary_contact_last_name",
-      action.payload.primary_contact_last_name
+      action.payload.editedAccount.primary_contact_last_name
     );
     formData.append(
       "contact_phone_number",
-      action.payload.contact_phone_number
+      action.payload.editedAccount.contact_phone_number
     );
-    formData.append("contact_email", action.payload.contact_email);
-    formData.append("website", action.payload.website);
-    formData.append("contact_method", action.payload.contact_method);
+    formData.append("contact_email", action.payload.editedAccount.contact_email);
+    formData.append("website", action.editedAccount.payload.website);
+    formData.append("contact_method", action.payload.editedAccount.contact_method);
 
     // Check if a file is uploaded
     if (action.payload.uploadedFile) {
