@@ -3,7 +3,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 // ~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { centeredStyle } from "../Utils/pageStyles";
 
-export default function LoadingSpinner({ text, finalText, timeout }) {
+export default function LoadingSpinner({ text, finalText, timeout, size }) {
   const [displayedText, setDisplayedText] = useState(text);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function LoadingSpinner({ text, finalText, timeout }) {
 
   return (
     <Box sx={centeredStyle}>
-      <CircularProgress />
+      <CircularProgress size={size} />
       {displayedText && (
         <Typography variant="body2">{displayedText}</Typography>
       )}

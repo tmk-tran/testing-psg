@@ -84,6 +84,7 @@ export default function Details({
   console.log(locations);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isNotesLoading, setIsNotesLoading] = useState(true);
   const [groupAdded, setGroupAdded] = useState(false);
   console.log(groupAdded);
   const [locationAdded, setLocationAdded] = useState(false);
@@ -154,11 +155,19 @@ export default function Details({
     noteAdded,
   ]);
 
+  // For page loading
   useEffect(() => {
     if (detailsOrg.length > 0) {
       setIsLoading(false);
     }
   }, [detailsOrg]);
+
+  // For Notes loading
+  useEffect(() => {
+    if (notes.length > 0) {
+      setIsNotesLoading(false);
+    }
+  }, [notes]);
 
   // Create a map to store organization details and associated groups
   // const orgMap = new Map();
@@ -223,11 +232,16 @@ export default function Details({
             detailsOrg.map((orgDetails) => (
               <React.Fragment key={orgDetails?.id}>
                 {!isTaskPage && !isMerchantTaskPage && !isOrgAdminPage && (
-                  <NotesDisplay notes={notes} details={orgDetails} />
+                  <NotesDisplay
+                    isNotesLoading={isNotesLoading}
+                    notes={notes}
+                    details={orgDetails}
+                  />
                 )}
 
                 {isTaskPage && !isOrgAdminPage && (
                   <NotesDisplay
+                    isNotesLoading={isNotesLoading}
                     notes={notes}
                     details={orgDetails}
                     caseType={1}
@@ -243,6 +257,7 @@ export default function Details({
                     <React.Fragment key={merchantInfo.id}>
                       <NotesDisplay
                         key={merchantInfo.id}
+                        isNotesLoading={isNotesLoading}
                         notes={notes}
                         details={merchantInfo}
                         isMerchantTaskPage={isMerchantTaskPage}

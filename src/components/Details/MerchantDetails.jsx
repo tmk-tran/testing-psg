@@ -28,6 +28,7 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
   const paramsObject = useParams();
   // ~~~~~~~~~~ State ~~~~~~~~~~ //
   const [isLoading, setIsLoading] = useState(true);
+  const [isNotesLoading, setIsNotesLoading] = useState(true);
   const [locationAdded, setLocationAdded] = useState(false);
   // ~~~~~~~~~~ Store ~~~~~~~~~~ //
   const merchantDetails = mDetails() || [];
@@ -63,11 +64,19 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
     setLocationAdded(false);
   }, [paramsObject.id, locationAdded]);
 
+  // For page loading
   useEffect(() => {
     if (merchantDetails.length > 0) {
       setIsLoading(false);
     }
   }, [merchantDetails]);
+
+  // For Notes loading
+  useEffect(() => {
+    if (notes.length > 0) {
+      setIsNotesLoading(false);
+    }
+  }, [notes]);
 
   const handleAddLocation = () => {
     setLocationAdded(true);
@@ -108,6 +117,7 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
               <React.Fragment key={merchantInfo.id}>
                 <NotesDisplay
                   key={`notes-${merchantInfo.id}`}
+                  isNotesLoading={isNotesLoading}
                   notes={notes}
                   details={merchantInfo}
                   isMerchantTaskPage={isMerchantTaskPage}

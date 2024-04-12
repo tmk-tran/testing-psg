@@ -22,8 +22,11 @@ import { showSaveSweetAlert, showDeleteSweetAlert } from "../Utils/sweetAlerts";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { disabledColor } from "../Utils/colors";
 import { useSelector } from "react-redux";
+// ~~~~~~~~~~ Components ~~~~~~~~~~ //
+import LoadingSpinner from "../HomePage/LoadingSpinner";
 
 export default function NotesDisplay({
+  isNotesLoading,
   notes,
   details,
   caseType,
@@ -36,7 +39,7 @@ export default function NotesDisplay({
   console.log(notes);
 
   const dispatch = dispatchHook();
-  const auth = useSelector((store) => store.auth)
+  const auth = useSelector((store) => store.auth);
   const paramsObject = useParams();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -76,8 +79,7 @@ export default function NotesDisplay({
     // Fetch notes based on the determined action type
     dispatch({
       type: fetchNotesActionType,
-      payload: {id: paramsObject.id,
-        auth: auth }
+      payload: { id: paramsObject.id, auth: auth },
     });
 
     // Reset noteAdded after fetching data
@@ -86,7 +88,7 @@ export default function NotesDisplay({
 
   const handleSave = () => {
     // Format the date as "mm/dd/yyyy"
-    const formattedDate = noteDate.toISOString().split('T')[0];
+    const formattedDate = noteDate.toISOString().split("T")[0];
 
     const sendNote = {
       organization_id: isMerchantTaskPage ? null : orgId,
@@ -104,7 +106,10 @@ export default function NotesDisplay({
       const actionType = isMerchantTaskPage
         ? "ADD_MERCHANT_NOTES"
         : "ADD_ORG_NOTES";
-      dispatch({ type: actionType, payload: {sendNote: sendNote, auth: auth} });
+      dispatch({
+        type: actionType,
+        payload: { sendNote: sendNote, auth: auth },
+      });
       console.log(sendNote);
       setNoteAdded(true);
     };
@@ -126,8 +131,8 @@ export default function NotesDisplay({
 
   const handleDelete = (note, entityId) => {
     console.log(note);
-    console.log(Number(entityId))
-   
+    console.log(Number(entityId));
+
     // Assuming you're using Redux for state management
     const actionType = isMerchantTaskPage
       ? "DELETE_MERCHANT_NOTE"
@@ -141,9 +146,9 @@ export default function NotesDisplay({
           entity_id: Number(entityId),
           note_date: note.note_date,
           note_content: note.note_content,
-          is_deleted: true
+          is_deleted: true,
         },
-        auth: auth
+        auth: auth,
       },
     });
 
@@ -174,9 +179,29 @@ export default function NotesDisplay({
                 : ""
             }`}
           >
-            {notes && notes.length > 0 ? (
-              <div style={{ height: "40vh" }}>
-                {notes
+            <div style={{ height: "40vh" }}>
+              {isNotesLoading && (
+                <LoadingSpinner
+                  text="Loading..."
+                  finalText="Oops! ...unexpected error. Please refresh the page"
+                  size={25}
+                />
+              )}
+              {!isNotesLoading && notes.length === 0 && (
+                <div
+                  style={{
+                    minHeight: "25vh",
+                    backgroundColor: disabledColor.color,
+                    padding: "20%",
+                  }}
+                >
+                  <Typography sx={{ textAlign: "center" }}>
+                    Notes Empty
+                  </Typography>
+                </div>
+              )}
+              {!isNotesLoading &&
+                notes
                   .filter((note) => !note.is_deleted) // Filter out deleted notes
                   .map((note, i) => (
                     <div className="note-main-container" key={i}>
@@ -212,10 +237,7 @@ export default function NotesDisplay({
                                   "Merchant ID:",
                                   note.merchant_id
                                 );
-                                showDeleteConfirmation(
-                                  note,
-                                  note.merchant_id
-                                );
+                                showDeleteConfirmation(note, note.merchant_id);
                               } else {
                                 console.log(
                                   "Organization Task Page - Note ID:",
@@ -238,20 +260,7 @@ export default function NotesDisplay({
                       <hr style={hrStyle} />
                     </div>
                   ))}
-              </div>
-            ) : (
-              <div
-                style={{
-                  minHeight: "25vh",
-                  backgroundColor: disabledColor.color,
-                  padding: "20%",
-                }}
-              >
-                <Typography sx={{ textAlign: "center" }}>
-                  Notes Empty
-                </Typography>
-              </div>
-            )}
+            </div>
           </div>
           <div>
             <TextField
