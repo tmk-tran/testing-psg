@@ -1,6 +1,6 @@
 //Imports used for function
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { TableCell, TableRow, Typography, Button } from "@mui/material";
 import "./ClosedFundraiserItem.css";
@@ -8,6 +8,7 @@ import "./ClosedFundraiserItem.css";
 export default function ClosedFundraiserItem({ fundraiser }) {
   //Instanciates dispatch for use
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
   //Function to format the data without the timestamp
   const formatDate = (dateString) => {
     if (!dateString) {
@@ -19,13 +20,26 @@ export default function ClosedFundraiserItem({ fundraiser }) {
   };
   //Runs on click of the open button. Sends dispatch to reopen a fundraiser and notifies the user of the update
   const handleClick = () => {
+    const openedFundraiser = {id: Number(fundraiser.id),
+      group_id: Number(fundraiser.group_id),
+      title: fundraiser.title,
+      description: fundraiser.description,
+      requested_book_quantity: fundraiser.requested_book_quantity,
+      book_quantity_checked_out: fundraiser.book_quantity_checked_out,
+      book_quantity_checked_in: fundraiser.book_quantity_checked_in,
+      books_sold: fundraiser.books_sold,
+      money_received: fundraiser.money_received,
+      start_date: fundraiser.start_date,
+      end_date: fundraiser.end_date,
+      coupon_book_id: fundraiser.coupon_book_id,
+      goal: fundraiser.goal,
+      closed: false}
     Swal.fire("Updated!", "The fundraiser has been reopened.", "success");
     dispatch({
       type: "OPEN_FUNDRAISER",
-      payload: {
-        id: Number(fundraiser.id),
-        group_id: Number(fundraiser.group_id),
-      },
+      payload: { openedFundraiser: openedFundraiser, 
+        auth: auth
+       },
     });
   };
 
@@ -81,7 +95,7 @@ export default function ClosedFundraiserItem({ fundraiser }) {
                 padding: "0",
               }}
             >
-              ${fundraiser.books_sold * fundraiser.organization_earnings}
+              ${fundraiser.books_sold * fundraiser.group.organization.organization_earnings}
             </Typography>
           </TableCell>
           <TableCell
@@ -111,7 +125,7 @@ export default function ClosedFundraiserItem({ fundraiser }) {
             <Typography
               style={{ fontSize: "15px", width: "80px", textAlign: "center" }}
             >
-              {fundraiser.year}
+              {fundraiser.coupon_book.year}
             </Typography>
           </TableCell>
           <TableCell

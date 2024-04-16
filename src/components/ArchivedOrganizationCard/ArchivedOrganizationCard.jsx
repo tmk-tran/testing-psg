@@ -10,10 +10,28 @@ function ArchivedOrganizationCard({ organization }) {
   const history = useHistory();
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
+  const auth = useSelector((store) => store.auth);
+  const aggs = useSelector((store) => store.organizations.
+  aggs)
+  console.log(organization)
 
   // function to re activate organization and dispatch the data
   // sweet alert to confirm
-  function unArchive(organizationId) {
+  function unArchive(organization) {
+    const resetOrg = {  
+      id: organization.id,
+      organization_name: organization.organization_name,
+      type: organization.type,
+      address: organization.address,
+      city: organization.city,
+      state: organization.state,
+      zip: organization.zip,
+      primary_contact_first_name: organization.primary_contact_first_name,
+      primary_contact_last_name: organization.primary_contact_last_name,
+      primary_contact_phone: organization.primary_contact_phone,
+      primary_contact_email: organization.primary_contact_email,
+      organization_earnings: organization.organization_earnings,
+      is_delete: false};
     Swal.fire({
       title: "Are you sure you want to restore this organization?",
       icon: "warning",
@@ -23,9 +41,9 @@ function ArchivedOrganizationCard({ organization }) {
       confirmButtonText: "Yes, restore it",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch({ type: "RESET_ORGANIZATION", payload: organizationId });
-        dispatch({ type: "FETCH_ORGANIZATIONS" });
-        dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS" });
+        dispatch({ type: "RESET_ORGANIZATION", payload: {resetOrg: resetOrg, auth:auth } });
+        dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
+        dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS", payload: auth });
         Swal.fire("Organization successfully restored!");
       }
     });
@@ -54,11 +72,40 @@ function ArchivedOrganizationCard({ organization }) {
   // formatting some of the data to render on the card
   const totalOrgEarnings = parseFloat(organization.total_org_earnings);
   const formattedEarnings = totalOrgEarnings.toLocaleString();
-  const totalCheckedOutBooks = organization.total_checked_out_books;
-  const totalCheckedInBooks = organization.total_checked_in_books;
-  const totalBooksSold = organization.total_books_sold;
+
+  // variables for the book amounts to be able to do the quick math here
+  const totalCheckedOutBooks = aggs.total_books_checked_out;
+  const totalCheckedInBooks = aggs.total_books_checked_in;
+  const totalBooksSold = aggs.total_books_sold;
   const totalStandingBooks =
     totalCheckedOutBooks - totalCheckedInBooks - totalBooksSold;
+  console.log(totalCheckedOutBooks)
+
+
+  function calculateBooksDifference(checkedOut, checkedIn, sold) {
+    const result = [];
+
+    for (const bookCheckedOut of checkedOut) {
+      for (const bookCheckedIn of checkedIn) {
+        for (const bookSold of sold) {
+          if (bookCheckedOut.group_organization_id === bookCheckedIn.group_organization_id &&
+            bookCheckedOut.group_organization_id === bookSold.group_organization_id) {
+
+            const difference = bookCheckedOut.sum - bookCheckedIn.sum - bookSold.sum;
+            result.push({
+              group_organization_id: bookCheckedOut.group_organization_id,
+              difference: difference
+            });
+
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  const result = calculateBooksDifference(totalCheckedOutBooks, totalCheckedInBooks, totalBooksSold);
 
   return (
     <>
@@ -76,46 +123,71 @@ function ArchivedOrganizationCard({ organization }) {
                   {organization.organization_name}
                 </Typography>
                 <div className="detailsContainer">
-                  <div className="column">
-                    <Typography variant="body2">
-                      Organization Fee: ${organization.organization_earnings}
-                    </Typography>
-                    <Typography variant="body2">
-                      Total Books Sold: {organization.total_books_sold}
-                    </Typography>
-                    <Typography variant="body2">
-                      Organization Earnings: ${formattedEarnings}
-                    </Typography>
+                  {aggs.total_books_sold.map((totalBooksSold) => {
+                    if (totalBooksSold.group_organization_id == organization.id) {
+                      return (
+                        <>
+                          <div className="column">
+                            <Typography variant="body2">
+                              Organization Fee: ${organization.organization_earnings}
+                            </Typography>
+
+                            <Typography key={totalBooksSold.id} variant="body2">
+                              Total Books Sold: {totalBooksSold.sum}
+                            </Typography>
+
+                            <Typography variant="body2">
+                              Organization Earnings: ${(organization.organization_earnings * totalBooksSold.sum).toLocaleString()}
+                            </Typography>
+
+                          </div>
+                          <div className="column">
+                            {aggs.total_groups.map((total_groups) => {
+                              if (total_groups.organization_id == organization.id) {
+                                return (
+                                  <Typography variant="body2">
+                                    Total Groups: {total_groups.count}
+                                  </Typography>
+                                );
+                              }
+                            })}
+                            {result.map((totalStandingBooks) => {
+                              if (totalStandingBooks.group_organization_id == organization.id) {
+                                return (
+                                  <>
+                                    <Typography variant="body2">
+                                      Total Outstanding Books: {totalStandingBooks.difference}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                      PSG Earnings: $
+                                      {(
+                                        (totalBooksSold.sum * 25) -
+                                        (organization.organization_earnings * totalBooksSold.sum)
+                                      ).toLocaleString()}
+                                    </Typography>
+                                  </>
+                                )
+                              }
+                            })}
+                          </div>
+                        </>
+                      );
+                    }
+                  })}
                   </div>
-                  <div className="column">
-                    <Typography variant="body2">
-                      Total Groups: {organization.total_groups}
-                    </Typography>
-                    <Typography variant="body2">
-                      Total Outstanding Books: {totalStandingBooks}
-                    </Typography>
-                    <Typography variant="body2">
-                      PSG Earnings: $
-                      {(
-                        organization.total_books_sold * 25 -
-                        organization.total_org_earnings
-                      ).toLocaleString()}
-                    </Typography>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
 
           <div
             className="archivedOrganizationActions"
-            style={{ marginTop: "-150px" }}
+            style={{ marginTop: "-80px" }}
           >
             <Button
               sx={{ mr: 2 }}
               onClick={(e) => {
                 e.stopPropagation();
-                unArchive(organization.id);
+                unArchive(organization);
               }}
             >
               Restore

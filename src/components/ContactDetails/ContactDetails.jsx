@@ -17,19 +17,27 @@ import { capitalizeWords, formatPhoneNumber } from "../Utils/helpers";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
 import { border } from "../Utils/colors";
+import { useSelector } from "react-redux";
 
 export default function ContactDetails({
   info,
   isMerchantTaskPage,
   isOrgAdminPage,
 }) {
-  console.log(info);
+  let newInfo = ""
+  if (isMerchantTaskPage) {
+    newInfo = info;
+} else {
+    newInfo = info[0];
+}
+  console.log(newInfo);
   console.log(isMerchantTaskPage);
   console.log(isOrgAdminPage);
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth);
   const contactPhone = isMerchantTaskPage
-    ? formatPhoneNumber(info.contact_phone_number)
-    : formatPhoneNumber(info.primary_contact_phone);
+    ? formatPhoneNumber(newInfo.contact_phone_number)
+    : formatPhoneNumber(newInfo.primary_contact_phone);
   const isSmallScreen = useMediaQuery("(max-width:400px)");
 
   const [isEditing, setIsEditing] = useState(false);
@@ -46,8 +54,8 @@ export default function ContactDetails({
   const handleSaveContact = (editedItem) => {
     console.log("New Contact Info:", editedItem);
     isMerchantTaskPage
-      ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: editedItem })
-      : dispatch({ type: "EDIT_ORG_DETAILS", payload: editedItem });
+      ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: {editedItem: editedItem, auth: auth} })
+      : dispatch({ type: "EDIT_ORG_DETAILS", payload: {editedItem: editedItem, auth: auth} });
     setIsEditing(false);
   };
 
@@ -55,11 +63,11 @@ export default function ContactDetails({
     console.log("New Details:", editedDetails);
     const merchantAction = {
       type: "EDIT_MERCHANT_DETAILS",
-      payload: editedDetails,
+      payload:{ editedItem: editedDetails, auth: auth}
     };
     const orgAction = {
       type: "EDIT_ORG_DETAILS",
-      payload: editedDetails,
+      payload: { editedItem: editedDetails, auth: auth}
     };
     isMerchantTaskPage ? dispatch(merchantAction) : dispatch(orgAction);
 
@@ -67,6 +75,7 @@ export default function ContactDetails({
     console.log(orgAction);
   };
 
+  console.log(newInfo)
   return (
     <>
       <div className="org-details">
@@ -85,7 +94,7 @@ export default function ContactDetails({
                 <DetailsEdit
                   isOpen={isEditingOrgDetails}
                   onClose={() => setIsEditingOrgDetails(false)}
-                  info={info}
+                  info={newInfo}
                   onSaveChanges={handleSaveOrgDetails}
                   isMerchantTaskPage={isMerchantTaskPage}
                 />
@@ -96,18 +105,18 @@ export default function ContactDetails({
             <div className="org-name-container">
               {!isMerchantTaskPage ? (
                 <Typography variant="h5" style={{ fontWeight: "bold" }}>
-                  {capitalizeWords(info.organization_name)}
+                  {capitalizeWords(newInfo.organization_name)}
                 </Typography>
               ) : (
                 <Typography variant="h5" style={{ fontWeight: "bold" }}>
-                  {capitalizeWords(info.merchant_name)}
+                  {capitalizeWords(newInfo.merchant_name)}
                 </Typography>
               )}
             </div>
-            <Typography>{capitalizeWords(info.address)}</Typography>
+            <Typography>{capitalizeWords(newInfo.address)}</Typography>
             <Typography>
-              {capitalizeWords(info.city)}, {info.state.toUpperCase()}{" "}
-              {info.zip}
+              {capitalizeWords(newInfo.city)}, {newInfo.state.toUpperCase()}{" "}
+              {newInfo.zip}
             </Typography>
           </div>
           <br />
@@ -119,7 +128,7 @@ export default function ContactDetails({
           contactPhone={contactPhone}
           handleEditContact={handleEditContact}
           handleSaveContact={handleSaveContact}
-          info={info}
+          info={newInfo}
           isEditing={isEditing}
           isMerchantTaskPage={isMerchantTaskPage}
           isSmallScreen={isSmallScreen}

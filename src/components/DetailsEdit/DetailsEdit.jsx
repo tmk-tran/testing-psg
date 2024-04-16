@@ -23,9 +23,9 @@ export default function DetailsEdit({
   isMerchantTaskPage,
 }) {
   // const [editedName, setEditedName] = useState(info.organization_name);
-  console.log(isOpen);
-  console.log(info);
-  console.log(info.merchant_name);
+  // console.log(isOpen);
+  // console.log(info);
+  // console.log(info.merchant_name);
   const [editedName, setEditedName] = useState(
     !isMerchantTaskPage ? info.organization_name : info.merchant_name
   );
@@ -84,7 +84,7 @@ export default function DetailsEdit({
     const orgId = detailsInfo.organization_id;
     console.log(orgId);
     const merchantId = detailsInfo.id;
-    console.log(merchantId);
+    // console.log(merchantId);
 
     const editedDetails = !isMerchantTaskPage
       ? {

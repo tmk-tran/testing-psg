@@ -11,7 +11,7 @@ function* fetchCustomers() {
   }
 }
 
-function* fetchCustomerEmail(action) {
+function* fetchCustomerAddressInfo(action) {
   console.log("from customers.saga, action.payload = ", action.payload);
   const customerId = action.payload.id;
   try {
@@ -31,7 +31,7 @@ function* addCustomer(action) {
     const newCustomerId = response.data[0].id;
 
     yield put({
-      type: "FETCH_CUSTOMER_EMAIL",
+      type: "FETCH_CUSTOMER_ADDRESS_INFO",
       payload: {
         id: newCustomerId,
       },
@@ -41,8 +41,8 @@ function* addCustomer(action) {
   }
 }
 
-export default function* merchantCommentsSaga() {
+export default function* customersSaga() {
   yield takeEvery("FETCH_CUSTOMERS", fetchCustomers);
-  yield takeEvery("FETCH_CUSTOMER_EMAIL", fetchCustomerEmail);
+  yield takeEvery("FETCH_CUSTOMER_ADDRESS_INFO", fetchCustomerAddressInfo);
   yield takeEvery("ADD_CUSTOMER", addCustomer);
 }

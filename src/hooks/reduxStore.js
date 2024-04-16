@@ -17,7 +17,7 @@ export const oFundraisers = () => {
 };
 
 export const allOrganizations = () => {
-  return useSelector((store) => store.organizations);
+  return useSelector((store) => store.organizations.organization);
 };
 
 export const allMerchants = () => {
@@ -94,6 +94,10 @@ export const userBooksData = () => {
 
 export const User = () => {
   return useSelector((store) => store.user);
+};
+
+export const Loading = () => {
+  return useSelector((store) => store.loading);
 };
 
 export const Errors = () => {

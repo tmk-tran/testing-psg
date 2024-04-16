@@ -3,32 +3,109 @@ import { put, takeEvery } from "redux-saga/effects";
 
 function* fetchAllMerchantComments(action) {
   try {
-    const items = yield axios.get(`/api/merchantComments`);
-    console.log(
-      "FETCH request from merchantComments.saga, ITEMS = ",
-      items.data
-    );
-    yield put({ type: "SET_MERCHANT_COMMENTS", payload: items.data });
-  } catch (error) {
-    console.log("error in merchantComments Saga", error);
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    console.log(auth_response)
+    const query = `{
+          merchant_comments{
+        id
+        merchant_id
+        comment_content
+        is_deleted
+        user
+        task_id
+        created_at
+        coupon_id
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    console.log("FETCH request to merchantComments");
+    yield put({ type: "SET_MERCHANT_COMMENTS", payload: response.data.merchant_comments });
+  } catch (err) {
+    console.log("error in allMerchantComments Saga", error);
     yield put({ type: "SET_ERROR", payload: error });
   }
 }
 
 function* merchantComments(action) {
-  console.log(action);
   console.log(action.payload);
-
   try {
-    const items = yield axios.get(`/api/merchantComments/${action.payload}`);
-    console.log(
-      "FETCH request from merchantComments.saga, ITEMS = ",
-      items.data
-    );
-    yield put({ type: "SET_MERCHANT_COMMENTS", payload: items.data });
-  } catch (error) {
-    console.log("error in merchantComments Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    console.log(auth_response)
+    const query = `{
+      merchant_comments (filter: "merchant_id = ${action.payload.id} "){
+        id
+        merchant_id
+        comment_content
+        is_deleted
+        user
+        task_id
+        created_at
+        coupon_id
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    console.log("FETCH request to merchantComments");
+    yield put({ type: "SET_MERCHANT_COMMENTS", payload: response.data.merchant_comments });
+  } catch (err) {
+    console.log("error in merchantComments Saga", err);
   }
 }
 
@@ -49,16 +126,64 @@ function* couponComments(action) {
 
 function* addComments(action) {
   try {
-    console.log(action.payload);
-    console.log(action.payload.merchant_id);
-    yield axios.post(`/api/merchantComments/`, action.payload);
-    yield put({
-      type: "FETCH_MERCHANT_COMMENTS",
-      payload: action.payload.merchant_id,
-    });
-  } catch (error) {
-    console.log("error in addComments Merchant Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const newComment = action.payload.newComment;
+
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    console.log(auth_response)
+    const query = `mutation ($input: merchant_commentsInput) {
+      create_merchant_comments(input: $input){
+        id
+        merchant_id
+        comment_content
+        is_deleted
+        user
+        task_id
+        created_at
+        coupon_id
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", JSON.stringify({
+      "input": {
+        "merchant_id": Number(newComment.merchant_id),
+        "comment_content": newComment.comment_content,
+        "user": newComment.user,
+        "task_id": Number(newComment.task_id),
+        "coupon_id": Number(newComment.coupon_id)
+      }
+    }));
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    console.log("FETCH request to merchantComments");
+    yield put({ type: "FETCH_MERCHANT_COMMENTS", payload: { id: newComment.merchant_id, auth: auth_response } });
+  } catch (err) {
+    console.log("error in addComments Merchant Saga", err);
   }
 }
 

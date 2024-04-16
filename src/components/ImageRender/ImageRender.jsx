@@ -9,7 +9,8 @@ const ImageRender = ({ base64Logo }) => {
     <img
       className="logoImage"
       src={`data:image/jpeg;base64,${base64Logo}`}
-      alt="Organization Logo"
+      // src={imageUrl}
+      alt="Logo file"
     />
   );
 };

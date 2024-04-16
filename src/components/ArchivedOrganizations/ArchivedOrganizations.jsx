@@ -15,8 +15,9 @@ import { useHistory } from "react-router-dom";
 
 export default function ArchivedOrganizations() {
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth);
   useEffect(() => {
-    dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS" });
+    dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS", payload: auth });
   }, []);
   // how many items you want to see each page
   const itemsPerPage = 12;

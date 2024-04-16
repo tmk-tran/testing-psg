@@ -7,10 +7,11 @@ import "./UserTableRow.css";
 
 function UserTableRow({ user }) {
   const dispatch = useDispatch();
+  const auth = useSelector((store) => store.auth)
   useEffect(() => {
-    dispatch({ type: "FETCH_GROUP_ADMIN" });
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
-    dispatch({ type: "FETCH_ALL_USERS" });
+    dispatch({ type: "FETCH_GROUP_ADMIN", payload: auth });
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
+    dispatch({ type: "FETCH_ALL_USERS", payload: auth });
   }, []);
 
   const organizations = useSelector((store) => store.organizations);
@@ -30,7 +31,7 @@ function UserTableRow({ user }) {
         group_admin: adminStatus[group.group_id],
       })),
     };
-    dispatch({ type: "EDIT_ADMIN_STATUS", payload: newData });
+    dispatch({ type: "EDIT_ADMIN_STATUS", payload: {newData: newData, auth: auth } });
     console.log(newData);
   };
 

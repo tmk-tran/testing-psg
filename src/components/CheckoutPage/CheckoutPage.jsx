@@ -294,11 +294,13 @@ export default function CheckoutPage({ caseType }) {
       // This is the last step, update transactions
       updateTransactions();
       if (digitalBookCredit) {
+
         dispatch(setDigitalBook(true));
       }
       if (physicalCouponBook) {
         dispatch(setPhysicalBook(true));
       }
+
       // Send payload to Active Campaign
       acInfo();
       // Redirect the user to a confirmation page

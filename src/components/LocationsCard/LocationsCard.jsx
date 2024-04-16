@@ -18,7 +18,6 @@ export const locationsCardWidth = {
 export default function LocationsCard({
   locations,
   handleTaskUpdate,
-  handleCaseTypeChange,
   handleAddLocation,
 }) {
   console.log(locations);
@@ -73,7 +72,6 @@ export default function LocationsCard({
       {/* ~~~~~~~~~~ ADD BUTTON ~~~~~~~~~~ */}
       <AddLocationModal
         onLocationAdd={handleTaskUpdate}
-        handleCaseTypeChange={handleCaseTypeChange}
         handleAddLocation={handleAddLocation}
         isEditing={isEditing}
         setIsEditing={setIsEditing}

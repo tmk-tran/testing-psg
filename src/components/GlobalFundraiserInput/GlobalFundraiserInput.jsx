@@ -9,20 +9,27 @@ import Swal from "sweetalert2";
 export default function GlobalFundraiserInput() {
   const dispatch = useDispatch();
 
-  const organizations = useSelector((store) => store.organizations);
-  const groupList = useSelector((store) => store.allGroups);
-  const couponBooks = useSelector((store) => store.couponBooks);
-  console.log(couponBooks);
-
   useEffect(() => {
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: auth });
     dispatch({
       type: "FETCH_ALL_GROUPS",
+      payload: auth,
     });
     dispatch({
       type: "FETCH_COUPON_BOOKS",
+      payload: auth,
     });
   }, []);
+
+  const organizations = useSelector(
+    (store) => store.organizations.organization
+  );
+  console.log(organizations);
+  const groupList = useSelector((store) => store.allGroups);
+  console.log(groupList);
+  const couponBooks = useSelector((store) => store.couponBooks);
+  const auth = useSelector((store) => store.auth);
+  console.log(couponBooks);
 
   const [selectedOrganizationId, setSelectedOrganizationId] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("");
@@ -35,11 +42,15 @@ export default function GlobalFundraiserInput() {
   const [endDate, setEndDate] = useState("");
   const [couponBookId, setCouponBookId] = useState("");
   const [isCancelButtonDisabled, setCancelButtonDisabled] = useState(true);
-
+  console.log(selectedOrganizationId);
   // filter groups based off of organization id
-  const filteredGroups = groupList.filter(
-    (group) => group.organization_id === selectedOrganizationId
-  );
+  if (groupList && groupList.group) {
+    const filteredGroups = groupList.group.filter(
+      (group) => group.organization_id == selectedOrganizationId
+    );
+
+    console.log(filteredGroups);
+  }
 
   const handleChange = (field, value) => {
     console.log(field);
@@ -124,11 +135,17 @@ export default function GlobalFundraiserInput() {
         goal: goal,
         requested_book_quantity: booksRequested,
         book_quantity_checked_out: booksCheckedOut,
+        book_quantity_checked_in: 0,
+        books_sold: 0,
+        money_received: 0,
         start_date: startDate,
         end_date: endDate,
         coupon_book_id: couponBookId,
       };
-      dispatch({ type: "ADD_FUNDRAISER", payload: newFundraiser });
+      dispatch({
+        type: "ADD_FUNDRAISER",
+        payload: { newFundraiser: newFundraiser, auth: auth },
+      });
       Swal.fire({
         title: "Fundraiser Added!",
         text: "Your fundraiser has been successfully added.",
@@ -185,7 +202,9 @@ export default function GlobalFundraiserInput() {
                 fullWidth
               >
                 {organizations
-                  .filter((organization) => organization.total_groups > 0)
+                  .filter(
+                    (organization) => organization.group_collection.length != 0
+                  )
                   .map((organization, index) => (
                     <MenuItem key={organization.id} value={organization.id}>
                       {organization.organization_name}
@@ -213,30 +232,31 @@ export default function GlobalFundraiserInput() {
                     handleChange("selectedGroup", e.target.value)
                   }
                 >
-                  {filteredGroups?.map((group, index) => (
-                    <MenuItem key={group.id} value={group.id}>
-                      {group.group_nickname
-                        ? `${group.group_nickname
-                            .charAt(0)
-                            .toUpperCase()}${group.group_nickname.slice(
-                            1
-                          )} - ${group.department
-                            .charAt(0)
-                            .toUpperCase()}${group.department
-                            .slice(1)
-                            .toLowerCase()}`
-                        : group.sub_department
-                        ? `${group.department
-                            .charAt(0)
-                            .toUpperCase()}${group.department
-                            .slice(1)
-                            .toLowerCase()} - ${group.sub_department
-                            .charAt(0)
-                            .toUpperCase()}${group.sub_department.slice(1)}`
-                        : group.department.charAt(0).toUpperCase() +
-                          group.department.slice(1).toLowerCase()}
-                    </MenuItem>
-                  ))}
+                  {filteredGroups.length > 0 &&
+                    filteredGroups?.map((group, index) => (
+                      <MenuItem key={group.id} value={group.id}>
+                        {group.group_nickname
+                          ? `${group.group_nickname
+                              .charAt(0)
+                              .toUpperCase()}${group.group_nickname.slice(
+                              1
+                            )} - ${group.department
+                              .charAt(0)
+                              .toUpperCase()}${group.department
+                              .slice(1)
+                              .toLowerCase()}`
+                          : group.sub_department
+                          ? `${group.department
+                              .charAt(0)
+                              .toUpperCase()}${group.department
+                              .slice(1)
+                              .toLowerCase()} - ${group.sub_department
+                              .charAt(0)
+                              .toUpperCase()}${group.sub_department.slice(1)}`
+                          : group.department.charAt(0).toUpperCase() +
+                            group.department.slice(1).toLowerCase()}
+                      </MenuItem>
+                    ))}
                 </TextField>
 
                 <TextField

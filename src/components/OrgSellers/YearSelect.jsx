@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  CircularProgress,
   Box,
   InputLabel,
   MenuItem,
@@ -9,8 +10,15 @@ import {
 } from "@mui/material";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { allYears } from "../../hooks/reduxStore";
+import { useSelector } from "react-redux";
+import { flexCenter } from "../Utils/pageStyles";
 
+const loadingSx = {
+
+};
 export default function YearSelect({
+  yearsLoading,
+  loadComplete,
   year,
   setYear,
   labelOutside,
@@ -20,7 +28,12 @@ export default function YearSelect({
   helperText,
 }) {
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth);
   const [yearSelected, setYearSelected] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  const years = allYears();
+  console.log(years);
 
   useEffect(() => {
     // Set the initial selected year to the ID of the active year
@@ -32,11 +45,17 @@ export default function YearSelect({
 
     const dispatchAction = {
       type: "FETCH_COUPON_BOOKS",
+      payload: auth,
     };
     dispatch(dispatchAction);
   }, []);
 
-  const years = allYears();
+  useEffect(() => {
+    if (years.length > 0) {
+      setIsLoading(false);
+      // loadComplete();
+    }
+  }, [years]);
 
   const handleChange = (event) => {
     labelOutside && setActiveYearError(false);
@@ -45,47 +64,57 @@ export default function YearSelect({
   };
 
   return (
-    <Box sx={sx}>
-      {labelOutside ? (
-        <>
-          <InputLabel>Book Year</InputLabel>
-          <FormControl fullWidth>
-            <Select
-              value={yearSelected}
-              label="Book Year"
-              onChange={handleChange}
-              error={error}
-              helperText={error ? helperText : ""}
-            >
-              {years.map((year) => (
-                <MenuItem key={year.id} value={year.id}>
-                  {year.year}
-                </MenuItem>
-              ))}
-            </Select>
-            {error && (
-              <Typography variant="caption" sx={{ color: "red" }}>
-                {helperText}
-              </Typography>
-            )}
-          </FormControl>
-        </>
+    <>
+      {isLoading ? (
+        <Box sx={{ ...sx, ...flexCenter}}>
+        <CircularProgress size={25} sx={{ mr: 1 }} />
+        Loading...
+        </Box>
       ) : (
-        <FormControl fullWidth>
-          <InputLabel>Book Year</InputLabel>
-          <Select
-            value={yearSelected}
-            label="Book Year"
-            onChange={handleChange}
-          >
-            {years.map((year) => (
-              <MenuItem key={year.id} value={year.id}>
-                {year.year}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Box sx={sx}>
+          {labelOutside ? (
+            <>
+              <InputLabel>Book Year</InputLabel>
+              <FormControl fullWidth>
+                <Select
+                  value={yearSelected}
+                  label="Book Year"
+                  onChange={handleChange}
+                  error={error}
+                  helperText={error ? helperText : ""}
+                >
+                  {!isLoading &&
+                    years.map((year) => (
+                      <MenuItem key={year.id} value={year.id}>
+                        {year.year}
+                      </MenuItem>
+                    ))}
+                </Select>
+                {error && (
+                  <Typography variant="caption" sx={{ color: "red" }}>
+                    {helperText}
+                  </Typography>
+                )}
+              </FormControl>
+            </>
+          ) : (
+            <FormControl fullWidth>
+              <InputLabel>Book Year</InputLabel>
+              <Select
+                value={yearSelected}
+                label="Book Year"
+                onChange={handleChange}
+              >
+                {years.map((year) => (
+                  <MenuItem key={year.id} value={year.id}>
+                    {year.year}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </Box>
       )}
-    </Box>
+    </>
   );
 }

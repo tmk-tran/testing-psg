@@ -258,6 +258,7 @@ function PayPalButton({ selectedProducts, customDonation, orderSuccess }) {
                 };
                 console.log(dispatchAction);
                 dispatch(dispatchAction);
+                acInfo();
 
                 // await axios.post("/api/transactions", transactionData, {
                 //   headers: {

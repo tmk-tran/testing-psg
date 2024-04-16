@@ -166,6 +166,7 @@ router.put(
   rejectUnauthenticated,
   (req, res) => {
     const merchant = req.body;
+    console.log("merchants = ", merchant);
     const merchantId = req.params.id;
 
     // Merchant Details

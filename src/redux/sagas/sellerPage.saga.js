@@ -1,7 +1,63 @@
 import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
+// function* fetchSeller(action) {
+//   try {
+//     console.log(action.payload)
+//     const refId = action.payload.refId;
+//     const auth_response = action.payload.auth;
+//     const ACCESS_TOKEN = auth_response.data.access_token;
+//     const QUERY_URL = auth_response.data.routes.query;
+//     const query = `{
+//       sellers(filter: "refId = ${refId}"){
+//         id
+//         refId
+//         lastname
+//         firstname
+//         level
+//         teacher
+//         initial_books
+//         additional_books
+//         books_returned
+//         cash
+//         checks
+//         digital
+//         donations
+//         notes
+//         organization_id
+//         is_deleted
+//         digital_donations
+//         organization{
+//           organization_name
+//           address
+//           city
+//           state
+//           zip
+//         }
+//     }
+// }`;
+
+//     const queryConfig = {
+//         headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${ACCESS_TOKEN}`,
+//         },
+//     };
+
+//     const data = new FormData();
+//     data.append("query", query);
+//     data.append("variables", `{}`);
+
+//     const response = yield axios.post(QUERY_URL, data, queryConfig);
+//     console.log(response)
+//     yield put({ type: "SET_SELLER_PAGEINFO", payload: response.data.sellers })
+// } catch (err) {
+//     console.log("error in sellerPage Saga", err);
+// }
+// }
+
 function* fetchSeller(action) {
+  console.log(action.payload);
   try {
     const items = yield axios.get(`/api/seller/${action.payload}`);
     console.log("FETCH request from sellerPage.saga, ITEMS = ", items.data);

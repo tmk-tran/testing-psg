@@ -4,6 +4,7 @@ import { TextField, Button, Paper } from "@mui/material";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { User } from "../../hooks/reduxStore";
 import { capitalizeFirstWord } from "../Utils/helpers";
+import { useSelector } from "react-redux";
 
 export default function CommentInput({
   merchantId,
@@ -12,9 +13,9 @@ export default function CommentInput({
   onChange,
   file,
 }) {
-  console.log(merchantId);
-  console.log(taskId);
-  console.log(file);
+  // console.log(merchantId);
+  // console.log(taskId);
+  // console.log(files);
   const [comment, setComment] = useState("");
   const [commentAdded, setCommentAdded] = useState(false);
   console.log(comment);
@@ -25,6 +26,7 @@ export default function CommentInput({
   console.log(currentUsername);
 
   const dispatch = dispatchHook();
+  const auth = useSelector((store) => store.auth)
 
   const newComment = {
     merchant_id: merchantId,
@@ -37,7 +39,7 @@ export default function CommentInput({
   const handleSubmit = () => {
     // Handle comment submission logic
     console.log("Comment submitted:", newComment);
-    dispatch({ type: "ADD_MERCHANT_COMMENT", payload: newComment });
+    dispatch({ type: "ADD_MERCHANT_COMMENT", payload: {newComment: newComment, auth: auth} });
     setCommentAdded(true);
     setComment("");
     onSubmit();

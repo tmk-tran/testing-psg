@@ -14,15 +14,15 @@ function* fetchAllTasks(action) {
         payload: merchantTasks,
       });
     } else if (type === "organization") {
-        const response = yield call(fetchAllOrganizationTasks);
-        console.log("FETCH all organization tasks, RESPONSE = ", response.data);
-        yield put({
-          type: "SET_ORG_TASKS",
-          payload: response.data,
-        });
+      const response = yield call(fetchAllOrganizationTasks);
+      console.log("FETCH all organization tasks, RESPONSE = ", response.data);
+      yield put({
+        type: "SET_ORG_TASKS",
+        payload: response.data,
+      });
     }
   } catch (error) {
-      console.log("Error in fetchAllTasks.saga",error);
+    console.log("Error in fetchAllTasks.saga", error);
   }
 }
 

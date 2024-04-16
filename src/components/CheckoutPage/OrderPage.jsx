@@ -14,6 +14,7 @@ import Typography from "../Typography/Typography";
 import OrderTable from "./OrderTable";
 import CustomerNameInfo from "../SellerPage/CustomerNameInfo";
 import RefIdDisplay from "../SellerPage/RefIdDisplay";
+import { useSelector } from "react-redux";
 import { lineDivider } from "../Utils/modalStyles";
 
 export default function OrderPage({ caseType }) {
@@ -22,6 +23,7 @@ export default function OrderPage({ caseType }) {
   console.log(seller);
   const dispatch = dispatchHook();
   const history = historyHook();
+  const auth = useSelector((store) => store.auth)
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -130,7 +132,7 @@ export default function OrderPage({ caseType }) {
 
     const dispatchAction = {
       type: "ADD_CUSTOMER",
-      payload: incomingData,
+      payload: {newCustomer: incomingData, auth: auth}
     };
     console.log("Dispatching action:", dispatchAction);
     dispatch(dispatchAction);

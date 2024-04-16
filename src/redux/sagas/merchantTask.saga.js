@@ -4,64 +4,257 @@ import { put, takeEvery } from "redux-saga/effects";
 function* merchantTask(action) {
   console.log(action.payload);
   try {
-    const items = yield axios.get(`/api/merchantTask/${action.payload}`);
-    console.log("FETCH request from merchantTask.saga, ITEMS = ", items.data);
-    yield put({ type: "SET_MERCHANT_TASKS", payload: items.data });
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{
+      merchant_tasks (filter: "merchant_id = ${action.payload.id}" ordering: "due_date ASC"){
+        id
+        category
+        task
+        merchant_id
+        merchant_name
+        assign
+        due_date
+        description
+        task_status
+        coupon_details
+        is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log("FETCH request from merchantTask.saga, ITEMS = ", response.data);
+    yield put({ type: "SET_MERCHANT_TASKS", payload: response.data.merchant_tasks });
   } catch (error) {
     console.log("error in merchantTasks Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
   }
 }
 
-function* fetchAllMerchantTasks() {
+function* fetchAllMerchantTasks(action) {
+  console.log(action.payload);
   try {
-    const items = yield axios.get("/api/tasks/merchants");
-    console.log("FETCH all merchant tasks, ITEMS = ", items.data);
-    yield put({ type: "SET_MERCHANT_TASKS", payload: items.data });
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `{
+      merchant_tasks (ordering: "due_date ASC"){
+        id
+        category
+        task
+        merchant_id
+        merchant_name
+        assign
+        due_date
+        description
+        task_status
+        coupon_details
+        is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", `{}`);
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log("FETCH request from allMerchantTask.saga, ITEMS = ", response.data);
+    yield put({ type: "SET_MERCHANT_TASKS", payload: response.data.merchant_tasks });
   } catch (error) {
-    console.log("error in fetchAllMerchantTasks Saga", error);
-    yield put({ type: "SET_ERROR", payload: error });
+    console.log("error in allMerchantTasks Saga", error);
   }
 }
 
 function* addMerchantTask(action) {
   console.log(action.payload);
   try {
-    const items = yield axios.post("/api/tasks/merchants", action.payload);
-    console.log(
-      "FETCH request from merchantTask.saga, ITEMS FOR add = ",
-      items.data
-    );
-    console.log("merchantTask action.payload = ", action.payload);
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
 
-    const fetchType =
-      action.payload.fetchType === "FETCH_MERCHANT_TASKS"
-        ? "FETCH_MERCHANT_TASKS"
-        : "FETCH_ALL_MERCHANT_TASKS";
+    const AUTH_URL = "https://api.devii.io/auth";
 
-    yield put({
-      type: fetchType,
-      payload: action.payload.merchant_id,
-    });
-  } catch (err) {
-    console.log("error in addMerchantTask Saga", err);
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const newTask = action.payload.newTask
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = `mutation($input: merchant_tasksInput){
+      create_merchant_tasks (input: $input){
+        id
+        category
+        task
+        merchant_id
+        merchant_name
+        assign
+        due_date
+        description
+        task_status
+        coupon_details
+        is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", JSON.stringify({
+      "input": {
+        "category": newTask.category,
+        "task": newTask.task,
+        "merchant_id": Number(newTask.merchant_id),
+        "merchant_name": newTask.merchant_name,
+        "assign": newTask.assign,
+        "due_date": newTask.due_date,
+        "description": newTask.description,
+        "task_status": newTask.task_status,
+        "coupon_id": Number(newTask.coupon_id),
+        "book_id": newTask.book_id
+
+      }
+    }));
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "FETCH_MERCHANT_TASKS", payload: { id: newTask.merchant_id, auth: auth_response } });
+  } catch (error) {
+    console.log("error in addNotes Saga", error);
   }
 }
 
 function* editMerchantTask(action) {
   console.log(action.payload);
   try {
-    yield axios.put(
-      `/api/tasks/merchants/${action.payload.id}`,
-      action.payload
-    );
-    console.log("merchantTask action.payload = ", action.payload);
-    yield put({
-      type: "FETCH_MERCHANT_TASKS",
-      payload: action.payload.merchantId,
-    });
-  } catch (err) {
-    console.log("error in editMerchantTask Saga", err);
+
+    const refreshToken = localStorage.psg_token;
+    console.log(refreshToken)
+    // Login to Devii
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+
+    const AUTH_URL = "https://api.devii.io/auth";
+
+    const auth_response = yield axios.get(AUTH_URL, config);
+    console.log(auth_response)
+
+    const updatedTask = action.payload.updatedTask
+    const ACCESS_TOKEN = auth_response.data.access_token;
+    const QUERY_URL = auth_response.data.routes.query;
+    const query = ` mutation ($input: merchant_tasksInput, $id: ID!){
+      update_merchant_tasks (input: $input id: $id){
+        id
+        category
+        task
+        merchant_id
+        merchant_name
+        assign
+        due_date
+        description
+        task_status
+        coupon_details
+        is_deleted
+        coupon_id
+        book_id
+        is_auto_generated
+      }
+    }`
+
+    const queryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    };
+
+    const data = new FormData();
+    data.append("query", query);
+    data.append("variables", JSON.stringify({
+      "input": {
+        "assign": updatedTask.assign,
+        "due_date": updatedTask.due_date,
+        "description": updatedTask.description,
+        "task_status": updatedTask.task_status
+      },
+      "id": Number(updatedTask.id)
+    }));
+
+    const response = yield axios.post(QUERY_URL, data, queryConfig);
+    console.log(response)
+    yield put({ type: "FETCH_ALL_MERCHANT_TASKS", payload: auth_response });
+  } catch (error) {
+    console.log("error with editMerchantTask request", error);
   }
 }
 

@@ -38,6 +38,7 @@ import "./App.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
 import { User } from "../../hooks/reduxStore";
+import { useSelector } from "react-redux";
 import { getCurrentSeason } from "../Utils/helpers";
 
 // ~~~~~ Theme establishing global color for MUI ~~~~~
@@ -62,6 +63,8 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
+  const auth = useSelector((store) => store.auth);
+  console.log("auth", auth);
   console.log(user);
   const [orgAdminId, setOrgAdminId] = useState(null);
   console.log(orgAdminId);
@@ -71,15 +74,15 @@ function App() {
     const currentSeason = getCurrentSeason();
     console.log(currentSeason);
 
-    dispatch({ type: "FETCH_USER" });
-    // dispatch({ type: "FETCH_COUPON_BOOKS" });
+    dispatch({ type: "FETCH_USER", payload: auth });
+    
     const dispatchAction2 = {
       type: "FETCH_BOOK_YEAR",
-      payload: currentSeason,
+      payload: { currentSeason: currentSeason, auth: auth },
     };
     console.log(dispatchAction2);
     dispatch(dispatchAction2);
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     if (user.org_admin) {
@@ -273,6 +276,15 @@ function App() {
               <Route exact path="/fargo/seller/:refId/complete">
                 <OrderComplete />
               </Route>
+
+              <ProtectedRoute exact path="/user">
+                {!user.org_admin ? (
+                  <HomePage isOrgAdmin={false} />
+                ) : (
+                  <HomePage isOrgAdmin={true} />
+                )}
+                {!user.is_admin && !user.org_admin && <Redirect to="/coupon" />}
+              </ProtectedRoute>
 
               <Route exact path="/login">
                 {user.id ? (
