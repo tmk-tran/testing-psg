@@ -172,7 +172,6 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
   const couponCount = createCouponCount(merchants, couponNumbers);
   console.log(couponCount);
   
-
   return (
     <div className="organizationsContainer">
       <Paper elevation={3} style={{ width: "90%", margin: "0 auto" }}>
