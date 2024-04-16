@@ -171,6 +171,7 @@ function HomePage({ isOrgAdmin, orgAdminId, isGraphicDesigner }) {
 
   const couponCount = createCouponCount(merchants, couponNumbers);
   console.log(couponCount);
+  
 
   return (
     <div className="organizationsContainer">
