@@ -21,7 +21,7 @@ export default function TableTaskDetails({ mId, caseType }) {
   const merchantTasks = Array.isArray(mTasks()) ? mTasks() : [];
   console.log(merchantTasks);
   const comments = mComments();
-  const orgTasks = oTasks() || [];
+  const orgTasks = oTasks();
   console.log(orgTasks);
 
   const toDoTasks = merchantTasks.filter(
