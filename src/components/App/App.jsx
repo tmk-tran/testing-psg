@@ -37,7 +37,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User } from "../../hooks/reduxStore";
+import { Region, User } from "../../hooks/reduxStore";
 import { getCurrentSeason } from "../Utils/helpers";
 
 // ~~~~~ Theme establishing global color for MUI ~~~~~
@@ -62,7 +62,11 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
+  const activeRegion = Region() || [];
   console.log(user);
+  console.log(activeRegion);
+  const [region, setRegion] = useState(null);
+  console.log(region);
   const [orgAdminId, setOrgAdminId] = useState(null);
   console.log(orgAdminId);
 
@@ -80,6 +84,19 @@ function App() {
     console.log(dispatchAction2);
     dispatch(dispatchAction2);
   }, []);
+
+  useEffect(() => {
+    // Get the Regions available to the user
+    const dispatchAction = {
+      type: "FETCH_REGIONS",
+    };
+    console.log(dispatchAction);
+    dispatch(dispatchAction);
+  }, []);
+
+  // useEffect(() => {
+  //   if (region.active)
+  // }, []);
 
   useEffect(() => {
     if (user.org_admin) {
