@@ -99,6 +99,7 @@ export default function CheckoutPage({ caseType }) {
       state: stateSelected,
       zip: zip,
       organization: sellerData[0].organization_name,
+      //region: sellerData[0].region
       url: "testpsg.fly.dev/fargo/coupon",
       year: currentYear[0].year,
       donation: customDonation,

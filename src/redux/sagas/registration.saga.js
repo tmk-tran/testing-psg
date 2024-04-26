@@ -31,7 +31,8 @@ function* registerUser(action) {
     // passes the username and password from the payload to the server
     
     yield axios.post('/api/user/register', action.payload);
-
+    console.log(response.data[0])
+    yield put ({type:"RELEASE_COUPON_BOOK", payload: response.data.id })
     // yield put({ type: 'FETCH_USER' });
 
   } catch (error) {

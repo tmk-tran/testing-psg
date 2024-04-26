@@ -4,9 +4,10 @@ import { takeEvery, put } from "redux-saga/effects";
 //Fetches group details based in id number
 function* fetchGroupSaga(action) {
     try {
+        //Refresh token stored in local state to prevent having to log out and log back into the app
         const refreshToken = localStorage.psg_token;
         console.log(refreshToken)
-        // Login to Devii
+
         const config = {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -17,8 +18,10 @@ function* fetchGroupSaga(action) {
         const AUTH_URL = "https://api.devii.io/auth";
 
         const auth_response = yield axios.get(AUTH_URL, config);
-        console.log(auth_response)
+        //Console logging the auth response for testing
+        // console.log(auth_response)
 
+        //Query used for Devii api call. Also includes acces token from auth response and end point to be used
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         const query = `{
@@ -36,7 +39,7 @@ function* fetchGroupSaga(action) {
              group_id
              title
              description
-              requested_book_quantity
+             requested_book_quantity
              book_quantity_checked_out
              book_checked_out_total_value
              book_quantity_checked_in
@@ -74,9 +77,10 @@ function* fetchGroupSaga(action) {
 //Fetches organization groups based on group id
 function* fetchOrgGroupsSaga(action) {
     try {
+        //Refresh token stored in local state
         const refreshToken = localStorage.psg_token;
         console.log(refreshToken)
-        // Login to Devii
+
         const config = {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -87,7 +91,10 @@ function* fetchOrgGroupsSaga(action) {
         const AUTH_URL = "https://api.devii.io/auth";
 
         const auth_response = yield axios.get(AUTH_URL, config);
-        console.log(auth_response)
+        //Console log of auth response for testing
+        // console.log(auth_response)
+
+          //Query used for Devii api call. Also includes acces token from auth response and end point to be used
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         const query = `{ group (filter: "organization_id = ${action.payload.id}"){
@@ -104,7 +111,7 @@ function* fetchOrgGroupsSaga(action) {
              group_id
              title
              description
-              requested_book_quantity
+             requested_book_quantity
              book_quantity_checked_out
              book_checked_out_total_value
              book_quantity_checked_in
@@ -119,7 +126,7 @@ function* fetchOrgGroupsSaga(action) {
              goal
         }
     }
-    }`;
+}`;
 
         const queryConfig = {
             headers: {
@@ -133,6 +140,7 @@ function* fetchOrgGroupsSaga(action) {
         data.append("variables", `{}`);
 
         const response = yield axios.post(QUERY_URL, data, queryConfig);
+        //Using response data to set the group
         yield put({ type: "SET_ORG_GROUPS", payload: response.data.group })
         console.log("response data = ", response.data);
     } catch (err) {
@@ -142,9 +150,10 @@ function* fetchOrgGroupsSaga(action) {
 //Saga used to add a new group to an organization, will then fetch the organization details
 function* addGroupSaga(action) {
     try {
-       const refreshToken = localStorage.psg_token;
-        console.log(refreshToken)
-        // Login to Devii
+        //Refresh token stored in local state
+        const refreshToken = localStorage.psg_token;
+        
+
         const config = {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -155,9 +164,13 @@ function* addGroupSaga(action) {
         const AUTH_URL = "https://api.devii.io/auth";
 
         const auth_response = yield axios.get(AUTH_URL, config);
-        
-        console.log(auth_response)
+        //Console log of auth response for testing
+        // console.log(auth_response)
+
+        //Payload object with data to be used in the mutation inputs
         const newGroup = action.payload.newGroup
+
+        //Mutation used to create a new group. Includes the access token and end point to be used.
         const ACCESS_TOKEN = auth_response.data.access_token;
         const QUERY_URL = auth_response.data.routes.query;
         const query = ` mutation ($input: groupInput){
@@ -180,6 +193,7 @@ function* addGroupSaga(action) {
             },
         };
 
+        //New form data that includes the required inputs for adding a new group to the database
         const data = new FormData();
         data.append("query", query);
         data.append("variables", JSON.stringify({

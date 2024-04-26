@@ -15,7 +15,7 @@ const passport = require("./strategies/user.strategy");
 const userRouter = require("./routes/user.router");
 // const groupRouter = require("./routes/group.details.router");
 // const orgDetailsRouter = require("./routes/orgDetails.router");
-// const organizationsRouter = require("./routes/organizations.router");
+const organizationsRouter = require("./routes/organizations.router");
 // const fundraisersRouter = require("./routes/fundraisers.router");
 // const archivedOrganizationsRouter = require("./routes/archivedOrganizations.router");
 // const allGroupsRouter = require("./routes/allGroups.router");
@@ -24,7 +24,7 @@ const groupAdminRouter = require("./routes/groupAdmin.router");
 // const orgNotesRouter = require("./routes/orgNotes.router");
 // const allUsersRouter = require("./routes/allUsers.router");
 const couponRouter = require("./routes/coupon.router");
-// const merchantsRouter = require("./routes/merchants.router");
+const merchantsRouter = require("./routes/merchants.router");
 // const organizationTaskRouter = require("./routes/organizationTask.router");
 // const merchantNotesRouter = require("./routes/merchantNotes.router");
 // const merchantTaskRouter = require("./routes/merchantTask.router");
@@ -58,7 +58,7 @@ app.use("/api/couponbook", couponBookRouter);
 app.use("/api/groupAdmin", groupAdminRouter);
 // app.use("/api/allUsers", allUsersRouter);
 app.use("/api/coupon", couponRouter);
-// app.use("/api/merchants", merchantsRouter);
+app.use("/api/merchants", merchantsRouter);
 // app.use("/api/merchantNotes", merchantNotesRouter);
 // app.use("/api/merchantTask", merchantTaskRouter);
 // app.use("/api/organizationTask", organizationTaskRouter);
@@ -142,7 +142,7 @@ app.use(
 // app.use("/api/group", groupRouter);
 // app.use("/api/orgnotes", orgNotesRouter);
 // app.use("/api/orgdetails", orgDetailsRouter);
-// app.use("/api/organizations", organizationsRouter);
+app.use("/api/organizations", organizationsRouter);
 // // app.use("/api/fundraisers", fundraisersRouter);
 // app.use("/api/archivedOrganizations", archivedOrganizationsRouter);
 // app.use("/api/allGroups", allGroupsRouter);
@@ -151,7 +151,7 @@ app.use(
 // app.use("/api/groupAdmin", groupAdminRouter);
 // app.use("/api/allUsers", allUsersRouter);
 // app.use("/api/coupon", couponRouter);
-// app.use("/api/merchants", merchantsRouter);
+app.use("/api/merchants", merchantsRouter);
 // app.use("/api/merchantNotes", merchantNotesRouter);
 // app.use("/api/merchantTask", merchantTaskRouter);
 // app.use("/api/organizationTask", organizationTaskRouter);
@@ -330,7 +330,7 @@ app.post(`/api/contact`, async (req, res) => {
         },
       }
     );
-    console.log(checkedResponse.data.contacts);
+    console.log("Active campaign returner check", checkedResponse.data.contacts);
     const returnerId =
       checkedResponse.data.contacts && checkedResponse.data.contacts.length > 0
         ? checkedResponse.data.contacts[0].id
@@ -410,18 +410,22 @@ app.post(`/api/contact`, async (req, res) => {
       const contactId = response1.data.contact.id;
       console.log(contactId);
 
-      let list = 0;
-      switch (req.body.city) {
-        case "Fargo":
-          list = 10;
-          break;
-        case "Grand Forks":
-          list = 11;
-          break;
-        default:
-          list = 0;
-          break;
-      }
+      let list = 10;
+
+      //ADD THIS BACK IN WHTN REGION FILTERING IS ADDED
+      //Can add more regions as needed
+
+      // switch (req.body.region) {
+      //   case 1:
+      //     list = 10;
+      //     break;
+      //   case 2:
+      //     list = 11;
+      //     break;
+      //   default:
+      //     list = 0;
+      //     break;
+      // }
 
       const response2 = await axios.post(
         `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
@@ -477,15 +481,6 @@ app.post(`/api/contact`, async (req, res) => {
       console.log("Response from adding tag to contact:", response3.data);
       res.send(randomPassword);
 
-    // await axios.post(
-    //     "/api/user/register",
-    //     (user = {
-    //       username: contactEmail,
-    //       password: randomPassword,
-    //       firstName: req.body.firstName,
-    //       lastName: req.body.lastName,
-    //     })
-    //   );
     } else {
       // Code block to run if there is already a user in the active campaign database, updates existing information and updates the list a user is added too
       const apiKey = process.env.AC_API_KEY;
@@ -549,18 +544,78 @@ app.post(`/api/contact`, async (req, res) => {
       console.log("Response from ActiveCampaign:", response1.data);
       // const contactId = response1.data.contact.id;
 
-      var list = 0;
-      switch (req.body.city) {
-        case "Fargo":
-          list = 10;
-          break;
-        case "Grand Forks":
-          list = 11;
-          break;
-        default:
-          list = 0;
-          break;
+
+      var list = 10;
+
+      //ADD THIS BACK IN WHEN REGION FILTERING IS ADDED
+      //Can add more regions as needed
+
+      // switch (req.body.region) {
+      //   case 1:
+      //     list = 10;
+      //     break;
+      //   case 2:
+      //     list = 11;
+      //     break;
+      //   default:
+      //     list = 0;
+      //     break;
+      // }
+      // console.log("returning list type is:", list)
+
+      //Retrieves returning contacts list's and then compairs an lists they are currently subscribed too to either add them to a new list or trigger the automation for the list
+      const returnerLists = await axios.get(`https://northpointeinsure57220.api-us1.com/api/3/contacts/${returnerId}/contactLists`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Api-Token": apiKey,
+        },
       }
+    );
+    const lists = returnerLists.data.contactLists
+    console.log("The lists variable", lists)
+
+    for (let i = 0; i < lists.length; i++) {
+      const returnList = lists[i];
+      console.log("list in loop", returnList.list)
+      console.log("list to be added too", list)
+      if (Number(returnList.list) === list) {
+        const response2 = await axios.post(`https://northpointeinsure57220.api-us1.com/api/3/contactAutomations`, 
+        JSON.stringify({
+          contactAutomation: {
+            contact: returnerId,
+            automation: "46"
+          },
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Api-Token": apiKey,
+          },
+        }
+        );
+        console.log("response from adding contact to automation", response2.data)
+      } else {
+        const response2 = await axios.post(
+          `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
+          JSON.stringify({
+            contactList: {
+              list: list,
+              contact: returnerId,
+              status: 1,
+            },
+          }),
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Api-Token": apiKey,
+            },
+          }
+        );
+        console.log("Response from adding contact to list:", response2.data);
+      }
+    }
+   
 
       const response2 = await axios.post(
         `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
@@ -579,7 +634,7 @@ app.post(`/api/contact`, async (req, res) => {
         }
       );
       console.log("Response from adding contact to list:", response2.data);
-
+      console.log( "returning book type is:", req.body.bookType)
       let tag = 0;
 
       if (
@@ -597,6 +652,7 @@ app.post(`/api/contact`, async (req, res) => {
       } else {
         tag = 0;
       }
+    
 
       const response3 = await axios.post(
         `https://northpointeinsure57220.api-us1.com/api/3/contactTags`,
@@ -613,7 +669,7 @@ app.post(`/api/contact`, async (req, res) => {
           },
         }
       );
-      console.log("Response from adding tag to contact:", response3.data);
+      console.log("Response from adding tag to a returning contact:", response3.data);
 
       res.sendStatus(200);
     }

@@ -167,7 +167,7 @@ router.put(
   (req, res) => {
     const merchant = req.body;
     const merchantId = req.params.id;
-    const merchant_logo = req.file ? req.file.buffer : null;
+    let merchant_logo = req.file ? req.file.buffer : null;
 
     // If no new file uploaded, retain existing logo from database
     if (!merchant_logo && !req.file) {
