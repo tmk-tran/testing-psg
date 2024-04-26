@@ -27,7 +27,6 @@ function* merchantTask(action) {
         category
         task
         merchant_id
-        merchant_name
         assign
         due_date
         description
@@ -85,7 +84,6 @@ function* fetchAllMerchantTasks(action) {
         category
         task
         merchant_id
-        merchant_name
         assign
         due_date
         description

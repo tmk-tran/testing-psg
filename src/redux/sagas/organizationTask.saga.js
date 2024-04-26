@@ -133,7 +133,6 @@ function* addOrganizationTask(action) {
           category
           task
           organization_id
-          organization_name
           assign
           due_date
           description
@@ -198,7 +197,6 @@ function* editOrganizationTask(action) {
         category
         task
         organization_id
-        organization_name
         assign
         due_date
         description
