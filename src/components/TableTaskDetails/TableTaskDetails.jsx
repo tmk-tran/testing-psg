@@ -154,7 +154,7 @@ export default function TableTaskDetails({ mId, caseType }) {
                 <CommentDisplay
                   key={taskComments[0].id}
                   comment={taskComments[0]}
-                  showAllComments={false}
+                  bulletSize={{ fontSize: 20 }}
                 />
               )}
               <hr />

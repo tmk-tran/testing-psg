@@ -1,9 +1,9 @@
 .goals-display-card {
   position: absolute;
-  width: 50vh;
+  width: 26vw;
+  /* width: 50vh; */
   right: 0;
   top: 0;
-  /* height: 40vh; */
 }
 
 .org-detail-goal-container {

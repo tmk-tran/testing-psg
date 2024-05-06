@@ -168,7 +168,8 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
             (comment) => comment.coupon_id === file.id
           );
 
-          const mostRecentComment = relatedComments.length > 0 ? relatedComments[0] : null;
+          const mostRecentComment =
+            relatedComments.length > 0 ? relatedComments[0] : null;
 
           return (
             <Card
@@ -302,19 +303,20 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                         </Typography>
                       )} */}
                       {mostRecentComment ? (
-                      <CommentDisplay
-                        key={mostRecentComment.id}
-                        comment={mostRecentComment}
-                        showAllComments={false}
-                      />
-                    ) : (
-                      <Typography
-                        variant="body2"
-                        sx={{ ml: 3, textAlign: "center" }}
-                      >
-                        No comment available
-                      </Typography>
-                    )}
+                        <CommentDisplay
+                          key={mostRecentComment.id}
+                          comment={mostRecentComment}
+                          divWidth={{ maxWidth: 300 }}
+                          bulletSize={{ fontSize: 15 }}
+                        />
+                      ) : (
+                        <Typography
+                          variant="body2"
+                          sx={{ ml: 3, textAlign: "center" }}
+                        >
+                          No comment available
+                        </Typography>
+                      )}
                     </Box>
                   </Box>
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}

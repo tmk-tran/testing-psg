@@ -67,7 +67,7 @@ export default function CouponReviewComments({
       {merchantComments.length > 0 ? (
         merchantComments.map((comment, i) => (
           <div className="comment-display-row" key={i}>
-            <CommentDisplay comment={comment} showAllComments={true} />
+            <CommentDisplay comment={comment} />
           </div>
         ))
       ) : (
