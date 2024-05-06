@@ -5,7 +5,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import UserProfile from "../UserProfile/UserProfile";
@@ -38,7 +38,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User } from "../../hooks/reduxStore";
+import { Region, User } from "../../hooks/reduxStore";
 import { getCurrentSeason } from "../Utils/helpers";
 
 // ~~~~~ Theme establishing global color for MUI ~~~~~
@@ -63,10 +63,14 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
+  const activeRegion = Region() || [];
+  console.log(activeRegion);
+  const [region, setRegion] = useState(null);
+  console.log(region);
   const [orgAdminId, setOrgAdminId] = useState(null);
 
   useEffect(() => {
-    const userCookie = Cookies.get('user');
+    const userCookie = Cookies.get("user");
 
     if (userCookie) {
       // Set user in Redux state
@@ -80,7 +84,7 @@ function App() {
     const currentSeason = getCurrentSeason();
 
     // dispatch({ type: "FETCH_USER" });
-    
+
     // if (user.id) {
     //   // User is logged in, fetch user data
     //   dispatch({ type: "FETCH_USER" });
@@ -92,6 +96,19 @@ function App() {
     };
     dispatch(dispatchAction2);
   }, [user.id]);
+
+  useEffect(() => {
+    // Get the Regions available to the user
+    const dispatchAction = {
+      type: "FETCH_REGIONS",
+    };
+    console.log(dispatchAction);
+    dispatch(dispatchAction);
+  }, []);
+
+  // useEffect(() => {
+  //   if (region.active)
+  // }, []);
 
   useEffect(() => {
     if (user.org_admin) {
