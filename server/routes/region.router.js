@@ -3,7 +3,7 @@ const pool = require("../modules/pool");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  console.log("from GET /id seller.router: ");
+  console.log("from GET region.router: ", req.body);
 
   const queryText = `
             SELECT * 
