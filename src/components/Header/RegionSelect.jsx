@@ -7,21 +7,26 @@ import {
   Typography,
 } from "@mui/material";
 import { headerMenuStyle } from "../AccountMenu/AccountMenu";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
 const RegionSelect = ({ isMobile, regions, onChange }) => {
   const activeRegion = regions.find((region) => region.active);
-  const [value, setValue] = useState(activeRegion ? activeRegion.region_name : null);
-  const [selectedRegionId, setSelectedRegionId] = useState(activeRegion ? activeRegion.id : "");
-  console.log(selectedRegionId);
-
+  const [value, setValue] = useState(
+    activeRegion ? activeRegion.region_name : null
+  );
+  const [selectedRegionId, setSelectedRegionId] = useState(
+    activeRegion ? activeRegion.id : ""
+  );
 
   const handleChange = (event) => {
     const newValue = event.target.value;
-    console.log(newValue);
     setValue(newValue);
-    const regionId = regions.find((region) => region.region_name === newValue)?.id;
+    const regionId = regions.find(
+      (region) => region.region_name === newValue
+    )?.id;
     setSelectedRegionId(regionId);
     onChange(regionId);
+    showSaveSweetAlert({ label: "Region Changed" });
   };
 
   return (
