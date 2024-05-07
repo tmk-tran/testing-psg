@@ -8,15 +8,20 @@ import {
 } from "@mui/material";
 import { headerMenuStyle } from "../AccountMenu/AccountMenu";
 
-const RegionSelect = ({ isMobile, regions, defaultValue, onChange }) => {
-  const [value, setValue] = useState(defaultValue ? defaultValue : null);
-  console.log(value);
+const RegionSelect = ({ isMobile, regions, onChange }) => {
+  const activeRegion = regions.find((region) => region.active);
+  const [value, setValue] = useState(activeRegion ? activeRegion.region_name : null);
+  const [selectedRegionId, setSelectedRegionId] = useState(activeRegion ? activeRegion.id : "");
+  console.log(selectedRegionId);
+
 
   const handleChange = (event) => {
     const newValue = event.target.value;
     console.log(newValue);
     setValue(newValue);
-    // onChange(newValue);
+    const regionId = regions.find((region) => region.region_name === newValue)?.id;
+    setSelectedRegionId(regionId);
+    onChange(regionId);
   };
 
   return (
@@ -38,12 +43,12 @@ const RegionSelect = ({ isMobile, regions, defaultValue, onChange }) => {
         </InputLabel>
       )}
       <Select
-        value={value}
+        value={value || ""}
         onChange={handleChange}
         sx={{ color: "white", ...headerMenuStyle }}
       >
         {regions.map((region) => (
-          <MenuItem key={region.id} value={region.id}>
+          <MenuItem key={region.id} value={region.region_name}>
             {region.region_name}
           </MenuItem>
         ))}

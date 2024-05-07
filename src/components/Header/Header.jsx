@@ -3,6 +3,7 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import "./Header.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { historyHook } from "../../hooks/useHistory";
+import { dispatchHook } from "../../hooks/useDispatch";
 import { flexCenter } from "../Utils/pageStyles";
 import { Region } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Component ~~~~~~~~~~ //
@@ -13,11 +14,22 @@ import RegionSelect from "./RegionSelect";
 
 export default function Header({ user }) {
   const history = historyHook();
+  const dispatch = dispatchHook();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const regions = Region() || [];
   console.log(regions);
+
+  const handleRegionSwitch = (regionId) => {
+    console.log(regionId);
+    const switchAction = {
+      type: "SWITCH_REGION",
+      payload: regionId
+    };
+    console.log("Dispatching action:", switchAction);
+    dispatch(switchAction);
+  };
 
   return (
     <>
@@ -58,7 +70,7 @@ export default function Header({ user }) {
             //   location="Fargo"
             // />
             <Box sx={{ ...flexCenter, width: isMobile ? 100 : 190 }}>
-            <RegionSelect isMobile={isMobile} regions={regions} />
+            <RegionSelect isMobile={isMobile} regions={regions} onChange={handleRegionSwitch} />
             </Box>
           ) : null}
           <Box sx={{ flexGrow: 1 }}></Box>
