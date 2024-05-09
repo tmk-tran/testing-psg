@@ -289,7 +289,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     UPDATE sellers s
     SET books_due = (s.initial_books + s.additional_books) - s.books_returned - COALESCE((
-        SELECT SUM(t.physical_book_cash + t.physical_book_digital + t.digital_book_credit)
+        SELECT SUM(t.physical_book_cash + t.physical_book_digital)
         FROM transactions t
         WHERE t."refId" = s."refId"
     ), 0);
@@ -299,7 +299,7 @@ $$ LANGUAGE plpgsql;
 
 ------- Trigger for transactions ----------------------
 CREATE TRIGGER calculate_books_due_trigger
-AFTER INSERT OR UPDATE OF physical_book_cash, physical_book_digital, digital_book_credit
+AFTER INSERT OR UPDATE OF physical_book_cash, physical_book_digital
 ON transactions
 FOR EACH ROW
 EXECUTE FUNCTION update_books_due();
@@ -374,6 +374,23 @@ FOR EACH ROW
 EXECUTE FUNCTION create_transaction_for_new_seller();
 ---------------------------------------------------------------------------
 
+---------- Function for updating seller earnings --------------------------
+CREATE OR REPLACE FUNCTION update_seller_earnings()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE seller
+    SET seller_earnings = (physical_book_cash + physical_book_digital + digital_book_credit) * NEW.organization_earnings
+    WHERE organization_id = NEW.id;
+    
+    RETURN NULL; -- Returning NULL to prevent update on organization table
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_seller_earnings_trigger
+AFTER UPDATE OF organization_earnings ON organization
+FOR EACH ROW
+EXECUTE FUNCTION update_seller_earnings();
+
 
 ----------------------------------------------------------------------
 -------------------- Coupon table ------------------------------------
@@ -412,7 +429,7 @@ CREATE TABLE coupon_redemption (
     coupon_id integer REFERENCES coupon(id),
     location_id integer REFERENCES location(id),
     redeemed_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    redeemed_by integer REFERENCES "user"(id)
+    redeemed_by integer REFERENCES "user"(id) ON DELETE CASCADE
 );
 
 ---------- Paypal transactions table ---------------
@@ -537,14 +554,23 @@ CREATE TABLE "user" (
     last_name character varying(100)
 );
 
-------- Table for creating coupon lost for users, uses function -----
+---------- JOIN table for users who are orgAdmins -----------
+CREATE TABLE user_org_admin (
+    user_id integer REFERENCES "user"(id) ON DELETE CASCADE,
+    org_id integer REFERENCES organization(id),
+    CONSTRAINT user_org_admin_pkey PRIMARY KEY (user_id, org_id)
+);
+
+------- Table for creating coupon list for users, uses function -----
 ------- and trigger listed below ------------------------------------
 
 CREATE TABLE user_coupon (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES "user"(id),
-    coupon_id INTEGER REFERENCES coupon(id),
-    location_id INTEGER REFERENCES location(id),
+    user_id integer REFERENCES "user"(id) ON DELETE CASCADE,
+    coupon_id integer REFERENCES coupon(id),
+    location_id integer REFERENCES location(id),
+    redeemed boolean DEFAULT false,
+    show_book boolean DEFAULT false,
     CONSTRAINT user_coupon_user_id_coupon_id_location_id_key UNIQUE (user_id, coupon_id, location_id)
 );
 

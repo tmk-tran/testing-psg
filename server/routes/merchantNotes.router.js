@@ -7,13 +7,17 @@ const {
 
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const merchantId = req.params.id;
-  console.log("merchantId = ", merchantId);
-  const queryText = `SELECT * FROM "merchant_notes" WHERE merchant_id = $1 ORDER by "id" DESC;`;
+
+  const queryText = `
+          SELECT * FROM "merchant_notes" 
+          WHERE merchant_id = $1 
+          ORDER by "id" DESC;
+        `;
+
   pool
     .query(queryText, [merchantId])
     .then((result) => {
-      // console.log("merchantId = ", merchantId);
-      console.log("FROM merchantNotes.router: ", result.rows);
+      console.log("Successful GET in merchantNotes.router");
       res.send(result.rows);
     })
     .catch((err) => {
@@ -24,13 +28,18 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 
 router.post("/", rejectUnauthenticated, (req, res) => {
   const note = req.body;
-  console.log(note);
   const merchantId = note.merchant_id;
   const date = note.note_date;
   const content = note.note_content;
 
-  const queryText = `INSERT INTO "merchant_notes" ("merchant_id", "note_date", "note_content")
-  VALUES ($1, $2, $3);`;
+  const queryText = `
+          INSERT INTO "merchant_notes" (
+            "merchant_id", 
+            "note_date", 
+            "note_content"
+          )
+          VALUES ($1, $2, $3); 
+        `;
 
   pool
     .query(queryText, [merchantId, date, content])
@@ -45,7 +54,6 @@ router.post("/", rejectUnauthenticated, (req, res) => {
 
 router.delete("/:id", (req, res) => {
   const noteId = req.params.id;
-  console.log("MERCHANT noteId = ", noteId);
 
   pool
     .query(
@@ -55,7 +63,7 @@ router.delete("/:id", (req, res) => {
       [noteId]
     )
     .then((response) => {
-      console.log(response.rows);
+      console.log("Successful DELETE in merchantNotes.router");
       res.sendStatus(200);
     })
     .catch((error) => {

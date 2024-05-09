@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { Button } from "@mui/material";
 import { errorColor, successColor } from "../Utils/colors";
@@ -20,13 +20,7 @@ export default function CouponReviewButtons({
   setIsTaskUpdate,
   couponId,
 }) {
-  console.log(isTaskUpdate);
-  console.log(changesRequested);
-  console.log(completedCoupon);
   const dispatch = dispatchHook();
-
-  const [isCompletedCoupon, setIsCompletedCoupon] = useState(false);
-  console.log(isCompletedCoupon);
 
   const handleDenyClick = () => {
     // Call the parent component's function when the Deny button is clicked
@@ -67,7 +61,6 @@ export default function CouponReviewButtons({
         merchantId: merchantId,
       },
     };
-    console.log(dispatchAction);
     dispatch(dispatchAction);
 
     if (completedCoupon) {
@@ -77,7 +70,6 @@ export default function CouponReviewButtons({
           id: couponId,
         },
       };
-      console.log(dispatchAction2);
       dispatch(dispatchAction2);
     }
 

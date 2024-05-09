@@ -1,9 +1,7 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { primaryColor } from "../Utils/colors";
-import { border } from "../Utils/colors";
 
 export default function OrgDetailsSection({ isMobile, seller }) {
-  console.log(seller);
   return (
     <Card elevation={3} sx={{ width: isMobile ? "100%" : "40%" }}>
       <CardContent>

@@ -18,10 +18,10 @@ export default function TableTaskDetails({ mId, caseType }) {
   console.log(mId);
   console.log(caseType);
   const dispatch = dispatchHook();
-  const merchantTasks = Array.isArray(mTasks()) ? mTasks() : [];
+  const merchantTasks = mTasks() || [];
   console.log(merchantTasks);
   const comments = mComments();
-  const orgTasks = oTasks() || [];
+  const orgTasks = oTasks();
   console.log(orgTasks);
 
   const toDoTasks = merchantTasks.filter(
@@ -58,15 +58,15 @@ export default function TableTaskDetails({ mId, caseType }) {
   //   });
   // }, [mId]);
 
-  useEffect(() => {
-    // Check if tasks are loaded before fetching comments
-    if (Array.isArray(merchantTasks) && merchantTasks.length > 0) {
-      dispatch({
-        type: "FETCH_MERCHANT_COMMENTS",
-        payload: mId,
-      });
-    }
-  }, [merchantTasks, mId]);
+  // useEffect(() => {
+  //   // Check if tasks are loaded before fetching comments
+  //   if (Array.isArray(merchantTasks) && merchantTasks.length > 0) {
+  //     dispatch({
+  //       type: "FETCH_MERCHANT_COMMENTS",
+  //       payload: mId,
+  //     });
+  //   }
+  // }, [merchantTasks, mId]);
 
   const renderTask = (task, index) => {
     const taskComments =
@@ -154,7 +154,7 @@ export default function TableTaskDetails({ mId, caseType }) {
                 <CommentDisplay
                   key={taskComments[0].id}
                   comment={taskComments[0]}
-                  showAllComments={false}
+                  bulletSize={{ fontSize: 20 }}
                 />
               )}
               <hr />

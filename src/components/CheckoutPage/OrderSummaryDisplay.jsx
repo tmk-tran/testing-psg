@@ -8,11 +8,6 @@ import TotalUpdate from "./TotalUpdate";
 export default function OrderSummaryDisplay({ customDonation }) {
   const location = useLocation();
   const selectedProducts = location.state?.selectedProducts ?? [];
-  // Access to selectedProducts and use in component
-  console.log("Selected Products in CheckoutPage:", selectedProducts);
-  const products = location.state?.rows ?? [];
-  console.log("Products from previous page: ", products);
-  console.log(customDonation);
 
   return (
     <>
@@ -36,7 +31,6 @@ export default function OrderSummaryDisplay({ customDonation }) {
         <TotalUpdate
           selectedProducts={selectedProducts}
           customDonation={customDonation}
-          caseType="Order Confirmation"
         />
       </Box>
     </>

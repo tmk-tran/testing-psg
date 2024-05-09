@@ -33,6 +33,7 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   const [taskId, setTaskId] = useState("");
   console.log(taskId);
   const [couponId, setCouponId] = useState("");
+  console.log(couponId);
   const [taskStatus, setTaskStatus] = useState("");
   console.log(taskStatus);
   const [newTaskStatus, setNewTaskStatus] = useState("");
@@ -77,9 +78,9 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   console.log(couponFiles);
   const merchantComments = mComments();
   console.log(merchantComments);
-  const mostRecentComment =
-    merchantComments.length > 0 ? merchantComments[0] : null;
-  console.log(mostRecentComment);
+  // const mostRecentComment =
+  //   merchantComments.length > 0 ? merchantComments[0] : null;
+  // console.log(mostRecentComment);
   const tasks = mTasks() || [];
   console.log(tasks);
 
@@ -124,23 +125,23 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
     event.stopPropagation();
   };
 
-  const handleUpdateTask = (taskId, couponId, choice, taskStatus) => {
+  const handleUpdateTask = (taskId, couponId, choice, selectedTaskStatus) => {
     console.log(taskId);
     console.log(couponId);
     console.log(choice);
-    console.log(taskStatus);
+    console.log(selectedTaskStatus);
     setTaskId(taskId);
     setCouponId(couponId);
     setNewTaskStatus(choice);
-    setTaskStatus(taskStatus);
+    setTaskStatus(selectedTaskStatus);
     setIsTaskUpdate(true);
   };
 
   const handleChangeRequest = (boolean) => {
     console.log(boolean);
     setChangesRequested(boolean);
-    console.log("Changes requested: ", changesRequested);
   };
+  console.log("Changes requested: ", changesRequested);
 
   const handleCompletedCoupon = (boolean) => {
     console.log(boolean);
@@ -166,6 +167,8 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
           const relatedComments = merchantComments.filter(
             (comment) => comment.coupon_id === file.id
           );
+
+          const mostRecentComment = relatedComments.length > 0 ? relatedComments[0] : null;
 
           return (
             <Card
@@ -285,9 +288,10 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                     {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                     <Box sx={{ mt: 5, p: 0.5 }}>
                       {/* <CommentDisplay comment={mostRecentComment} /> */}
-                      {relatedComments.length > 0 ? (
+                      {/* {relatedComments.length > 0 ? (
                         relatedComments.map((comment, index) => (
-                          <CommentDisplay key={index} comment={comment} showAllComments={false} />
+                          <CommentDisplay key={mostRecentComment.id} comment={mostRecentComment} showAllComments={false} />
+                          // <CommentDisplay key={relatedComments[0].id} comment={relatedComments[0]} showAllComments={false} />
                         ))
                       ) : (
                         <Typography
@@ -296,7 +300,21 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                         >
                           No comment available
                         </Typography>
-                      )}
+                      )} */}
+                      {mostRecentComment ? (
+                      <CommentDisplay
+                        key={mostRecentComment.id}
+                        comment={mostRecentComment}
+                        showAllComments={false}
+                      />
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        sx={{ ml: 3, textAlign: "center" }}
+                      >
+                        No comment available
+                      </Typography>
+                    )}
                     </Box>
                   </Box>
                   {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}

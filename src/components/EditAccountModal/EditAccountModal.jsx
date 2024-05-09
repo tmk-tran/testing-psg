@@ -36,12 +36,11 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
   };
 
   const handleFileSelection = (uploadedFile) => {
-    console.log(uploadedFile);
+    // console.log(uploadedFile);
     setEditedAccount({ ...editedAccount, uploadedFile });
   };
 
   const handleEditSave = (editedAccount) => {
-    console.log(editedAccount);
     if (!isMerchantList) {
       dispatch({ type: "EDIT_ORGANIZATION", payload: editedAccount });
       dispatch({ type: "FETCH_ORGANIZATIONS" });

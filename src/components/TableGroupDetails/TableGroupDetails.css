@@ -6,4 +6,5 @@
 .custom-table th,
 .custom-table td {
   border: none;
+  padding: 0;
 }

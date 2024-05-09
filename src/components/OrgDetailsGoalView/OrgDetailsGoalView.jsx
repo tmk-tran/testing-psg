@@ -10,7 +10,6 @@ import { oFundraisers } from "../../hooks/reduxStore";
 
 export default function OrgDetailsGoalView({ info, groups, handleAddGroup }) {
   const fundraiserInfo = oFundraisers();
-  console.log(fundraiserInfo);
 
   // Total number of goals for groups
   const totalGoals = groups.reduce((total, group) => {
@@ -43,13 +42,14 @@ export default function OrgDetailsGoalView({ info, groups, handleAddGroup }) {
 
   return (
     <>
-      <Card elevation={3} className="goals-display-card">
+      {/* <Card elevation={3} className="goals-display-card"> */}
+      <Card elevation={3} sx={{ width: "50vh" }}>
         <CardContent>
           <Typography
             variant="h6"
             sx={{ textAlign: "center", fontWeight: "bold" }}
           >
-            Details
+            Group Details
           </Typography>
           <div
             className={`org-detail-goal-container ${
@@ -58,9 +58,6 @@ export default function OrgDetailsGoalView({ info, groups, handleAddGroup }) {
                 : "no-fundraisers-bg"
             }`}
           >
-            {/* <div>
-                  <AddGroupPopover info={info} />
-                </div> */}
             <center>
               {/* <br /> */}
               {fundraiserInfo && fundraiserInfo.length > 0 ? (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Select, MenuItem } from "@mui/material";
 
 const statusOptions = [
@@ -23,36 +23,50 @@ export default function CouponStatusDropdown({
   complete,
   task,
 }) {
-  const defaultTask = task ? task.task : ""; // Default to an empty string if task is undefined
-  const defaultStatus = task ? task.task_status : "";
-  const defaultId = task ? task.id : "";
-  const [status, setStatus] = useState(defaultTask);
-  console.log(status);
-  const [taskStatus, setTaskStatus] = useState(defaultStatus);
+  console.log(task);
+
+  const [taskStatus, setTaskStatus] = useState(task ? task.task_status : "");
   console.log(taskStatus);
-  const [taskId, setTaskId] = useState(defaultId);
+  // Change name to: task description
+  const [status, setStatus] = useState(task ? task.task : "");
+  console.log(status);
+
+  const [taskId, setTaskId] = useState(task ? task.id : "");
   console.log(taskId);
+  const [assignedCouponId, setAssignedCouonId] = useState(
+    task ? task.coupon_id : ""
+  );
+  console.log(assignedCouponId);
+
   console.log(couponId);
 
   const handleMenuChange = (event) => {
     console.log(event.target);
     const choice = event.target.value;
     setStatus(choice);
+    console.log(choice);
 
+    let newTaskStatus;
     if (choice === "Changes Requested") {
-      onChange(true); // Call the onChange function with true
+      onChange(true);
+      newTaskStatus = "Changes Requested";
+    } else if (
+      choice === "New: Create Proof" ||
+      choice === "New: Add-on Proof"
+    ) {
+      newTaskStatus = "New";
+    } else if (choice === "Completed Coupon") {
+      onChange(false);
+      complete(true);
+      newTaskStatus = "Complete";
     } else {
-      onChange(false); // Call the onChange function with false
+      onChange(false);
+      complete(false);
+      newTaskStatus = "In Progress";
     }
 
-    if (choice === "Completed Coupon") {
-      complete(true); // Call the complete function with true
-    } else {
-      complete(false); // Call the complete function with false
-    }
-
-    // Pass both the selected status and isTaskUpdate state to the parent
-    handleUpdateTask(taskId, couponId, choice, taskStatus);
+    // Pass the updated taskStatus to the parent
+    handleUpdateTask(taskId, couponId, choice, newTaskStatus);
   };
 
   return (

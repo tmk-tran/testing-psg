@@ -22,6 +22,14 @@ export const showDeleteSweetAlert = (deleteCall, caseType) => {
       title = "Remove location?";
       confirmButtonText = "Confirm";
       break;
+    case "removeOrgAdmin":
+      title = "Remove Organization?";
+      confirmButtonText = "Confirm";
+      break;
+    case "deleteUser":
+      title = "Delete User?";
+      confirmButtonText = "Confirm";
+      break;
     default:
       title = "Are you sure?";
       confirmButtonText = "Yes, confirm it!";
@@ -34,14 +42,18 @@ export const showDeleteSweetAlert = (deleteCall, caseType) => {
     showCancelButton: true,
     confirmButtonColor: successColor.color,
     cancelButtonColor: "#d33",
-    // confirmButtonText: "Yes, archive it!",
     confirmButtonText: confirmButtonText,
   }).then((result) => {
     if (result.isConfirmed) {
       // Execute the callback if the user confirms
       deleteCall && deleteCall();
       Swal.fire({
-        title: "Archived!",
+        title:
+          caseType === "removeOrgAdmin"
+            ? "Removed!"
+            : caseType === "deleteUser"
+            ? "Deleted!"
+            : "Archived!",
         icon: "success",
         confirmButtonColor: primaryColor.color,
       });

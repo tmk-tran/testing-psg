@@ -5,6 +5,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import UserProfile from "../UserProfile/UserProfile";
@@ -31,6 +32,7 @@ import OrderComplete from "../CheckoutPage/OrderComplete";
 import Transactions from "../Transactions/Transactions";
 import MerchantDetails from "../Details/MerchantDetails";
 import UserAdmin from "../UserAdmin/UserAdmin";
+import RecoverPasswordForm from "../RecoverPasswordForm/RecoverPasswordForm";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
@@ -61,24 +63,35 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
-  console.log(user);
   const [orgAdminId, setOrgAdminId] = useState(null);
-  console.log(orgAdminId);
+
+  useEffect(() => {
+    const userCookie = Cookies.get('user');
+
+    if (userCookie) {
+      // Set user in Redux state
+      // dispatch({ type: 'SET_USER', payload: JSON.parse(userCookie) });
+      dispatch({ type: "FETCH_USER" });
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     // Set the current season
     const currentSeason = getCurrentSeason();
-    console.log(currentSeason);
 
-    dispatch({ type: "FETCH_USER" });
+    // dispatch({ type: "FETCH_USER" });
+    
+    // if (user.id) {
+    //   // User is logged in, fetch user data
+    //   dispatch({ type: "FETCH_USER" });
+    // }
     // dispatch({ type: "FETCH_COUPON_BOOKS" });
     const dispatchAction2 = {
       type: "FETCH_BOOK_YEAR",
       payload: currentSeason,
     };
-    console.log(dispatchAction2);
     dispatch(dispatchAction2);
-  }, []);
+  }, [user.id]);
 
   useEffect(() => {
     if (user.org_admin) {
@@ -179,14 +192,12 @@ function App() {
                   <Details
                     isMerchantTaskPage={false}
                     isTaskPage={false}
-                    isMerchantDetails={false}
                     isOrgAdminPage={false}
                   />
                 ) : (
                   <Details
                     isMerchantTaskPage={false}
                     isTaskPage={false}
-                    isMerchantDetails={false}
                     isOrgAdminPage={true}
                   />
                 )}
@@ -282,6 +293,10 @@ function App() {
                   // Otherwise, show the login page
                   <LoginPage />
                 )}
+              </Route>
+
+              <Route exact path="/recover">
+                <RecoverPasswordForm />
               </Route>
 
               <Route exact path="/registration">

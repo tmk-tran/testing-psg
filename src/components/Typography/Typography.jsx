@@ -3,7 +3,6 @@ import { Typography as MuiTypography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const Typography = ({ customKey, label, sx, variant, gutterBottom, to, newTab, icon }) => {
-  console.log(newTab);
   if (to) {
     return (
       <MuiTypography

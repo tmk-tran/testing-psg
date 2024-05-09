@@ -29,7 +29,8 @@ const PdfModal = ({ isMobile, pdf, isOpen, onClose }) => {
       <Box
         sx={{
           ...style,
-          ...(isMobile ? { width: 350 } : { width: 850 }),
+          ...(isMobile ? { margin: 0 } : {}),
+          ...(isMobile ? { width: 350 } : { width: 600 }),
         }}
       >
         {pdf && (

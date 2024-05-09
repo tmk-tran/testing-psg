@@ -2,7 +2,6 @@ import React from "react";
 import { Alert, Snackbar } from "@mui/material";
 
 export default function SuccessAlert({ isOpen, onClose, caseType }) {
-  console.log(caseType);
   let anchorOrigin = { vertical: "top", horizontal: "center" };
 
   // Set different anchor origins based on caseType

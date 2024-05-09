@@ -31,14 +31,12 @@ export default function AddAccountModal({
   handleModalClose,
   isMerchantList,
 }) {
-  console.log(isMerchantList);
   const dispatch = useDispatch();
 
   // ~~~~~ Set state for the add organization form ~~~~~ //
   const [organizationName, setOrganizationName] = useState("");
   const [organizationType, setOrganizationType] = useState("");
   const [merchantName, setMerchantName] = useState("");
-  console.log(merchantName);
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState(false);
@@ -49,10 +47,8 @@ export default function AddAccountModal({
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [logoFile, setLogoFile] = useState("");
-  console.log(logoFile);
   const [orgEarnings, setOrgEarnings] = useState(10);
-  const [selectedChoice, setSelectedChoice] = useState("");
-  console.log(selectedChoice);
+  const [selectedChoice, setSelectedChoice] = useState(null);
   // ~~~~~~~~~ Errors ~~~~~~~~~~~ //
   const [organizationNameError, setOrganizationNameError] = useState(false);
   const [organizationTypeError, setOrganizationTypeError] = useState(false);
@@ -69,10 +65,8 @@ export default function AddAccountModal({
   const handleLogoSelection = (selectedFile) => {
     setLogoFile(selectedFile);
   };
-  console.log(contactPhone);
   // Save function to dispatch data for new organization
   const handleSave = () => {
-    console.log("clicked");
     if (!isMerchantList) {
       if (!organizationName) {
         setOrganizationNameError(true);
@@ -134,6 +128,7 @@ export default function AddAccountModal({
         primary_contact_phone: contactPhone,
         primary_contact_email: contactEmail,
         organization_logo: logoFile,
+        filename: logoFile.name,
         organization_earnings: orgEarnings,
       },
     };
@@ -153,6 +148,7 @@ export default function AddAccountModal({
         contact_phone_number: contactPhone,
         contact_email: contactEmail,
         merchant_logo: logoFile,
+        filename: logoFile.name,
         website: merchantWebsite,
         contact_method: selectedChoice,
       },
@@ -223,7 +219,6 @@ export default function AddAccountModal({
   };
 
   const stateInput = (value) => {
-    console.log(value.abbreviation);
     setState(value.abbreviation);
   };
 
@@ -447,6 +442,7 @@ export default function AddAccountModal({
             {/* ~~~~~~~~~~~~ PHONE ~~~~~~~~~~~~~~~~~ */}
             <Grid item xs={6}>
               <PhoneInput
+                caseType={"addAccount"}
                 phoneNumber={contactPhone}
                 setPhoneNumber={setContactPhone}
                 sx={{ mb: 2 }}

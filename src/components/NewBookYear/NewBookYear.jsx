@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { highlightColor } from "../Utils/colors";
-import { bookYear } from "../../hooks/reduxStore";
+import { appActiveYear } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import NewYearForm from "./NewYearForm";
 import AvailableYearsButtons from "./AvailableYearsButtons";
@@ -15,8 +15,8 @@ const typographyStyle = {
 };
 
 export default function NewBookYear() {
-  const years = bookYear();
-  const activeYear = years[0].year;
+  const years = appActiveYear();
+  const activeYear = years ? years[0].year : "";
 
   return (
     <Grid container spacing={2}>

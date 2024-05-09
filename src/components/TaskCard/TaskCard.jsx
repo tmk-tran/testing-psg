@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { historyHook } from "../../hooks/useHistory";
 import { dispatchHook } from "../../hooks/useDispatch";
+import { flexCenter } from "../Utils/pageStyles";
 import { mComments } from "../../hooks/reduxStore";
 import {
   successColor,
@@ -33,8 +34,6 @@ import {
 import TaskDropdown from "./TaskDropdown";
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import AssignSelect from "./AssignSelect";
-import { showSaveSweetAlert } from "../Utils/sweetAlerts";
-import { flexCenter, flexRowSpace } from "../Utils/pageStyles";
 import TaskCardButtons from "./TaskCardButtons";
 import DatePicker from "../DatePicker/DatePicker";
 
@@ -59,38 +58,28 @@ const iconButtonStyle = {
 };
 
 export default function TaskCard({
-  id,
   task,
   taskType,
   index,
   onTaskUpdate,
   handleCaseTypeChange,
 }) {
-  console.log(id);
+  console.log(task);
   console.log(taskType);
   const history = historyHook();
   const dispatch = dispatchHook();
-  const [selectedTask, setSelectedTask] = useState(null);
-  console.log(task);
-  console.log(task.id);
-  console.log(task.merchant_id);
-  console.log(task.organization_id);
-  const oId = task.organization_id;
-  const mId = task.merchant_id;
+
+  const oId = task ? task.organization_id : null;
+  const mId = task ? task.merchant_id : null;
   console.log(mId);
-  console.log(oId);
-  console.log(index);
-  console.log(task.task_status);
-  const complete = task.task_status;
-  console.log(complete);
-  const [completedTask, setCompletedTask] = useState(complete === "Complete");
-  console.log(completedTask);
+  const taskStatus = task ? task.task_status : null;
+
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [completedTask, setCompletedTask] = useState(taskStatus === "Complete");
   const [assignedUser, setAssignedUser] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isDateEdit, setIsDateEdit] = useState(false);
   const [newDueDate, setNewDueDate] = useState("");
-
-  console.log(assignedUser);
 
   // Comments
   const merchantComments = mComments(mId) || [];
@@ -107,7 +96,6 @@ export default function TaskCard({
   }
 
   const handleTaskChange = (taskStatus) => {
-    console.log(taskStatus);
     setSelectedTask(taskStatus); // Update selectedTask with the value received from TaskDropdown
   };
 
@@ -120,11 +108,7 @@ export default function TaskCard({
     const updateActionType =
       taskType === "organization"
         ? "UPDATE_ORGANIZATION_TASK"
-        : "UPDATE_MERCHANT_TASK";
-
-    console.log(updateActionType);
-    console.log(task.id);
-    console.log(selectedTask);
+        : "CHANGE_MERCHANT_TASK_STATUS";
 
     const dispatchAction = {
       type: updateActionType,
@@ -134,24 +118,21 @@ export default function TaskCard({
         task_status: selectedTask,
       },
     };
-    console.log(dispatchAction);
     dispatch(dispatchAction);
     // Notify the parent component about the task update
     onTaskUpdate();
-    // Show the success alert
-    // setIsAlertOpen(true);
   };
 
   const archiveTask = () => {
-    console.log(id);
+    // console.log(id);
 
     const archiveActionType =
       taskType === "organization"
         ? "ARCHIVE_ORGANIZATION_TASK"
         : "ARCHIVE_MERCHANT_TASK";
 
-    console.log(archiveActionType);
-    console.log(task.id);
+    // console.log(archiveActionType);
+    // console.log(task.id);
     dispatch({
       type: archiveActionType,
       payload: {
@@ -171,15 +152,18 @@ export default function TaskCard({
   };
 
   const saveNewDueDate = () => {
+    const idToSend = taskType === "organization" ? oId : mId;
+
+    const actionType = taskType === "organization" ? "CHANGE_DUE_DATE_ORG" : "CHANGE_DUE_DATE_MER";
+
     const action = {
-      type: "CHANGE_DUE_DATE",
+      type: actionType,
       payload: {
         id: task.id,
         due_date: newDueDate,
-        merchantId: mId,
+        accountId: idToSend,
       },
     };
-    console.log(action);
     dispatch(action);
     clearDateField();
   };
@@ -188,8 +172,6 @@ export default function TaskCard({
     setNewDueDate("");
     setIsDateEdit(false);
   };
-  console.log(newDueDate);
-  console.log(isDateEdit);
 
   const handleEditMode = () => {
     setIsEditing(true);
@@ -209,7 +191,6 @@ export default function TaskCard({
           merchantId: mId,
         },
       };
-      console.log(dispatchAction);
       dispatch(dispatchAction);
     }
     if (assignedUser && taskType === "organization") {
@@ -221,7 +202,6 @@ export default function TaskCard({
           organizationId: oId,
         },
       };
-      console.log(dispatchAction2);
       dispatch(dispatchAction2);
     }
     onTaskUpdate();

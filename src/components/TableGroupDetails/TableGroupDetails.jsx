@@ -20,12 +20,12 @@ export default function TableGroupDetails({
       <TableHead>
         <TableRow>
           <TableCell>
-            <Typography variant="h6" style={centerStyle} sx={{ mb: 1, mt: 2 }}>
+            <Typography variant="body1" style={centerStyle} sx={{ mb: 1, mt: 2, fontWeight: "bold" }}>
               Total Goal:
             </Typography>
           </TableCell>
           <TableCell>
-            <Typography variant="h6" sx={{ mb: 1, mt: 2, fontSize: "28px" }}>
+            <Typography variant="body1" sx={{ fontSize: "25px", fontWeight: "bold" }}>
               {totalGoals > 0 ? (
                 new Intl.NumberFormat("en-US", {
                   style: "currency",
@@ -56,14 +56,14 @@ export default function TableGroupDetails({
         </TableRow>
         <TableRow>
           <TableCell>
-            <Typography sx={centerStyle}>Fundraiser End Date(s):</Typography>
+            <Typography sx={{ ...centerStyle, mb: 2 }}>Fundraiser End Date(s):</Typography>
           </TableCell>
           <TableCell>
             {fundraiserInfo.map((fundraiser) =>
               !fundraiser.fundraiser_closed ? (
                 <Typography
                   key={fundraiser.fundraiser_id}
-                  sx={{ fontWeight: "bold" }}
+                  sx={{ fontWeight: "bold", mb: 2 }}
                 >
                   {formatDate(fundraiser.fundraiser_end_date)}
                 </Typography>

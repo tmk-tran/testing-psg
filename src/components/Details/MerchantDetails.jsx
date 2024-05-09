@@ -106,20 +106,20 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
                   info={merchantInfo}
                   isMerchantTaskPage={isMerchantTaskPage}
                 />
-                {merchantInfo.contact_method && (
-                  <Typography
-                    key={`contact-method-${merchantInfo.id}`}
-                    sx={{ mt: 2 }}
-                  >
-                    Preferred contact:{" "}
-                    <ContactMethodMenu
-                      id={merchantInfo.id}
-                      methods={choices}
-                      defaultValue={merchantInfo.contact_method}
-                      onChange={handleContactMethod}
-                    />
-                  </Typography>
-                )}
+                {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+                {/* ~~~~~~~~~~ Preferred Contact Method ~~~~~~~~~~ */}
+                <Typography
+                  key={`contact-method-${merchantInfo.id}`}
+                  sx={{ mt: 2 }}
+                >
+                  Preferred contact:{" "}
+                  <ContactMethodMenu
+                    id={merchantInfo.id}
+                    methods={choices}
+                    defaultValue={merchantInfo.contact_method}
+                    onChange={handleContactMethod}
+                  />
+                </Typography>
               </center>
             </React.Fragment>
           ))}

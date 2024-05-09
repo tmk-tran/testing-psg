@@ -23,13 +23,9 @@ export default function DetailsEdit({
   isMerchantTaskPage,
 }) {
   // const [editedName, setEditedName] = useState(info.organization_name);
-  console.log(isOpen);
-  console.log(info);
-  console.log(info.merchant_name);
   const [editedName, setEditedName] = useState(
     !isMerchantTaskPage ? info.organization_name : info.merchant_name
   );
-  console.log(editedName);
   const [editedType, setEditedType] = useState(info.type);
   const [editedAddress, setEditedAddress] = useState(info.address);
   const [editedCity, setEditedCity] = useState(info.city);
@@ -45,15 +41,12 @@ export default function DetailsEdit({
   const [contactPhone, setContactPhone] = useState(
     !isMerchantTaskPage ? info.primary_contact_phone : info.contact_phone_number
   );
-  console.log(contactPhone);
   const [contactEmail, setContactEmail] = useState(
     !isMerchantTaskPage ? info.primary_contact_email : info.contact_email
   );
-  console.log(contactEmail);
   const [contactWebsite, setContactWebsite] = useState(
     isMerchantTaskPage ? info.website : null
   );
-  console.log(contactWebsite);
 
   useEffect(() => {
     setContactFirstName(info.primary_contact_first_name);
@@ -79,12 +72,9 @@ export default function DetailsEdit({
     const detailsInfo = {
       ...info,
     };
-    console.log(detailsInfo);
 
     const orgId = detailsInfo.organization_id;
-    console.log(orgId);
     const merchantId = detailsInfo.id;
-    console.log(merchantId);
 
     const editedDetails = !isMerchantTaskPage
       ? {

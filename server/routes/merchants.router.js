@@ -151,7 +151,7 @@ router.post("/", upload.single("merchant_logo"), (req, res) => {
       contactMethod,
     ])
     .then((response) => {
-      console.log("response from POST merchants.router: ", response.rows);
+      console.log("Successful POST in merchants.router");
       res.sendStatus(201);
     })
     .catch((err) => {
@@ -167,12 +167,6 @@ router.put(
   (req, res) => {
     const merchant = req.body;
     const merchantId = req.params.id;
-    const merchant_logo = req.file ? req.file.buffer : null;
-
-    // If no new file uploaded, retain existing logo from database
-    if (!merchant_logo && !req.file) {
-      merchant_logo = merchant.merchant_logo;
-    }
 
     // Merchant Details
     const merchantName = merchant.merchant_name;
@@ -190,25 +184,34 @@ router.put(
     const website = merchant.website ? merchant.website : null;
     const contactMethod = merchant.contact_method;
 
-    const queryText = `
-        UPDATE "merchant" 
-        SET 
-          merchant_name = $1, 
-          address = $2, 
-          city = $3, 
-          state = $4, 
-          zip = $5, 
-          primary_contact_first_name = $6, 
-          primary_contact_last_name = $7, 
-          contact_phone_number = $8, 
-          contact_email = $9,
-          merchant_logo = $10,
-          filename = $11,
-          website = $12,
-          contact_method = $13
-        WHERE id = $14;`;
-    pool
-      .query(queryText, [
+    let merchant_logo = null;
+    if (req.file) {
+      merchant_logo = req.file.buffer;
+    }
+
+    let queryText;
+    let values;
+    if (merchant_logo) {
+      // If a new logo is being uploaded, update the organization logo as well
+      queryText = `
+          UPDATE "merchant" 
+          SET 
+            "merchant_name" = $1, 
+            "address" = $2, 
+            "city" = $3, 
+            "state" = $4, 
+            "zip" = $5, 
+            "primary_contact_first_name" = $6, 
+            "primary_contact_last_name" = $7, 
+            "contact_phone_number" = $8, 
+            "contact_email" = $9,
+            "merchant_logo" = $10,
+            "filename" = $11,
+            "website" = $12,
+            "contact_method" = $13
+          WHERE id = $14;`;
+
+      values = [
         merchantName,
         address,
         city,
@@ -223,9 +226,47 @@ router.put(
         website,
         contactMethod,
         merchantId,
-      ])
+      ];
+    } else {
+      // If no new logo is being uploaded, update the organization logo only
+      queryText = `
+              UPDATE "merchant" 
+              SET 
+                "merchant_name" = $1, 
+                "address" = $2, 
+                "city" = $3, 
+                "state" = $4, 
+                "zip" = $5, 
+                "primary_contact_first_name" = $6, 
+                "primary_contact_last_name" = $7, 
+                "contact_phone_number" = $8, 
+                "contact_email" = $9,
+                "filename" = $10,
+                "website" = $11,
+                "contact_method" = $12
+              WHERE id = $13;`;
+
+      values = [
+        merchantName,
+        address,
+        city,
+        state,
+        zip,
+        firstName,
+        lastName,
+        phone,
+        email,
+        filename,
+        website,
+        contactMethod,
+        merchantId,
+      ];
+    }
+
+    pool
+      .query(queryText, values)
       .then((response) => {
-        console.log("successful PUT to merchants.router");
+        console.log("successful PUT in merchants.router");
         res.sendStatus(200);
       })
       .catch((err) => {
@@ -247,7 +288,7 @@ router.put("/contact/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [method, merchantId])
     .then((response) => {
-      console.log("successful PUT in merchants.router: ");
+      console.log("Successful PUT to /contact in merchants.router");
       res.sendStatus(200);
     })
     .catch((err) => {
@@ -260,11 +301,18 @@ router.delete("/:id", (req, res) => {
   const { id } = req.params;
   const { archiveReason } = req.body;
 
-  const queryText = `UPDATE "merchant" SET is_deleted = true, archive_reason = $1 WHERE id = $2;`;
+  const queryText = `
+          UPDATE "merchant" 
+          SET 
+            is_deleted = true, 
+            archive_reason = $1 
+          WHERE id = $2;
+        `;
+
   pool
     .query(queryText, [archiveReason, id])
     .then((response) => {
-      console.log("successful DELETE from merchants.router: ");
+      console.log("successful DELETE from merchants.router");
       res.sendStatus(200);
     })
     .catch((error) => {

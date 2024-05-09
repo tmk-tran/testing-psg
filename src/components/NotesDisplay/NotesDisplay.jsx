@@ -28,12 +28,6 @@ export default function NotesDisplay({
   caseType,
   isMerchantTaskPage,
 }) {
-  console.log(isMerchantTaskPage);
-  console.log(notes);
-  console.log(details);
-  console.log(caseType);
-  console.log(notes);
-
   const dispatch = dispatchHook();
   const paramsObject = useParams();
   const theme = useTheme();
@@ -46,13 +40,11 @@ export default function NotesDisplay({
   const [orgId, setOrgId] = useState(
     !isMerchantTaskPage ? details.organization_id : details.id
   );
-  console.log(orgId);
   const [noteDate, setNoteDate] = useState(new Date());
   const [noteAdded, setNoteAdded] = useState(false);
 
   // Access merchant_id directly from details if isMerchantTaskPage is true
   const merchantId = isMerchantTaskPage ? details.id : null;
-  console.log(merchantId);
 
   // useEffect(() => {
   //   // Fetch org notes whenever noteAdded changes
@@ -101,9 +93,7 @@ export default function NotesDisplay({
       const actionType = isMerchantTaskPage
         ? "ADD_MERCHANT_NOTES"
         : "ADD_ORG_NOTES";
-      console.log(actionType);
       dispatch({ type: actionType, payload: sendNote });
-      console.log(sendNote);
       setNoteAdded(true);
     };
     saveCall();
@@ -123,9 +113,6 @@ export default function NotesDisplay({
   };
 
   const handleDelete = (noteId, entityId) => {
-    console.log(noteId);
-    console.log(entityId);
-
     // Assuming you're using Redux for state management
     const actionType = isMerchantTaskPage
       ? "DELETE_MERCHANT_NOTE"

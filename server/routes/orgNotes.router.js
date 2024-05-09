@@ -7,13 +7,10 @@ const {
 
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const orgId = req.params.id;
-  console.log("orgId = ", orgId);
   const queryText = `SELECT * FROM "organization_notes" WHERE organization_id = $1 ORDER by "id" DESC;`;
   pool
     .query(queryText, [orgId])
     .then((result) => {
-      // console.log("orgId = ", orgId);
-      console.log("FROM orgNotes.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -44,7 +41,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
 
 router.delete("/:id", (req, res) => {
   const noteId = req.params.id;
-  console.log("ORG noteId = ", noteId);
+
   pool
     .query(
       `UPDATE "organization_notes"

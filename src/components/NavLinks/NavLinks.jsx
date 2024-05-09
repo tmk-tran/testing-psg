@@ -35,7 +35,6 @@ const theme = createTheme({
 export default function NavLinks() {
   const location = useLocation();
   const user = User();
-  console.log(user);
 
   // Hide NavLinks component on the checkout page
   if (location.pathname === "/checkout") {
@@ -48,7 +47,7 @@ export default function NavLinks() {
         {/* If no user is logged in or user is an org admin, show these links */}
         {!user.id || user.org_admin || user.graphic_designer ? (
           <>
-            {(!user.id) && (
+            {!user.id && (
               <Typography
                 sx={{
                   textAlign: !user.id ? "center" : "inherit",
@@ -208,8 +207,6 @@ export default function NavLinks() {
                   Users
                 </MuiLink>
               </Typography>
-
-
             </>
           )
         )}

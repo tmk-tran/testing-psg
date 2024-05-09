@@ -11,10 +11,8 @@ import {
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~ //
 import AddBox from "../AddBoxIcon/AddBoxIcon";
 import SelectMenu from "./SelectMenu";
-import AddFileButton from "../AddFileButton/AddFileButton";
 import ModalButtons from "../Modals/ModalButtons";
 import AllLocationsButton from "./AllLocationsButton";
-import PhoneInput from "../LocationsCard/PhoneInput";
 import YearSelect from "../OrgSellers/YearSelect";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~ //
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
@@ -37,39 +35,22 @@ const style = {
 export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   const dispatch = dispatchHook();
   const paramsObject = useParams();
-  console.log(paramsObject);
-  console.log(locations);
 
   const [open, setOpen] = useState(false);
   const [merchantId, setMerchantId] = useState(paramsObject.id);
   // ~~~~~~~~~~ Form State ~~~~~~~~~~~~~~~~~~~ //
   const [selectedLocations, setSelectedLocations] = useState([]);
-  console.log(selectedLocations);
   const [seasonIdSelected, setSeasonIdSelected] = useState("");
   const [selectAllLocations, setSelectAllLocations] = useState(false);
-  const [phone, setPhone] = useState("");
   const [couponOffer, setCouponOffer] = useState("");
   const [website, setWebsite] = useState("");
   const [couponValue, setCouponValue] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [exclusions, setExclusions] = useState("");
-  const [address, setAddress] = useState("");
   // ~~~~~~~~~~ Errors ~~~~~~~~~~~~~~~~~~~~~~~ //
   const [locationsError, setLocationsError] = useState(false);
   const [websiteError, setWebsiteError] = useState(false);
-  const [phoneError, setPhoneError] = useState(false);
-  const [offerError, setOfferError] = useState(false);
-
-  console.log(phoneError);
-  console.log(couponOffer);
-  console.log(couponValue);
-  console.log(exclusions);
-  console.log(address);
-  console.log(phone);
-  console.log(website);
-  console.log(additionalInfo);
-  console.log(merchantId);
-  console.log(seasonIdSelected);
+  const [activeYearError, setActiveYearError] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -88,14 +69,8 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   };
 
   const addCoupon = () => {
-    if (!phone) {
-      setPhoneError(true);
-      return;
-    }
-
-    // Validate phone number before saving
-    if (!/^\d{10}$/.test(phone)) {
-      setPhoneError(true);
+    if (!seasonIdSelected) {
+      setActiveYearError(true);
       return;
     }
 
@@ -119,14 +94,13 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   const resetForm = () => {
     setSelectedLocations([]);
     setSeasonIdSelected("");
-    setPhone("");
     setCouponOffer("");
     setWebsite("");
     setCouponValue("");
     setAdditionalInfo("");
     setExclusions("");
     setSelectAllLocations(false);
-    setPhoneError(false);
+    setActiveYearError(false);
     setLocationsError(false);
 
     handleClose();
@@ -177,7 +151,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <SelectMenu
-                label="Participating Location*"
+                label="Participating Location"
                 locations={locations}
                 selectAllLocations={selectAllLocations}
                 onLocationChange={handleLocationChange}
@@ -191,6 +165,9 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                 labelOutside
                 sx={{ mb: 2 }}
                 setYear={setSeasonIdSelected}
+                setActiveYearError={setActiveYearError}
+                error={activeYearError}
+                helpertext={activeYearError ? "Please select a book year" : ""}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -217,17 +194,6 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                 fullWidth
                 sx={{ mb: 2 }}
               />
-              {/* </Grid> */}
-              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-              {/* ~~~~~~~~~~ VALUE ~~~~~~~~~~~~ */}
-              {/* <Grid item={6}> */}
-              <TextField
-                label="Coupon Value"
-                value={couponValue}
-                onChange={(e) => setCouponValue(e.target.value)}
-                fullWidth
-                sx={{ mb: 2 }}
-              />
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~ EXCLUSIONS ~~~~~~~~~ */}
               <TextField
@@ -240,16 +206,14 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
             </Grid>
 
             <Grid item xs={6}>
-              {/* <Divider sx={{ mt: 2, mb: 2, ...lineDivider}} /> */}
-              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-              {/* ~~~~~~~~~~~ PHONE ~~~~~~~~~~~~ */}
-              <PhoneInput
-                phoneNumber={phone}
-                setPhoneNumber={setPhone}
+              {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+              {/* ~~~~~~~~~~ VALUE ~~~~~~~~~~~~ */}
+              <TextField
+                label="Coupon Value"
+                value={couponValue}
+                onChange={(e) => setCouponValue(e.target.value)}
+                fullWidth
                 sx={{ mb: 2 }}
-                setPhoneError={setPhoneError}
-                error={phoneError}
-                helperText={phoneError ? "Invalid phone number" : ""}
               />
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~~ WEBSITE ~~~~~~~~~~~~ */}
@@ -280,7 +244,6 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                 onChange={(e) => setAdditionalInfo(e.target.value)}
                 fullWidth
                 multiline
-                rows={3.6}
                 sx={{ mb: 2 }}
               />
             </Grid>

@@ -52,13 +52,6 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   const merchantId = req.params.id;
-  const filename = req.params.filename;
-  console.log("filename = ", filename);
-
-  const frontViewPdf = req.params.front_view_pdf;
-  const backViewPdf = req.params.back_view_pdf;
-  console.log("frontViewPdf = ", frontViewPdf);
-  console.log("backViewPdf = ", backViewPdf);
 
   // const queryText = "SELECT * FROM coupon WHERE merchant_id = $1";
   const queryText = `
@@ -73,7 +66,7 @@ router.get("/:id", (req, res) => {
   pool
     .query(queryText, [merchantId])
     .then((result) => {
-      console.log("FROM coupon.router GET /:id route: ", result.rows);
+      console.log("Successful GET by ID in coupon.router");
       res.send(result.rows);
     })
     .catch((err) => {
@@ -84,33 +77,6 @@ router.get("/:id", (req, res) => {
 
 router.get("/details/:id", (req, res) => {
   const couponId = req.params.id;
-  console.log("couponId = ", couponId);
-
-  // const queryText = "SELECT * FROM coupon WHERE id = $1";
-
-  // const queryText = `
-  //         SELECT
-  //           c.*,
-  //           l.id AS location_id,
-  //           l.location_name,
-  //           l.phone_number,
-  //           l.address,
-  //           l.city,
-  //           l.state,
-  //           l.zip,
-  //           l.coordinates,
-  //           l.region_id,
-  //           l.merchant_id AS location_merchant_id,
-  //           l.additional_details AS location_additional_details
-  //         FROM
-  //           coupon c
-  //         JOIN
-  //           coupon_location cl ON c.id = cl.coupon_id
-  //         JOIN
-  //           location l ON cl.location_id = l.id
-  //         WHERE
-  //           c.id = $1;
-  //   `;
 
   const queryText = `
               SELECT
@@ -139,17 +105,19 @@ router.get("/details/:id", (req, res) => {
   pool
     .query(queryText, [couponId])
     .then((result) => {
-      console.log("FROM coupon.router GET /details/:id : ", result.rows);
+      console.log("Successful GET /details in coupon.router");
       res.send(result.rows);
     })
     .catch((err) => {
-      console.log("error in the GET / request for coupons", err);
+      console.log(
+        "error in the GET / request for /details in coupon.router",
+        err
+      );
       res.sendStatus(500);
     });
 });
 
 router.post("/", rejectUnauthenticated, async (req, res) => {
-  console.log(req.body);
   const coupon = req.body;
   const merchantId = coupon.merchant_id;
   const offer = coupon.offer;
@@ -200,7 +168,7 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
   } catch (error) {
     // Rollback the transaction in case of an error
     await pool.query("ROLLBACK");
-    console.error(error);
+    console.error("Error POST in coupon.router: ", error);
     res.status(500).send("Error uploading coupon");
   }
 });
@@ -218,7 +186,7 @@ router.put("/redeem/:id", (req, res) => {
   pool
     .query(queryText, [couponId])
     .then((response) => {
-      console.log("Coupon redeemed:", response.rows);
+      console.log("Coupon redeemed");
       res.sendStatus(200);
     })
     .catch((error) => {
@@ -229,7 +197,6 @@ router.put("/redeem/:id", (req, res) => {
 
 // PUT route for uploading front view PDF
 router.put("/front/:id", upload.single("pdf"), (req, res) => {
-  console.log("PUT req.body = ", req.body);
   const frontViewPdf = req.file.buffer;
   const filename = req.file.originalname;
   // const merchantId = req.params.id;
@@ -278,10 +245,8 @@ router.put(
   "/:merchantId/:couponId",
   rejectUnauthenticated,
   async (req, res) => {
-    console.log("COUPON EDIT req.body = ", req.body);
     const coupon = req.body;
     const couponId = req.params.couponId;
-    console.log("couponId = ", couponId);
 
     const offer = coupon.offer;
     const value = coupon.value;
@@ -311,7 +276,7 @@ router.put(
         couponId,
       ])
       .then((response) => {
-        console.log("FROM coupon.router EDIT: ", response.rows);
+        console.log("Successful PUT in coupon.router");
         res.sendStatus(200);
       })
       .catch((error) => {

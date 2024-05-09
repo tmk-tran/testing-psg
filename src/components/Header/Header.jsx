@@ -2,7 +2,6 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
 import "./Header.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
-import { border } from "../Utils/colors";
 import { historyHook } from "../../hooks/useHistory";
 import { flexCenter } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Component ~~~~~~~~~~ //
@@ -12,7 +11,6 @@ import RegionText from "./RegionText";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export default function Header({ user }) {
-  console.log(user);
   const history = historyHook();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -43,7 +41,7 @@ export default function Header({ user }) {
             className="main-logo"
             src="../images/main-logo.jpg"
             alt="Preferred Saving Guide logo in colors blue and gold"
-            onClick={() => history.push("/home")}
+            onClick={() => history.push("/fargo/home")}
             style={{ cursor: "pointer" }}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}

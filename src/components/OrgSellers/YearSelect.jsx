@@ -1,23 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { Box, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
+import {
+  Box,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Typography,
+} from "@mui/material";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { allYears } from "../../hooks/reduxStore";
 
-export default function YearSelect({ year, setYear, labelOutside, sx }) {
+export default function YearSelect({
+  year,
+  setYear,
+  labelOutside,
+  sx,
+  setActiveYearError,
+  error,
+  helpertext,
+}) {
   const dispatch = dispatchHook();
   const [yearSelected, setYearSelected] = useState("");
-  console.log(year);
+
   useEffect(() => {
     // Set the initial selected year to the ID of the active year
-    
-    // if (year.length > 0) {
-    //   const activeYearId = year.find((y) => y.active)?.id || "";
-    //   setYearSelected(activeYearId);
-    // }
+
     if (Array.isArray(year) && year.length > 0) {
       const activeYearId = year.find((y) => y.active)?.id || "";
       setYearSelected(activeYearId);
-  }
+    }
 
     const dispatchAction = {
       type: "FETCH_COUPON_BOOKS",
@@ -26,9 +37,11 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
   }, []);
 
   const years = allYears();
-  console.log(years); 
+  console.log(years);
+  console.log(yearSelected);
 
   const handleChange = (event) => {
+    labelOutside && setActiveYearError(false);
     setYearSelected(event.target.value);
     setYear(event.target.value);
   };
@@ -43,6 +56,8 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
               value={yearSelected}
               label="Book Year"
               onChange={handleChange}
+              error={error}
+              helperText={error ? helpertext : ""}
             >
               {years.map((year) => (
                 <MenuItem key={year.id} value={year.id}>
@@ -50,6 +65,11 @@ export default function YearSelect({ year, setYear, labelOutside, sx }) {
                 </MenuItem>
               ))}
             </Select>
+            {error && (
+              <Typography variant="caption" sx={{ color: "red" }}>
+                {helpertext}
+              </Typography>
+            )}
           </FormControl>
         </>
       ) : (

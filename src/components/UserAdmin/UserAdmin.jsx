@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Fuse from "fuse.js";
 import {
   Box,
-  Button,
   TableContainer,
   Table,
   TableHead,
@@ -10,20 +9,33 @@ import {
   TableCell,
   TableBody,
   Typography,
+  Tooltip,
 } from "@mui/material";
 // ~~~~~~~~~ Hooks ~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
 import {
   userTableData,
+  UserOrgAdmins,
   allOrganizations,
   userBooksData,
 } from "../../hooks/reduxStore";
 import { centerMe, containerStyle, flexRowSpace } from "../Utils/pageStyles";
-import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { successColor } from "../Utils/colors";
 // ~~~~~~~~~ Components ~~~~~~~~~ //
 import ActionSwitch from "./ActionSwitch";
-import OrgMenu from "./OrgMenu";
 import UserAdminHeader from "./UserAdminHeader";
+import OrgAdminCell from "./OrgAdminCell";
+import AddOrgBtn from "./AddOrgBtn";
+import OrgMenu from "./OrgMenu";
+import UserActions from "./UserActions";
+import ActionButton from "../OrgSellers/ActionButton";
+import EditUsernameField from "./EditUsernameField";
+
+const pageBoxStyle = {
+  width: "80%",
+  margin: "0 auto",
+};
 
 const pageHeaderStyle = {
   textAlign: "center",
@@ -42,6 +54,19 @@ const shortHeaderCell = {
 
 const wideCellSx = {
   border: "1px solid #ddd",
+  maxWidth: 140,
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+};
+
+const userNameCellSx = {
+  maxWidth: 175,
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  transition: "max-width 0.5s",
+  ...wideCellSx,
 };
 
 const shortCellSx = {
@@ -49,30 +74,57 @@ const shortCellSx = {
   border: "1px solid #ddd",
 };
 
+const disabledCellSx = {
+  backgroundColor: "#eaeaea",
+  color: "gray",
+};
+
 export default function UserAdmin() {
+  // Removed auth store from this component
   const dispatch = dispatchHook();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isHovered, setIsHovered] = useState(false);
+  const [addNewOrg, setAddNewOrg] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  // ~~~~~~~~~ State for Edit ~~~~~~~~~ //
+  const [editMode, setEditMode] = useState(false);
+  const [userToEdit, setUserToEdit] = useState(null);
+  const [newUserName, setNewUserName] = useState(null);
+
+  isHovered
+    ? (userNameCellSx.maxWidth = "none")
+    : (userNameCellSx.maxWidth = 175);
 
   useEffect(() => {
     const action = {
       type: "FETCH_USER_TABLE",
+      // payload: auth,
     };
     dispatch(action);
     const action2 = {
       type: "FETCH_ORGANIZATIONS",
+      // payload: auth,
     };
     dispatch(action2);
     const action3 = {
       type: "FETCH_CONSUMER_BOOKS",
+      // payload: auth,
     };
     dispatch(action3);
+    const action4 = {
+      type: "FETCH_ORG_ADMINS",
+    };
+    dispatch(action4);
   }, []);
 
   const tableData = userTableData() || [];
+  const orgAdmins = UserOrgAdmins() || [];
+  // console.log(orgAdmins);
   const allOrgs = allOrganizations() || [];
+  // console.log(allOrgs);
   const userBooks = userBooksData() || [];
 
   const fuse = new Fuse(tableData, {
@@ -112,17 +164,52 @@ export default function UserAdmin() {
     }
   };
 
-  const handleOrgSelect = (userId, id) => {
-    const dispatchAction = {
-      type: "SET_ORGANIZATION_ADMIN",
+  const handleOrgSelect = (userId, currentId, newId) => {
+    if (userId && currentId && newId) {
+      const dispatchAction = {
+        type: "REPLACE_ORG_ID",
+        payload: {
+          currentId: currentId,
+          user_id: userId,
+          org_id: newId,
+        },
+      };
+      // console.log(dispatchAction);
+      dispatch(dispatchAction);
+      showSaveSweetAlert({ label: "Organization Admin Set" });
+      setAddNewOrg(false);
+    }
+
+    if (userId && newId && !currentId) {
+      const addAction = {
+        type: "ADD_ORG_ADMIN",
+        payload: {
+          user_id: userId,
+          org_id: newId,
+        },
+      };
+      // console.log(addAction);
+      dispatch(addAction);
+    }
+  };
+
+  const handleAddOrg = (userId) => {
+    setAddNewOrg(true);
+    setSelectedUserId(userId);
+  };
+
+  const deleteOrgAdmin = (userId, orgId) => {
+    const deleteAction = {
+      type: "DELETE_ORG_ID",
       payload: {
-        id: userId,
-        org_id: id,
+        user_id: userId,
+        org_id: orgId,
       },
     };
-    console.log(dispatchAction);
-    dispatch(dispatchAction);
-    showSaveSweetAlert({ label: "Organization Admin Set" });
+
+    showDeleteSweetAlert(() => {
+      dispatch(deleteAction);
+    }, "removeOrgAdmin");
   };
 
   const handleOpenModal = () => {
@@ -134,7 +221,6 @@ export default function UserAdmin() {
   };
 
   const handleSearch = (value) => {
-    console.log(value);
     setQuery(value);
     if (value.trim() === "") {
       setFilteredUsers([]);
@@ -161,8 +247,47 @@ export default function UserAdmin() {
     setCurrentPage(1); // Reset to the first page when clearing the search
   };
 
+  const startEdit = (userId) => {
+    setUserToEdit(userId);
+    setEditMode(true);
+  };
+
+  const handleEditUser = () => {
+    const editAction = {
+      type: "EDIT_USER_NAME",
+      payload: {
+        id: userToEdit,
+        username: newUserName,
+      },
+    };
+    // console.log(editAction);
+    dispatch(editAction);
+    resetEditUser();
+
+    showSaveSweetAlert({ label: "User Name Updated" });
+  };
+
+  const resetEditUser = () => {
+    setEditMode(false);
+    setUserToEdit(null);
+    setNewUserName(null);
+  };
+
+  const handleDeleteUser = (userId) => {
+    const deleteAction = {
+      type: "DELETE_USER",
+      payload: {
+        id: userId,
+      },
+    };
+
+    showDeleteSweetAlert(() => {
+      dispatch(deleteAction);
+    }, "deleteUser");
+  };
+
   return (
-    <div style={{ ...containerStyle }}>
+    <Box sx={pageBoxStyle}>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Header ~~~~~~~~~~ */}
       <UserAdminHeader
@@ -200,6 +325,9 @@ export default function UserAdmin() {
               <TableCell sx={{ ...headerStyle, ...centerMe }}>
                 Coupon Book
               </TableCell>
+              <TableCell sx={{ ...headerStyle, ...centerMe }}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           {/* ~~~~~~~~~~ BODY ~~~~~~~~~~ */}
@@ -212,13 +340,37 @@ export default function UserAdmin() {
                     index % 2 === 0 ? "rgba(0, 0, 0, 0.04)" : "transparent",
                 }}
               >
-                <TableCell sx={wideCellSx}>{row.last_name}</TableCell>
-                <TableCell sx={wideCellSx}>{row.first_name}</TableCell>
                 <TableCell sx={wideCellSx}>
-                  <strong>{row.username}</strong>
+                  <Tooltip title={row.last_name}>
+                    <span>{row.last_name}</span>
+                  </Tooltip>
                 </TableCell>
-                <TableCell sx={{ ...shortCellSx, ...centerMe }}>
-                  {/* ~~~~~~~~~ Graphic Designer Column ~~~~~~~~~~ */}
+                <TableCell sx={wideCellSx}>
+                  <Tooltip title={row.first_name}>
+                    <span>{row.first_name}</span>
+                  </Tooltip>
+                </TableCell>
+                {/* ~~~~~~~~~~ Username Column ~~~~~~~~~~ */}
+                <TableCell>
+                  {editMode && userToEdit === row.id ? (
+                    <EditUsernameField
+                      newUserName={newUserName}
+                      setNewUserName={setNewUserName}
+                      resetEditUser={resetEditUser}
+                      handleEditUser={handleEditUser}
+                    />
+                  ) : (
+                    <strong>{row.username}</strong>
+                  )}
+                </TableCell>
+                {/* ~~~~~~~~~ Graphic Designer Column ~~~~~~~~~~ */}
+                <TableCell
+                  sx={{
+                    ...shortCellSx,
+                    ...centerMe,
+                    ...(row.id === 3 || row.id === 4 ? disabledCellSx : {}),
+                  }}
+                >
                   {row.graphic_designer ? (
                     <Typography
                       component="span"
@@ -253,53 +405,86 @@ export default function UserAdmin() {
                     />
                   )}
                 </TableCell>
-                <TableCell sx={{ ...shortCellSx, ...centerMe }}>
+                <TableCell
+                  sx={{
+                    ...shortCellSx,
+                    ...centerMe,
+                    ...(row.id === 3 || row.id === 4 ? disabledCellSx : {}),
+                  }}
+                >
                   {/* ~~~~~~~~~ Org Admin Column ~~~~~~~~~~ */}
-                  {row.org_admin ? (
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      sx={{ display: "inline" }}
-                    >
-                      Yes
-                    </Typography>
-                  ) : (
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      sx={{ display: "inline" }}
-                    >
-                      No
-                    </Typography>
-                  )}
-                  {row.id === 3 || row.id === 4 ? (
-                    <ActionSwitch
-                      disabled={true}
-                      isChecked={row.org_admin}
-                      onChange={(newValue) =>
-                        handleSwitch(row.id, "org_admin", newValue)
-                      }
-                    />
-                  ) : (
-                    <ActionSwitch
-                      isChecked={row.org_admin}
-                      onChange={(newValue) =>
-                        handleSwitch(row.id, "org_admin", newValue)
-                      }
-                    />
-                  )}
+                  <Box sx={{ ...flexRowSpace, position: "relative" }}>
+                    <Box>
+                      {row.org_admin ? (
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          sx={{ display: "inline" }}
+                        >
+                          Yes
+                        </Typography>
+                      ) : (
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          sx={{ display: "inline" }}
+                        >
+                          No
+                        </Typography>
+                      )}
+                      {row.id === 3 || row.id === 4 ? (
+                        <ActionSwitch
+                          disabled={true}
+                          isChecked={row.org_admin}
+                          onChange={(newValue) =>
+                            handleSwitch(row.id, "org_admin", newValue)
+                          }
+                        />
+                      ) : (
+                        <ActionSwitch
+                          isChecked={row.org_admin}
+                          onChange={(newValue) =>
+                            handleSwitch(row.id, "org_admin", newValue)
+                          }
+                        />
+                      )}
+                    </Box>
+                    {/* ~~~~~ Add Org button ~~~~~ */}
+                    <Box sx={{ position: "absolute", right: 0, top: -2 }}>
+                      <AddOrgBtn
+                        title="Assign New Org"
+                        disabled={!row.org_admin}
+                        sx={{
+                          fontSize: 18,
+                          color: !row.org_admin ? "gray" : successColor.color,
+                        }}
+                        onClick={() => handleAddOrg(row.id)}
+                      />
+                    </Box>
+                  </Box>
                 </TableCell>
-                <TableCell sx={{ ...wideCellSx, ...centerMe, maxWidth: 150 }}>
-                  {row.org_admin ? (
+                {/* ~~~~~ Org Admin Select Menu ~~~~~ */}
+                <TableCell sx={{ ...wideCellSx, ...centerMe, maxWidth: 240 }}>
+                  <OrgAdminCell
+                    orgAdmins={orgAdmins}
+                    row={row}
+                    allOrgs={allOrgs}
+                    handleOrgSelect={handleOrgSelect}
+                    removeOrg={deleteOrgAdmin}
+                    setAddNewOrg={setAddNewOrg}
+                  />
+                  {row.org_admin && row.id === selectedUserId && addNewOrg ? (
                     <OrgMenu
                       userId={row.id}
                       organizations={allOrgs}
                       defaultValue={row.org_id}
                       onChange={handleOrgSelect}
+                      setAddNewOrg={setAddNewOrg}
                     />
                   ) : null}
                 </TableCell>
-                <TableCell sx={centerMe}>
+                {/* ~~~~~~~~~~ Coupon Book Column ~~~~~~~~~~~ */}
+                <TableCell sx={{ ...shortCellSx, ...centerMe }}>
                   {row.show_book ? (
                     <Typography
                       component="span"
@@ -324,11 +509,19 @@ export default function UserAdmin() {
                     }
                   />
                 </TableCell>
+                {/* ~~~~~~~~~~ Actions Column ~~~~~~~~~~ */}
+                <TableCell sx={{ ...shortCellSx, ...centerMe }}>
+                  <UserActions
+                    user={row}
+                    startEdit={startEdit}
+                    handleDelete={handleDeleteUser}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Box>
   );
 }

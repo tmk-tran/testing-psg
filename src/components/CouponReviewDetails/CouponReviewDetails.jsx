@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Typography, Card, CardContent, Box, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { border, dueDateHighlight } from "../Utils/colors";
+import { dueDateHighlight } from "../Utils/colors";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import DenyProofModal from "../DenyProofModal/DenyProofModal";
 import CouponStatusDropdown from "../CouponStatusDropdown/CouponStatusDropdown";
@@ -21,12 +21,8 @@ import EditCouponModal from "./EditCouponModal";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { couponsData, mTasks, bookYear } from "../../hooks/reduxStore";
 import { centeredStyle, flexCenter, flexRowSpace } from "../Utils/pageStyles";
-import { grayBackground, highlightColor } from "../Utils/colors";
-import {
-  capitalizeFirstWord,
-  capitalizeWords,
-  formatDate,
-} from "../Utils/helpers";
+import { grayBackground } from "../Utils/colors";
+import { capitalizeFirstWord, formatDate } from "../Utils/helpers";
 
 const uploadBoxStyle = {
   width: "100%",
@@ -38,9 +34,7 @@ export default function CouponReviewDetails() {
   const dispatch = dispatchHook();
   const params = useParams();
   const merchantId = params.merchantId;
-  console.log(merchantId);
   const couponId = params.couponId;
-  console.log(couponId);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -77,22 +71,16 @@ export default function CouponReviewDetails() {
   const [showLocations, setShowLocations] = useState(false);
   // ~~~~~~~~~~ Book Year State ~~~~~~~~~~ //
   const [bookId, setBookId] = useState("");
-  const [currentYear, setCurrentYear] = useState("");
 
   const files = couponsData() || [];
-  console.log(files);
   const file = files.length > 0 ? files[0] : null;
   const formattedDate =
     file && file.expiration ? formatDate(file.expiration) : null;
-
-  console.log(file);
   const tasks = mTasks() || [];
-  console.log(tasks);
-  // const couponTask = tasks.find((task) => task.coupon_id === Number(couponId));
+  const year = bookYear();
   const couponTask = Array.isArray(tasks)
     ? tasks.find((task) => task.coupon_id === Number(couponId))
     : null;
-  console.log(couponTask);
 
   useEffect(() => {
     // Ensure that merchantId is available before dispatching the action
@@ -111,6 +99,10 @@ export default function CouponReviewDetails() {
       console.log(action2);
       dispatch(action2);
       setBookId(file?.bookId);
+    }
+
+    if (couponTask) {
+      setTaskStatus(couponTask.task_status);
     }
 
     if (couponId) {
@@ -135,7 +127,6 @@ export default function CouponReviewDetails() {
       dispatch(action);
     }
   }, [bookId]);
-  const year = bookYear();
 
   const handleDenyButtonClick = () => {
     // Open the modal when Deny button is clicked
@@ -164,11 +155,13 @@ export default function CouponReviewDetails() {
   const handleChangeRequest = (boolean) => {
     setChangesRequested(boolean);
     console.log("Changes requested? ", changesRequested);
+    setTaskStatus("In Progress");
   };
 
   const handleCompletedCoupon = (boolean) => {
     setCompletedCoupon(boolean);
     console.log("Completed coupon? ", completedCoupon);
+    setTaskStatus("Complete");
   };
 
   const handleUploadFile = () => {
@@ -325,10 +318,11 @@ export default function CouponReviewDetails() {
                         >
                           Front of Coupon
                         </Typography>
+
                         <Box
-                          sx={{
-                            ...centeredStyle,
-                          }}
+                        // sx={{
+                        //   ...centeredStyle,
+                        // }}
                         >
                           <FilePreview
                             directFile={file}
@@ -349,12 +343,14 @@ export default function CouponReviewDetails() {
                               </Button>
                             </div>
                           )}
-                          <Box sx={uploadBoxStyle}>
-                            <UploadFileButton
-                              onFileSelect={handleFrontViewUpload}
-                              title="Upload Front View PDF"
-                            />
-                          </Box>
+                          {frontViewFile && !isUploaded ? null : (
+                            <Box sx={uploadBoxStyle}>
+                              <UploadFileButton
+                                onFileSelect={handleFrontViewUpload}
+                                title="Upload Front View PDF"
+                              />
+                            </Box>
+                          )}
                         </Box>
                       </div>
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -374,7 +370,8 @@ export default function CouponReviewDetails() {
                         >
                           Back of Coupon
                         </Typography>
-                        <Box sx={{ position: "relative", ...centeredStyle }}>
+                        {/* <Box sx={{ ...centeredStyle }}> */}
+                        <Box>
                           <FilePreview
                             directFile={file}
                             showBackViewFiles={true}
@@ -394,12 +391,14 @@ export default function CouponReviewDetails() {
                               </Button>
                             </div>
                           )}
-                          <Box sx={uploadBoxStyle}>
-                            <UploadFileButton
-                              onFileSelect={handleBackViewUpload}
-                              title="Upload Back View PDF"
-                            />
-                          </Box>
+                          {backViewFile && !isUploaded ? null : (
+                            <Box sx={uploadBoxStyle}>
+                              <UploadFileButton
+                                onFileSelect={handleBackViewUpload}
+                                title="Upload Back View PDF"
+                              />
+                            </Box>
+                          )}
                         </Box>
                       </div>
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -429,6 +428,12 @@ export default function CouponReviewDetails() {
                         <Box sx={{ mt: 2, p: 1 }}>
                           <Box sx={flexRowSpace}>
                             <ToggleButton
+                              title={
+                                !showLocations
+                                  ? "View Locations Accepted"
+                                  : "View Coupon Details "
+                              }
+                              placement="top"
                               onClick={handleToggleLocations}
                               toggleState={showLocations}
                               label1="Locations"

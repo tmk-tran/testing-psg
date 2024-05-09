@@ -34,7 +34,7 @@ export default function AddFileButton({ filename, onFileSelect }) {
         value={
           file
             ? file.name
-            : isDisabled
+            : !filename || filename === ""
             ? "Please upload a high resolution logo"
             : filename
         }
