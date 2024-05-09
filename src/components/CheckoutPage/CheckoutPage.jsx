@@ -182,30 +182,6 @@ export default function CheckoutPage({ caseType }) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  
-  const acInfo = () => {
-    const contactData = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: phone,
-      address: address,
-      unit: selectedProducts[0].quantity,
-      city: city,
-      state: stateSelected,
-      zip: zip,
-      organization: orgId,
-      url: "",
-      year: activeYearId,
-      donation: customDonation,
-      bookType: selectedProducts[0].bookType,
-      type: caseType
-    }
-    console.log("Contact Data from acInfo",contactData)
-    dispatch({type: "ADD_CONTACT", payload: contactData})
-  }
-  
-
   const getStepContent = (step) => {
     switch (step) {
       case 0:
