@@ -1,7 +1,7 @@
 import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
-function* fetchPaypalTransactions(action) {
+function* fetchPaypalTransactions() {
 
   try {
     const items = yield axios.get(`/api/paypal/`);

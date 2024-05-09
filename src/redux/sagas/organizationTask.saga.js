@@ -27,7 +27,6 @@ function* organizationTask(action) {
         category
         task
         organization_id
-        organization_name
         assign
         due_date
         description
@@ -80,7 +79,6 @@ function* fetchAllOrganizationTasks(action) {
         category
         task
         organization_id
-        organization_name
         assign
         due_date
         description
