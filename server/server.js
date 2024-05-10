@@ -406,7 +406,6 @@ app.post(`/api/contact`, async (req, res) => {
         }
       );
       console.log("Response from ActiveCampaign:", response1.data.contact);
-      const contactEmail = response1.data.contact.email;
       const contactId = response1.data.contact.id;
       console.log(contactId);
 
