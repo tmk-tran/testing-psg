@@ -2,24 +2,18 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
 import "./Header.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
-import { border } from "../Utils/colors";
 import { historyHook } from "../../hooks/useHistory";
 import { flexCenter } from "../Utils/pageStyles";
-import { Region } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Component ~~~~~~~~~~ //
 import AccountMenu from "../AccountMenu/AccountMenu";
 import NavLinks from "../NavLinks/NavLinks";
 import RegionText from "./RegionText";
-import RegionSelect from "./RegionSelect";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export default function Header({ user }) {
-  console.log(user);
   const history = historyHook();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const regions = Region() || [];
-  console.log(regions);
 
   return (
     <>
@@ -47,23 +41,19 @@ export default function Header({ user }) {
             className="main-logo"
             src="../images/main-logo.jpg"
             alt="Preferred Saving Guide logo in colors blue and gold"
-            onClick={() => history.push("/home")}
+            onClick={() => history.push("/fargo/home")}
             style={{ cursor: "pointer" }}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ Region Text ~~~~~~~~~~ */}
           {user.id ? (
-            // <RegionText
-            //   isMobile={isMobile}
-            //   sx={flexCenter}
-            //   color="ghostwhite"
-            //   location="Fargo"
-            // />
-            <Box sx={{ ...flexCenter, width: isMobile ? 100 : 190 }}>
-            <RegionSelect isMobile={isMobile} regions={regions} />
-            </Box>
+            <RegionText
+              isMobile={isMobile}
+              sx={flexCenter}
+              color="ghostwhite"
+              location="Fargo"
+            />
           ) : null}
-          <Box sx={{ flexGrow: 1 }}></Box>
           <Box
             sx={{
               display: "flex",

@@ -48,8 +48,6 @@ ORDER BY LOWER (g.group_nickname) ASC;`;
   pool
     .query(queryText, [orgId])
     .then((result) => {
-      // console.log("orgId = ", orgId);
-      console.log("FROM orgDetails.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -63,7 +61,6 @@ ORDER BY LOWER (g.group_nickname) ASC;`;
  */
 router.put("/:id", rejectUnauthenticated, (req, res) => {
   const organization = req.body;
-  console.log("ORGANIZATION = ", organization);
 
   // Org Details
   const orgName = organization.organization_name;
@@ -97,7 +94,6 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
       orgId,
     ])
     .then((response) => {
-      console.log("response from orgDetails.router: ", response.rows);
       res.sendStatus(200);
     })
     .catch((err) => {

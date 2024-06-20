@@ -7,8 +7,8 @@
 }
 
 .org-detail-goal-container {
-  height: 28vh;
-  max-height: 32vh;
+  /* height: 28vh;
+  max-height: 32vh; */
   overflow-y: auto;
   border: 1px solid #273a9158;
   border-radius: 4px;

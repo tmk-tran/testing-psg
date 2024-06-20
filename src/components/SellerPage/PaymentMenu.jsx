@@ -10,7 +10,6 @@ import {
 
 export default function PaymentMenu({ isMobile, onPaymentSelect }) {
   const [payment, setPayment] = useState("");
-  console.log(payment);
 
   const handleChange = (event) => {
     setPayment(event.target.value);

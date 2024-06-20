@@ -37,10 +37,12 @@ export default function ConfirmNewYearModal({
 
   const handleSave = () => {
     if (yearSelected) {
+      console.log(yearSelected);
       const dispatchAction = {
         type: "SET_ACTIVE_YEAR",
         payload: selectedYearId,
       };
+      console.log(dispatchAction);
       dispatch(dispatchAction);
     }
     setModalOpen(false);

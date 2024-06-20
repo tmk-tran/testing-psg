@@ -38,50 +38,51 @@ router.get("/:id", (req, res) => {
   // GROUP BY
   // o.id, g.id, f.group_id
   // ORDER BY LOWER (g.group_nickname) ASC;`;
-  const queryText = `SELECT
-  f.id AS fundraiser_id,
-  f.title AS fundraiser_title,
-  f.description AS fundraiser_description,
-  f.start_date AS fundraiser_start_date,
-  f.end_date AS fundraiser_end_date,
-  f.requested_book_quantity,
-  f.book_quantity_checked_out,
-  f.book_checked_out_total_value,
-  f.book_quantity_checked_in,
-  f.books_sold,
-  f.money_received,
-  f.outstanding_balance,
-  f.is_deleted AS fundraiser_is_deleted,
-  f.closed AS fundraiser_closed,
-  f.goal AS fundraiser_goal,
+  const queryText = `
+          SELECT
+            f.id AS fundraiser_id,
+            f.title AS fundraiser_title,
+            f.description AS fundraiser_description,
+            f.start_date AS fundraiser_start_date,
+            f.end_date AS fundraiser_end_date,
+            f.requested_book_quantity,
+            f.book_quantity_checked_out,
+            f.book_checked_out_total_value,
+            f.book_quantity_checked_in,
+            f.books_sold,
+            f.money_received,
+            f.outstanding_balance,
+            f.is_deleted AS fundraiser_is_deleted,
+            f.closed AS fundraiser_closed,
+            f.goal AS fundraiser_goal,
+
+            g.id AS group_id,
+            g.organization_id AS group_organization_id,
+            g.department AS group_department,
+            g.sub_department AS group_sub_department,
+            g.group_nickname,
+            g.group_photo,
+            g.group_description,
+            g.is_deleted AS group_is_deleted,
   
-  g.id AS group_id,
-  g.organization_id AS group_organization_id,
-  g.department AS group_department,
-  g.sub_department AS group_sub_department,
-  g.group_nickname,
-  g.group_photo,
-  g.group_description,
-  g.is_deleted AS group_is_deleted,
-  
-  o.id AS organization_id,
-  o.organization_name,
-  o.type AS organization_type,
-  o.address AS organization_address,
-  o.city AS organization_city,
-  o.state AS organization_state,
-  o.zip AS organization_zip,
-  o.primary_contact_first_name,
-  o.primary_contact_last_name,
-  o.primary_contact_phone,
-  o.primary_contact_email,
-  o.organization_logo,
-  o.is_deleted AS organization_is_deleted,
-  o.organization_earnings
-FROM fundraiser f
-JOIN "group" g ON f.group_id = g.id
-JOIN organization o ON g.organization_id = o.id
-WHERE o.id = $1;`;
+            o.id AS organization_id,
+            o.organization_name,
+            o.type AS organization_type,
+            o.address AS organization_address,
+            o.city AS organization_city,
+            o.state AS organization_state,
+            o.zip AS organization_zip,
+            o.primary_contact_first_name,
+            o.primary_contact_last_name,
+            o.primary_contact_phone,
+            o.primary_contact_email,
+            o.organization_logo,
+            o.is_deleted AS organization_is_deleted,
+            o.organization_earnings
+          FROM fundraiser f
+          JOIN "group" g ON f.group_id = g.id
+          JOIN organization o ON g.organization_id = o.id
+          WHERE o.id = $1;`;
 
   pool
     .query(queryText, [orgId])
@@ -97,31 +98,32 @@ WHERE o.id = $1;`;
 //Get route for fundraisers with a specific group id
 router.get("/groupfundraisers/:id", (req, res) => {
   const groupId = req.params.id;
-  const queryText = `SELECT 
-  "f".id, 
-  "f".group_id, 
-  "f".title, 
-  "f".description, 
-  "f".photo, 
-  "f".requested_book_quantity, 
-  "f".book_quantity_checked_out, 
-  "f".book_checked_out_total_value, 
-  "f".book_quantity_checked_in, 
-  "f".books_sold, 
-  "f".money_received, 
-  "f".start_date, 
-  "f".end_date, 
-  "f".goal, 
-  "cb".year, 
-  "f".outstanding_balance, 
-  "f".closed,
-  "o".organization_earnings
-FROM "fundraiser" AS "f"
-JOIN "group" AS "g" ON "f".group_id = "g".id
-JOIN "organization" AS "o" ON "g".organization_id = "o".id
-JOIN "coupon_book" AS "cb" ON "f".coupon_book_id = "cb".id
-WHERE "f".group_id = $1
-ORDER BY "f".id ASC, "f".closed = false;`;
+  const queryText = `
+          SELECT 
+            "f".id, 
+            "f".group_id, 
+            "f".title, 
+            "f".description, 
+            "f".photo, 
+            "f".requested_book_quantity, 
+            "f".book_quantity_checked_out, 
+            "f".book_checked_out_total_value, 
+            "f".book_quantity_checked_in, 
+            "f".books_sold, 
+            "f".money_received, 
+            "f".start_date, 
+            "f".end_date, 
+            "f".goal, 
+            "cb".year, 
+            "f".outstanding_balance, 
+            "f".closed,
+            "o".organization_earnings
+          FROM "fundraiser" AS "f"
+          JOIN "group" AS "g" ON "f".group_id = "g".id
+          JOIN "organization" AS "o" ON "g".organization_id = "o".id
+          JOIN "coupon_book" AS "cb" ON "f".coupon_book_id = "cb".id
+          WHERE "f".group_id = $1
+          ORDER BY "f".id ASC, "f".closed = false;`;
 
   pool
     .query(queryText, [groupId])
@@ -137,12 +139,41 @@ ORDER BY "f".id ASC, "f".closed = false;`;
 //Post route for a new fundraiser, data comes from form inputs
 router.post("/", (req, res) => {
   const newFundraiser = req.body;
-  console.log(req.body);
-  const queryText = `INSERT INTO "fundraiser" ("group_id", "title", "description", "requested_book_quantity", "book_quantity_checked_out", "goal", "start_date", "end_date", "coupon_book_id", "books_sold", "book_quantity_checked_in", "money_received")
-  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`;
+  const queryText = `
+          INSERT INTO "fundraiser" (
+            "group_id", 
+            "title", 
+            "description", 
+            "requested_book_quantity", 
+            "book_quantity_checked_out", 
+            "goal", 
+            "start_date", 
+            "end_date", 
+            "coupon_book_id", 
+            "books_sold", 
+            "book_quantity_checked_in", 
+            "money_received"
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+        `;
 
-  pool.query(queryText, [newFundraiser.group_id, newFundraiser.title, newFundraiser.description, newFundraiser.requested_book_quantity, newFundraiser.book_quantity_checked_out, newFundraiser.goal, newFundraiser.start_date, newFundraiser.end_date, newFundraiser.coupon_book_id, newFundraiser.books_sold, newFundraiser.book_quantity_checked_in, newFundraiser.money_received])
+  pool
+    .query(queryText, [
+      newFundraiser.group_id,
+      newFundraiser.title,
+      newFundraiser.description,
+      newFundraiser.requested_book_quantity,
+      newFundraiser.book_quantity_checked_out,
+      newFundraiser.goal,
+      newFundraiser.start_date,
+      newFundraiser.end_date,
+      newFundraiser.coupon_book_id,
+      newFundraiser.books_sold,
+      newFundraiser.book_quantity_checked_in,
+      newFundraiser.money_received,
+    ])
     .then(() => {
+      console.log("Successful POST in fundraisers.router");
       res.sendStatus(201);
     })
     .catch((err) => {
@@ -155,8 +186,18 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   const id = req.params.id;
   const updatedAmount = req.body;
-  console.log(updatedAmount);
-  const queryText = `UPDATE "fundraiser" SET "title" = $1, "book_quantity_checked_out" = $2, "book_quantity_checked_in" = $3, "books_sold" = $4, "money_received" = $5, "goal" = $6 WHERE "id" = $7;`;
+
+  const queryText = `
+          UPDATE "fundraiser" 
+          SET 
+            "title" = $1, 
+            "book_quantity_checked_out" = $2, 
+            "book_quantity_checked_in" = $3, 
+            "books_sold" = $4, 
+            "money_received" = $5, 
+            "goal" = $6 
+          WHERE "id" = $7;
+        `;
 
   pool
     .query(queryText, [
@@ -169,6 +210,7 @@ router.put("/:id", (req, res) => {
       id,
     ])
     .then(() => {
+      console.log("Successful PUT in fundraisers.router");
       res.sendStatus(200);
     })
     .catch((err) => {
@@ -179,10 +221,17 @@ router.put("/:id", (req, res) => {
 //PUT route that sets a fundraiser to closed
 router.put("/close/:id", (req, res) => {
   const id = req.params.id;
-  const queryText = `UPDATE "fundraiser" SET "closed" = 'true' WHERE "id" = $1;`;
+
+  const queryText = `
+          UPDATE "fundraiser" 
+          SET "closed" = 'true' 
+          WHERE "id" = $1;
+        `;
+
   pool
     .query(queryText, [id])
     .then(() => {
+      console.log("Successful PUT to /close in fundraisers.router");
       res.sendStatus(200);
     })
     .catch((err) => {
@@ -193,10 +242,17 @@ router.put("/close/:id", (req, res) => {
 //PUT route to reopen a fundraiser
 router.put("/open/:id", (req, res) => {
   const id = req.params.id;
-  const queryText = `UPDATE "fundraiser" SET "closed" = 'false' WHERE "id" = $1;`;
+
+  const queryText = `
+          UPDATE "fundraiser" 
+          SET "closed" = 'false' 
+          WHERE "id" = $1;
+        `;
+
   pool
     .query(queryText, [id])
     .then(() => {
+      console.log("Successful PUT to /open in fundraisers.router");
       res.sendStatus(200);
     })
     .catch((err) => {
@@ -208,10 +264,17 @@ router.put("/open/:id", (req, res) => {
 //Delete route to set a fundraiser to deleted, not used in current scope of admin dashboard
 router.put("/delete/:id", (req, res) => {
   const id = req.params.id;
-  const queryText = `UPDATE "fundraiser" SET "is_deleted" = 'true' WHERE "id" = $1;`;
+
+  const queryText = `
+          UPDATE "fundraiser" 
+          SET "is_deleted" = 'true' 
+          WHERE "id" = $1;
+        `;
+
   pool
     .query(queryText, [id])
     .then(() => {
+      console.log("Successful PUT to /delete in fundraisers.router");
       res.sendStatus(200);
     })
     .catch((err) => {

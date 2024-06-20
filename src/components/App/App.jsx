@@ -5,6 +5,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import UserProfile from "../UserProfile/UserProfile";
@@ -31,20 +32,21 @@ import OrderComplete from "../CheckoutPage/OrderComplete";
 import Transactions from "../Transactions/Transactions";
 import MerchantDetails from "../Details/MerchantDetails";
 import UserAdmin from "../UserAdmin/UserAdmin";
+import RecoverPasswordForm from "../RecoverPasswordForm/RecoverPasswordForm";
+import HelpPage from "../UserDocs/HelpPage";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { Region, User } from "../../hooks/reduxStore";
+import { User } from "../../hooks/reduxStore";
 import { getCurrentSeason } from "../Utils/helpers";
 
 // ~~~~~ Theme establishing global color for MUI ~~~~~
 const theme = createTheme({
   typography: {
     fontSize: 18,
-    // fontFamily: 'Lato, "Helvetica Neue", Arial, sans-serif',
-    fontFamily: "Helvetica Neue",
+    fontFamily: "Helvetica, sans-serif",
   },
   palette: {
     primary: {
@@ -61,41 +63,35 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
-  const activeRegion = Region() || [];
-  console.log(user);
-  console.log(activeRegion);
-  const [region, setRegion] = useState(null);
-  console.log(region);
   const [orgAdminId, setOrgAdminId] = useState(null);
-  console.log(orgAdminId);
+
+  useEffect(() => {
+    const userCookie = Cookies.get('user');
+
+    if (userCookie) {
+      // Set user in Redux state
+      // dispatch({ type: 'SET_USER', payload: JSON.parse(userCookie) });
+      dispatch({ type: "FETCH_USER" });
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     // Set the current season
     const currentSeason = getCurrentSeason();
-    console.log(currentSeason);
 
-    dispatch({ type: "FETCH_USER" });
+    // dispatch({ type: "FETCH_USER" });
+    
+    // if (user.id) {
+    //   // User is logged in, fetch user data
+    //   dispatch({ type: "FETCH_USER" });
+    // }
     // dispatch({ type: "FETCH_COUPON_BOOKS" });
     const dispatchAction2 = {
       type: "FETCH_BOOK_YEAR",
       payload: currentSeason,
     };
-    console.log(dispatchAction2);
     dispatch(dispatchAction2);
-  }, []);
-
-  useEffect(() => {
-    // Get the Regions available to the user
-    const dispatchAction = {
-      type: "FETCH_REGIONS",
-    };
-    console.log(dispatchAction);
-    dispatch(dispatchAction);
-  }, []);
-
-  // useEffect(() => {
-  //   if (region.active)
-  // }, []);
+  }, [user.id]);
 
   useEffect(() => {
     if (user.org_admin) {
@@ -196,14 +192,12 @@ function App() {
                   <Details
                     isMerchantTaskPage={false}
                     isTaskPage={false}
-                    isMerchantDetails={false}
                     isOrgAdminPage={false}
                   />
                 ) : (
                   <Details
                     isMerchantTaskPage={false}
                     isTaskPage={false}
-                    isMerchantDetails={false}
                     isOrgAdminPage={true}
                   />
                 )}
@@ -301,6 +295,10 @@ function App() {
                 )}
               </Route>
 
+              <Route exact path="/recover">
+                <RecoverPasswordForm />
+              </Route>
+
               <Route exact path="/registration">
                 {user.id ? (
                   // If the user is already logged in,
@@ -315,6 +313,10 @@ function App() {
               <Route exact path="/fargo/home">
                 {user.id ? <Redirect to="/fargo/home" /> : <LoginPage />}
                 {/* {!user.is_admin && !user.org_admin && <Redirect to="/coupon" />} */}
+              </Route>
+
+              <Route exact path="/help">
+                <HelpPage />
               </Route>
 
               {/* If none of the other routes matched, we will show a 404. */}

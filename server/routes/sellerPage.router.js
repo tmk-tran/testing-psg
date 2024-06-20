@@ -24,7 +24,7 @@ router.get("/:refId", (req, res) => {
   pool
     .query(queryText, [refId])
     .then((result) => {
-      console.log("from GET /id seller.router: ", result.rows);
+      console.log("from GET /id sellerPage.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {

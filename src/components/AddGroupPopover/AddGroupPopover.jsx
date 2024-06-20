@@ -20,8 +20,6 @@ import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import ModalButtons from "../Modals/ModalButtons";
 
 export default function BasicPopover({ info, groups, onChange }) {
-  console.log(info);
-  console.log(groups);
   const dispatch = useDispatch();
   // state for the popover
   const [anchorEl, setAnchorEl] = useState(null);
@@ -69,14 +67,10 @@ export default function BasicPopover({ info, groups, onChange }) {
 
   return (
     <div className="popover-container">
-        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-        {/* ~~~~~~~~~~ Add group button ~~~~~~~~~~ */}
+      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+      {/* ~~~~~~~~~~ Add group button ~~~~~~~~~~ */}
       <Tooltip title="Add a new group">
-        <Button
-          id="add-group-button"
-          onClick={handleClick}
-          fullWidth
-        >
+        <Button id="add-group-button" onClick={handleClick} fullWidth>
           <AddBoxIcon />
           &nbsp;Group
           {/* Add Group */}

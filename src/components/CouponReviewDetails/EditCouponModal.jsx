@@ -11,19 +11,23 @@ import {
   InputAdornment,
 } from "@mui/material";
 // ~~~~~~~~~~~ Hooks ~~~~~~~~~~~ //
+import { couponsData, mLocations } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~ //
 import EditButton from "../Buttons/EditButton";
 import ModalButtons from "../Modals/ModalButtons";
+import LocationSelect from "../CouponReviewCard/LocationSelect";
+import LocationsRadioGroup from "../CouponReviewCard/LocationsRadioGroup";
+import YearSelect from "../OrgSellers/YearSelect";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600,
+  width: 700,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -41,30 +45,110 @@ export default function EditCouponModal({ file }) {
   console.log(params);
   const couponId = params.couponId;
   const merchantId = params.merchantId;
+  // ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~ //
   const [open, setOpen] = useState(false);
-  const [offer, setOffer] = useState("");
+  const [offer, setOffer] = useState(null);
+  const [validYear, setValidYear] = useState(null);
+  console.log(validYear);
   const [value, setValue] = useState(null);
-  const [exclusions, setExclusions] = useState("");
-  const [expiration, setExpiration] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [website, setWebsite] = useState("");
+  const [exclusions, setExclusions] = useState(null);
+  const [expiration, setExpiration] = useState(null);
+  const [additionalInfo, setAdditionalInfo] = useState(null);
+
+  // ~~~~~~~~~~ Location State ~~~~~~~~~~~~~~~~~~~ //
+  // FIGURE OUT WHY THIS IS GETTING FORMATTED AS AN ARRAY
+  const [selectedLocations, setSelectedLocations] = useState(null);
+  console.log(selectedLocations);
+  const [selectedLocationId, setSelectedLocationId] = useState(null);
+  console.log(selectedLocationId);
+  const [selectAllLocations, setSelectAllLocations] = useState(false);
+  console.log(selectAllLocations);
+  const [participatingLocations, setParticipatingLocations] = useState(false);
+  console.log(participatingLocations);
+  const [isDropdownSelected, setIsDropdownSelected] = useState(false);
+  // ~~~~~~~~~~ Errors ~~~~~~~~~~~~~~~~~~~~~~~ //
+  const [locationsError, setLocationsError] = useState(false);
+
+  const locations = mLocations() || [];
+  console.log(locations);
+  const couponLocations = couponsData() || [];
+  console.log(couponLocations);
+
+  // Obtain the coupon book id for the year, use in edit
+  const coupon = couponLocations[0];
+  const couponBookId = coupon ? coupon.bookId : null;
+  console.log(couponBookId);
+
+  const validLocationId = couponLocations.map((coupon) => coupon.location_id);
+  console.log(validLocationId);
 
   useEffect(() => {
     if (file) {
-      setOffer(file.offer || "");
+      setOffer(file.offer || null);
+      setValidYear(file.bookId || null);
       setValue(file.value || 0);
-      setExclusions(file.exclusions || "");
-      setExpiration(file.expiration || "");
-      setAdditionalInfo(file.additionalInfo || "");
-      setPhoneNumber(file.phoneNumber || "");
-      setWebsite(file.website || "");
+      setExclusions(file.exclusions || null);
+      setExpiration(file.expiration || null);
+      setAdditionalInfo(file.additionalInfo || null);
     }
   }, [file]);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  // useEffect(() => {
+  //   // Set the initial value when the component mounts
+  //   if (validLocationId && validLocationId.length === 1) {
+  //     const initialLocation = locations.find(
+  //       (loc) => loc.id === validLocationId[0]
+  //     );
+  //     console.log(initialLocation);
+  //     if (initialLocation) {
+  //       setSelectedLocations(initialLocation.location_name);
+  //     }
+  //   }
 
+  // }, [validLocationId, locations, selectedLocations, participatingLocations]);
+  useEffect(() => {
+    if (open && validLocationId && validLocationId.length === 1) {
+      const initialLocation = locations.find(
+        (loc) => loc.id === validLocationId[0]
+      );
+      if (initialLocation) {
+        setSelectedLocations(initialLocation.location_name);
+        // setSelectedLocationId(initialLocation.id);
+      }
+    }
+  }, [open, validLocationId, locations]);
+
+  useEffect(() => {
+    if (isDropdownSelected) {
+      setSelectAllLocations(false);
+      setParticipatingLocations(false);
+    }
+  }, [isDropdownSelected])
+  console.log(isDropdownSelected);
+  console.log(selectAllLocations);
+  console.log(participatingLocations);
+
+  const handleOpen = () => {
+    setOpen(true);
+    if (validLocationId && validLocationId.length === 1) {
+      const initialLocation = locations.find(
+        (loc) => loc.id === validLocationId[0]
+      );
+      console.log(initialLocation);
+      if (initialLocation) {
+        setSelectedLocations(initialLocation.location_name);
+      }
+    }
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedLocationId(null);
+    setSelectedLocations(null);
+    setSelectAllLocations(null);
+    setIsDropdownSelected(false);
+  };
+
+  // add bookId here to edit the assigned year, also to saga and router
   const updateCoupon = () => {
     const dispatchAction = {
       type: "UPDATE_COUPON",
@@ -76,6 +160,8 @@ export default function EditCouponModal({ file }) {
         exclusions: exclusions,
         expiration: expiration,
         additional_info: additionalInfo,
+        book_id: validYear,
+        location_ids: [selectedLocationId],
       },
     };
     console.log(dispatchAction);
@@ -84,14 +170,40 @@ export default function EditCouponModal({ file }) {
   };
 
   const resetForm = () => {
-    setOffer("");
+    setOffer(null);
+    setValidYear(null);
     setValue(0);
-    setExclusions("");
-    setExpiration("");
-    setAdditionalInfo("");
+    setExclusions(null);
+    setExpiration(null);
+    setAdditionalInfo(null);
+    setSelectedLocationId(null);
     showSaveSweetAlert({ label: "Coupon Updated" });
 
     handleClose();
+  };
+
+  // Sets the Location Ids from Radio Group
+  const handleLocationChange = (locationId) => {
+    console.log(locationId);
+    setSelectedLocationId(locationId);
+    setLocationsError(false);
+  };
+  console.log(selectedLocationId);
+  console.log(participatingLocations);
+
+  const handleSelectAllLocs = (boolean) => {
+    console.log(boolean);
+    setSelectAllLocations(boolean);
+  };
+
+  const handleParticipatingLocations = (boolean) => {
+    setParticipatingLocations(boolean);
+  };
+
+  // For the dropdown selection, sets to true or false
+  const handleDropdownSelectChange = (state) => {
+    console.log(state);
+    setIsDropdownSelected(state);
   };
 
   return (
@@ -109,7 +221,33 @@ export default function EditCouponModal({ file }) {
           </Typography>
           <Divider sx={lineDivider} />
           <Grid container spacing={2}>
+            {/* ~~~~~~ RADIO BUTTON GROUP ~~~~~ */}
             <Grid item xs={12}>
+              <Box
+                sx={{
+                  border: "1px solid rgba(0, 0, 0, 0.23)", // Match the border style
+                  borderRadius: "4px", // Match the border radius
+                  padding: "6px 10px", // Match the padding
+                  marginBottom: "16px", // Match the margin bottom
+                  mt: 3.6,
+                }}
+              >
+                <LocationsRadioGroup
+                  acceptedAt={validLocationId}
+                  onSelectAll={handleSelectAllLocs}
+                  onSelectParticipatingLocs={handleParticipatingLocations}
+                  isDropdownSelected={isDropdownSelected}
+                  onDropdownSelectChange={handleDropdownSelectChange}
+                  locations={locations}
+                  selectedLocations={selectedLocations}
+                  participatingLocs={participatingLocations}
+                  selectAllLocations={selectAllLocations}
+                  onLocationChange={handleLocationChange}
+                />
+              </Box>
+            </Grid>
+            {/* ~~~~~~ OFFER ~~~~~ */}
+            <Grid item xs={6}>
               <TextField
                 label="Offer"
                 fullWidth
@@ -118,6 +256,13 @@ export default function EditCouponModal({ file }) {
                   setOffer(e.target.value);
                 }}
                 sx={textfieldStyle}
+              />
+            </Grid>
+            {/* ~~~~~ Assigned Year Field ~~~~~ */}
+            <Grid item xs={6}>
+              <YearSelect
+                setYear={setValidYear}
+                assignedYearId={couponBookId}
               />
             </Grid>
             <Grid item xs={12}>
@@ -143,6 +288,7 @@ export default function EditCouponModal({ file }) {
                 }}
               />
             </Grid>
+
             <Grid item xs={6}>
               <InputLabel>Value</InputLabel>
               <TextField
@@ -170,27 +316,6 @@ export default function EditCouponModal({ file }) {
                   setExpiration(e.target.value);
                 }}
                 sx={textfieldStyle}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                type="number"
-                label="Phone"
-                fullWidth
-                value={phoneNumber}
-                onChange={(e) => {
-                  setPhoneNumber(e.target.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Website"
-                fullWidth
-                value={website}
-                onChange={(e) => {
-                  setWebsite(e.target.value);
-                }}
               />
             </Grid>
           </Grid>

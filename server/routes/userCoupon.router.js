@@ -56,6 +56,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
             AND uc.redeemed = false
             AND uc.show_book = true
             AND cb.id = $2
+            AND c.is_deleted = false
           GROUP BY
             c.id, m.merchant_name, cl.coupon_id, uc.show_book
           ORDER BY

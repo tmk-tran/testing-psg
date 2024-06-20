@@ -83,6 +83,26 @@ function* changeAssignedOrg(action) {
   }
 }
 
+function* changeDueDate(action) {
+  console.log(action.payload);
+  const taskId = action.payload.id;
+  const orgId = action.payload.accountId;
+
+  try {
+    yield axios.put(`/api/organizationTask/duedate/${taskId}`, action.payload);
+    console.log(
+      "organizationTask dueDate PUT action.payload = ",
+      action.payload
+    );
+    yield put({
+      type: "FETCH_ALL_ORGANIZATION_TASKS",
+      payload: orgId,
+    });
+  } catch (err) {
+    console.log("error in editOrgTask dueDate Saga", err);
+  }
+}
+
 function* deleteOrganizationTask(action) {
   try {
     const items = yield axios.delete(
@@ -109,5 +129,6 @@ export default function* organizationTaskSaga() {
   yield takeEvery("ADD_ORGANIZATION_TASK", addOrganizationTask);
   yield takeEvery("UPDATE_ORGANIZATION_TASK", editOrganizationTask);
   yield takeEvery("CHANGE_ASSIGNED_ORG", changeAssignedOrg);
+  yield takeEvery("CHANGE_DUE_DATE_ORG", changeDueDate);
   yield takeEvery("ARCHIVE_ORGANIZATION_TASK", deleteOrganizationTask);
 }

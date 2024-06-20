@@ -1,6 +1,37 @@
-# PSG Admin Dashboard
+# Table of Contents
 
-This is an admin dashboard for the Preferred Savings Guide based in Fargo, ND. Admin users will be able to log in, add, delete, and edit organizations and groups that host fundraisers. The fundraisers track the books requested, sold, checked back in, as well as money received and outstanding balance. This is the first step in a bigger project to digitize part of their coupon book to cut costs and be less paper waste for the enviorment.
+1. [Installation](#installation)
+2. [Project Database Setup](#database-configuration)
+    - [SQL Files](#sql-files)
+3. [Built With](#built-with)
+
+
+# Preferred Savings Guide (co-op project, Dec 2023 - May 2024)
+This application is a continuation of our client project developed in the Koss cohort at Emerging Digital Academy. This second version aims to enhance the existing platform by providing a comprehensive solution for coupon development, management, and sales. The key objectives of this project include:
+
+ - Coupon Development Platform: Enable administrators to create, manage, and publish coupons, facilitating the entire lifecycle from initial design to consumer availability.
+
+ - Task Tracking System: Implement a task management feature for administrators to track, create, update, and complete tasks. This feature also enables communication with graphic designers for coupon development and facilitates communication with merchants.
+
+ - Seller Organization: Provide tools to organize sellers associated with organizations. This includes tracking metrics such as books sold, due, sales data, and other relevant information.
+
+ - Unique Seller URLs: Generate and assign unique URLs to sellers, allowing them to sell coupon books for their fundraisers effectively.
+
+ - PayPal Integration: Integrate PayPal payment gateway to facilitate secure transactions within the application.
+
+This project aims to streamline the coupon management process, enhance seller organization, and improve overall user experience for both administrators and sellers.
+
+## Additional objectives:
+In addition to the main objectives, various enhancements provided our team with the opportunity to further expand the application's functionality, incorporating:
+
+ - Active Campaign API Integration: Implement the Active Campaign API to automate email communication with users. This integration allows for user management tasks such as assigning new users to the application and facilitating password reset processes.
+
+ - Enhanced User Management: Develop a feature for application administrators to manage user information more effectively. This includes editing usernames, assigning coupon books to users, and removing users from the application as needed.
+
+
+# PSG Admin Dashboard (client project, Nov 2023)
+
+The first version of this project was developed as an admin dashboard for the Preferred Savings Guide based in Fargo, ND. Admin users will be able to log in, add, delete, and edit organizations and groups that host fundraisers. The fundraisers track the books requested, sold, checked back in, as well as money received and outstanding balance. This is the first step in a bigger project to digitize part of their coupon book to cut costs and be less paper waste for the enviorment.
 
 ### Authors
 
@@ -8,7 +39,7 @@ Joe Colago, Alyssa Nichols, and T Mark Schisel
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. This project should be able to run in your favorite IDE. I used VS code while building it.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. This project should be able to run in your favorite IDE. VS Code was used for development.
 
 ### Prerequisites
 
@@ -30,13 +61,21 @@ Before you get started, make sure you have the following software installed on y
 SERVER_SESSION_SECRET=superDuperSecret
 ```
 
-While you're in your new `.env` file, take the time to replace `superDuperSecret` with some long random string like `25POUbVtx6RKVNWszd9ERB9Bb6` to keep your application secure. Here's a site that can help you: [https://passwordsgenerator.net/](https://passwordsgenerator.net/). If you don't do this step, create a secret with less than eight characters, or leave it as `superDuperSecret`, you will get a warning. 8. Create a database named `psg_project` in PostgresSQL
+While you're in your new `.env` file, take the time to replace `superDuperSecret` with some long random string like `imArandomString12345changeMe` to keep your application secure. Here's a site that can help you: [https://passwordsgenerator.net/](https://passwordsgenerator.net/). If you don't do this step, create a secret with less than eight characters, or leave it as `superDuperSecret`, you will get a warning. 8. Create a database named `psg_project` in PostgresSQL
+
 -If you would like to name your database something else, you will need to change `psg_project` to the name of your new database name in `server/modules/pool.js` 9. The queries in the database.sql file are set up to create all the necessary tables that you need, as well as mock data to test the app. Copy and paste those queries in the SQL query of the database. If this is going to production, leave out the mock data. 10. Start postgres if not running already by using `brew services start postgresql` 11. Run `npm run server` in your VS Code terminal 12. Open a second terminal and run `npm run client` 13. Navigate to `localhost:3000`
 
 ## Database Configuration
 
-- For this project, we created a database using Postico 2
-- If you would like to create a database using mock data, please review the database.sql file
+For this project, we created a database using Postico 2. If you would like to create a database using mock data, please review the `.sql` files provided below:
+
+### SQL Files
+
+- **[db.sql](./db.sql)**: Used for FLY DB deployment.
+
+- **[client_project_db.sql](./client_project_db.sql)**: The original schema we used for the client project, containing some mock data.
+
+- **[current_database.sql](./current_database.sql)**: A copy of the most current schema used with this application. This file should be used to set up the application. Functions and triggers for tables are located here.
 
 ## Built With
 

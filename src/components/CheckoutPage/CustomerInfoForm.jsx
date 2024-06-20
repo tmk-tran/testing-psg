@@ -31,7 +31,16 @@ export default function CustomerInfoForm({
   stateSelected,
   zip,
   setZip,
+  setFormSubmitted,
 }) {
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    // Clear any existing email format error when user types in the email field
+    setErrors({ ...errors, email: "" });
+    setFormSubmitted(false);
+  };
+
   return (
     <div style={{ width: "90%", margin: "0 auto", padding: isMobile ? 0 : 5 }}>
       {/* ~~~~~~~~~~ Header ~~~~~~~~~~~~~~ */}
@@ -88,36 +97,22 @@ export default function CustomerInfoForm({
               label="Email"
               value={email}
               onChange={(e) => {
-                setEmail(e.target.value);
+                handleEmailChange(e);
                 setErrors((prevErrors) => {
-                  return { ...prevErrors, email: "" };
+                  return { ...prevErrors, email: "", emailCheck: "" };
                 });
               }}
               variant="outlined"
               fullWidth
               required
-              error={!!errors.email}
-              helperText={errors.email}
+              error={!!errors.email || !!errors.emailCheck}
+              helperText={errors.email || errors.emailCheck}
             />
           </Grid>
           {/* ~~~~~~~~~ Phone Number ~~~~~~~~~~~~~~~ */}
           <Grid item xs={12} sm={6}>
-            {/* <TextField
-              label="Phone Number"
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-                setErrors((prevErrors) => {
-                  return { ...prevErrors, phone: "" };
-                });
-              }}
-              variant="outlined"
-              fullWidth
-              required
-              error={!!errors.phone}
-              helperText={errors.phone}
-            /> */}
             <PhoneInput
+              caseType="addAccount"
               phoneNumber={phone}
               setPhoneNumber={setPhone}
               setPhoneError={() =>
@@ -190,6 +185,7 @@ export default function CustomerInfoForm({
           {/* ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~~ */}
           <Grid item xs={12} sm={3}>
             <StateSelector
+              inputLabel="State*"
               onChange={handleStateChange}
               stateSelected={stateSelected}
               isSubmitted={isSubmitted}

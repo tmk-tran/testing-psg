@@ -7,21 +7,8 @@ const {
 
 router.post("/", rejectUnauthenticated, (req, res) => {
   const coupon = req.body;
-  console.log("from couponRedemption.router: ", coupon);
-  const couponId = coupon.couponId;
-  const locationId = coupon.locationId;
-  const redeemedBy = coupon.userId;
 
-  // const queryText = `
-  //       INSERT INTO 
-  //           coupon_redemption (
-  //               coupon_id, 
-  //               location_id, 
-  //               redeemed_by)
-  //       VALUES ($1, $2, $3);
-    
-  //   `;
-      const queryText = `
+  const queryText = `
       INSERT INTO 
           coupon_redemption (
               coupon_id, 
@@ -29,15 +16,20 @@ router.post("/", rejectUnauthenticated, (req, res) => {
               redeemed_by
           )
       VALUES 
-          ${coupon.locationId.map((_, index) => `($1, $${index + 2}, $${coupon.locationId.length + 2})`).join(", ")};
+          ${coupon.locationId
+            .map(
+              (_, index) =>
+                `($1, $${index + 2}, $${coupon.locationId.length + 2})`
+            )
+            .join(", ")};
       `;
 
-      const params = [coupon.couponId, ...coupon.locationId, coupon.userId];
+  const params = [coupon.couponId, ...coupon.locationId, coupon.userId];
 
   pool
     .query(queryText, params)
     .then((response) => {
-      console.log("response from couponRedemption.router: ", response.rows);
+      console.log("Successful POST in couponRedemption.router");
       res.sendStatus(201);
     })
     .catch((err) => {

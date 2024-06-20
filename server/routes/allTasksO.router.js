@@ -6,11 +6,17 @@ const {
 } = require("../modules/authentication-middleware");
 
 router.get("/", rejectUnauthenticated, (req, res) => {
-  const queryText = `SELECT * FROM organization_tasks ORDER BY due_date ASC;`;
+  const queryText = `
+          SELECT ot.*, o.organization_name
+          FROM organization_tasks ot
+          JOIN organization o ON ot.organization_id = o.id
+          ORDER BY ot.due_date ASC;
+        `;
+
   pool
     .query(queryText)
     .then((result) => {
-      console.log("FROM allTasksO.router: ", result.rows);
+      console.log("Successful GET from allTasksO.router");
       res.send(result.rows);
     })
     .catch((err) => {
@@ -20,23 +26,31 @@ router.get("/", rejectUnauthenticated, (req, res) => {
 });
 
 router.post("/", rejectUnauthenticated, (req, res) => {
-  const queryText = `INSERT INTO "organization_tasks" (category, task, organization_id, organization_name, assign, due_date, description, task_status) 
-                                            VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
   const category = req.body.category;
   const task = req.body.task;
   const organizationId = req.body.organization_id;
-  const organizationName = req.body.organization_name;
   const assign = req.body.assign;
   const dueDate = req.body.due_date;
   const description = req.body.description;
   const taskStatus = req.body.task_status;
+
+  const queryText = `
+          INSERT INTO "organization_tasks" (
+            category, 
+            task, 
+            organization_id, 
+            assign, 
+            due_date, 
+            description, 
+            task_status
+          ) 
+          VALUES ($1, $2, $3, $4, $5, $6, $7);`;
 
   pool
     .query(queryText, [
       category,
       task,
       organizationId,
-      organizationName,
       assign,
       dueDate,
       description,
@@ -55,10 +69,15 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
   const taskId = req.params.id;
   const taskStatus = req.body.task_status;
 
-  const queryText = `UPDATE "organization_tasks" SET task_status = $1 WHERE id = $2;`;
+  const queryText = `
+          UPDATE "organization_tasks" 
+          SET task_status = $1 
+          WHERE id = $2;
+        `;
   pool
     .query(queryText, [taskStatus, taskId])
     .then((response) => {
+      console.log("Successful PUT in allTasksO.router");
       res.sendStatus(200);
     })
     .catch((err) => {
@@ -69,7 +88,7 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
 
 router.delete("/:id", (req, res) => {
   const taskId = req.params.id;
-  console.log("taskId = ", taskId);
+
   pool
     .query(
       `UPDATE "organization_tasks"
@@ -78,6 +97,7 @@ router.delete("/:id", (req, res) => {
       [taskId]
     )
     .then((response) => {
+      console.log("Successful DELETE in allTasksO.router");
       res.sendStatus(200);
     })
     .catch((error) => {

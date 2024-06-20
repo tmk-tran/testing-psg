@@ -17,7 +17,6 @@ import {
 // ~~~~~~~~~~ Icons ~~~~~~~~~~
 import AddBoxIcon from "@mui/icons-material/AddBox";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
-import { border, hoverAccept, hoverDeny } from "../Utils/colors";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { capitalizeFirstWord, saveBtnWidth } from "../Utils/helpers";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
@@ -56,12 +55,13 @@ const taskOptions = {
 const userOptions = ["Chris", "Lacey", "Wendy"];
 
 // ~~~~~~~~~ ADD USE ALERT HERE FOR SUCCESS ALERT ~~~~~~~~~~~~~~~~~~~ ADD USE ALERT HERE FOR SUCCESS ALERT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-export default function BasicModal({
+export default function NewTaskModal({
   tabs,
   merchantTab,
   customIcon,
   customText,
   caseType,
+  disabled,
 }) {
   console.log(tabs);
   console.log(merchantTab);
@@ -197,7 +197,6 @@ export default function BasicModal({
             category: firstMenuChoice,
             task: secondMenuChoice,
             merchant_id: merchantId,
-            merchant_name: thirdMenuChoice,
             assign: fourthMenuChoice,
             due_date: dueDate,
             description: additionalDetails,
@@ -210,7 +209,6 @@ export default function BasicModal({
             category: firstMenuChoice,
             task: secondMenuChoice,
             merchant_id: merchantId,
-            merchant_name: thirdMenuChoice,
             assign: fourthMenuChoice,
             due_date: dueDate,
             description: additionalDetails,
@@ -220,11 +218,9 @@ export default function BasicModal({
           }
         : {
             // Adjust the payload properties for organization logic
-            // Example:
             category: firstMenuChoice,
             task: secondMenuChoice,
             organization_id: organizationId,
-            organization_name: thirdMenuChoice,
             assign: fourthMenuChoice,
             due_date: dueDate,
             description: additionalDetails,
@@ -249,6 +245,7 @@ export default function BasicModal({
           sx={{ mt: 1 }}
           onClick={handleOpen}
           fullWidth
+          disabled={disabled}
         >
           {customIcon ? (
             customIcon // Render the custom icon if provided

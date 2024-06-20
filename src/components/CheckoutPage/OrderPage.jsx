@@ -125,16 +125,18 @@ export default function OrderPage({ caseType }) {
     setOrderTotal(total);
   };
 
-  const handleFormChange = (incomingData) => {
-    console.log(incomingData);
+  // REMOVED THIS FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-    const dispatchAction = {
-      type: "ADD_CUSTOMER",
-      payload: incomingData,
-    };
-    console.log("Dispatching action:", dispatchAction);
-    dispatch(dispatchAction);
-  };
+  // const handleFormChange = (incomingData) => {
+  //   console.log(incomingData);
+
+  //   const dispatchAction = {
+  //     type: "ADD_CUSTOMER",
+  //     payload: incomingData,
+  //   };
+  //   console.log("Dispatching action:", dispatchAction);
+  //   dispatch(dispatchAction);
+  // };
 
   const addToCart = () => {
     history.push({
@@ -188,7 +190,7 @@ export default function OrderPage({ caseType }) {
       {caseType === "cash" && (
         <Box sx={{ mb: 2 }}>
           <CustomerNameInfo
-            onSubmit={handleFormChange}
+            // removed handleFormChange from here
             setShowOrderTable={setShowOrderTable}
             pageLoad={pageLoad}
             setPageLoad={setPageLoad}

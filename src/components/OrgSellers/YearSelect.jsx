@@ -17,10 +17,11 @@ export default function YearSelect({
   sx,
   setActiveYearError,
   error,
-  helperText,
+  helpertext,
+  assignedYearId,
 }) {
   const dispatch = dispatchHook();
-  const [yearSelected, setYearSelected] = useState("");
+  const [yearSelected, setYearSelected] = useState(assignedYearId);
 
   useEffect(() => {
     // Set the initial selected year to the ID of the active year
@@ -37,6 +38,8 @@ export default function YearSelect({
   }, []);
 
   const years = allYears();
+  console.log(years);
+  console.log(yearSelected);
 
   const handleChange = (event) => {
     labelOutside && setActiveYearError(false);
@@ -55,7 +58,7 @@ export default function YearSelect({
               label="Book Year"
               onChange={handleChange}
               error={error}
-              helperText={error ? helperText : ""}
+              helperText={error ? helpertext : ""}
             >
               {years.map((year) => (
                 <MenuItem key={year.id} value={year.id}>
@@ -65,7 +68,7 @@ export default function YearSelect({
             </Select>
             {error && (
               <Typography variant="caption" sx={{ color: "red" }}>
-                {helperText}
+                {helpertext}
               </Typography>
             )}
           </FormControl>

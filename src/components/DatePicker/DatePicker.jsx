@@ -24,17 +24,6 @@ export default function BasicDatePicker({
     onChange(newDate);
   };
 
-  // const handleDateChange = (newDate) => {
-  //   const formattedDate = date.$d.toLocaleDateString("en-US", {
-  //     year: "numeric",
-  //     month: "2-digit",
-  //     day: "2-digit",
-  //   });
-
-  //   setDate(newDate);
-  //   onChange(formattedDate);
-  // };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       {hideInputLabel ? null : <InputLabel>Due:</InputLabel>}

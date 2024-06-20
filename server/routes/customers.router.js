@@ -18,7 +18,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText)
     .then((result) => {
-      console.log("from GET ALL customers.router: ", result.rows);
+      // console.log("from GET ALL customers.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -27,7 +27,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
     });
 });
 
-router.get("/:id", rejectUnauthenticated, (req, res) => {
+router.get("/:id", (req, res) => {
   const customerId = req.params.id;
 
   const queryText = `
@@ -42,7 +42,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [customerId])
     .then((result) => {
-      console.log("from GET /id customers.router: ", result.rows);
+      // console.log("from GET /id customers.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -51,8 +51,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
     });
 });
 
-router.post("/", rejectUnauthenticated, (req, res) => {
-  console.log(req.body);
+router.post("/", async (req, res) => {
   const customer = req.body;
   const refId = customer.refId;
   const lastName = customer.last_name;
@@ -65,31 +64,48 @@ router.post("/", rejectUnauthenticated, (req, res) => {
   const state = customer.state;
   const zip = customer.zip;
 
-  // Check if the phone number is exactly 10 digits long
-  // if (!/^\d{10}$/.test(phone)) {
-  //   console.log("Phone number is not 10 digits long");
-  //   return res.status(400).send("Phone number must be 10 digits long");
-  // }
+  // Check if the email already exists in the user table
+  const emailExistsQuery = `
+    SELECT
+      *
+    FROM
+      "user"
+    WHERE
+      username = $1;
+  `;
 
-  const queryText = `
-        INSERT INTO "customers" (
-          "refId",
-          "last_name",
-          "first_name",
-          "phone",
-          "email",
-          "address",
-          "unit",
-          "city",
-          "state",
-          "zip"
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-        RETURNING "id";
-        `;
+  try {
+    const emailExistsResult = await pool.query(emailExistsQuery, [email]);
+    if (emailExistsResult.rows.length > 0) {
+      // Email already exists, return an error
+      return res
+        .status(400)
+        .json({ error: "This email is already in use. Please try again..." });
+    }
 
-  pool
-    .query(queryText, [
+    // Email does not exist, proceed with inserting into the customers table
+    const insertQuery = `
+      INSERT INTO "customers" (
+        "refId",
+        "last_name",
+        "first_name",
+        "phone",
+        "email",
+        "address",
+        "unit",
+        "city",
+        "state",
+        "zip"
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING "id";
+    `;
+
+    // ADDED FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~ //
+    // Log the customer object to debug potential null values
+    console.log("Customer object received:", customer);
+
+    const response = await pool.query(insertQuery, [
       refId,
       lastName,
       firstName,
@@ -100,15 +116,22 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       city,
       state,
       zip,
-    ])
-    .then((response) => {
-      console.log("response from POST customers.router: ", response.rows);
-      res.send(response.rows).status(201);
-    })
-    .catch((err) => {
-      console.log("error in customers POST route", err);
-      res.sendStatus(500);
-    });
+    ]);
+
+    // ADDED FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~ //
+    console.log("Successful POST in customers.router:", response.rows);
+    res.status(201).send(response.rows);
+  } catch (error) {
+    console.log("error in customers POST route", error);
+
+    // ADDED FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~ //
+    // Check for NOT NULL constraint violation
+    if (error.code === '23502') { // PostgreSQL error code for NOT NULL violation
+      return res.status(400).json({ error: "One or more required fields are missing." });
+    }
+
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

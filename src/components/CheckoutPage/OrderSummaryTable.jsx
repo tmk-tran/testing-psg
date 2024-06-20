@@ -22,18 +22,13 @@ export default function OrderSummaryTable({
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  console.log(selectedProducts);
-  console.log(caseType);
+
   const [localQuantities, setLocalQuantities] = useState(
     selectedProducts.reduce((quantities, product) => {
       quantities[product.id] = product.quantity;
       return quantities;
     }, {})
   );
-  console.log(localQuantities);
-  console.log(customDonation);
-  const [orderTotal, setOrderTotal] = useState(0);
-  console.log(orderTotal);
 
   useEffect(() => {
     let bookTotal = 0;
@@ -62,7 +57,6 @@ export default function OrderSummaryTable({
   }, [localQuantities, selectedProducts]);
 
   const handleQuantityChange = (productId, newQuantity) => {
-    console.log(productId, newQuantity);
     if (productId === 4) {
       setCustomDonation(newQuantity);
     } else {

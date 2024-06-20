@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
-import { Typography, MenuItem, Select } from "@mui/material";
+import { CircularProgress, Typography, MenuItem, Select } from "@mui/material";
 import "./TaskList.css";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import TaskCard from "../TaskCard/TaskCard";
@@ -9,8 +9,13 @@ import SuccessAlert from "../SuccessAlert/SuccessAlert";
 import { mTasks } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { useAlert } from "../SuccessAlert/useAlert";
+import { spinnerSx } from "../TaskTabs/TaskTabs";
 
-export default function TaskListMerchant() {
+export default function TaskListMerchant({
+  isLoading,
+  setIsLoading,
+  loadComplete,
+}) {
   const dispatch = dispatchHook();
   const [selectedTasks, setSelectedTasks] = useState({
     newTask: "",
@@ -18,17 +23,23 @@ export default function TaskListMerchant() {
     completeTask: "",
   });
   const [caseType, setCaseType] = useState("");
-  console.log(caseType);
-
+  // ~~~~~~~~~~ Toast ~~~~~~~~~~ //
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
 
   // Tasks
   const merchantTasks = mTasks() || [];
-  console.log(merchantTasks);
 
   useEffect(() => {
     dispatch({ type: "FETCH_ALL_MERCHANT_COMMENTS" });
   }, []);
+
+  // Set isLoading to false when the tasks are loaded
+  useEffect(() => {
+    setIsLoading(merchantTasks.length === 0); // Set isLoading to true if merchantTasks is empty
+    if (merchantTasks.length > 0) {
+      loadComplete(); // Notify parent that loading is complete
+    }
+  }, [merchantTasks]);
 
   // Group tasks by task_status (case-insensitive)
   // Check if merchantTasks is an array before using reduce
@@ -45,7 +56,6 @@ export default function TaskListMerchant() {
   const sortedNewTasks = tasksByStatus["new"] || [];
   const sortedInProgressTasks = tasksByStatus["in progress"] || [];
   const sortedCompleteTasks = tasksByStatus["complete"] || [];
-  console.log(sortedCompleteTasks);
 
   const handleCaseTypeChange = (newValue) => {
     setCaseType(newValue);
@@ -71,6 +81,7 @@ export default function TaskListMerchant() {
           <Typography>
             {"New"}&nbsp;
             {`(${sortedNewTasks.length})`}
+            {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
           </Typography>
         )}
       >
@@ -100,6 +111,7 @@ export default function TaskListMerchant() {
           <Typography>
             {"In Progress"}&nbsp;
             {`(${sortedInProgressTasks.length})`}
+            {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
           </Typography>
         )}
       >
@@ -132,6 +144,7 @@ export default function TaskListMerchant() {
             <Typography>
               {"Complete"}&nbsp;
               {`(${nonDeletedTasks.length})`}
+              {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
             </Typography>
           );
         }}

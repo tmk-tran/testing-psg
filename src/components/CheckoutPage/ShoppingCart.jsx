@@ -6,9 +6,10 @@ import OrderSummaryTable from "./OrderSummaryTable";
 import TotalUpdate from "./TotalUpdate";
 import CustomButton from "../CustomButton/CustomButton";
 import Typography from "../Typography/Typography";
+import CashCheckSelector from "./CashCheckSelector";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { sellerPageInfo } from "../../hooks/reduxStore";
+import { appActiveYear, sellerPageInfo } from "../../hooks/reduxStore";
 import { historyHook } from "../../hooks/useHistory";
 import { containerStyle } from "../Utils/pageStyles";
 import { border } from "../Utils/colors";
@@ -21,6 +22,7 @@ export default function ShoppingCart() {
   const location = useLocation();
   console.log(location);
   const history = historyHook();
+  // ~~~~~~~~~~ Location State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const seller = location.state?.seller ?? [];
   console.log(seller);
   const sellerId = location.state?.sellerId ?? "";
@@ -29,6 +31,7 @@ export default function ShoppingCart() {
   console.log(refId);
   const caseType = location.state?.caseType ?? [];
   console.log(caseType);
+  // ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const [selectedProducts, setSelectedProducts] = useState(
     location.state?.selectedProducts ?? []
   );
@@ -41,11 +44,16 @@ export default function ShoppingCart() {
   console.log(customDonation);
   const [physicalBooks, setPhysicalBooks] = useState(0);
   console.log(physicalBooks);
-
+  const [paymentSelectorOpen, setPaymentSelectorOpen] = useState(false);
+  // ~~~~~~~~~~ Redux Store ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const sellerData = sellerPageInfo() || [];
   console.log(sellerData);
   const orgId = sellerData[0].organization_id;
   console.log(orgId);
+  const currentYear = appActiveYear() || [];
+  console.log(currentYear);
+  const activeYearId = currentYear ? currentYear[0].id : "";
+  console.log(activeYearId);
 
   const handleUpdateQuantity = (updatedQuantities) => {
     console.log(updatedQuantities);
@@ -69,7 +77,7 @@ export default function ShoppingCart() {
       state: { selectedProducts, orderTotal, customDonation },
     });
   };
-
+ 
   const submitOrder = (caseType) => {
     console.log(caseType);
 
@@ -79,15 +87,19 @@ export default function ShoppingCart() {
         payload: {
           id: sellerId,
           refId: refId,
+          orgId: orgId,
+          yearId: activeYearId,
           [caseType.toLowerCase()]: Number(orderTotal),
           updateType: caseType.toLowerCase(),
         },
       };
+      console.log(updateAction);
       const updateTransactionsAction = {
         type: `UPDATE_BOOKS_SOLD`,
         payload: {
           refId: refId,
           orgId: orgId,
+          yearId: activeYearId,
           physical_book_cash: physicalBooks,
           physical_book_digital: 0,
           digital_book_credit: 0,
@@ -102,6 +114,8 @@ export default function ShoppingCart() {
             updateType: "donations",
             id: sellerId,
             refId: refId,
+            orgId: orgId,
+            yearId: activeYearId,
             donations: customDonation,
           },
         };
@@ -114,6 +128,14 @@ export default function ShoppingCart() {
     };
 
     submitPaymentSweetAlert(saveCall);
+  };
+
+  const openCashCheckSelector = () => {
+    setPaymentSelectorOpen(true);
+  };
+
+  const closeCashCheckSelector = () => {
+    setPaymentSelectorOpen(false);
   };
 
   return (
@@ -165,6 +187,9 @@ export default function ShoppingCart() {
           </div>
         </div>
       </div>
+      {paymentSelectorOpen && (
+        <CashCheckSelector open={paymentSelectorOpen} handleClose={closeCashCheckSelector} submitOrder={submitOrder} />
+      )}
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <CustomButton label="Back" onClick={goBack} />
         {/* {!caseType ? (
@@ -191,7 +216,8 @@ export default function ShoppingCart() {
             {caseType === "cash" && (
               <CustomButton
                 label="Complete Order"
-                onClick={() => submitOrder("cash")}
+                // onClick={() => submitOrder("cash")}
+                onClick={() => openCashCheckSelector()}
                 variant="contained"
               />
             )}

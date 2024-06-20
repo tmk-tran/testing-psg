@@ -1,7 +1,7 @@
 .NavLinks-container {
   display: flex;
   justify-content: space-between;
-  width: 70%;
+  width: 70vw;
   margin: 20px auto 0 auto;
   font-family: Telugu Sangam MN;
 }

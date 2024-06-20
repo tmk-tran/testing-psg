@@ -18,10 +18,14 @@ import PayPalButtons from "./PayPalButtons";
 import Typography from "../Typography/Typography";
 import CustomButton from "../CustomButton/CustomButton";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-import { border } from "../Utils/colors";
 import { historyHook } from "../../hooks/useHistory";
 import { navButtonStyle } from "./checkoutStyles";
-import { sellerPageInfo, bookYear } from "../../hooks/reduxStore";
+import {
+  sellerPageInfo,
+  Errors,
+  appActiveYear,
+  CustomerAdded,
+} from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 
 export const containerStyle = {
@@ -37,11 +41,11 @@ const steps = ["Information", "Payment", "Order Confirmation"];
 export default function CheckoutPage({ caseType }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  console.log(caseType);
+
   const history = historyHook();
   const location = useLocation();
   const dispatch = dispatchHook();
-  console.log(location.state);
+
   const paramsObject = useParams();
   const refId = paramsObject.refId;
   // Access state from URL and use it in component //
@@ -51,7 +55,8 @@ export default function CheckoutPage({ caseType }) {
   // Access digital payment amount //
   let digitalPayment;
   digitalPayment = orderTotal - customDonation;
-  console.log(digitalPayment);
+
+  const [physicalCouponBook, setPhysicalCouponBook] = useState(false);
   // Number of books sold //
   const [physicalBookDigital, setPhysicalBookDigital] = useState(0);
   const [digitalBookCredit, setDigitalBookCredit] = useState(0);
@@ -61,16 +66,21 @@ export default function CheckoutPage({ caseType }) {
   const [stateSelected, setStateSelected] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // ~~~~~ Store Data ~~~~~ //
   const sellerData = sellerPageInfo() || [];
-  const orgId = sellerData[0].organization_id;
-  const sellerId = sellerData[0].id;
-  const currentYear = bookYear() || [];
-  const activeYearId = currentYear[0].id;
+  const orgId = sellerData ? sellerData[0].organization_id : "";
+  const sellerId = sellerData ? sellerData[0].id : "";
+  const currentYear = appActiveYear() || [];
+  const activeYearId = currentYear ? currentYear[0].id : "";
+  // const errorStore = Errors();
+  const errorState = Errors();
+  const errorStore = errorState.errorReducer.errorMessage;
 
   // ~~~~~~~~~~ Form state ~~~~~~~~~~ //
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailChanged, setEmailChanged] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [unit, setUnit] = useState("");
@@ -82,18 +92,42 @@ export default function CheckoutPage({ caseType }) {
   // ~~~~~~~~~~ Order Info ~~~~~~~~~~ //
   const [orderInfo, setOrderInfo] = useState(null);
 
+  // Active Campaign Dispatch ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  //
+  const acInfo = () => {
+    const contactData = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      address: address,
+      unit: unit,
+      city: city,
+      state: stateSelected,
+      zip: zip,
+      organization: sellerData[0].organization_name,
+      url: "testpsg.fly.dev/fargo/coupon",
+      year: currentYear[0].year,
+      donation: customDonation,
+      bookType: selectedProducts[0].bookType,
+      type: caseType,
+    };
+    console.log("Contact Data from acInfo", contactData);
+    dispatch({ type: "ADD_CONTACT", payload: contactData });
+  };
+
   useEffect(() => {
     let physicalDigital = 0;
-    let digitalCredit = 0;
     let donationAmount = 0;
+    let digitalCredit = 0;
 
     selectedProducts.forEach((product) => {
       if (product.bookType === "Physical Coupon Book") {
         switch (caseType) {
-          case "cash":
-            physicalCash += product.quantity;
-            break;
+          // case "cash":
+          //   setPhysicalBook(true);
+          //   break;
           case "credit":
+            setPhysicalCouponBook(true);
             physicalDigital += product.quantity;
             break;
           default:
@@ -118,16 +152,19 @@ export default function CheckoutPage({ caseType }) {
       }
     });
 
-    // setPhysicalBookCash(physicalCash);
     setPhysicalBookDigital(physicalDigital);
     setDigitalBookCredit(digitalCredit);
     setDigitalDonation(donationAmount);
   }, [selectedProducts, caseType]);
 
-  // console.log(physicalBookCash);
-  console.log(physicalBookDigital);
-  console.log(digitalBookCredit);
-  console.log(digitalDonation);
+  useEffect(() => {
+    if (errorStore) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        emailCheck: errorStore,
+      }));
+    }
+  }, [errorStore]);
 
   const handleStateChange = (state, value) => {
     // Handle the state change in the parent component
@@ -173,6 +210,7 @@ export default function CheckoutPage({ caseType }) {
             stateSelected={stateSelected}
             zip={zip}
             setZip={setZip}
+            setFormSubmitted={setFormSubmitted}
           />
         );
       case 1:
@@ -184,6 +222,7 @@ export default function CheckoutPage({ caseType }) {
             }}
           >
             <PayPalButtons
+              refId={refId}
               selectedProducts={selectedProducts}
               customDonation={customDonation}
               orderSuccess={handleOrderInfo}
@@ -207,8 +246,7 @@ export default function CheckoutPage({ caseType }) {
     }
   };
 
-  const handleForm = () => {
-    // Example validation logic, replace with your own
+  const handleForm = async () => {
     const newErrors = {};
     if (!firstName) {
       newErrors.firstName = "Please enter your first name";
@@ -239,12 +277,39 @@ export default function CheckoutPage({ caseType }) {
     setErrors(newErrors);
     // Check if there are any errors
     const hasErrors = Object.keys(newErrors).length > 0;
-    // setIsSubmitted(!hasErrors);
+    // For state validation
     !hasErrors && setIsSubmitted(true);
-    // setIsSubmitted(true);
-    !hasErrors && handleNext();
 
-    saveCustomerInfo();
+    if (Object.keys(newErrors).length === 0) {
+      try {
+        await saveCustomerInfo();
+        // setFormSubmitted(true);
+        // No action here...
+      } catch (error) {
+        console.error("Failed to save customer info:", error);
+      }
+    }
+  };
+
+  // ~~~ State for adding a customer ~~~ //
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const formStatus = CustomerAdded();
+
+  // useEffect to run runHandleNext
+  useEffect(() => {
+    if (formSubmitted && formStatus.customerAddedSuccessfully === true) {
+      runHandleNext();
+      setFormSubmitted(false);
+    }
+  }, [errorStore, formStatus]);
+
+  const runHandleNext = () => {
+    if (Object.keys(errors).length === 0 && !errorStore) {
+      console.log("running handleNext");
+      handleNext();
+    } else {
+      console.log("not running handleNext");
+    }
   };
 
   const returnToStore = () => {
@@ -256,6 +321,11 @@ export default function CheckoutPage({ caseType }) {
     payload: value,
   });
 
+  const setPhysicalBook = (value) => ({
+    type: "SET_PHYSICAL_BOOK",
+    payload: value,
+  });
+
   const handleSubmit = () => {
     // Check if this is the last step in the process
     if (activeStep === steps.length - 1) {
@@ -264,6 +334,11 @@ export default function CheckoutPage({ caseType }) {
       if (digitalBookCredit) {
         dispatch(setDigitalBook(true));
       }
+      if (physicalCouponBook) {
+        dispatch(setPhysicalBook(true));
+      }
+      // Send payload to Active Campaign
+      acInfo();
       // Redirect the user to a confirmation page
       history.push(`/fargo/seller/${refId}/complete`);
     } else {
@@ -272,7 +347,54 @@ export default function CheckoutPage({ caseType }) {
     }
   };
 
+  // const updateTransactions = () => {
+  //   const updateAction = {
+  //     type: "UPDATE_BOOKS_SOLD",
+  //     payload: {
+  //       refId: refId,
+  //       orgId: orgId,
+  //       yearId: activeYearId,
+  //       physical_book_cash: 0,
+  //       physical_book_digital: physicalBookDigital,
+  //       digital_book_credit: digitalBookCredit,
+  //     },
+  //   };
+  //   let updateActions = [updateAction];
+
+  //   customDonation > 0 &&
+  //     updateActions.push({
+  //       type: "UPDATE_DONATIONS",
+  //       payload: {
+  //         updateType: "digital_donations",
+  //         id: sellerId,
+  //         refId: refId,
+  //         digital_donations: customDonation,
+  //         orgId: orgId,
+  //         yearId: activeYearId,
+  //       },
+  //     });
+
+  //   orderTotal > 0 &&
+  //     updateActions.push({
+  //       type: "UPDATE_DIGITAL_PAYMENTS",
+  //       payload: {
+  //         updateType: "digital",
+  //         id: sellerId,
+  //         refId: refId,
+  //         digital: digitalPayment,
+  //         orgId: orgId,
+  //         yearId: activeYearId,
+  //       },
+  //     });
+
+  //   updateActions.forEach((action) => dispatch(action));
+  // };
+
   const updateTransactions = () => {
+    console.log("refId: ", refId);
+    console.log("orgId: ", orgId);
+    console.log("yearId: ", activeYearId);
+  
     const updateAction = {
       type: "UPDATE_BOOKS_SOLD",
       payload: {
@@ -284,21 +406,27 @@ export default function CheckoutPage({ caseType }) {
         digital_book_credit: digitalBookCredit,
       },
     };
+  
     let updateActions = [updateAction];
-
-    customDonation > 0 &&
-      updateActions.push({
+  
+    if (customDonation > 0) {
+      const donationAction = {
         type: "UPDATE_DONATIONS",
         payload: {
           updateType: "digital_donations",
           id: sellerId,
           refId: refId,
           digital_donations: customDonation,
+          orgId: orgId,
+          yearId: activeYearId,
         },
-      });
-
-    orderTotal > 0 &&
-      updateActions.push({
+      };
+      console.log("Dispatching donation action: ", donationAction);
+      updateActions.push(donationAction);
+    }
+  
+    if (orderTotal > 0) {
+      const paymentAction = {
         type: "UPDATE_DIGITAL_PAYMENTS",
         payload: {
           updateType: "digital",
@@ -306,11 +434,17 @@ export default function CheckoutPage({ caseType }) {
           refId: refId,
           digital: digitalPayment,
           orgId: orgId,
+          yearId: activeYearId,
         },
-      });
-
-    console.log("Dispatching action:", updateActions);
-    updateActions.forEach((action) => dispatch(action));
+      };
+      console.log("Dispatching payment action: ", paymentAction);
+      updateActions.push(paymentAction);
+    }
+  
+    updateActions.forEach((action) => {
+      console.log("Dispatching action: ", action);
+      dispatch(action);
+    });
   };
 
   const handleOrderInfo = (orderData) => {
@@ -318,7 +452,6 @@ export default function CheckoutPage({ caseType }) {
     setOrderInfo(orderData);
     handleNext();
   };
-  console.log(orderInfo);
 
   const saveCustomerInfo = () => {
     const saveAction = {
@@ -336,8 +469,16 @@ export default function CheckoutPage({ caseType }) {
         zip: zip,
       },
     };
-    console.log("Dispatching action:", saveAction);
-    dispatch(saveAction);
+    return new Promise((resolve, reject) => {
+      try {
+        dispatch(saveAction);
+        setFormSubmitted(true);
+        resolve();
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
   };
 
   return (
@@ -366,30 +507,25 @@ export default function CheckoutPage({ caseType }) {
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~ CHECKOUT NAV BUTTONS ~~~~~~~~~~ */}
         <Box sx={navButtonStyle}>
-          {/* <CustomButton
-            label="Back"
-            disabled={activeStep === 0}
-            onClick={handleBack}
-          /> */}
-          <CustomButton label="Return to Store" onClick={returnToStore} />
+          <CustomButton label="Return to Store" onClick={returnToStore} disabled={ activeStep === 1 ? true : false } />
           <CustomButton
             label={
               activeStep === steps.length - 1
                 ? "Complete Order"
-                : // : activeStep === steps.length - 2
-                  // ? "Place Order"
-                  "Continue"
+                : "Continue"
             }
             onClick={
               activeStep === 0
                 ? handleForm // First step, check form info
-                : activeStep === 1
-                ? updateTransactions // If it's the second step, update transactions
+                // ~~~ HAD THIS, BUT IT WAS CAUSING AN EXTRA BOOK TO GET ADDED ~~~ //
+                // : activeStep === 1
+                // ? updateTransactions // If it's the second step, update transactions
                 : activeStep === 2
                 ? handleSubmit // If it's the last step, handle form submission
                 : handleNext // Otherwise, move to the next step
             }
             variant="contained"
+            disabled={ activeStep === 1 ? true : false }
           />
         </Box>
       </div>

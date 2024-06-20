@@ -5,8 +5,75 @@ const {
   rejectUnauthenticated,
 } = require("../modules/authentication-middleware");
 
+router.get("/", rejectUnauthenticated, (req, res) => {
+  const queryText = `
+            SELECT sellers.*, o.organization_name
+            FROM sellers
+            JOIN organization o ON sellers.organization_id = o.id;
+        `;
+
+  pool
+    .query(queryText)
+    .then((response) => {
+      res.send(response.rows).status(200);
+    })
+    .catch((err) => {
+      console.log("error in the GET / request for seller details", err);
+      res.sendStatus(500);
+    });
+});
+
+router.get("/name", rejectUnauthenticated, (req, res) => {
+  const queryText = `
+          SELECT sellers.*, o.organization_name
+          FROM sellers
+          JOIN organization o ON sellers.organization_id = o.id
+          WHERE sellers.lastname = $1
+          ${req.query.firstname ? "AND sellers.firstname = $2" : ""}
+          AND sellers.is_deleted = false
+        `;
+
+  const params = [req.query.lastname];
+
+  if (req.query.firstname) {
+    params.push(req.query.firstname);
+  }
+
+  pool
+    .query(queryText, params)
+    .then((response) => {
+      res.send(response.rows).status(200);
+    })
+    .catch((err) => {
+      console.log("error in the GET / request for seller details", err);
+      res.sendStatus(500);
+    });
+});
+
+router.get("/byrefid", rejectUnauthenticated, (req, res) => {
+  const queryText = `
+          SELECT sellers.*, o.organization_name
+          FROM sellers
+          JOIN organization o ON sellers.organization_id = o.id
+          WHERE sellers."refId" = $1
+          AND sellers.is_deleted = false;
+        `;
+
+  const params = [req.query.refId];
+
+  pool
+    .query(queryText, params)
+    .then((response) => {
+      res.send(response.rows).status(200);
+    })
+    .catch((err) => {
+      console.log("error in the GET / request for seller details", err);
+      res.sendStatus(500);
+    });
+});
+
 router.get("/:orgId/:yearId", rejectUnauthenticated, (req, res) => {
-  console.log("from sellers.router: ", req.params);
+  console.log("From sellers router: ", req.params);
   const orgId = req.params.orgId;
   const yearId = req.params.yearId;
 
@@ -54,7 +121,7 @@ router.get("/:orgId/:yearId", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [orgId, yearId])
     .then((result) => {
-      console.log("from GET /id sellers.router: ", result.rows);
+      console.log("Successful GET /id from sellers.router: ");
       res.send(result.rows);
     })
     .catch((err) => {
@@ -124,7 +191,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       bookYear,
     ])
     .then((response) => {
-      console.log("response from POST sellers.router: ", response.rows);
+      console.log("Successful POST sellers.router: ");
       res.sendStatus(201);
     })
     .catch((err) => {
@@ -170,7 +237,7 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, values)
     .then((response) => {
-      console.log("response from PUT sellers.router: ", response.rows);
+      console.log("Successful PUT sellers.router: ");
       res.sendStatus(200);
     })
     .catch((err) => {

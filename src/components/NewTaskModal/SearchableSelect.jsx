@@ -72,7 +72,7 @@ export default function SearchableSelect({
       }
       sx={{ margin: "5px 0" }}
       renderOption={(props, option) => (
-        <MenuItem {...props}>
+        <MenuItem key={option.id} {...props}>
           {merchantTab ? option.merchant_name : option.organization_name}
         </MenuItem>
       )}

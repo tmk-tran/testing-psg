@@ -24,9 +24,9 @@ function LoginPage() {
       >
         <Button
           style={{ textDecoration: "underline", textTransform: "none" }}
-          // onClick={() => {
-          //   history.push("/");
-          // }}
+          onClick={() => {
+            history.push("/recover");
+          }}
         >
           Forgot Password?
         </Button>

@@ -9,7 +9,7 @@ const commentBoxStyle = {
   width: "100%",
 };
 
-export default function CommentDisplay({ comment, showAllComments }) {
+export default function CommentDisplay({ comment, showAllComments, maxWidth }) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Check if the comment is null or undefined
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,9 +45,17 @@ export default function CommentDisplay({ comment, showAllComments }) {
 
   return (
     <Box sx={commentBoxStyle}>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div>
-          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={maxWidth}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: "bold",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
             {user}
           </Typography>
         </div>

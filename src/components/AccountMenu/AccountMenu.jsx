@@ -9,13 +9,6 @@ import "./AccountMenu.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
 
-export const headerMenuStyle = {
-  backgroundColor: "#19338E",
-  height: "48px",
-  border: "1px solid gray",
-  padding: "0 10px",
-};
-
 const AccountMenu = ({ isMobile }) => {
   const user = User();
   const history = historyHook();
@@ -34,7 +27,11 @@ const AccountMenu = ({ isMobile }) => {
       inputProps={{ "aria-label": "Account Menu" }}
       style={{
         minWidth: isMobile ? "80px" : "120px",
-        ...headerMenuStyle,
+        backgroundColor: "#19338E",
+        // width: "216px",
+        height: "48px",
+        border: "1px solid gray",
+        padding: "0 10px",
       }}
       renderValue={() => (
         <Typography
@@ -43,9 +40,6 @@ const AccountMenu = ({ isMobile }) => {
             display: "flex",
             alignItems: "center",
             fontSize: isMobile ? "0.8rem" : "inherit",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            width: isMobile ? 20 : null,
           }}
         >
           <PersonIcon sx={{ mr: 1.5, fontSize: isMobile ? 24 : "undefined" }} />
@@ -109,7 +103,7 @@ const AccountMenu = ({ isMobile }) => {
               history.push("/fargo/useradmin");
             }}
           >
-            User Roles
+            Users
           </MenuItem>
         ),
         // user.is_admin && <hr key="divider2" style={{ width: "90%" }} />,
