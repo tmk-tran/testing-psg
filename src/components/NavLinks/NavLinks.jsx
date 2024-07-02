@@ -212,7 +212,7 @@ export default function NavLinks({ activeRegionName }) {
             </>
           )
         )}
-        {user.id && (
+        {/* {user.id && (
           <Typography>
             <MuiLink
               component={Link}
@@ -223,7 +223,7 @@ export default function NavLinks({ activeRegionName }) {
               Help
             </MuiLink>
           </Typography>
-        )}
+        )} */}
       </div>
     </ThemeProvider>
   );
