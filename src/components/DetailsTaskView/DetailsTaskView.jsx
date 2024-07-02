@@ -10,7 +10,6 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import "./DetailsTaskView.css";
 // ~~~~~~~~~~ Utils ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { mTasks } from "../../hooks/reduxStore";
 
 export default function DetailsTaskView({ caseType }) {
   const dispatch = dispatchHook();
@@ -25,11 +24,10 @@ export default function DetailsTaskView({ caseType }) {
         type: "FETCH_ORGANIZATION_TASKS",
         payload: mId,
       });
+    } else {
+      dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: mId });
+      dispatch({ type: "FETCH_MERCHANT_TASKS", payload: mId });
     }
-    // } else {
-    //   dispatch({ type: "FETCH_MERCHANT_COMMENTS", payload: mId });
-    //   // dispatch({ type: "FETCH_MERCHANT_TASKS", payload: mId });
-    // }
   }, [mId, caseType]);
 
   return (
@@ -48,7 +46,7 @@ export default function DetailsTaskView({ caseType }) {
               caseType === "merchantView" ? "merchant-task-view" : ""
             }`}
           >
-            <TableTaskDetails caseType={caseType} mId={mId} merchantTasks={merchantTasks} />
+            <TableTaskDetails caseType={caseType} mId={mId} />
           </div>
 
           <div>

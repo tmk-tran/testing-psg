@@ -3,11 +3,8 @@ const pool = require("../modules/pool");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-<<<<<<< Updated upstream
   console.log("from GET /id seller.router: ");
 
-=======
->>>>>>> Stashed changes
   const queryText = `
             SELECT * 
             FROM 
@@ -19,10 +16,6 @@ router.get("/", (req, res) => {
   pool
     .query(queryText)
     .then((result) => {
-<<<<<<< Updated upstream
-      console.log("from GET /id region.router: ", result.rows);
-=======
->>>>>>> Stashed changes
       res.send(result.rows);
     })
     .catch((err) => {
@@ -31,8 +24,6 @@ router.get("/", (req, res) => {
     });
 });
 
-<<<<<<< Updated upstream
-=======
 router.put("/:id", async (req, res) => {
   const regionId = req.params.id;
 
@@ -58,5 +49,4 @@ router.put("/:id", async (req, res) => {
   }
 });
 
->>>>>>> Stashed changes
 module.exports = router;

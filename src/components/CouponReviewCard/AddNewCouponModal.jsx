@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
@@ -7,18 +7,25 @@ import {
   TextField,
   Divider,
   Grid,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~ //
 import AddBox from "../AddBoxIcon/AddBoxIcon";
-import SelectMenu from "./SelectMenu";
+import LocationSelect from "./LocationSelect";
 import ModalButtons from "../Modals/ModalButtons";
-import AllLocationsButton from "./AllLocationsButton";
 import YearSelect from "../OrgSellers/YearSelect";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~ //
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { capitalizeWords, validateWebsiteFormat } from "../Utils/helpers";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+
+// SAME ISSUE AS IN EditCouponModal:
+// Need to figure out a way to deselect radio button when a value is selected in dropdown
+// the dropdown is already cleared when the radio button is selected
 
 const style = {
   position: "absolute",
@@ -42,11 +49,13 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [seasonIdSelected, setSeasonIdSelected] = useState("");
   const [selectAllLocations, setSelectAllLocations] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(""); // Track selected radio button
   const [couponOffer, setCouponOffer] = useState("");
   const [website, setWebsite] = useState("");
   const [couponValue, setCouponValue] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [exclusions, setExclusions] = useState("");
+  const [isDropdownSelected, setIsDropdownSelected] = useState(false);
   // ~~~~~~~~~~ Errors ~~~~~~~~~~~~~~~~~~~~~~~ //
   const [locationsError, setLocationsError] = useState(false);
   const [websiteError, setWebsiteError] = useState(false);
@@ -174,12 +183,14 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
           {/* ~~~~~~~ LOCATION SELECT ~~~~~~~ */}
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <SelectMenu
+              <LocationSelect
                 label="Participating Location"
                 locations={locations}
                 selectAllLocations={selectAllLocations}
                 onLocationChange={handleLocationChange}
                 error={locationsError}
+                onDropdownSelectChange={handleDropdownSelectChange}
+                onChange={handleDeselect}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -191,7 +202,7 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                 setYear={setSeasonIdSelected}
                 setActiveYearError={setActiveYearError}
                 error={activeYearError}
-                helperText={activeYearError ? "Please select a book year" : ""}
+                helpertext={activeYearError ? "Please select a book year" : ""}
               />
             </Grid>
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -205,7 +216,21 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
                   marginBottom: "16px", // Match the margin bottom
                 }}
               >
-                <AllLocationsButton onSelect={handleSelect} />
+                {/* <LocationsRadioGroup onSelect={handleSelect} /> */}
+                <FormControl component="fieldset">
+                  <RadioGroup
+                    value={selectedValue}
+                    onChange={handleSelect}
+                    aria-label="validity"
+                    name="validity-group"
+                  >
+                    <FormControlLabel
+                      value="validAtAllLocations"
+                      control={<Radio />}
+                      label={<Typography>Valid at All Locations</Typography>}
+                    />
+                  </RadioGroup>
+                </FormControl>
               </Box>
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~ OFFER ~~~~~~~~~~~~ */}

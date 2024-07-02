@@ -5,7 +5,6 @@ import { Button, Card, CardContent, Typography } from "@mui/material";
 import "./ListView.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import Swal from "sweetalert2";
-import EditAccountModal from "../EditAccountModal/EditAccountModal";
 import {
   backgroundColor,
   border,
@@ -15,8 +14,6 @@ import {
 import { User } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import ImageRender from "../ImageRender/ImageRender";
-<<<<<<< Updated upstream
-=======
 import EditAccountModal from "../EditAccountModal/EditAccountModal";
 
 function ListView({
@@ -28,29 +25,10 @@ function ListView({
   numCoupons,
 }) {
   const history = useHistory();
-  const dispatch = dispatchHook();
-  const [isEditModalOpen, setEditModalOpen] = useState(false);
->>>>>>> Stashed changes
-
-function ListView({
-  data,
-  isMerchantList,
-  onChange,
-  editComplete,
-  isOrgAdmin,
-  numCoupons,
-}) {
-  console.log(data);
-  console.log(data.organization_logo_base64);
-  console.log(data.merchant_logo_base64);
-  console.log(isMerchantList);
-  console.log(numCoupons);
-  const user = User() || {};
-  console.log(user);
-  const history = useHistory();
   const dispatch = useDispatch();
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  console.log(editComplete);
+
+  const user = User() || {};
 
   const handleEdit = () => {
     setEditModalOpen(true);

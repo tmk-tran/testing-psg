@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import errors from "./errors.reducer";
 import user from "./user.reducer";
-import region from "./region.reducer.js";
+import userOrgAdmins from "./userOrgAdmin.reducer.js";
 
 import orgDetails from "./orgDetails.reducer";
 import organizations from "./organizations.reducer.js";
@@ -31,13 +31,17 @@ import paypal from "./paypal.reducer";
 import bookYear from "./bookYear.reducer";
 import userTable from "./userTable.reducer";
 import userBooks from "./userCoupon.reducer.js";
-import digitalBook from "./digitalBook.reducer";
+import digitalBookType from "./digitalBookType.reducer";
+import sellerSearch from "./sellerSearch.reducer.js";
+import activeYear from "./activeYear.reducer.js";
+import customerAddSuccess from "./customerAdded.reducer.js";
+import region from "./region.reducer.js";
 
 // This is what we get when we use 'state' inside of 'mapStateToProps'
 const rootReducer = combineReducers({
   errors, // contains registrationMessage and loginMessage
   user, // will have an id and username if someone is logged in
-  region,
+  userOrgAdmins,
   orgDetails,
   organizations,
   group,
@@ -66,7 +70,11 @@ const rootReducer = combineReducers({
   bookYear,
   userTable,
   userBooks,
-  digitalBook,
+  digitalBookType,
+  sellerSearch,
+  activeYear,
+  customerAddSuccess,
+  region,
 });
 
 export default rootReducer;

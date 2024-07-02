@@ -52,15 +52,15 @@ export default function TableTaskDetails({ mId, caseType }) {
   //   });
   // }, [mId]);
 
-  useEffect(() => {
-    // Check if tasks are loaded before fetching comments
-    if (Array.isArray(merchantTasks) && merchantTasks.length > 0) {
-      dispatch({
-        type: "FETCH_MERCHANT_COMMENTS",
-        payload: mId,
-      });
-    }
-  }, [merchantTasks, mId]);
+  // useEffect(() => {
+  //   // Check if tasks are loaded before fetching comments
+  //   if (Array.isArray(merchantTasks) && merchantTasks.length > 0) {
+  //     dispatch({
+  //       type: "FETCH_MERCHANT_COMMENTS",
+  //       payload: mId,
+  //     });
+  //   }
+  // }, [merchantTasks, mId]);
 
   const renderTask = (task, index) => {
     const taskComments =
@@ -148,7 +148,7 @@ export default function TableTaskDetails({ mId, caseType }) {
                 <CommentDisplay
                   key={taskComments[0].id}
                   comment={taskComments[0]}
-                  showAllComments={false}
+                  bulletSize={{ fontSize: 20 }}
                 />
               )}
               <hr />
