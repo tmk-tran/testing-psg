@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { Button } from "@mui/material";
+import { IconButton, Button } from "@mui/material";
 import useFileInput from "./useFileInput";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 export default function UploadFileButton({ title, onFileSelect }) {

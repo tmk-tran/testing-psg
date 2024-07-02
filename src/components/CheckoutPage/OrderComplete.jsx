@@ -5,21 +5,17 @@ import { centeredStyle } from "../Utils/pageStyles";
 // ~~~~~~~~~ Components ~~~~~~~~~ //
 import NewOrderButton from "./NewOrderButton";
 import Typography from "../Typography/Typography";
-import { customerList, digitalBookTypeSold } from "../../hooks/reduxStore";
-
-const boldCenter = {
-  fontWeight: "bold",
-  textAlign: "center",
-};
+import { customerList, digitalBookSold } from "../../hooks/reduxStore";
 
 export default function OrderComplete() {
   const seller = useParams();
   const refId = seller.refId;
-  const customerAddressInfo = customerList() || [];
-  const digitalBookType = digitalBookTypeSold() || [];
-
-  // Typography here is a CUSTOM component //
-  // MuiTypography is MUI default component //
+  const customerEmail = customerList() || [];
+  console.log(customerEmail);
+  const digitalBook = digitalBookSold() || [];
+  console.log(digitalBook);
+  // Typography here is a custom component //
+  // MuiTypography is MUI component //
   return (
     <>
       <Box sx={centeredStyle}>
@@ -28,37 +24,14 @@ export default function OrderComplete() {
           variant="h6"
           sx={{ mt: 10 }}
         />
-        {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-        {/* ~~~~~~~~~~ Address Display ~~~~~~~~~~ */}
-        {customerAddressInfo.map((customer) => (
+        {customerEmail.map((customer) => (
           <MuiTypography
             key={customer.email}
             variant="body2"
             sx={{ mt: 5, mb: 5 }}
           >
-            {digitalBookType.digitalBookCredit === true && (
-              <>
-                Your digital coupon book will be sent to:{" "}
-                <Typography label={`${customer.email}`} sx={boldCenter} />
-              </>
-            )}
-            <br />
-            {/* {digitalBookType.physicalBookCash === true && (
-              <>
-                Your physical coupon book will be sent to:{" "}
-                <Typography
-                  label={`
-                  ${customer.address} ${customer.unit} 
-                `}
-                  sx={boldCenter}
-                />
-                <Typography
-                  label={`${customer.city}
-                  ${customer.state}, ${customer.zip}`}
-                  sx={boldCenter}
-                />
-              </>
-            )} */}
+            Your digital coupon book will be sent to:{" "}
+            <strong>{customer.email}</strong>
           </MuiTypography>
         ))}
         <Typography
@@ -66,8 +39,6 @@ export default function OrderComplete() {
           variant="caption"
         />
       </Box>
-      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-      {/* ~~~~~~~~~~ Button ~~~~~~~~~~ */}
       <Box
         sx={{
           mt: 3,

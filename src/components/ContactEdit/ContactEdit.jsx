@@ -58,8 +58,6 @@ export default function ContactEdit({
   const [editedWebsite, setEditedWebsite] = useState(
     info.website ? info.website : null
   );
-  console.log(editedWebsite);
-  console.log(info.website);
   const [websiteError, setWebsiteError] = useState(false);
 
   useEffect(() => {

@@ -30,9 +30,10 @@ const theme = createTheme({
   },
 });
 
-export default function NavLinks() {
+export default function NavLinks({ activeRegionName }) {
   const location = useLocation();
   const user = User();
+  console.log(user);
 
   // Hide NavLinks component on the checkout page
   if (location.pathname === "/checkout") {
@@ -45,7 +46,7 @@ export default function NavLinks() {
         {/* If no user is logged in or user is an org admin, show these links */}
         {!user.id || user.org_admin || user.graphic_designer ? (
           <>
-            {!user.id && (
+            {(!user.id) && (
               <Typography
                 sx={{
                   textAlign: !user.id ? "center" : "inherit",
@@ -69,7 +70,7 @@ export default function NavLinks() {
                   <MuiLink
                     component={Link}
                     className="main-navlink"
-                    to="/fargo/home"
+                    to={`/${activeRegionName}/home`}
                     underline="hover"
                   >
                     Organizations
@@ -79,7 +80,7 @@ export default function NavLinks() {
                   <MuiLink
                     component={Link}
                     className="main-navlink"
-                    to="/fargo/coupon"
+                    to={`/${activeRegionName}/coupon`}
                     underline="hover"
                   >
                     Coupons
@@ -96,7 +97,7 @@ export default function NavLinks() {
                   <MuiLink
                     component={Link}
                     className="main-navlink"
-                    to="/fargo/home"
+                    to={`/${activeRegionName}/home`}
                     underline="hover"
                   >
                     Merchants
@@ -107,7 +108,7 @@ export default function NavLinks() {
                   <MuiLink
                     component={Link}
                     className="main-navlink"
-                    to="/fargo/coupon"
+                    to={`/${activeRegionName}/coupon`}
                     underline="hover"
                   >
                     Coupons
@@ -135,7 +136,7 @@ export default function NavLinks() {
                 <MuiLink
                   component={Link}
                   className="main-navlink"
-                  to="/fargo/home"
+                  to={`/${activeRegionName}/home`}
                   underline="hover"
                 >
                   Home
@@ -146,7 +147,7 @@ export default function NavLinks() {
                 <MuiLink
                   component={Link}
                   className="main-navlink"
-                  to="/fargo/newFundraiser"
+                  to={`/${activeRegionName}/newFundraiser`}
                   underline="hover"
                 >
                   New Fundraiser
@@ -157,7 +158,7 @@ export default function NavLinks() {
                 <MuiLink
                   component={Link}
                   className="main-navlink"
-                  to="/fargo/archivedOrganizations"
+                  to={`/${activeRegionName}/archivedOrganizations`}
                   underline="hover"
                 >
                   Archived Organizations
@@ -168,7 +169,7 @@ export default function NavLinks() {
                 <MuiLink
                   component={Link}
                   className="main-navlink"
-                  to="/fargo/coupon"
+                  to={`/${activeRegionName}/coupon`}
                   underline="hover"
                 >
                   Coupons
@@ -207,6 +208,7 @@ export default function NavLinks() {
                   Users
                 </MuiLink>
               </Typography>
+
             </>
           )
         )}

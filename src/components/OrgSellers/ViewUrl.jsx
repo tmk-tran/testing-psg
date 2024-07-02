@@ -25,8 +25,11 @@ const dividerMargin = {
 };
 
 export default function ViewUrl({ open, close, sellerRefId }) {
+  console.log(sellerRefId);
   const [sellerUrl, setSellerUrl] = useState("");
+  console.log(sellerUrl);
   const [urlForOrder, setUrlForOrder] = useState("");
+  console.log(urlForOrder);
 
   useEffect(() => {
     if (sellerRefId) {
@@ -37,6 +40,10 @@ export default function ViewUrl({ open, close, sellerRefId }) {
 
   const onClose = () => {
     close();
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(sellerUrl);
   };
 
   const copyOrderUrl = () => {

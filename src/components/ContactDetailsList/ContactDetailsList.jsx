@@ -19,7 +19,6 @@ export default function ContactDetailsList({
   contactPhone,
   isMerchantTaskPage,
 }) {
-  console.log(info.website);
   return (
     <List style={{ padding: "15px", marginTop: "5px" }}>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -49,21 +48,26 @@ export default function ContactDetailsList({
         <ListItemIcon style={centeredStyle}>
           <EmailIcon style={primaryColor} />
         </ListItemIcon>
-        <Typography sx={typographySx}>
-          {isMerchantTaskPage ? (
-            info.contact_email ? (
+        {isMerchantTaskPage ? (
+          <Typography sx={typographySx}>
+            {info.contact_email ? (
               <a href={`mailto:${info.contact_email}`}>{info.contact_email}</a>
             ) : (
-              "No Email Provided"
-            )
-          ) : info.primary_contact_email ? (
-            <a href={`mailto:${info.primary_contact_email}`}>
-              {info.primary_contact_email}
-            </a>
-          ) : (
-            "No Email Provided"
-          )}
-        </Typography>
+              <Typography>No Email Provided</Typography>
+            )}
+          </Typography>
+        ) : (
+          <Typography sx={typographySx}>
+            {info.primary_contact_email ? (
+              <a href={`mailto:${info.primary_contact_email}`}>
+                {info.primary_contact_email}
+              </a>
+            ) : (
+              // Render this if no email is provided
+              <Typography>No Email Provided</Typography>
+            )}
+          </Typography>
+        )}
       </ListItem>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~~~ WEBSITE ~~~~~~~~~~~~~~~~~~~ */}

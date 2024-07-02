@@ -5,7 +5,9 @@ export default function TotalUpdate({
   selectedProducts,
   customDonation,
   onChange = () => {},
+  caseType,
 }) {
+  console.log(caseType);
 
   const total = selectedProducts.reduce(
     (acc, product) =>

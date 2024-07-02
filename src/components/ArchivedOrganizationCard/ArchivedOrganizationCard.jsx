@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import "./ArchivedOrganizationCard.css";
 import { successColor } from "../Utils/colors";
 
-function ArchivedOrganizationCard({ organization }) {
+function ArchivedOrganizationCard({ organization, activeRegion }) {
   const history = useHistory();
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
@@ -24,7 +24,7 @@ function ArchivedOrganizationCard({ organization }) {
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch({ type: "RESET_ORGANIZATION", payload: organizationId });
-        dispatch({ type: "FETCH_ORGANIZATIONS" });
+        dispatch({ type: "FETCH_ORGANIZATIONS", payload: activeRegion.id });
         dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS" });
         Swal.fire("Organization successfully restored!");
       }

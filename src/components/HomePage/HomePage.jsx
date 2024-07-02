@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Button,
   Paper,
   Pagination,
   Typography,
+  Fab,
   Tooltip,
 } from "@mui/material";
 import "./HomePage.css";
@@ -16,35 +18,33 @@ import AddAccountModal from "../AddAccountModal/AddAccountModal.jsx";
 import ListView from "../ListView/ListView.jsx";
 import SearchBar from "../SearchBar/SearchBar.jsx";
 import ToggleButton from "../ToggleButton/ToggleButton.jsx";
-import SellerSearch from "./SellerSearch.jsx";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
-import {
-  User,
-  allOrganizations,
-  allMerchants,
-  mCoupons,
-  searchedSeller,
-} from "../../hooks/reduxStore.js";
+import { allMerchants, mCoupons } from "../../hooks/reduxStore.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 import { dispatchHook } from "../../hooks/useDispatch.js";
 
-function HomePage({ isOrgAdmin, isGraphicDesigner }) {
+function HomePage({ isOrgAdmin, isGraphicDesigner, activeRegion }) {
   const dispatch = dispatchHook();
+  console.log(activeRegion);
 
   const [isMerchantList, setIsMerchantList] = useState(
     Cookies.get("isMerchantList") === "true" || false
   );
+  console.log(isMerchantList);
 
   // state for the search and modal and pagination
   const [query, setQuery] = useState(" ");
+  console.log(query);
   const [showInput, setShowInput] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  console.log(currentPage);
   const [editComplete, setEditComplete] = useState(false);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~ Store ~~~~~~~~~~~~~~~~~~~~
   const user = User();
   const organizationsList = allOrganizations() || [];
+  console.log(organizationsList);
   const merchants = allMerchants() || [];
   const couponNumbers = mCoupons() || [];
   const sellerResults = searchedSeller() || [];
@@ -64,27 +64,67 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
     setIsMerchantList(initialIsMerchantList);
   }, []);
 
-  useEffect(() => {
-    // Initial data fetch based on isMerchantList
-    const fetchDataAction = isMerchantList
-      ? "FETCH_MERCHANTS"
-      : "FETCH_ORGANIZATIONS";
-    dispatch({ type: fetchDataAction });
+  // useEffect(() => {
+  //   // Initial data fetch based on isMerchantList
+  //   // const fetchDataAction = isMerchantList
+  //   //   ? "FETCH_MERCHANTS"
+  //   //   : "FETCH_ORGANIZATIONS";
+  //   // dispatch({ type: fetchDataAction });
+  //   if (activeRegion.id) {
+  //     const fetchDataAction = isMerchantList
+  //       ? "FETCH_MERCHANTS"
+  //       : "FETCH_ORGANIZATIONS";
+  //     dispatch({ type: fetchDataAction, payload: activeRegion.id });
+  //   }
 
+  //   const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
+  //   dispatch({ type: dispatchAction });
+
+  //   // If editComplete is true, trigger refresh and reset editComplete
+  //   // if (editComplete) {
+  //   //   dispatch({ type: fetchDataAction });
+  //   //   setEditComplete(false);
+  //   // }
+  // }, [isMerchantList]);
+
+  // useEffect(() => {
+  //   // If editComplete is true, trigger refresh and reset editComplete
+  //   if (editComplete) {
+  //     const fetchDataAction = isMerchantList
+  //     ? "FETCH_MERCHANTS"
+  //     : "FETCH_ORGANIZATIONS";
+  //     dispatch({ type: fetchDataAction, payload: activeRegion.id });
+  //     setEditComplete(false);
+  //   }
+  // }, [editComplete]);
+  function fetchAction(isMerchantList, dispatch, activeRegionId) {
+    const fetchDataAction = isMerchantList ? "FETCH_MERCHANTS" : "FETCH_ORGANIZATIONS";
+    dispatch({ type: fetchDataAction, payload: activeRegionId });
+  }
+  
+  useEffect(() => {
+    if (activeRegion.id) {
+      fetchAction(isMerchantList, dispatch, activeRegion.id);
+    }
+  
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
     dispatch({ type: dispatchAction });
-
+  
+  }, [isMerchantList]);
+  
+  useEffect(() => {
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
-      dispatch({ type: fetchDataAction });
+      fetchAction(isMerchantList, dispatch, activeRegion.id);
       setEditComplete(false);
     }
-  }, [isMerchantList, editComplete]);
+  }, [editComplete]);
 
   // fuzzy search information
   const listToSearch = !isMerchantList ? organizationsList : merchants;
-
+  console.log(listToSearch);
   const keys = !isMerchantList ? ["organization_name"] : ["merchant_name"];
+  console.log(keys);
 
   const fuse = new Fuse(listToSearch, {
     keys: keys,
@@ -93,10 +133,12 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
     minMatchCharLength: 2,
   });
   const results = fuse.search(query);
-
+  console.log(results);
   const searchResult = results.map((result) => result.item);
+  console.log(searchResult);
 
   const handleOnSearch = (value) => {
+    console.log(value);
     setQuery(value);
     if (!showInput) {
       setShowInput(true);
@@ -124,30 +166,21 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const orgIdsArray = user.org_ids
-    ? user.org_ids.split(",").map((id) => parseInt(id.trim(), 10))
-    : [];
-
-  const userOrgs = organizationsList.filter(
-    (organization) =>
-      !isOrgAdmin ||
-      (orgIdsArray.length > 0 && orgIdsArray.includes(organization.id))
-  );
-
   const currentItems =
     searchResult.length > 0
       ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
       : isMerchantList
       ? merchants.slice(indexOfFirstItem, indexOfLastItem)
-      : userOrgs.slice(indexOfFirstItem, indexOfLastItem);
+      : organizationsList.slice(indexOfFirstItem, indexOfLastItem);
+
+  console.log(currentItems);
 
   const totalItems =
     searchResult.length > 0
       ? searchResult.length
-      : isMerchantList
-      ? merchants.length
-      : userOrgs.length;
-
+      : !isMerchantList
+      ? organizationsList.length
+      : merchants.length;
   const pageCount = Math.ceil(totalItems / itemsPerPage);
 
   const handlePageChange = (event, value) => {
@@ -243,6 +276,7 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
               <Tooltip title="Add a New Account">
                 <Button
                   style={{ marginBottom: "5px" }}
+                  // variant="outlined"
                   onClick={handleAddAccountClick}
                 >
                   {!isMerchantList ? (
@@ -281,8 +315,10 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
                       (coupon) => coupon.merchant_id === merchant.id
                     )?.num_coupons || 0
                   }
+                  activeRegion={activeRegion}
                 />
               ))
+
             : currentItems
                 .filter(
                   (organization) =>
@@ -308,6 +344,7 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
                         editComplete={editComplete}
                         setEditComplete={setEditComplete}
                         isOrgAdmin={isOrgAdmin}
+                        activeRegion={activeRegion}
                       />
                     );
                   }

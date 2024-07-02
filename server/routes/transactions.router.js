@@ -18,7 +18,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [refId])
     .then((result) => {
-      console.log("Successful GET by ID in transactions.router");
+      console.log("from GET /id transactions.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -56,7 +56,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       digitalBookCredit,
     ])
     .then((response) => {
-      console.log("Successful POST in transactions.router");
+      console.log("response from POST transactions.router: ", response.rows);
       res.sendStatus(201);
     })
     .catch((err) => {
@@ -65,9 +65,10 @@ router.post("/", rejectUnauthenticated, (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", rejectUnauthenticated, (req, res) => {
   const seller = req.body;
   const refId = req.params.id;
+  console.log("Req.body from transactions = ", seller);
   const caseType = req.body.caseType;
 
   // Ensure seller.physical_book_cash is a number

@@ -98,7 +98,7 @@ function PayPalButton({
                 })),
               };
 
-              // console.log("Request Body:", requestBody);
+              console.log("Request Body:", requestBody);
 
               const response = await axios.post("/api/orders", requestBody, {
                 headers: {
@@ -106,10 +106,10 @@ function PayPalButton({
                 },
               });
 
-              // console.log(response);
+              console.log(response);
 
               const orderData = response.data;
-              // console.log(orderData);
+              console.log(orderData);
 
               if (orderData.id) {
                 return orderData.id;
@@ -207,93 +207,64 @@ function PayPalButton({
                 setMessage(
                   `Transaction ${transaction.status}: ${transaction.id}. See console for all available details`
                 );
-                // console.log(
-                //   "Capture result",
-                //   orderData,
-                //   JSON.stringify(orderData, null, 2)
-                // );
+                console.log(
+                  "Capture result",
+                  orderData,
+                  JSON.stringify(orderData, null, 2)
+                );
                 orderSuccess(orderData);
 
                 // Insert transaction data into the transactions table
                 const transactionData = {
                   status: orderData.status,
-                  payment_source_email:
-                    orderData.payment_source.paypal.email_address,
-                  payment_source_account_id:
-                    orderData.payment_source.paypal.account_id,
-                  payment_source_account_status:
-                    orderData.payment_source.paypal.account_status,
-                  payment_source_name_given_name:
-                    orderData.payment_source.paypal.name.given_name,
-                  payment_source_name_surname:
-                    orderData.payment_source.paypal.name.surname,
-                  payment_source_address_country_code:
-                    orderData.payment_source.paypal.address.country_code,
-                  purchase_units_reference_id:
-                    orderData.purchase_units[0].reference_id,
-                  purchase_units_shipping_name_full_name:
-                    orderData.purchase_units[0].shipping.name.full_name,
-                  purchase_units_shipping_address_address_line_1:
-                    orderData.purchase_units[0].shipping.address.address_line_1,
-                  purchase_units_shipping_address_admin_area_2:
-                    orderData.purchase_units[0].shipping.address.admin_area_2,
-                  purchase_units_shipping_address_admin_area_1:
-                    orderData.purchase_units[0].shipping.address.admin_area_1,
-                  purchase_units_shipping_address_postal_code:
-                    orderData.purchase_units[0].shipping.address.postal_code,
-                  purchase_units_shipping_address_country_code:
-                    orderData.purchase_units[0].shipping.address.country_code,
-                  purchase_units_payments_captures_id:
-                    orderData.purchase_units[0].payments.captures[0].id,
-                  purchase_units_payments_captures_status:
-                    orderData.purchase_units[0].payments.captures[0].status,
-                  purchase_units_payments_captures_amount_currency_code:
-                    orderData.purchase_units[0].payments.captures[0].amount
-                      .currency_code,
-                  purchase_units_payments_captures_amount_value:
-                    orderData.purchase_units[0].payments.captures[0].amount
-                      .value,
-                  purchase_units_payments_captures_create_time:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .create_time,
-                  purchase_units_payments_captures_update_time:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .update_time,
+                  payment_source_email: orderData.payment_source.paypal.email_address,
+                  payment_source_account_id: orderData.payment_source.paypal.account_id,
+                  payment_source_account_status: orderData.payment_source.paypal.account_status,
+                  payment_source_name_given_name: orderData.payment_source.paypal.name.given_name,
+                  payment_source_name_surname: orderData.payment_source.paypal.name.surname,
+                  payment_source_address_country_code: orderData.payment_source.paypal.address.country_code,
+                  purchase_units_reference_id: orderData.purchase_units[0].reference_id,
+                  purchase_units_shipping_name_full_name: orderData.purchase_units[0].shipping.name.full_name,
+                  purchase_units_shipping_address_address_line_1: orderData.purchase_units[0].shipping.address.address_line_1,
+                  purchase_units_shipping_address_admin_area_2: orderData.purchase_units[0].shipping.address.admin_area_2,
+                  purchase_units_shipping_address_admin_area_1: orderData.purchase_units[0].shipping.address.admin_area_1,
+                  purchase_units_shipping_address_postal_code: orderData.purchase_units[0].shipping.address.postal_code,
+                  purchase_units_shipping_address_country_code: orderData.purchase_units[0].shipping.address.country_code,
+                  purchase_units_payments_captures_id: orderData.purchase_units[0].payments.captures[0].id,
+                  purchase_units_payments_captures_status: orderData.purchase_units[0].payments.captures[0].status,
+                  purchase_units_payments_captures_amount_currency_code: orderData.purchase_units[0].payments.captures[0].amount.currency_code,
+                  purchase_units_payments_captures_amount_value: orderData.purchase_units[0].payments.captures[0].amount.value,
+                  purchase_units_payments_captures_create_time: orderData.purchase_units[0].payments.captures[0].create_time,
+                  purchase_units_payments_captures_update_time: orderData.purchase_units[0].payments.captures[0].update_time,
                   payer_name_given_name: orderData.payer.name.given_name,
                   payer_name_surname: orderData.payer.name.surname,
                   payer_email_address: orderData.payer.email_address,
                   payer_payer_id: orderData.payer.payer_id,
-                  payer_address_country_code:
-                    orderData.payer.address.country_code,
+                  payer_address_country_code: orderData.payer.address.country_code,
                   links_href: orderData.links[0].href,
                   links_rel: orderData.links[0].rel,
                   links_method: orderData.links[0].method,
-                  seller_receivable_gross_amount_currency_code:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .seller_receivable_breakdown.gross_amount.currency_code,
-                  seller_receivable_gross_amount_value:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .seller_receivable_breakdown.gross_amount.value,
-                  seller_receivable_paypal_fee_currency_code:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .seller_receivable_breakdown.paypal_fee.currency_code,
-                  seller_receivable_paypal_fee_value:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .seller_receivable_breakdown.paypal_fee.value,
-                  seller_receivable_net_amount_currency_code:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .seller_receivable_breakdown.net_amount.currency_code,
-                  seller_receivable_net_amount_value:
-                    orderData.purchase_units[0].payments.captures[0]
-                      .seller_receivable_breakdown.net_amount.value,
-                  seller_ref_id: refId,
+                  seller_receivable_gross_amount_currency_code: orderData.purchase_units[0].payments.captures[0].seller_receivable_breakdown.gross_amount.currency_code,
+                  seller_receivable_gross_amount_value: orderData.purchase_units[0].payments.captures[0].seller_receivable_breakdown.gross_amount.value,
+                  seller_receivable_paypal_fee_currency_code: orderData.purchase_units[0].payments.captures[0].seller_receivable_breakdown.paypal_fee.currency_code,
+                  seller_receivable_paypal_fee_value: orderData.purchase_units[0].payments.captures[0].seller_receivable_breakdown.paypal_fee.value,
+                  seller_receivable_net_amount_currency_code: orderData.purchase_units[0].payments.captures[0].seller_receivable_breakdown.net_amount.currency_code,
+                  seller_receivable_net_amount_value: orderData.purchase_units[0].payments.captures[0].seller_receivable_breakdown.net_amount.value,
                 };
+                
 
                 const dispatchAction = {
                   type: "ADD_PAYPAL_TRANSACTION",
                   payload: transactionData,
                 };
+                console.log(dispatchAction);
                 dispatch(dispatchAction);
+
+                // await axios.post("/api/transactions", transactionData, {
+                //   headers: {
+                //     "Content-Type": "application/json",
+                //   },
+                // });
               }
             } catch (error) {
               console.error(error);

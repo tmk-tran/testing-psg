@@ -6,10 +6,9 @@ import OrderSummaryTable from "./OrderSummaryTable";
 import TotalUpdate from "./TotalUpdate";
 import CustomButton from "../CustomButton/CustomButton";
 import Typography from "../Typography/Typography";
-import CashCheckSelector from "./CashCheckSelector";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { appActiveYear, sellerPageInfo } from "../../hooks/reduxStore";
+import { sellerPageInfo } from "../../hooks/reduxStore";
 import { historyHook } from "../../hooks/useHistory";
 import { containerStyle } from "../Utils/pageStyles";
 import { border } from "../Utils/colors";
@@ -21,7 +20,6 @@ export default function ShoppingCart() {
   const dispatch = dispatchHook();
   const location = useLocation();
   const history = historyHook();
-  // ~~~~~~~~~~ Location State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const seller = location.state?.seller ?? [];
   const sellerId = location.state?.sellerId ?? "";
   const refId = seller.refId ?? "";
@@ -63,7 +61,7 @@ export default function ShoppingCart() {
       state: { selectedProducts, orderTotal, customDonation },
     });
   };
- 
+
   const submitOrder = (caseType) => {
     const saveCall = () => {
       const updateAction = {
@@ -71,19 +69,15 @@ export default function ShoppingCart() {
         payload: {
           id: sellerId,
           refId: refId,
-          orgId: orgId,
-          yearId: activeYearId,
           [caseType.toLowerCase()]: Number(orderTotal),
           updateType: caseType.toLowerCase(),
         },
       };
-      console.log(updateAction);
       const updateTransactionsAction = {
         type: `UPDATE_BOOKS_SOLD`,
         payload: {
           refId: refId,
           orgId: orgId,
-          yearId: activeYearId,
           physical_book_cash: physicalBooks,
           physical_book_digital: 0,
           digital_book_credit: 0,
@@ -98,8 +92,6 @@ export default function ShoppingCart() {
             updateType: "donations",
             id: sellerId,
             refId: refId,
-            orgId: orgId,
-            yearId: activeYearId,
             donations: customDonation,
           },
         };
@@ -110,14 +102,6 @@ export default function ShoppingCart() {
     };
 
     submitPaymentSweetAlert(saveCall);
-  };
-
-  const openCashCheckSelector = () => {
-    setPaymentSelectorOpen(true);
-  };
-
-  const closeCashCheckSelector = () => {
-    setPaymentSelectorOpen(false);
   };
 
   return (
@@ -202,8 +186,7 @@ export default function ShoppingCart() {
             {caseType === "cash" && (
               <CustomButton
                 label="Complete Order"
-                // onClick={() => submitOrder("cash")}
-                onClick={() => openCashCheckSelector()}
+                onClick={() => submitOrder("cash")}
                 variant="contained"
               />
             )}

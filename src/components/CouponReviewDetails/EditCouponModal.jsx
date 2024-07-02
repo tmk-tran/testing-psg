@@ -11,23 +11,19 @@ import {
   InputAdornment,
 } from "@mui/material";
 // ~~~~~~~~~~~ Hooks ~~~~~~~~~~~ //
-import { couponsData, mLocations } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~ //
 import EditButton from "../Buttons/EditButton";
 import ModalButtons from "../Modals/ModalButtons";
-import LocationSelect from "../CouponReviewCard/LocationSelect";
-import LocationsRadioGroup from "../CouponReviewCard/LocationsRadioGroup";
-import YearSelect from "../OrgSellers/YearSelect";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 700,
+  width: 600,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -43,7 +39,6 @@ export default function EditCouponModal({ file }) {
   const params = useParams();
   const couponId = params.couponId;
   const merchantId = params.merchantId;
-  // ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~ //
   const [open, setOpen] = useState(false);
   const [offer, setOffer] = useState(null);
   const [validYear, setValidYear] = useState(null);
@@ -72,12 +67,13 @@ export default function EditCouponModal({ file }) {
 
   useEffect(() => {
     if (file) {
-      setOffer(file.offer || null);
-      setValidYear(file.bookId || null);
+      setOffer(file.offer || "");
       setValue(file.value || 0);
-      setExclusions(file.exclusions || null);
-      setExpiration(file.expiration || null);
-      setAdditionalInfo(file.additionalInfo || null);
+      setExclusions(file.exclusions || "");
+      setExpiration(file.expiration || "");
+      setAdditionalInfo(file.additionalInfo || "");
+      setPhoneNumber(file.phoneNumber || "");
+      setWebsite(file.website || "");
     }
   }, [file]);
 
@@ -131,8 +127,6 @@ export default function EditCouponModal({ file }) {
         exclusions: exclusions,
         expiration: expiration,
         additional_info: additionalInfo,
-        book_id: validYear,
-        location_ids: [selectedLocationId],
       },
     };
     dispatch(dispatchAction);
@@ -140,13 +134,11 @@ export default function EditCouponModal({ file }) {
   };
 
   const resetForm = () => {
-    setOffer(null);
-    setValidYear(null);
+    setOffer("");
     setValue(0);
-    setExclusions(null);
-    setExpiration(null);
-    setAdditionalInfo(null);
-    setSelectedLocationId(null);
+    setExclusions("");
+    setExpiration("");
+    setAdditionalInfo("");
     showSaveSweetAlert({ label: "Coupon Updated" });
 
     handleClose();
@@ -186,33 +178,7 @@ export default function EditCouponModal({ file }) {
           </Typography>
           <Divider sx={lineDivider} />
           <Grid container spacing={2}>
-            {/* ~~~~~~ RADIO BUTTON GROUP ~~~~~ */}
             <Grid item xs={12}>
-              <Box
-                sx={{
-                  border: "1px solid rgba(0, 0, 0, 0.23)", // Match the border style
-                  borderRadius: "4px", // Match the border radius
-                  padding: "6px 10px", // Match the padding
-                  marginBottom: "16px", // Match the margin bottom
-                  mt: 3.6,
-                }}
-              >
-                <LocationsRadioGroup
-                  acceptedAt={validLocationId}
-                  onSelectAll={handleSelectAllLocs}
-                  onSelectParticipatingLocs={handleParticipatingLocations}
-                  isDropdownSelected={isDropdownSelected}
-                  onDropdownSelectChange={handleDropdownSelectChange}
-                  locations={locations}
-                  selectedLocations={selectedLocations}
-                  participatingLocs={participatingLocations}
-                  selectAllLocations={selectAllLocations}
-                  onLocationChange={handleLocationChange}
-                />
-              </Box>
-            </Grid>
-            {/* ~~~~~~ OFFER ~~~~~ */}
-            <Grid item xs={6}>
               <TextField
                 label="Offer"
                 fullWidth
@@ -221,13 +187,6 @@ export default function EditCouponModal({ file }) {
                   setOffer(e.target.value);
                 }}
                 sx={textfieldStyle}
-              />
-            </Grid>
-            {/* ~~~~~ Assigned Year Field ~~~~~ */}
-            <Grid item xs={6}>
-              <YearSelect
-                setYear={setValidYear}
-                assignedYearId={couponBookId}
               />
             </Grid>
             <Grid item xs={12}>
@@ -253,7 +212,6 @@ export default function EditCouponModal({ file }) {
                 }}
               />
             </Grid>
-
             <Grid item xs={6}>
               <InputLabel>Value</InputLabel>
               <TextField
@@ -281,6 +239,27 @@ export default function EditCouponModal({ file }) {
                   setExpiration(e.target.value);
                 }}
                 sx={textfieldStyle}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                type="number"
+                label="Phone"
+                fullWidth
+                value={phoneNumber}
+                onChange={(e) => {
+                  setPhoneNumber(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Website"
+                fullWidth
+                value={website}
+                onChange={(e) => {
+                  setWebsite(e.target.value);
+                }}
               />
             </Grid>
           </Grid>

@@ -25,10 +25,11 @@ router.get("/id/:id", (req, res) => {
   const bookId = req.params.id;
 
   const queryText = `
-          SELECT *
-          FROM coupon_book
-          WHERE id = $1;
-        `;
+            SELECT *
+            FROM coupon_book
+            WHERE id = $1
+            AND active = TRUE;
+          `;
 
   pool
     .query(queryText, [bookId])
@@ -62,10 +63,8 @@ router.get("/season/:season", (req, res) => {
 
 //Post route to add a new coupon book
 router.post("/", (req, res) => {
-  const queryText = `
-          SELECT year 
-          FROM coupon_book 
-          ORDER BY year DESC LIMIT 1`;
+  console.log("from couponBook.saga = ", req.body);
+  const queryText = `SELECT year FROM coupon_book ORDER BY year DESC LIMIT 1`;
 
   pool
     .query(queryText)

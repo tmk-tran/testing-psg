@@ -11,6 +11,10 @@ const SearchBar = ({
   onChange,
   clearInput,
 }) => {
+  console.log(isOrganization);
+  console.log(isCoupon);
+  console.log(isUserAdmin);
+  console.log(query);
   const [isSticky, setIsSticky] = useState(false);
 
   const stickyStyle = {

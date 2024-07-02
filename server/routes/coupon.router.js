@@ -52,6 +52,13 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   const merchantId = req.params.id;
+  const filename = req.params.filename;
+  console.log("filename = ", filename);
+
+  const frontViewPdf = req.params.front_view_pdf;
+  const backViewPdf = req.params.back_view_pdf;
+  console.log("frontViewPdf = ", frontViewPdf);
+  console.log("backViewPdf = ", backViewPdf);
 
   // const queryText = "SELECT * FROM coupon WHERE merchant_id = $1";
   const queryText = `
@@ -66,7 +73,7 @@ router.get("/:id", (req, res) => {
   pool
     .query(queryText, [merchantId])
     .then((result) => {
-      console.log("Successful GET by ID in coupon.router");
+      console.log("FROM coupon.router GET /:id route: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -77,6 +84,33 @@ router.get("/:id", (req, res) => {
 
 router.get("/details/:id", (req, res) => {
   const couponId = req.params.id;
+  console.log("couponId = ", couponId);
+
+  // const queryText = "SELECT * FROM coupon WHERE id = $1";
+
+  // const queryText = `
+  //         SELECT
+  //           c.*,
+  //           l.id AS location_id,
+  //           l.location_name,
+  //           l.phone_number,
+  //           l.address,
+  //           l.city,
+  //           l.state,
+  //           l.zip,
+  //           l.coordinates,
+  //           l.region_id,
+  //           l.merchant_id AS location_merchant_id,
+  //           l.additional_details AS location_additional_details
+  //         FROM
+  //           coupon c
+  //         JOIN
+  //           coupon_location cl ON c.id = cl.coupon_id
+  //         JOIN
+  //           location l ON cl.location_id = l.id
+  //         WHERE
+  //           c.id = $1;
+  //   `;
 
   const queryText = `
               SELECT
@@ -105,19 +139,17 @@ router.get("/details/:id", (req, res) => {
   pool
     .query(queryText, [couponId])
     .then((result) => {
-      console.log("Successful GET /details in coupon.router");
+      console.log("FROM coupon.router GET /details/:id : ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
-      console.log(
-        "error in the GET / request for /details in coupon.router",
-        err
-      );
+      console.log("error in the GET / request for coupons", err);
       res.sendStatus(500);
     });
 });
 
 router.post("/", rejectUnauthenticated, async (req, res) => {
+  console.log(req.body);
   const coupon = req.body;
   const merchantId = coupon.merchant_id;
   const offer = coupon.offer;
@@ -168,7 +200,7 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
   } catch (error) {
     // Rollback the transaction in case of an error
     await pool.query("ROLLBACK");
-    console.error("Error POST in coupon.router: ", error);
+    console.error(error);
     res.status(500).send("Error uploading coupon");
   }
 });
@@ -186,7 +218,7 @@ router.put("/redeem/:id", (req, res) => {
   pool
     .query(queryText, [couponId])
     .then((response) => {
-      console.log("Coupon redeemed");
+      console.log("Coupon redeemed:", response.rows);
       res.sendStatus(200);
     })
     .catch((error) => {
@@ -197,6 +229,7 @@ router.put("/redeem/:id", (req, res) => {
 
 // PUT route for uploading front view PDF
 router.put("/front/:id", upload.single("pdf"), (req, res) => {
+  console.log("PUT req.body = ", req.body);
   const frontViewPdf = req.file.buffer;
   const filename = req.file.originalname;
   // const merchantId = req.params.id;
@@ -241,171 +274,51 @@ router.put("/back/:id", upload.single("pdf"), (req, res) => {
 });
 
 // EDIT route for updating coupon details
-// router.put(
-//   "/:merchantId/:couponId",
-//   rejectUnauthenticated,
-//   async (req, res) => {
-//     const coupon = req.body;
-//     const couponId = req.params.couponId;
-
-//     const offer = coupon.offer;
-//     const value = coupon.value;
-//     const exclusions = coupon.exclusions;
-//     const expiration = coupon.expiration;
-//     const additionalInfo = coupon.additional_info;
-
-//     const queryText = `
-//       UPDATE
-//         coupon
-//       SET
-//         offer = $1,
-//         value = $2,
-//         exclusions = $3,
-//         expiration = $4,
-//         additional_info = $5
-//       WHERE id = $6;
-//   `;
-
-//     pool
-//       .query(queryText, [
-//         offer,
-//         value,
-//         exclusions,
-//         expiration,
-//         additionalInfo,
-//         couponId,
-//       ])
-//       .then((response) => {
-//         console.log("Successful PUT in coupon.router");
-//         res.sendStatus(200);
-//       })
-//       .catch((error) => {
-//         console.error("Error in EDIT coupon PUT route", error);
-//         res.sendStatus(500);
-//       });
-//   }
-// );
-
 router.put(
   "/:merchantId/:couponId",
   rejectUnauthenticated,
   async (req, res) => {
+    console.log("COUPON EDIT req.body = ", req.body);
     const coupon = req.body;
-    console.log("from coupon router: ", coupon);
     const couponId = req.params.couponId;
+    console.log("couponId = ", couponId);
 
     const offer = coupon.offer;
     const value = coupon.value;
     const exclusions = coupon.exclusions;
     const expiration = coupon.expiration;
     const additionalInfo = coupon.additional_info;
-    const bookId = coupon.book_id;
-    const locationIds = coupon.location_ids;
 
-    try {
-      // Start a transaction
-      await pool.query("BEGIN");
+    const queryText = `
+      UPDATE 
+        coupon
+      SET 
+        offer = $1,
+        value = $2,
+        exclusions = $3,
+        expiration = $4,
+        additional_info = $5
+      WHERE id = $6;
+  `;
 
-      // Update coupon in coupon table
-      const couponUpdateQuery = `
-      UPDATE coupon
-      SET offer = $1,
-          value = $2,
-          exclusions = $3,
-          expiration = $4,
-          additional_info = $5,
-          book_id = $6
-      WHERE id = $7;
-    `;
-      await pool.query(couponUpdateQuery, [
+    pool
+      .query(queryText, [
         offer,
         value,
         exclusions,
         expiration,
         additionalInfo,
-        bookId,
         couponId,
-      ]);
-
-      // Check if locationIds contains only null
-      if (locationIds.length === 1 && locationIds[0] === null) {
-        // Delete existing locations for the coupon
-        const deleteLocationsQuery = `
-        DELETE FROM coupon_location
-        WHERE coupon_id = $1;
-      `;
-        await pool.query(deleteLocationsQuery, [couponId]);
-      } else {
-
-      // Delete existing locations for the coupon
-      const deleteLocationsQuery = `
-      DELETE FROM coupon_location
-      WHERE coupon_id = $1;
-    `;
-      await pool.query(deleteLocationsQuery, [couponId]);
-
-      // Insert updated locations into coupon_location table
-      const locationInsertQuery = `
-      INSERT INTO coupon_location (coupon_id, location_id)
-      SELECT $1, location_id
-      FROM unnest($2::integer[]) AS location_id;
-    `;
-      await pool.query(locationInsertQuery, [couponId, locationIds]);
-      }
-
-      // Commit the transaction
-      await pool.query("COMMIT");
-
-      res.sendStatus(200);
-    } catch (error) {
-      // Rollback the transaction in case of an error
-      await pool.query("ROLLBACK");
-      console.error("Error in EDIT coupon PUT route", error);
-      res.sendStatus(500);
-    }
+      ])
+      .then((response) => {
+        console.log("FROM coupon.router EDIT: ", response.rows);
+        res.sendStatus(200);
+      })
+      .catch((error) => {
+        console.error("Error in EDIT coupon PUT route", error);
+        res.sendStatus(500);
+      });
   }
 );
-
-router.delete("/:id/front", (req, res) => {
-  const couponId = req.params.id;
-
-  const queryText = `
-    UPDATE coupon
-    SET filename_front = NULL, front_view_pdf = NULL
-    WHERE id = $1;
-  `;
-
-  pool
-    .query(queryText, [couponId])
-    .then((response) => {
-      console.log("Successful DELETE in coupon.router");
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.error("Error in DELETE coupon.router", error);
-      res.sendStatus(500);
-    });
-});
-
-router.delete("/:id/back", (req, res) => {
-  const couponId = req.params.id;
-
-  const queryText = `
-    UPDATE coupon
-    SET filename_back = NULL, back_view_pdf = NULL
-    WHERE id = $1;
-  `;
-
-  pool
-    .query(queryText, [couponId])
-    .then((response) => {
-      console.log("Successful DELETE in coupon.router");
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.error("Error in DELETE coupon.router", error);
-      res.sendStatus(500);
-    });
-});
 
 module.exports = router;

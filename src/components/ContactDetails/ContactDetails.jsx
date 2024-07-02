@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 // ~~~~~~~~~~ Styles ~~~~~~~~~~
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import "./OrgContactDetails.css";
+// ~~~~~~~~~~ Icons ~~~~~~~~~~
+import EditNoteIcon from "@mui/icons-material/EditNote";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import DetailsEdit from "../DetailsEdit/DetailsEdit";
 import ContactDetailsCard from "./ContactDetailsCard";
@@ -10,19 +16,16 @@ import EditButton from "../Buttons/EditButton";
 import { capitalizeWords, formatPhoneNumber } from "../Utils/helpers";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-
-const accountNameStyle = {
-  fontWeight: "bold",
-  whiteSpace: "normal",
-  wordWrap: "break-word",
-  overflowWrap: "break-word",
-};
+import { border } from "../Utils/colors";
 
 export default function ContactDetails({
   info,
   isMerchantTaskPage,
   isOrgAdminPage,
 }) {
+  console.log(info);
+  console.log(isMerchantTaskPage);
+  console.log(isOrgAdminPage);
   const dispatch = dispatchHook();
   const contactPhone = isMerchantTaskPage
     ? formatPhoneNumber(info.contact_phone_number)
@@ -41,6 +44,7 @@ export default function ContactDetails({
   };
 
   const handleSaveContact = (editedItem) => {
+    console.log("New Contact Info:", editedItem);
     isMerchantTaskPage
       ? dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: editedItem })
       : dispatch({ type: "EDIT_ORG_DETAILS", payload: editedItem });
@@ -48,6 +52,7 @@ export default function ContactDetails({
   };
 
   const handleSaveOrgDetails = (editedDetails) => {
+    console.log("New Details:", editedDetails);
     const merchantAction = {
       type: "EDIT_MERCHANT_DETAILS",
       payload: editedDetails,
@@ -57,6 +62,9 @@ export default function ContactDetails({
       payload: editedDetails,
     };
     isMerchantTaskPage ? dispatch(merchantAction) : dispatch(orgAction);
+
+    console.log(merchantAction);
+    console.log(orgAction);
   };
 
   return (
@@ -87,11 +95,11 @@ export default function ContactDetails({
           <div className="org-address">
             <div className="org-name-container">
               {!isMerchantTaskPage ? (
-                <Typography variant="h5" sx={accountNameStyle}>
+                <Typography variant="h5" style={{ fontWeight: "bold" }}>
                   {capitalizeWords(info.organization_name)}
                 </Typography>
               ) : (
-                <Typography variant="h5" sx={accountNameStyle}>
+                <Typography variant="h5" style={{ fontWeight: "bold" }}>
                   {capitalizeWords(info.merchant_name)}
                 </Typography>
               )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Select, MenuItem } from "@mui/material";
 
 const statusOptions = [
@@ -30,29 +30,21 @@ export default function CouponStatusDropdown({
   const handleMenuChange = (event) => {
     const choice = event.target.value;
     setStatus(choice);
-    console.log(choice);
 
-    let newTaskStatus;
     if (choice === "Changes Requested") {
-      onChange(true);
-      newTaskStatus = "Changes Requested";
-    } else if (
-      choice === "New: Create Proof" ||
-      choice === "New: Add-on Proof"
-    ) {
-      newTaskStatus = "New";
-    } else if (choice === "Completed Coupon") {
-      onChange(false);
-      complete(true);
-      newTaskStatus = "Complete";
+      onChange(true); // Call the onChange function with true
     } else {
-      onChange(false);
-      complete(false);
-      newTaskStatus = "In Progress";
+      onChange(false); // Call the onChange function with false
     }
 
-    // Pass the updated taskStatus to the parent
-    handleUpdateTask(taskId, couponId, choice, newTaskStatus);
+    if (choice === "Completed Coupon") {
+      complete(true); // Call the complete function with true
+    } else {
+      complete(false); // Call the complete function with false
+    }
+
+    // Pass both the selected status and isTaskUpdate state to the parent
+    handleUpdateTask(taskId, couponId, choice, taskStatus);
   };
 
   return (

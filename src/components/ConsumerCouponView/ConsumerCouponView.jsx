@@ -18,22 +18,21 @@ import Typography from "../Typography/Typography";
 import CouponCard from "./CouponCard";
 import SearchBar from "../SearchBar/SearchBar";
 import ToggleButton from "../ToggleButton/ToggleButton";
-import LoadingSpinner from "../HomePage/LoadingSpinner";
 
 export default function ConsumerCouponView() {
   const dispatch = dispatchHook();
   const user = User();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [isLoading, setIsLoading] = useState(true);
   const [toggleView, setToggleView] = useState(false);
+  console.log(toggleView);
   const [query, setQuery] = useState("");
   const [filteredCoupons, setFilteredCoupons] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const coupons = couponsData() || [];
   // For Coupon Book Year
-  const activeYear = appActiveYear();
+  const activeYear = bookYear();
   const expirationYear =
     activeYear && activeYear[0] ? activeYear[0].year.split("-")[1] : "";
   // Year ID //
@@ -49,12 +48,6 @@ export default function ConsumerCouponView() {
     };
     dispatch(dispatchAction);
   }, [activeYear]);
-
-  useEffect(() => {
-    if (coupons.length > 0) {
-      setIsLoading(false);
-    }
-  }, [coupons]);
 
   const fuse = new Fuse(coupons, {
     keys: ["merchant_name"], // The 'merchant' field is used for searching
@@ -82,6 +75,7 @@ export default function ConsumerCouponView() {
       typeof coupon.merchantName === "string" &&
       coupon.merchantName.toLowerCase().includes(query.toLowerCase())
   );
+  console.log(filteredMerchants);
 
   const clearInput = () => {
     setQuery("");
@@ -98,6 +92,7 @@ export default function ConsumerCouponView() {
   );
   const totalFilteredMerchants =
     query.trim() === "" ? coupons.length : filteredMerchants.length;
+  console.log(totalFilteredMerchants);
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -161,16 +156,13 @@ export default function ConsumerCouponView() {
           </Box>
           {/* ~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~ List ~~~~~ */}
-          {isLoading && (
-            <LoadingSpinner
-              text="Loading from database..."
-              finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
-            />
-          )}
-          {!isLoading &&
+          {currentCoupons.length > 0 ? (
             currentCoupons.map((coupon, index) => (
               <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
-            ))}
+            ))
+          ) : (
+            <Typography label="No matching coupons found" />
+          )}
         </>
       ) : (
         <Typography label="Coupons Redeemed" />

@@ -15,7 +15,6 @@ import EditIcon from "@mui/icons-material/Edit";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { historyHook } from "../../hooks/useHistory";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { flexCenter } from "../Utils/pageStyles";
 import { mComments } from "../../hooks/reduxStore";
 import {
   successColor,
@@ -34,6 +33,8 @@ import {
 import TaskDropdown from "./TaskDropdown";
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import AssignSelect from "./AssignSelect";
+import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { flexCenter, flexRowSpace } from "../Utils/pageStyles";
 import TaskCardButtons from "./TaskCardButtons";
 import DatePicker from "../DatePicker/DatePicker";
 
@@ -67,16 +68,18 @@ export default function TaskCard({
   const history = historyHook();
   const dispatch = dispatchHook();
 
-  const oId = task ? task.organization_id : null;
-  const mId = task ? task.merchant_id : null;
+  const oId = task.organization_id;
+  const mId = task.merchant_id;
   const taskStatus = task ? task.task_status : null;
 
   const [selectedTask, setSelectedTask] = useState(null);
-  const [completedTask, setCompletedTask] = useState(taskStatus === "Complete");
+  const [completedTask, setCompletedTask] = useState(complete === "Complete");
   const [assignedUser, setAssignedUser] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isDateEdit, setIsDateEdit] = useState(false);
   const [newDueDate, setNewDueDate] = useState("");
+
+  console.log(assignedUser);
 
   // Comments
   const merchantComments = mComments(mId) || [];
@@ -86,6 +89,7 @@ export default function TaskCard({
   );
 
   const handleTaskChange = (taskStatus) => {
+    console.log(taskStatus);
     setSelectedTask(taskStatus); // Update selectedTask with the value received from TaskDropdown
   };
 
@@ -98,7 +102,11 @@ export default function TaskCard({
     const updateActionType =
       taskType === "organization"
         ? "UPDATE_ORGANIZATION_TASK"
-        : "CHANGE_MERCHANT_TASK_STATUS";
+        : "UPDATE_MERCHANT_TASK";
+
+    console.log(updateActionType);
+    console.log(task.id);
+    console.log(selectedTask);
 
     const dispatchAction = {
       type: updateActionType,
@@ -108,9 +116,12 @@ export default function TaskCard({
         task_status: selectedTask,
       },
     };
+    console.log(dispatchAction);
     dispatch(dispatchAction);
     // Notify the parent component about the task update
     onTaskUpdate();
+    // Show the success alert
+    // setIsAlertOpen(true);
   };
 
   const archiveTask = () => {
@@ -118,6 +129,9 @@ export default function TaskCard({
       taskType === "organization"
         ? "ARCHIVE_ORGANIZATION_TASK"
         : "ARCHIVE_MERCHANT_TASK";
+
+    console.log(archiveActionType);
+    console.log(task.id);
 
     dispatch({
       type: archiveActionType,
@@ -138,18 +152,15 @@ export default function TaskCard({
   };
 
   const saveNewDueDate = () => {
-    const idToSend = taskType === "organization" ? oId : mId;
-
-    const actionType = taskType === "organization" ? "CHANGE_DUE_DATE_ORG" : "CHANGE_DUE_DATE_MER";
-
     const action = {
-      type: actionType,
+      type: "CHANGE_DUE_DATE",
       payload: {
         id: task.id,
         due_date: newDueDate,
-        accountId: idToSend,
+        merchantId: mId,
       },
     };
+    console.log(action);
     dispatch(action);
     clearDateField();
   };
@@ -158,6 +169,8 @@ export default function TaskCard({
     setNewDueDate("");
     setIsDateEdit(false);
   };
+  console.log(newDueDate);
+  console.log(isDateEdit);
 
   const handleEditMode = () => {
     setIsEditing(true);
@@ -177,6 +190,7 @@ export default function TaskCard({
           merchantId: mId,
         },
       };
+      console.log(dispatchAction);
       dispatch(dispatchAction);
     }
     if (assignedUser && taskType === "organization") {
@@ -188,6 +202,7 @@ export default function TaskCard({
           organizationId: oId,
         },
       };
+      console.log(dispatchAction2);
       dispatch(dispatchAction2);
     }
     onTaskUpdate();

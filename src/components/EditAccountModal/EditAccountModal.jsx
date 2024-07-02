@@ -18,7 +18,7 @@ import AddFileButton from "../AddFileButton/AddFileButton";
 import StateSelector from "../StateSelector/StateSelector";
 import ModalButtons from "../Modals/ModalButtons";
 
-const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
+const EditAccountModal = ({ open, handleClose, data, isMerchantList, activeRegion }) => {
   const dispatch = useDispatch();
   const [editedAccount, setEditedAccount] = useState(data);
   const [selectedState, setSelectedState] = useState(data.state);
@@ -36,14 +36,15 @@ const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
   };
 
   const handleFileSelection = (uploadedFile) => {
-    // console.log(uploadedFile);
+    console.log(uploadedFile);
     setEditedAccount({ ...editedAccount, uploadedFile });
   };
 
   const handleEditSave = (editedAccount) => {
+    console.log(editedAccount);
     if (!isMerchantList) {
       dispatch({ type: "EDIT_ORGANIZATION", payload: editedAccount });
-      dispatch({ type: "FETCH_ORGANIZATIONS" });
+      dispatch({ type: "FETCH_ORGANIZATIONS", payload: activeRegion.id });
     } else {
       dispatch({ type: "EDIT_MERCHANT_DETAILS", payload: editedAccount });
       dispatch({ type: "FETCH_MERCHANTS" });

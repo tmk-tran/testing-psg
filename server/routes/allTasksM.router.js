@@ -6,17 +6,11 @@ const {
 } = require("../modules/authentication-middleware");
 
 router.get("/", rejectUnauthenticated, (req, res) => {
-  const queryText = `
-          SELECT mt.*, m.merchant_name
-          FROM merchant_tasks mt
-          JOIN merchant m ON mt.merchant_id = m.id
-          ORDER BY mt.due_date ASC;
-        `;
-
+  const queryText = `SELECT * FROM merchant_tasks ORDER BY due_date ASC;`;
   pool
     .query(queryText)
     .then((result) => {
-      console.log("Successful GET from allTasksM.router");
+      console.log("FROM tasks.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -28,18 +22,11 @@ router.get("/", rejectUnauthenticated, (req, res) => {
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const merchantId = req.params.id;
 
-  const queryText = `
-          SELECT mt.*, m.merchant_name
-          FROM merchant_tasks mt
-          JOIN merchant m ON mt.merchant_id = m.id
-          WHERE mt.merchant_id = $1
-          ORDER BY mt.due_date ASC;
-        `;
-
+  const queryText = `SELECT * FROM merchant_tasks WHERE merchant_id = $1;`;
   pool
     .query(queryText, [merchantId])
     .then((result) => {
-      console.log("Successful GET by id in allTasksM.router");
+      console.log("FROM tasks.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -49,9 +36,11 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 });
 
 router.post("/", rejectUnauthenticated, (req, res) => {
+  console.log("From ALLTASKS ROUTER: ", req.body);
   const category = req.body.category;
   const task = req.body.task;
   const merchantId = req.body.merchant_id;
+  const merchantName = req.body.merchant_name;
   const assign = req.body.assign;
   const dueDate = req.body.due_date;
   const description = req.body.description;
@@ -63,20 +52,22 @@ router.post("/", rejectUnauthenticated, (req, res) => {
           INSERT INTO "merchant_tasks" (
             category, 
             task, 
-            merchant_id,  
+            merchant_id, 
+            merchant_name, 
             assign, 
             due_date, 
             description, 
             task_status, 
             coupon_details,
             book_id) 
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`;
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`;
 
   pool
     .query(queryText, [
       category,
       task,
       merchantId,
+      merchantName,
       assign,
       dueDate,
       description,
@@ -94,10 +85,12 @@ router.post("/", rejectUnauthenticated, (req, res) => {
 });
 
 router.put("/:id", rejectUnauthenticated, (req, res) => {
+  console.log("From ALLTASKS ROUTER: ", req.body);
   const taskId = req.params.id;
   const task = req.body.task;
   const taskStatus = req.body.task_status;
 
+  // const queryText = `UPDATE "merchant_tasks" SET task_status = $1 WHERE id = $2;`;
   const queryText = `
             UPDATE 
               "merchant_tasks"
@@ -119,33 +112,9 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
     });
 });
 
-router.put("/status/:id", rejectUnauthenticated, (req, res) => {
-  const taskId = req.params.id;
-  const taskStatus = req.body.task_status;
-
-  const queryText = `
-            UPDATE 
-              "merchant_tasks"
-            SET
-              task_status = $1
-            WHERE
-              id = $2;
-        `;
-
-  pool
-    .query(queryText, [taskStatus, taskId])
-    .then((response) => {
-      res.sendStatus(200);
-    })
-    .catch((err) => {
-      console.log("error with allTaskM PUT route", err);
-      res.sendStatus(500);
-    });
-});
-
 router.delete("/:id", (req, res) => {
   const taskId = req.params.id;
-
+  console.log("taskId = ", taskId);
   pool
     .query(
       `UPDATE "merchant_tasks"

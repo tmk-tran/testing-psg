@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import {
@@ -20,13 +20,9 @@ import EditAttributesIcon from "@mui/icons-material/EditAttributes";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
-import {
-  User,
-  oSellers,
-  allYears,
-  appActiveYear,
-} from "../../hooks/reduxStore";
+import { User, oSellers, bookYear, allYears } from "../../hooks/reduxStore";
 import { primaryColor } from "../Utils/colors";
+import { border } from "../Utils/colors";
 import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import SellerForm from "./SellerForm";
@@ -47,7 +43,27 @@ const sellersBorder = {
   borderRadius: "5px",
 };
 
-export default function SellersTable({ forwardedRef }) {
+function generateRefId(firstName, lastName, teacher) {
+  const firstInitial = firstName.charAt(0).toUpperCase();
+  const lastInitial = lastName.charAt(0).toUpperCase();
+  const teacherInitials = teacher
+    .split(" ")
+    .map((name) => name.charAt(0).toUpperCase())
+    .join("");
+  // const randomDigits = Math.floor(1000 + Math.random() * 9000); // Generate random 4-digit number
+  const randomDigits = Math.floor(100000 + Math.random() * 900000); // Generate random 6-digit number
+
+  return `${firstInitial}${lastInitial}${teacherInitials}${randomDigits}`;
+}
+
+// Example usage
+const firstName = "John";
+const lastName = "Doe";
+const teacher = "Jane Smith";
+const refId = generateRefId(firstName, lastName, teacher);
+console.log(refId);
+
+export default function SellersTable() {
   const dispatch = dispatchHook();
   const paramsObject = useParams();
   const orgId = paramsObject.id;
@@ -55,24 +71,30 @@ export default function SellersTable({ forwardedRef }) {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
+  console.log(mode);
   const [sellerToEdit, setSellerToEdit] = useState(null);
   const [showSellerUrl, setShowSellerUrl] = useState(false);
+  console.log(showSellerUrl);
   const [sellerRefId, setSellerRefId] = useState(null);
+  console.log(sellerRefId);
   const [viewUrlTable, setViewUrlTable] = useState(false);
+  console.log(viewUrlTable);
   const [modeEditBooks, setModeEditBooks] = useState(false);
+  console.log(modeEditBooks);
   const [booksSold, setBooksSold] = useState(0);
+  console.log(booksSold);
   const [editingRefId, setEditingRefId] = useState(null);
+  console.log(editingRefId);
   const [updateActions, setUpdateActions] = useState([]);
+  console.log(updateActions);
 
   const user = User() || [];
   const sellers = oSellers() || [];
-  const year = appActiveYear() || [];
-  const yearId = year.length > 0 ? year[0].id : null;
+  const year = bookYear() || [];
+  const yearId = year[0].id;
   const availableYears = allYears();
   const [viewYearId, setViewYearId] = useState(year ? yearId : null);
 
-  // move this to Details parent component, and
-  // send the store data as props to this component
   useEffect(() => {
     const dispatchAction = {
       type: "FETCH_SELLERS",
@@ -81,7 +103,7 @@ export default function SellersTable({ forwardedRef }) {
         yearId: yearId,
       },
     };
-    // console.log(dispatchAction);
+    console.log(dispatchAction);
     dispatch(dispatchAction);
   }, []);
 
@@ -94,20 +116,10 @@ export default function SellersTable({ forwardedRef }) {
           yearId: viewYearId,
         },
       };
-      // console.log(dispatchAction2);
+      console.log(dispatchAction2);
       dispatch(dispatchAction2);
     }
   }, [viewYearId]);
-
-  useLayoutEffect(() => {
-    if (forwardedRef && forwardedRef.current && sellers.length > 0) {
-      // Delay the scroll operation slightly to allow the table to render completely
-      setTimeout(() => {
-        forwardedRef.current.scrollIntoView({ behavior: "instant" });
-      }, 100); // Adjust the delay as needed
-    }
-    // No need to clear forwardedRef here
-  }, [forwardedRef, sellers.length]);
 
   // Get only active year ID
   const activeYears = availableYears
@@ -130,8 +142,11 @@ export default function SellersTable({ forwardedRef }) {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
   const handleEditOpen = (id, mode) => {
-    const sellerToEdit = sellers.find((seller) => seller.id === id);
+    console.log(id);
+    console.log(mode);
 
+    const sellerToEdit = sellers.find((seller) => seller.id === id);
+    console.log(sellerToEdit);
     if (sellerToEdit) {
       setSellerToEdit(sellerToEdit);
       setMode(mode);
@@ -151,22 +166,24 @@ export default function SellersTable({ forwardedRef }) {
       type: "ADD_SELLER",
       payload: formDataWithId,
     };
-    // console.log("Dispatching action:", action);
+    console.log("Dispatching action:", action);
     dispatch(action);
     showSaveSweetAlert({ label: "Seller Added" });
   };
 
   const handleEditSeller = (editedSeller) => {
+    console.log(editedSeller);
+
     const editAction = {
       type: "EDIT_SELLER",
       payload: editedSeller,
     };
     dispatch(editAction);
-    // console.log("Dispatching action:", editAction);
+    console.log("Dispatching action:", editAction);
 
     // Dispatch each update action from updateActions
     updateActions.forEach((action) => {
-      // console.log("Dispatching action:", action);
+      console.log("Dispatching action:", action);
       dispatch(action);
     });
 
@@ -200,6 +217,7 @@ export default function SellersTable({ forwardedRef }) {
 
   // ~~~~~ Open / Close URL modal ~~~~~ //
   const handleViewUrl = (value) => {
+    console.log(value);
     setShowSellerUrl(true);
     setSellerRefId(value);
   };
@@ -211,6 +229,8 @@ export default function SellersTable({ forwardedRef }) {
 
   // ~~~~~~ Open / Close edit form for physical books sold ~~~~~~ //
   const openEditBooksSold = (refId, value) => {
+    console.log(refId);
+    console.log(value);
     setModeEditBooks(true);
     setBooksSold(value);
     setEditingRefId(refId);
@@ -289,7 +309,6 @@ export default function SellersTable({ forwardedRef }) {
         handleClose={closeEditBooksSold}
         orgId={orgId}
         editingRefId={editingRefId}
-        yearId={yearId}
       />
       {/* ~~~~~~~~~~~ View URL modal ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       <ViewUrl
@@ -302,7 +321,7 @@ export default function SellersTable({ forwardedRef }) {
       <Paper elevation={3} sx={{ width: "100%" }}>
         <TableContainer sx={{ maxHeight: 600, overflowX: "auto" }}>
           {/* {!viewUrlTable ? ( */}
-          <Table ref={forwardedRef} stickyHeader aria-label="sticky table">
+          <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 {columns.map((column) => (
@@ -343,8 +362,7 @@ export default function SellersTable({ forwardedRef }) {
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={seller.id}
-                      id={`seller-row-${seller.id}`}
+                      key={index}
                       sx={{
                         ...(isEvenRow
                           ? { backgroundColor: evenRowColor }
@@ -465,7 +483,7 @@ export default function SellersTable({ forwardedRef }) {
                   const sum = calculateColumnSum(sellers, column.id);
                   const displaySum = !isNaN(sum); // Check if sum is a valid number and not zero
                   const isExcludedColumn =
-                    // column.id === "refId" ||
+                    column.id === "refId" ||
                     column.id === "lastname" ||
                     column.id === "firstname" ||
                     column.id === "level" ||
@@ -501,8 +519,6 @@ export default function SellersTable({ forwardedRef }) {
                               column.id === "digital" ||
                               column.id === "seller_earnings"
                               ? "$" + parseFloat(sum).toFixed(2)
-                              : column.id === "refId"
-                              ? `Sellers: ${Number(sellers.length)}`
                               : sum
                             : null}
                         </TableCell>

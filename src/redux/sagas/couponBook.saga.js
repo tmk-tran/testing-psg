@@ -4,40 +4,31 @@ import { takeEvery, put } from "redux-saga/effects";
 function* fetchCouponBooksSaga() {
   try {
     const response = yield axios.get("/api/couponbook");
+    console.log("FETCH request fetchCouponBooksSaga", response.data);
     yield put({ type: "SET_COUPON_BOOKS", payload: response.data });
   } catch (err) {
     console.log("error in fetching coupon books", err);
   }
 }
 
-// function* fetchByIdSaga(action) {
-//   console.log(action.payload);
-//   try {
-//     const response = yield axios.get(`/api/couponbook/id/${action.payload}`);
-//     // changed this from SET_BOOK_YEAR
-//     console.log(response.data);
-//     yield put({ type: "SET_APP_YEAR", payload: response.data });
-//   } catch (err) {
-//     console.log("Error fetching coupon book year by id", err);
-//   }
-// }
 function* fetchByIdSaga(action) {
   try {
+    console.log(action.payload);
     const response = yield axios.get(`/api/couponbook/id/${action.payload}`);
-    yield put({ type: action.reducerType, payload: response.data });
+    yield put({ type: "SET_BOOK_YEAR", payload: response.data });
   } catch (err) {
     console.log("Error fetching coupon book year by id", err);
   }
 }
 
-
 // Reducer is bookYear.reducer here
 function* fetchByYearSaga(action) {
   try {
+    console.log(action.payload);
     const response = yield axios.get(
       `/api/couponbook/season/${action.payload}`
     );
-    yield put({ type: "SET_APP_YEAR", payload: response.data });
+    yield put({ type: "SET_BOOK_YEAR", payload: response.data });
   } catch (err) {
     console.log("Error fetching book year", err);
   }
@@ -54,7 +45,6 @@ function* addCouponBookSaga(action) {
 
 function* setActiveYearSaga(action) {
   const yearId = action.payload;
-  console.log(yearId);
 
   try {
     yield axios.put(`/api/couponbook/id/${yearId}`);

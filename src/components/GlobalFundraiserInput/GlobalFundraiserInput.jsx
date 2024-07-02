@@ -6,7 +6,7 @@ import { MenuItem, Box, Paper, Typography } from "@mui/material";
 import { Button, TextField, CardContent } from "@mui/material";
 import Swal from "sweetalert2";
 
-export default function GlobalFundraiserInput() {
+export default function GlobalFundraiserInput({ activeRegion }) {
   const dispatch = useDispatch();
 
   const organizations = useSelector((store) => store.organizations);
@@ -14,7 +14,7 @@ export default function GlobalFundraiserInput() {
   const couponBooks = useSelector((store) => store.couponBooks);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
+    dispatch({ type: "FETCH_ORGANIZATIONS", payload: activeRegion.id });
     dispatch({
       type: "FETCH_ALL_GROUPS",
     });

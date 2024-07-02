@@ -4,7 +4,6 @@ import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 
 export default function ToggleButton({
   title,
-  placement,
   onClick,
   toggleState,
   label1,
@@ -13,7 +12,7 @@ export default function ToggleButton({
   sxIcon,
 }) {
   return (
-    <Tooltip title={title} placement={placement}>
+    <Tooltip title={title}>
       <Button
         // variant="outlined"
         onClick={onClick}

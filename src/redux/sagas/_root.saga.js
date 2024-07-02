@@ -2,7 +2,7 @@ import { all } from "redux-saga/effects";
 import loginSaga from "./login.saga";
 import registrationSaga from "./registration.saga";
 import userSaga from "./user.saga";
-import userOrgAdminSaga from "./userOrgAdmin.saga";
+import regionSaga from "./region.saga";
 
 import orgDetailsSaga from "./orgDetails.saga";
 import organizationsSaga from "./organizations.saga";
@@ -28,14 +28,13 @@ import transactionsSaga from "./transactions.saga";
 import redeemSaga from "./couponRedeem.saga";
 import paypalSaga from "./paypal.saga";
 import userCouponSaga from "./userCoupon.saga";
-import activeCampaignSaga from "./active_campaign.saga";
 
 export default function* rootSaga() {
   yield all([
     loginSaga(), // login saga is now registered
     registrationSaga(),
     userSaga(),
-    userOrgAdminSaga(),
+    regionSaga(),
     orgDetailsSaga(),
     organizationsSaga(),
     groupSaga(),
@@ -60,6 +59,5 @@ export default function* rootSaga() {
     redeemSaga(),
     paypalSaga(),
     userCouponSaga(),
-    activeCampaignSaga(),
   ]);
 }

@@ -1,12 +1,10 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, Typography } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
+import { dispatchHook } from "../../hooks/useDispatch";
 import { flexCenter } from "../Utils/pageStyles";
-import { border, primaryColor } from "../Utils/colors";
-// ~~~~~~~~~~ Components ~~~~~~~~~ //
+import { border } from "../Utils/colors";
 import PdfThumbnail from "../PdfThumbnail/PdfThumbnail";
-import DeletePdfIcon from "./DeletePdfIcon";
-import PageViewButton from "./PageViewButton";
 
 export const thumbnailSize = {
   height: "150px",
@@ -16,25 +14,36 @@ export const thumbnailSize = {
 const boxStyle = {
   display: "flex",
   justifyContent: "center",
-  height: 25,
+  // position: "relative"
 };
 
-const divStyle = {
-  marginTop: "auto",
-};
-
-const viewButtonSx = {
-  color: primaryColor.color,
-};
-
-export default function FilePreview({
+const FilePreview = ({
+  pdfBlob,
+  merchantId,
   showFrontViewFiles,
   showBackViewFiles,
   caseType,
   directFile,
-  handleDeleteFile,
-}) {
+}) => {
+  console.log(merchantId);
+  console.log(showFrontViewFiles);
+  console.log(showBackViewFiles);
+  console.log(caseType);
+  const dispatch = dispatchHook();
+  const [pdf, setPdf] = useState(null);
+  console.log(pdfBlob);
+  console.log(directFile);
+  console.log(pdf);
+  const [isUploading, setIsUploading] = useState(false);
+  console.log(isUploading);
+  const [frontViewUrl, setFrontViewUrl] = useState(null);
+  console.log(frontViewUrl);
+  const [backViewUrl, setBackViewUrl] = useState(null);
+  console.log(backViewUrl);
+
   const handleButtonClick = (file, type) => {
+    console.log(file);
+    console.log(type);
     let blob = null;
 
     switch (type) {
@@ -56,81 +65,55 @@ export default function FilePreview({
       window.open(url, "_blank");
     }
   };
+  console.log(directFile);
 
   return (
-    <div style={divStyle}>
+    <div>
       <>
         {directFile && (
           <>
             {showFrontViewFiles && directFile.frontViewBlob !== null ? (
               <>
-                {caseType !== "preview" && (
-                  <Box sx={boxStyle}>
-                    <>
-                      <DeletePdfIcon
-                        size={25}
-                        deleteTitle="Delete PDF"
-                        onDelete={handleDeleteFile}
-                        fileId={directFile.id}
-                      />
-                      <Box sx={{ flexGrow: 1 }}></Box>
-                      {/* ~~~~~ View PDF ~~~~~ */}
-                      <PageViewButton
-                        viewButtonSx={viewButtonSx}
-                        handleButtonClick={handleButtonClick}
-                        view="frontView"
-                        directFile={directFile}
-                        viewTitle="View Front"
-                      />
-                    </>
-                  </Box>
-                )}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <PdfThumbnail
                     pdf={directFile.frontViewBlob}
                     style={thumbnailSize}
                   />
                 </div>
+                {caseType !== "preview" && (
+                  <Box sx={boxStyle}>
+                    <Button
+                      onClick={() => handleButtonClick(directFile, "frontView")}
+                    >
+                      View Front
+                    </Button>
+                  </Box>
+                )}
               </>
             ) : null}
             {showBackViewFiles && directFile.backViewBlob !== null ? (
               <>
-                {caseType !== "preview" && (
-                  <Box sx={boxStyle}>
-                    <>
-                      <DeletePdfIcon
-                        size={25}
-                        deleteTitle="Delete PDF"
-                        onDelete={handleDeleteFile}
-                        fileId={directFile.id}
-                      />
-                      <Box sx={{ flexGrow: 1 }}></Box>
-                      {/* ~~~~~ View PDF ~~~~~ */}
-                      <PageViewButton
-                        viewButtonSx={viewButtonSx}
-                        handleButtonClick={handleButtonClick}
-                        view="backView"
-                        directFile={directFile}
-                        viewTitle="View Back"
-                      />
-                    </>
-                  </Box>
-                )}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <PdfThumbnail
                     pdf={directFile.backViewBlob}
                     style={thumbnailSize}
                   />
                 </div>
+                {caseType !== "preview" && (
+                  <Box sx={boxStyle}>
+                    <Button
+                      onClick={() => handleButtonClick(directFile, "backView")}
+                    >
+                      View Back
+                    </Button>
+                  </Box>
+                )}
               </>
             ) : null}
             {(showFrontViewFiles && directFile.frontViewBlob === null) ||
             (showBackViewFiles && directFile.backViewBlob === null) ? (
-              <Box>
-                <Box sx={{ height: 25 }}></Box>
-                <Box sx={{ ...thumbnailSize, ...flexCenter, margin: "0 auto" }}>
-                  <Typography variant="caption">No file available</Typography>
-                </Box>
+              <Box sx={{ ...thumbnailSize, ...flexCenter }}>
+                <Typography variant="caption">No file available</Typography>
               </Box>
             ) : null}
           </>
@@ -138,4 +121,6 @@ export default function FilePreview({
       </>
     </div>
   );
-}
+};
+
+export default FilePreview;

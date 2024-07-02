@@ -6,7 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
 import { choices } from "../AddAccountModal/contactChoices";
-import { mDetails, mNotes, mLocations } from "../../hooks/reduxStore";
+import { mDetails, mNotes, mLocations, mTasks } from "../../hooks/reduxStore";
 import { useCaseType } from "../Utils/useCaseType";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import BackButton from "../Buttons/BackButton";
@@ -27,6 +27,7 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
   // ~~~~~~~~~~ State ~~~~~~~~~~ //
   const [locationAdded, setLocationAdded] = useState(false);
   const { caseType, handleCaseTypeChange } = useCaseType("default");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const action = {
@@ -79,8 +80,7 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
   return (
     <Box className={`details-container ${isSmallScreen ? "small-screen" : ""}`}>
       <div style={{ position: "relative" }}>
-        {/* <div style={{ position: "absolute", top: 0, left: 0 }}> */}
-        <div>
+        <div style={{ position: "absolute", top: 0, left: 0 }}>
           <BackButton />
         </div>
       </div>

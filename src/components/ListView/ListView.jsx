@@ -1,22 +1,56 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Card, CardContent, Typography } from "@mui/material";
 import "./ListView.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import Swal from "sweetalert2";
-import { dispatchHook } from "../../hooks/useDispatch";
+import EditAccountModal from "../EditAccountModal/EditAccountModal";
+import {
+  backgroundColor,
+  border,
+  primaryColor,
+  successColor,
+} from "../Utils/colors";
 import { User } from "../../hooks/reduxStore";
-import { backgroundColor } from "../Utils/colors";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import ImageRender from "../ImageRender/ImageRender";
+<<<<<<< Updated upstream
+=======
 import EditAccountModal from "../EditAccountModal/EditAccountModal";
 
-function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
+function ListView({
+  activeRegion,
+  data,
+  isMerchantList,
+  onChange,
+  isOrgAdmin,
+  numCoupons,
+}) {
   const history = useHistory();
   const dispatch = dispatchHook();
   const [isEditModalOpen, setEditModalOpen] = useState(false);
+>>>>>>> Stashed changes
 
+function ListView({
+  data,
+  isMerchantList,
+  onChange,
+  editComplete,
+  isOrgAdmin,
+  numCoupons,
+}) {
+  console.log(data);
+  console.log(data.organization_logo_base64);
+  console.log(data.merchant_logo_base64);
+  console.log(isMerchantList);
+  console.log(numCoupons);
   const user = User() || {};
+  console.log(user);
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  console.log(editComplete);
 
   const handleEdit = () => {
     setEditModalOpen(true);
@@ -24,7 +58,6 @@ function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
 
   const handleEditClose = () => {
     setEditModalOpen(false);
-    // Used to refresh page for Merchant account edit
     onChange();
   };
 
@@ -117,17 +150,6 @@ function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
   const totalBooksSold = data.total_books_sold;
   const totalStandingBooks =
     totalCheckedOutBooks - totalCheckedInBooks - totalBooksSold;
-  // Added 4/19/24, per client request
-  const orgBooksSold =
-    Number(data.physical_book_cash || 0) +
-    Number(data.physical_book_digital || 0) +
-    Number(data.digital_book_credit || 0);
-  const orgEarningsCalc =
-    Number(orgBooksSold) * Number(data.organization_earnings);
-  const psgEarningsCalc =
-    (25 - Number(data.organization_earnings)) * Number(orgBooksSold);
-  const donationsTotal =
-    Number(data.total_donations) + Number(data.total_digital_donations);
 
   return (
     <>
@@ -155,7 +177,7 @@ function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
                       {/* ///////////// ORG INFORMATION /////////// */}
                       {/* ///////////////////////////////////////// */}
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~ ORG FEE ~~~~~~~~~~~~~ */}
+                      {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
                       <Typography variant="body2">
                         {!user.org_admin
                           ? `Organization Fee: $${data.organization_earnings}`
@@ -163,59 +185,34 @@ function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
                       </Typography>
 
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
+                      {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
                       <Typography variant="body2">
-                        Organization Earnings: ${orgEarningsCalc}
-                      </Typography>
-
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~~ Donations ~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Donations: ${donationsTotal}
-                      </Typography>
-
-                      {/* ~~~~~ For Groups ~~~~~ */}
-                      {/* <Typography variant="body2">
                         Total Books Sold: {data.total_books_sold}
-                      </Typography> */}
+                      </Typography>
 
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~~ EARNINGS ~~~~~~~~~~~~ */}
-                      {/* <Typography variant="body2">
+                      <Typography variant="body2">
                         Organization Earnings: ${formattedEarnings}
-                      </Typography> */}
+                      </Typography>
                     </div>
 
                     <div className="column">
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~~~ GROUPS ~~~~~~~~~~~~~ */}
-                      {/* <Typography variant="body2">
+                      <Typography variant="body2">
                         Total Groups: {data.total_groups}
-                      </Typography> */}
-
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ BOOKS SOLD ~~~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        Total Books Sold: {orgBooksSold}
-                      </Typography>
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
-                      {/* <Typography variant="body2">
-                        Total Outstanding Books: {totalStandingBooks}
-                      </Typography> */}
-                      <Typography variant="body2">
-                        Total Outstanding Books: {data.total_books_due}
                       </Typography>
 
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                       {/* ~~~~~~~~~~ TOTAL BOOKS ~~~~~~~~~~ */}
-                      {/* <Typography variant="body2">
+                      <Typography variant="body2">
                         Total Outstanding Books: {totalStandingBooks}
-                      </Typography> */}
+                      </Typography>
 
                       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~ PSG EARNINGS (groups) ~~~~~ */}
-                      {/* <Typography variant="body2">
+                      {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
+                      <Typography variant="body2">
                         {!user.org_admin
                           ? `PSG Earnings: $${(
                               data.total_books_sold * 25 -
@@ -223,13 +220,6 @@ function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
                                 ? parseFloat(data.total_org_earnings)
                                 : 0)
                             ).toLocaleString()}`
-                          : null}
-                      </Typography> */}
-                      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-                      {/* ~~~~~~~~~~ PSG EARNINGS ~~~~~~~~~ */}
-                      <Typography variant="body2">
-                        {!user.org_admin
-                          ? `PSG Earnings: $${psgEarningsCalc}`
                           : null}
                       </Typography>
                     </div>
@@ -301,6 +291,7 @@ function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
           handleClose={handleEditClose}
           data={data}
           isMerchantList={isMerchantList}
+          activeRegion={activeRegion}
         />
       </Card>
     </>

@@ -9,66 +9,40 @@ const userStrategy = require("../strategies/user.strategy");
 const router = express.Router();
 
 // Handles Ajax request for user information if user is authenticated
-// router.get("/", rejectUnauthenticated, (req, res) => {
-//   // Send back user object from the session (previously queried from the database)
-//   res.send(req.user);
-// });
-
-router.get("/", rejectUnauthenticated, async (req, res) => {
-  try {
-    const queryText = `
-            SELECT
-              u.id,
-              u.username,
-              u.first_name,
-              u.last_name,
-              u.is_admin,
-              u.org_admin,
-              u.graphic_designer,
-              STRING_AGG(ua.org_id::text, ', ') AS org_ids,
-              STRING_AGG(o.organization_name, ', ') AS organization_names
-            FROM "user" u
-            LEFT JOIN user_org_admin ua ON u.id = ua.user_id
-            LEFT JOIN organization o ON ua.org_id = o.id
-            WHERE u.id = $1
-              AND u.is_deleted = false
-            GROUP BY 
-              u.id, 
-              u.username, 
-              u.first_name, 
-              u.last_name, 
-              u.is_admin, 
-              u.org_admin, 
-              u.graphic_designer;
-          `;
-
-    const values = [req.user.id];
-
-    const result = await pool.query(queryText, values);
-    res.send(result.rows[0]); // Assuming only one user is returned
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    res.sendStatus(500);
-  }
+router.get("/", rejectUnauthenticated, (req, res) => {
+  // Send back user object from the session (previously queried from the database)
+  res.send(req.user);
 });
 
 router.get("/table", rejectUnauthenticated, (req, res) => {
+  // const queryText = `
+  //         SELECT
+  //           id,
+  //           username,
+  //           first_name,
+  //           last_name,
+  //           org_admin,
+  //           org_id,
+  //           graphic_designer
+  //         FROM "user"
+  //         ORDER BY last_name ASC;
+  //       `;
   const queryText = `
-            SELECT 
-              u.id, 
-              u.username,
-              u.first_name,
-              u.last_name, 
-              u.org_admin,
-              u.graphic_designer,
-              STRING_AGG(DISTINCT o.organization_name, ',') AS organization_names,
-              STRING_AGG(DISTINCT uc.show_book::text, ',') AS show_book
-            FROM "user" u
-            LEFT JOIN user_coupon uc ON u.id = uc.user_id
-            LEFT JOIN user_org_admin uoa ON u.id = uoa.user_id
-            LEFT JOIN organization o ON uoa.org_id = o.id
-            GROUP BY u.id, u.username, u.first_name, u.last_name, u.org_admin, u.graphic_designer
-            ORDER BY u.last_name ASC;
+          SELECT 
+            u.id, 
+            u.username,
+            u.first_name,
+            u.last_name, 
+            u.org_admin,
+            u.org_id,
+            u.graphic_designer,
+            o.organization_name,
+            STRING_AGG(DISTINCT uc.show_book::text, ',') AS show_book
+          FROM "user" u
+          LEFT JOIN organization o ON u.org_id = o.id
+          LEFT JOIN user_coupon uc ON u.id = uc.user_id
+          GROUP BY u.id, u.username, u.first_name, u.last_name, u.org_admin, u.org_id, u.graphic_designer, o.organization_name
+          ORDER BY u.last_name ASC;
         `;
 
   pool
@@ -157,26 +131,6 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
     });
 });
 
-router.put("/name/:id", rejectUnauthenticated, (req, res) => {
-  const userId = req.params.id;
-  const newUserName = req.body.username;
-
-  const queryText = `
-          UPDATE "user"
-          SET username = $1
-          WHERE id = $2;
-      `;
-  pool
-    .query(queryText, [newUserName, userId])
-    .then((response) => {
-      res.sendStatus(200);
-    })
-    .catch((err) => {
-      console.log("error in the PUT / request for user name change", err);
-      res.sendStatus(500);
-    });
-});
-
 router.put("/org/:id", rejectUnauthenticated, (req, res) => {
   const userId = req.params.id;
   const orgId = req.body.org_id;
@@ -194,25 +148,6 @@ router.put("/org/:id", rejectUnauthenticated, (req, res) => {
     })
     .catch((err) => {
       console.log("error in the PUT / request for orgAdmin, user.router", err);
-      res.sendStatus(500);
-    });
-});
-
-router.delete("/:id", rejectUnauthenticated, (req, res) => {
-  const userId = req.params.id;
-
-  const queryText = `
-          DELETE FROM "user" 
-          WHERE id = $1;
-      `;
-
-  pool
-    .query(queryText, [userId])
-    .then((response) => {
-      res.sendStatus(200);
-    })
-    .catch((err) => {
-      console.log("error in the DELETE / request for user", err);
       res.sendStatus(500);
     });
 });
