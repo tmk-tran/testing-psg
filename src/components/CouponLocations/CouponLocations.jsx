@@ -17,7 +17,6 @@ const bold = {
 };
 
 const CouponLocations = ({ locations }) => {
-  console.log(locations);
   if (
     !locations ||
     locations.length === 0 ||

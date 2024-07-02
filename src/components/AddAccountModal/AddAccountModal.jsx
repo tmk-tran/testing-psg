@@ -132,7 +132,6 @@ export default function AddAccountModal({
         organization_earnings: orgEarnings,
       },
     };
-    !isMerchantList && console.log(action1);
     !isMerchantList && dispatch(action1);
 
     const action2 = {
@@ -153,7 +152,6 @@ export default function AddAccountModal({
         contact_method: selectedChoice,
       },
     };
-    isMerchantList && console.log(action2);
     isMerchantList && dispatch(action2);
 
     // clear input fields

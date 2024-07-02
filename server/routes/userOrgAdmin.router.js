@@ -37,7 +37,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [userId, orgId])
     .then((response) => {
-      console.log("Successful POST in user_org_admin.router", response.rows);
+      console.log("Successful POST in user_org_admin.router");
       res.sendStatus(200);
     })
     .catch((err) => {

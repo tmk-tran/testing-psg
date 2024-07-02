@@ -13,14 +13,9 @@ import { columns } from "../OrgSellers/sellerTableColumns";
 import CashUpdateModal from "./CashUpdateModal";
 
 export default function SellerPageTable({ sellerInfo }) {
-  console.log(sellerInfo);
-  console.log(columns);
   if (!sellerInfo || sellerInfo.length === 0) {
     return <Typography>No data available</Typography>;
   }
-
-  const info = Object.keys(sellerInfo[0]);
-  console.log(info);
 
   return (
     <Paper>

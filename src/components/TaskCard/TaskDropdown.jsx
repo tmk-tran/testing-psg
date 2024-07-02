@@ -5,8 +5,6 @@ const taskOptions = ["New", "In Progress", "Complete"];
 
 export default function TaskDropdown({ onChange, taskStatus }) {
   const [status, setStatus] = useState("");
-  console.log(taskStatus);
-  console.log(status);
 
   useEffect(() => {
     setStatus(taskStatus);

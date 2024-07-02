@@ -23,25 +23,10 @@ export default function CommentDisplay({ comment, showAllComments, maxWidth }) {
     );
   }
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  console.log(comment);
   const content = comment.comment_content;
-  console.log(content);
   const user = comment.user;
-  console.log(user);
-  console.log(showAllComments);
-  console.log(comment);
   const date = comment.formatted_date;
-  console.log(date);
   const time = comment.formatted_time;
-  console.log(time);
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Display only the most recent comment if showAllComments is false
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  const mostRecentComment = !showAllComments
-    ? comment
-    : [comment[comment.length - 1]];
-  console.log(mostRecentComment);
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
     <Box sx={commentBoxStyle}>

@@ -25,7 +25,6 @@ export default function GroupDetailsCard({ group }) {
   const dispatch = useDispatch();
   //Selector for the coupon books. Used to grab the year of the coupon book in the dropdown menu
   const couponBooks = useSelector((store) => store.couponBooks);
-  console.log(couponBooks);
   //State used for the modal add fundraiser form
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -64,7 +63,6 @@ export default function GroupDetailsCard({ group }) {
       end_date: endDate,
       coupon_book_id: couponBookId,
     };
-    console.log(newFundraiser);
     Swal.fire(
       "Fundraiser Created!",
       "Your fundraiser has been created!",

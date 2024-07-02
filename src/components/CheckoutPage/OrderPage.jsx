@@ -1,43 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Divider, useTheme, useMediaQuery } from "@mui/material";
+import { Box, useTheme, useMediaQuery } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { historyHook } from "../../hooks/useHistory";
-import { dispatchHook } from "../../hooks/useDispatch";
-import { flexCenter, containerStyle } from "../Utils/pageStyles";
+import { containerStyle } from "../Utils/pageStyles";
 import { navButtonStyle } from "./checkoutStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
-import { border } from "../Utils/colors";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import CustomButton from "../CustomButton/CustomButton";
 import Typography from "../Typography/Typography";
 import OrderTable from "./OrderTable";
-import CustomerNameInfo from "../SellerPage/CustomerNameInfo";
+import CustomerNameInfo from "../SellerPage/CustomerNameInfo"; // Disabled on July 2, 2024 (client request)
 import RefIdDisplay from "../SellerPage/RefIdDisplay";
-import { lineDivider } from "../Utils/modalStyles";
 
 export default function OrderPage({ caseType }) {
-  console.log(caseType);
   const seller = useParams();
-  console.log(seller);
-  const dispatch = dispatchHook();
   const history = historyHook();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [customDonation, setCustomDonation] = useState(0);
-  console.log(customDonation);
   const [orderTotal, setOrderTotal] = useState(0);
-  console.log(orderTotal);
 
   // Seller info from store //
   const sellerData = sellerPageInfo() || [];
-  console.log(sellerData);
   // Extract the seller ID //
   const [firstSeller] = sellerData;
   const sellerId = firstSeller ? firstSeller.id : null;
-  console.log(sellerId);
   const [showOrderTable, setShowOrderTable] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
 
@@ -66,6 +56,7 @@ export default function OrderPage({ caseType }) {
           setRows((prevRows) =>
             prevRows.filter((row) => row.id === 1 || row.id === 4)
           );
+          setShowOrderTable(true);
           break;
         // Add other case types if needed
         default:
@@ -104,7 +95,7 @@ export default function OrderPage({ caseType }) {
   const handleQuantityChange = (newRows) => {
     setRows(newRows);
   };
-  
+
   const mapSelectedRowsToProducts = () => {
     return selectedRows.map((selectedId) => {
       const row = rows.find((row) => row.id === selectedId);
@@ -114,29 +105,14 @@ export default function OrderPage({ caseType }) {
       }
       return row;
     });
-  };  
-
-  const selectedProducts = mapSelectedRowsToProducts();
-  console.log("Selected Products:", selectedProducts);
-
-  const handlePayment = (total) => {
-    // Implement payment logic here
-    console.log("Subtotal being sent for payment:", total);
-    setOrderTotal(total);
   };
 
-  // REMOVED THIS FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+  const selectedProducts = mapSelectedRowsToProducts();
 
-  // const handleFormChange = (incomingData) => {
-  //   console.log(incomingData);
-
-  //   const dispatchAction = {
-  //     type: "ADD_CUSTOMER",
-  //     payload: incomingData,
-  //   };
-  //   console.log("Dispatching action:", dispatchAction);
-  //   dispatch(dispatchAction);
-  // };
+  const handlePayment = (subTotal) => {
+    // Implement payment logic here
+    setOrderTotal(subTotal);
+  };
 
   const addToCart = () => {
     history.push({
@@ -164,10 +140,8 @@ export default function OrderPage({ caseType }) {
   };
 
   return (
-    // <div style={containerStyle}>
-    <div style={{ ...containerStyle, ...(isMobile && { width: '100%' }) }}>
+    <div style={{ ...containerStyle, ...(isMobile && { width: "100%" }) }}>
       <Typography
-        // label="Order Books"
         label={
           caseType === "cash"
             ? "Cash / Check"
@@ -187,7 +161,10 @@ export default function OrderPage({ caseType }) {
       </Box>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Customer info fields ~~~~~~~~~~ */}
-      {caseType === "cash" && (
+      {/* Removed on July 2, 2024 after feedback from client */}
+      {/* Need to define onSubmit if reinstated, and also */}
+      {/* an endpoint for the backend (where to save?) */}
+      {/* {caseType === "cash" && (
         <Box sx={{ mb: 2 }}>
           <CustomerNameInfo
             // removed handleFormChange from here
@@ -197,7 +174,7 @@ export default function OrderPage({ caseType }) {
           />
           <Divider sx={{ mt: 2, ...lineDivider }} />
         </Box>
-      )}
+      )} */}
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Order Table ~~~~~~~~~~ */}
       {caseType === "cash" && showOrderTable && (
@@ -219,7 +196,6 @@ export default function OrderPage({ caseType }) {
             <CustomButton label="Clear" onClick={clearTotal} />
             <CustomButton
               label="Add to Cart"
-              // onClick={addToCart}
               onClick={addToCart}
               variant="contained"
             />
@@ -245,24 +221,12 @@ export default function OrderPage({ caseType }) {
             <CustomButton label="Clear" onClick={clearTotal} />
             <CustomButton
               label="Add to Cart"
-              // onClick={addToCart}
               onClick={addToCart}
               variant="contained"
             />
           </Box>
         </>
       )}
-      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-      {/* ~~~~~~~~~~ Buttons ~~~~~~~~~~ */}
-      {/* <Box sx={navButtonStyle}>
-        <CustomButton label="Clear" onClick={clearTotal} />
-        <CustomButton
-          label="Add to Cart"
-          // onClick={addToCart}
-          onClick={addToCart}
-          variant="contained"
-        />
-      </Box> */}
     </div>
   );
 }

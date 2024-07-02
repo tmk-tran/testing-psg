@@ -39,17 +39,14 @@ const textfieldStyle = {
 };
 
 export default function EditCouponModal({ file }) {
-  console.log(file);
   const dispatch = dispatchHook();
   const params = useParams();
-  console.log(params);
   const couponId = params.couponId;
   const merchantId = params.merchantId;
   // ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~ //
   const [open, setOpen] = useState(false);
   const [offer, setOffer] = useState(null);
   const [validYear, setValidYear] = useState(null);
-  console.log(validYear);
   const [value, setValue] = useState(null);
   const [exclusions, setExclusions] = useState(null);
   const [expiration, setExpiration] = useState(null);
@@ -58,29 +55,20 @@ export default function EditCouponModal({ file }) {
   // ~~~~~~~~~~ Location State ~~~~~~~~~~~~~~~~~~~ //
   // FIGURE OUT WHY THIS IS GETTING FORMATTED AS AN ARRAY
   const [selectedLocations, setSelectedLocations] = useState(null);
-  console.log(selectedLocations);
   const [selectedLocationId, setSelectedLocationId] = useState(null);
-  console.log(selectedLocationId);
   const [selectAllLocations, setSelectAllLocations] = useState(false);
-  console.log(selectAllLocations);
   const [participatingLocations, setParticipatingLocations] = useState(false);
-  console.log(participatingLocations);
   const [isDropdownSelected, setIsDropdownSelected] = useState(false);
   // ~~~~~~~~~~ Errors ~~~~~~~~~~~~~~~~~~~~~~~ //
   const [locationsError, setLocationsError] = useState(false);
 
   const locations = mLocations() || [];
-  console.log(locations);
   const couponLocations = couponsData() || [];
-  console.log(couponLocations);
 
   // Obtain the coupon book id for the year, use in edit
   const coupon = couponLocations[0];
   const couponBookId = coupon ? coupon.bookId : null;
-  console.log(couponBookId);
-
   const validLocationId = couponLocations.map((coupon) => coupon.location_id);
-  console.log(validLocationId);
 
   useEffect(() => {
     if (file) {
@@ -93,19 +81,6 @@ export default function EditCouponModal({ file }) {
     }
   }, [file]);
 
-  // useEffect(() => {
-  //   // Set the initial value when the component mounts
-  //   if (validLocationId && validLocationId.length === 1) {
-  //     const initialLocation = locations.find(
-  //       (loc) => loc.id === validLocationId[0]
-  //     );
-  //     console.log(initialLocation);
-  //     if (initialLocation) {
-  //       setSelectedLocations(initialLocation.location_name);
-  //     }
-  //   }
-
-  // }, [validLocationId, locations, selectedLocations, participatingLocations]);
   useEffect(() => {
     if (open && validLocationId && validLocationId.length === 1) {
       const initialLocation = locations.find(
@@ -123,10 +98,7 @@ export default function EditCouponModal({ file }) {
       setSelectAllLocations(false);
       setParticipatingLocations(false);
     }
-  }, [isDropdownSelected])
-  console.log(isDropdownSelected);
-  console.log(selectAllLocations);
-  console.log(participatingLocations);
+  }, [isDropdownSelected]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -134,7 +106,6 @@ export default function EditCouponModal({ file }) {
       const initialLocation = locations.find(
         (loc) => loc.id === validLocationId[0]
       );
-      console.log(initialLocation);
       if (initialLocation) {
         setSelectedLocations(initialLocation.location_name);
       }
@@ -164,7 +135,6 @@ export default function EditCouponModal({ file }) {
         location_ids: [selectedLocationId],
       },
     };
-    console.log(dispatchAction);
     dispatch(dispatchAction);
     resetForm();
   };
@@ -184,15 +154,11 @@ export default function EditCouponModal({ file }) {
 
   // Sets the Location Ids from Radio Group
   const handleLocationChange = (locationId) => {
-    console.log(locationId);
     setSelectedLocationId(locationId);
     setLocationsError(false);
   };
-  console.log(selectedLocationId);
-  console.log(participatingLocations);
 
   const handleSelectAllLocs = (boolean) => {
-    console.log(boolean);
     setSelectAllLocations(boolean);
   };
 
@@ -202,7 +168,6 @@ export default function EditCouponModal({ file }) {
 
   // For the dropdown selection, sets to true or false
   const handleDropdownSelectChange = (state) => {
-    console.log(state);
     setIsDropdownSelected(state);
   };
 

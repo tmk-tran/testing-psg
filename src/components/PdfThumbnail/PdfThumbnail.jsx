@@ -11,8 +11,6 @@ import PdfModal from "./PdfModal";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const PdfThumbnail = ({ isMobile, pdf, style, width, caseType }) => {
-  console.log(pdf);
-  console.log(caseType);
   const [loading, setLoading] = useState(true);
   const [hovering, setHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);

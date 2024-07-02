@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   TableContainer,
   Table,
@@ -10,7 +10,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { border } from "../Utils/colors";
 
 export default function OrderTable({
   isMobile,
@@ -22,13 +21,9 @@ export default function OrderTable({
   customDonation,
   setCustomDonation,
 }) {
-  console.log(rows);
-  console.log(selectedRows);
-
   const total =
     rows.reduce((acc, row) => acc + row.price * row.quantity, 0) +
     customDonation;
-  console.log(total);
 
   useEffect(() => {
     handlePayment(total);
@@ -48,7 +43,6 @@ export default function OrderTable({
       const donationIndex = updatedRows.findIndex((r) => r.id === row.id);
       updatedRows.splice(donationIndex, 1, updatedRow);
     }
-    console.log(updatedRows);
 
     handleQuantityChange(updatedRows);
 
@@ -56,17 +50,7 @@ export default function OrderTable({
       (acc, r) => acc + r.price * r.quantity,
       0
     );
-    console.log(totalAmount);
-
-    const withDonation = customDonation + totalAmount;
-    console.log(withDonation);
   };
-
-  // const total =
-  //   rows.reduce((acc, row) => acc + row.price * row.quantity, 0) +
-  //   customDonation;
-  // console.log(total);
-  // handlePayment(total);
 
   const mapSelectedRowsToProducts = () => {
     return selectedRows.map((selectedId) => {
@@ -75,7 +59,6 @@ export default function OrderTable({
   };
 
   const selectedProducts = mapSelectedRowsToProducts();
-  console.log("Selected Products:", selectedProducts);
 
   return (
     <TableContainer

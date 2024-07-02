@@ -28,13 +28,7 @@ export default function LocationSelect({
   maxWidth,
   mb = 2,
 }) {
-  console.log(locations);
-  console.log(selectedLocations);
-  console.log(participatingLocs);
-  console.log(selectAllLocations);
-  console.log(acceptedAt);
   const [selectedLocation, setSelectedLocation] = useState("");
-  console.log(selectedLocation);
   const [onDropdownSelect, setOnDropdownSelect] = useState(false);
 
   // Update the local state when the parent's selectedLocations prop changes
@@ -52,7 +46,6 @@ export default function LocationSelect({
       setOnDropdownSelect(false);
     }
   }, [selectedLocation]);
-  console.log(onDropdownSelect);
 
   useEffect(() => {
     if (selectAllLocations) {
@@ -69,7 +62,6 @@ export default function LocationSelect({
     const selectedLocationId = locations.find(
       (loc) => loc.location_name === event.target.value
     )?.id;
-    console.log(selectedLocationId);
     onLocationChange(selectedLocationId);
   };
 
@@ -85,7 +77,6 @@ export default function LocationSelect({
   useEffect(() => {
     // Call handleSelectAll when selectAllLocations changes to true
     if (selectAllLocations) {
-      console.log(selectAllLocations);
       handleSelectAll();
       setSelectedLocation("");
     }

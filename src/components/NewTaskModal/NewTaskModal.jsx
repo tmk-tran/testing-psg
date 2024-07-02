@@ -63,43 +63,33 @@ export default function NewTaskModal({
   caseType,
   disabled,
 }) {
-  console.log(tabs);
-  console.log(merchantTab);
-  console.log(caseType);
   const dispatch = dispatchHook();
   // ~~~~~~~~~~ All Merchants from store ~~~~~~~~~~
   const merchants = allMerchants();
-  console.log(merchants);
   // ~~~~~~~~~~ All Organizations from store ~~~~~~~~~~
   const organizations = allOrganizations();
-  console.log(organizations);
   // ~~~~~~~~~~ Modal State ~~~~~~~~~~
   const [open, setOpen] = useState(false);
   // ~~~~~~~~~~ Menu State ~~~~~~~~~~
   const [firstMenuChoice, setFirstMenuChoice] = useState("");
   const [secondMenuChoice, setSecondMenuChoice] = useState("");
   const [thirdMenuChoice, setThirdMenuChoice] = useState("");
-  console.log(thirdMenuChoice);
   const [bookYearId, setBookYearId] = useState(null);
   const [organizationId, setOrganizationId] = useState(null);
   const [merchantId, setMerchantId] = useState(null);
-  console.log(merchantId);
   const [fourthMenuChoice, setFourthMenuChoice] = useState("");
   const [couponDetails, setCouponDetails] = useState("");
   const [showDetailsInput, setShowDetailsInput] = useState(false);
   const [dueDate, setDueDate] = useState(new Date());
   const [additionalDetails, setAdditionalDetails] = useState("");
-  console.log(additionalDetails);
 
   useEffect(() => {
     // Conditional logic based on merchantTab
     merchantTab
-      ? /* Logic for merchantTab being true */
-        (dispatch({ type: "FETCH_MERCHANTS" }),
-        console.log("Merchant Tab is true"))
-      : /* Logic for merchantTab being false */
-        (dispatch({ type: "FETCH_ORGANIZATIONS" }),
-        console.log("Merchant Tab is false"));
+    ? /* Logic for merchantTab being true */
+      dispatch({ type: "FETCH_MERCHANTS" })
+    : /* Logic for merchantTab being false */
+      dispatch({ type: "FETCH_ORGANIZATIONS" });  
 
     // Cleanup function or dependencies for useEffect
   }, [merchantTab]);
@@ -144,9 +134,7 @@ export default function NewTaskModal({
   };
 
   const handleAccountChange = (event, value) => {
-    console.log(value);
     const selectedName = value;
-    console.log(selectedName);
 
     if (merchantTab) {
       // Logic for merchantTab being true
@@ -154,12 +142,8 @@ export default function NewTaskModal({
         merchants.find((merchant) => merchant.merchant_name === selectedName)
           ?.id || "";
 
-      console.log(merchants);
-      console.log(selectedId);
-      console.log(selectedName);
       setThirdMenuChoice(selectedName);
       setMerchantId(selectedId);
-      console.log(selectedId);
     } else {
       // Logic for merchantTab being false (organizations logic)
       const selectedId =
@@ -167,10 +151,8 @@ export default function NewTaskModal({
           (organization) => organization.organization_name === selectedName
         )?.id || "";
 
-      console.log(selectedName);
       setThirdMenuChoice(selectedName);
       setOrganizationId(selectedId);
-      console.log(selectedId);
     }
   };
 

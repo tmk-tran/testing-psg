@@ -5,7 +5,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import UserProfile from "../UserProfile/UserProfile";
@@ -46,7 +46,7 @@ import { getCurrentSeason } from "../Utils/helpers";
 const theme = createTheme({
   typography: {
     fontSize: 18,
-    fontFamily: "Helvetica, sans-serif",
+    fontFamily: "'Nunito', Helvetica, sans-serif",
   },
   palette: {
     primary: {
@@ -66,7 +66,7 @@ function App() {
   const [orgAdminId, setOrgAdminId] = useState(null);
 
   useEffect(() => {
-    const userCookie = Cookies.get('user');
+    const userCookie = Cookies.get("user");
 
     if (userCookie) {
       // Set user in Redux state
@@ -80,7 +80,7 @@ function App() {
     const currentSeason = getCurrentSeason();
 
     // dispatch({ type: "FETCH_USER" });
-    
+
     // if (user.id) {
     //   // User is logged in, fetch user data
     //   dispatch({ type: "FETCH_USER" });
@@ -232,7 +232,7 @@ function App() {
               </ProtectedRoute>
 
               <ProtectedRoute exact path="/fargo/useradmin">
-                <UserAdmin />
+                {user.is_admin ? <UserAdmin /> : <Redirect to="/fargo/home" />}
               </ProtectedRoute>
 
               <ProtectedRoute exact path="/fargo/sellers">

@@ -5,13 +5,10 @@ import CheckIcon from "@mui/icons-material/Check";
 
 export default function AddFileButton({ filename, onFileSelect }) {
   const [file, setFile] = useState(null);
-  console.log(file);
   const [isDisabled, setIsDisabled] = useState(true);
-  console.log(isDisabled);
 
   const handleFileChange = (event) => {
     const uploadedFile = event.target.files[0];
-    console.log(uploadedFile);
     setFile(uploadedFile);
     onFileSelect(uploadedFile);
     setIsDisabled(false);

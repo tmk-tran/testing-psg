@@ -24,26 +24,17 @@ const thumbnailHeaderStyle = {
 };
 
 export default function CouponReviewCard({ merchant, onTaskUpdate }) {
-  console.log(merchant);
   const mId = useParams();
-  console.log(mId);
   const merchantId = mId.id;
-  console.log(merchantId);
 
   const [taskId, setTaskId] = useState("");
-  console.log(taskId);
   const [couponId, setCouponId] = useState("");
   console.log(couponId);
   const [taskStatus, setTaskStatus] = useState("");
-  console.log(taskStatus);
   const [newTaskStatus, setNewTaskStatus] = useState("");
-  console.log(newTaskStatus);
   const [isTaskUpdate, setIsTaskUpdate] = useState(false);
-  console.log(isTaskUpdate);
   const [changesRequested, setChangesRequested] = useState(false);
-  console.log(changesRequested);
   const [completedCoupon, setCompletedCoupon] = useState(false);
-  console.log(completedCoupon);
 
   const dispatch = dispatchHook();
   const history = historyHook();
@@ -57,11 +48,8 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   }, [merchantId]);
 
   const couponFiles = couponsData() || [];
-  console.log(couponFiles);
   const merchantComments = mComments();
-  console.log(merchantComments);
   const tasks = mTasks() || [];
-  console.log(tasks);
 
   const handleUpdateClick = (event) => {
     // Prevent the click event from propagating to the Card and triggering history.push
@@ -81,7 +69,6 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
 
     // Log the dispatch action if it is defined
     if (dispatchAction) {
-      console.log("Dispatch Action:", dispatchAction);
       dispatch(dispatchAction);
     }
 
@@ -92,7 +79,6 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
           id: couponId,
         },
       };
-      console.log(dispatchAction2);
       dispatch(dispatchAction2);
     }
 
@@ -105,10 +91,6 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   };
 
   const handleUpdateTask = (taskId, couponId, choice, selectedTaskStatus) => {
-    console.log(taskId);
-    console.log(couponId);
-    console.log(choice);
-    console.log(selectedTaskStatus);
     setTaskId(taskId);
     setCouponId(couponId);
     setNewTaskStatus(choice);
@@ -117,18 +99,15 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   };
 
   const handleChangeRequest = (boolean) => {
-    console.log(boolean);
     setChangesRequested(boolean);
   };
   console.log("Changes requested: ", changesRequested);
 
   const handleCompletedCoupon = (boolean) => {
-    console.log(boolean);
     setCompletedCoupon(boolean);
   };
 
   const handleCardClick = (couponId) => {
-    console.log(couponId);
     history.push({
       pathname: `/fargo/coupon/${merchantId}/${couponId}`,
     });

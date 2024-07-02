@@ -15,11 +15,8 @@ export default function DetailsTaskView({ caseType }) {
   const dispatch = dispatchHook();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  console.log(caseType);
   const merchantId = useParams();
-  console.log(merchantId);
   const mId = merchantId.id;
-  console.log(mId);
 
   useEffect(() => {
     if (caseType === "orgTaskView") {

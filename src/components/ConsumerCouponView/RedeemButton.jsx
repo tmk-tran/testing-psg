@@ -22,7 +22,9 @@ export default function RedeemButton({ isMobile, coupon, user, handleRedeem }) {
       <Button
         variant="contained"
         color="secondary"
-        onClick={() => handleRedeem(coupon.id, coupon.locationId, user.id)}
+        onClick={() =>
+          handleRedeem(coupon.id, coupon.locationId, user.id, coupon.bookId)
+        }
         sx={{ mt: isMobile ? 3 : 5, mb: isMobile ? 3 : 0 }}
       >
         Redeem

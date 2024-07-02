@@ -10,12 +10,9 @@ export default function BasicDatePicker({
   onChange,
   hideInputLabel,
 }) {
-  console.log(initialDate);
   const [date, setDate] = useState(initialDate);
-  console.log(date);
   if (date) {
     const logDate = date.$d;
-    console.log(logDate);
   }
 
   const handleDateChange = (newDate) => {

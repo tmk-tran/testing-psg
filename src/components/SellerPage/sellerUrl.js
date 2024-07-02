@@ -7,10 +7,19 @@
 // };
 
 // FOR TEST ENVIRONMENT USE ~~~~~~~~~~~~~~~~ //
+// export const transactionsUrl = (refId) => {
+//   return `testpsg.fly.dev/#/fargo/seller/${refId}/cash`;
+// };
+
+// export const orderUrl = (refId) => {
+//   return `testpsg.fly.dev/#/fargo/seller/${refId}`;
+// };
+
+// FOR LIVE PROD USE ~~~~~~~~~~~~~~~~~~~~~~~ //
 export const transactionsUrl = (refId) => {
-  return `testpsg.fly.dev/#/fargo/seller/${refId}/cash`;
+  return `digitalcoupon.app/#/fargo/seller/${refId}/cash`;
 };
 
 export const orderUrl = (refId) => {
-  return `testpsg.fly.dev/#/fargo/seller/${refId}`;
+  return `digitalcoupon.app/#/fargo/seller/${refId}`;
 };

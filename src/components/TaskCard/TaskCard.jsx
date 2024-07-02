@@ -64,14 +64,11 @@ export default function TaskCard({
   onTaskUpdate,
   handleCaseTypeChange,
 }) {
-  console.log(task);
-  console.log(taskType);
   const history = historyHook();
   const dispatch = dispatchHook();
 
   const oId = task ? task.organization_id : null;
   const mId = task ? task.merchant_id : null;
-  console.log(mId);
   const taskStatus = task ? task.task_status : null;
 
   const [selectedTask, setSelectedTask] = useState(null);
@@ -83,17 +80,10 @@ export default function TaskCard({
 
   // Comments
   const merchantComments = mComments(mId) || [];
-  console.log(merchantComments);
 
   const matchingComment = merchantComments.find(
     (comment) => comment.id === task.id
   );
-
-  if (matchingComment) {
-    console.log("Found matching comment:", matchingComment);
-  } else {
-    console.log("No matching comment found for task_id:", task.id);
-  }
 
   const handleTaskChange = (taskStatus) => {
     setSelectedTask(taskStatus); // Update selectedTask with the value received from TaskDropdown
@@ -124,15 +114,11 @@ export default function TaskCard({
   };
 
   const archiveTask = () => {
-    // console.log(id);
-
     const archiveActionType =
       taskType === "organization"
         ? "ARCHIVE_ORGANIZATION_TASK"
         : "ARCHIVE_MERCHANT_TASK";
 
-    // console.log(archiveActionType);
-    // console.log(task.id);
     dispatch({
       type: archiveActionType,
       payload: {

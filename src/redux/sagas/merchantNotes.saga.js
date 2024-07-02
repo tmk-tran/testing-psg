@@ -2,10 +2,9 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* merchantNotes(action) {
-  console.log(action.payload);
   try {
     const items = yield axios.get(`/api/merchantnotes/${action.payload}`);
-    console.log("FETCH request from merchantNotes.saga, ITEMS = ", items.data);
+    // console.log("FETCH request from merchantNotes.saga, ITEMS = ", items.data);
     yield put({ type: "SET_MERCHANT_NOTES", payload: items.data });
   } catch {
     console.log("error in merchantNotes Saga");
@@ -14,8 +13,6 @@ function* merchantNotes(action) {
 }
 
 function* addNotes(action) {
-  console.log(action.payload);
-
   try {
     // const { merchant_id, note_date, note_content } = action.payload;
     yield axios.post(`/api/merchantnotes/`, action.payload);
@@ -26,9 +23,7 @@ function* addNotes(action) {
 }
 
 function* deleteMerchantNote(action) {
-  console.log(action.payload);
   const noteId = action.payload.noteId;
-  console.log(noteId);
   const merchantId = action.payload.entityId;
 
   try {

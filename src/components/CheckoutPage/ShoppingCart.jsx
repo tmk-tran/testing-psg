@@ -20,43 +20,29 @@ export default function ShoppingCart() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = dispatchHook();
   const location = useLocation();
-  console.log(location);
   const history = historyHook();
   // ~~~~~~~~~~ Location State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const seller = location.state?.seller ?? [];
-  console.log(seller);
   const sellerId = location.state?.sellerId ?? "";
-  console.log(sellerId);
   const refId = seller.refId ?? "";
-  console.log(refId);
   const caseType = location.state?.caseType ?? [];
-  console.log(caseType);
   // ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const [selectedProducts, setSelectedProducts] = useState(
     location.state?.selectedProducts ?? []
   );
-  console.log("Selected Products in CheckoutPage:", selectedProducts);
   const [orderTotal, setOrderTotal] = useState(0);
-  console.log(orderTotal);
   const [customDonation, setCustomDonation] = useState(
     location.state?.customDonation ?? 0
   );
-  console.log(customDonation);
   const [physicalBooks, setPhysicalBooks] = useState(0);
-  console.log(physicalBooks);
   const [paymentSelectorOpen, setPaymentSelectorOpen] = useState(false);
   // ~~~~~~~~~~ Redux Store ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const sellerData = sellerPageInfo() || [];
-  console.log(sellerData);
   const orgId = sellerData[0].organization_id;
-  console.log(orgId);
   const currentYear = appActiveYear() || [];
-  console.log(currentYear);
   const activeYearId = currentYear ? currentYear[0].id : "";
-  console.log(activeYearId);
 
   const handleUpdateQuantity = (updatedQuantities) => {
-    console.log(updatedQuantities);
     // Update the state passed through the URL with updatedQuantities
     setSelectedProducts(
       selectedProducts.map((product) =>
@@ -79,8 +65,6 @@ export default function ShoppingCart() {
   };
  
   const submitOrder = (caseType) => {
-    console.log(caseType);
-
     const saveCall = () => {
       const updateAction = {
         type: `UPDATE_${caseType.toUpperCase()}`,
@@ -121,8 +105,6 @@ export default function ShoppingCart() {
         };
         updateActions.push(updateSellerTable);
       }
-
-      console.log("Dispatching actions:", updateActions);
       updateActions.forEach((action) => dispatch(action));
       history.push(`/fargo/seller/${refId}/complete`);
     };
@@ -188,7 +170,11 @@ export default function ShoppingCart() {
         </div>
       </div>
       {paymentSelectorOpen && (
-        <CashCheckSelector open={paymentSelectorOpen} handleClose={closeCashCheckSelector} submitOrder={submitOrder} />
+        <CashCheckSelector
+          open={paymentSelectorOpen}
+          handleClose={closeCashCheckSelector}
+          submitOrder={submitOrder}
+        />
       )}
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <CustomButton label="Back" onClick={goBack} />

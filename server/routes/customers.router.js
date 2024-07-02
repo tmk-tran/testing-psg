@@ -103,7 +103,7 @@ router.post("/", async (req, res) => {
 
     // ADDED FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~ //
     // Log the customer object to debug potential null values
-    console.log("Customer object received:", customer);
+    // console.log("Customer object received:", customer);
 
     const response = await pool.query(insertQuery, [
       refId,
@@ -118,8 +118,6 @@ router.post("/", async (req, res) => {
       zip,
     ]);
 
-    // ADDED FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~ //
-    console.log("Successful POST in customers.router:", response.rows);
     res.status(201).send(response.rows);
   } catch (error) {
     console.log("error in customers POST route", error);

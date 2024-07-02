@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import LogoPSG from "../LogoPSG/LogoPSG";
 import {
   Button,
   Card,
@@ -14,7 +13,6 @@ function RegisterForm() {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  console.log(firstName, lastName);
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
 

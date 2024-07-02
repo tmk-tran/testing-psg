@@ -7,7 +7,6 @@ import { sellerPageInfo } from "../../hooks/reduxStore";
 import { flexCenter } from "../Utils/pageStyles";
 import { useAlert } from "../SuccessAlert/useAlert";
 import { useCaseType } from "../Utils/useCaseType";
-import { border } from "../Utils/colors";
 // ~~~~~~~~~~~~ Components ~~~~~~~~~~~~~~~~~~~~~ //
 import Typography from "../Typography/Typography";
 import SellerPageTable from "./SellerPageTable";
@@ -28,21 +27,15 @@ export default function SellerPage() {
 
   useEffect(() => {
     const fetchAction = { type: "FETCH_SELLER_PAGEINFO", payload: refId };
-    console.log("Dispatching action:", fetchAction);
     dispatch(fetchAction);
   }, [refId]);
-  console.log(refId);
   const sellerInfo = sellerPageInfo() || [];
-  console.log(sellerInfo);
 
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
   const { caseType, handleCaseTypeChange } = useCaseType("default");
 
   const updateSellerInfo = (updateType, amountToUpdate) => {
-    console.log(updateType);
-    console.log(amountToUpdate);
     const sellerId = sellerInfo[0].id;
-    console.log(sellerId);
     const updateAction = {
       type: `UPDATE_${updateType.toUpperCase()}`,
       payload: {
@@ -52,7 +45,6 @@ export default function SellerPage() {
         updateType: updateType.toLowerCase(),
       },
     };
-    console.log("Dispatching action:", updateAction);
     dispatch(updateAction);
   };
 

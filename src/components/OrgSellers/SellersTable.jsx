@@ -183,7 +183,6 @@ export default function SellersTable({ forwardedRef }) {
         type: "ARCHIVE_SELLER",
         payload: { sellerId, orgId },
       };
-      console.log("Dispatching action:", archiveAction);
       dispatch(archiveAction);
     }, "archiveStudent");
   };

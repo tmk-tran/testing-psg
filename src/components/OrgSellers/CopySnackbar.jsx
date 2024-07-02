@@ -4,7 +4,6 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { primaryColor } from "../Utils/colors";
 
 export default function CopyToClipboardExample({ copyToClipboard, caseType }) {
-  console.log(caseType);
   const [open, setOpen] = useState(false);
 
   const handleCopy = () => {

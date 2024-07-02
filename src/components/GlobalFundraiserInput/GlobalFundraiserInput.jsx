@@ -12,7 +12,6 @@ export default function GlobalFundraiserInput() {
   const organizations = useSelector((store) => store.organizations);
   const groupList = useSelector((store) => store.allGroups);
   const couponBooks = useSelector((store) => store.couponBooks);
-  console.log(couponBooks);
 
   useEffect(() => {
     dispatch({ type: "FETCH_ORGANIZATIONS" });
@@ -42,8 +41,6 @@ export default function GlobalFundraiserInput() {
   );
 
   const handleChange = (field, value) => {
-    console.log(field);
-    console.log(value);
     if (!isCancelButtonDisabled) {
       setCancelButtonDisabled(true);
     }

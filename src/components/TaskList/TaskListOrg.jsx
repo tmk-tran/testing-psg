@@ -23,14 +23,17 @@ export default function TaskListOrg({ isLoading, loadComplete }) {
     completeTask: "",
   });
   const [caseType, setCaseType] = useState("");
-  console.log(caseType);
-  const [isNewTasksMenuOpen, setIsNewTasksMenuOpen] = useState(false);
-  console.log(isNewTasksMenuOpen);
 
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
 
   const orgTasks = oTasks() || [];
-  console.log(orgTasks);
+
+  // Set isLoading to false when the tasks are loaded
+  useEffect(() => {
+    if (orgTasks.length > 0 || orgTasks.length === 0) {
+      loadComplete(); // Indicate that loading is complete even if there are no tasks
+    }
+  }, [orgTasks]);
 
   // Set isLoading to false when the tasks are loaded
   useEffect(() => {

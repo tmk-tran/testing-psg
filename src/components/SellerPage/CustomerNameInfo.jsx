@@ -22,7 +22,6 @@ export default function CustomerNameInfo({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const refId = seller.refId;
-  console.log(refId);
   const [customerLastName, setCustomerLastName] = useState("");
   const [customerFirstName, setCustomerFirstName] = useState("");
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState("");
@@ -32,7 +31,6 @@ export default function CustomerNameInfo({
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [showSkip, setShowSkip] = useState(true);
   const [customerInfoSubmitted, setCustomerInfoSubmitted] = useState(false);
-  console.log(customerInfoSubmitted);
 
   const handleLastName = (e) => {
     setCustomerLastName(e.target.value);
@@ -91,14 +89,6 @@ export default function CustomerNameInfo({
       setPhoneNumberError(true);
       return;
     }
-    // Call your submit function here
-    console.log(
-      "Submitting form with info:",
-      refId,
-      customerLastName,
-      customerFirstName,
-      customerPhoneNumber
-    );
 
     onSubmit({
       refId: refId,

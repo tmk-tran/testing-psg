@@ -9,11 +9,9 @@ import {
 
 const OrgMenu = ({ methods, defaultValue, onChange }) => {
   const [value, setValue] = useState(defaultValue);
-  console.log(value);
 
   const handleChange = (event) => {
     const newValue = event.target.value;
-    console.log(newValue);
     setValue(newValue);
     onChange(newValue);
   };

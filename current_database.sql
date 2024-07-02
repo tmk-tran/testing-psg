@@ -161,7 +161,9 @@ CREATE TABLE merchant (
     archive_reason character varying(150),
     merchant_logo bytea,
     filename character varying(255),
-    website character varying(150)
+    website character varying(150),
+    contact_method character varying(50),
+    region_id integer REFERENCES region(id)
 );
 
 
@@ -363,9 +365,9 @@ EXECUTE FUNCTION create_transaction_for_new_seller();
 CREATE OR REPLACE FUNCTION update_seller_earnings()
 RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE seller
-    SET seller_earnings = (physical_book_cash + physical_book_digital + digital_book_credit) * NEW.organization_earnings
-    WHERE organization_id = NEW.id;
+    UPDATE transactions
+    SET seller_earnings = (transactions.physical_book_cash + transactions.physical_book_digital + transactions.digital_book_credit) * NEW.organization_earnings
+    WHERE transactions.organization_id = NEW.id;
     
     RETURN NULL; -- Returning NULL to prevent update on organization table
 END;
@@ -414,6 +416,24 @@ CREATE TRIGGER update_coupon_trigger
 AFTER UPDATE OF is_deleted ON merchant
 FOR EACH ROW
 EXECUTE FUNCTION update_coupon_on_merchant_archive();
+
+----------------- For unarchive action --------------------------------
+CREATE OR REPLACE FUNCTION update_coupon_on_merchant_unarchive()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.is_deleted IS DISTINCT FROM NEW.is_deleted AND NEW.is_deleted = false THEN
+        UPDATE coupon SET is_deleted = false WHERE merchant_id = NEW.id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE TRIGGER update_coupon_on_unarchive_trigger
+AFTER UPDATE OF is_deleted ON merchant
+FOR EACH ROW
+EXECUTE FUNCTION update_coupon_on_merchant_unarchive();
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -605,19 +625,19 @@ EXECUTE FUNCTION insert_user_coupons();
 ----------------------------------------------------------------------
 
 ----------------------------------------------------------------------
-------- Function and trigger for unique coupons for users ------------
+------- Function and trigger for redeeming coupons for users ------------
 CREATE OR REPLACE FUNCTION redeem_coupon_trigger_function()
 RETURNS TRIGGER AS
 $$
 BEGIN
-    -- Insert a record into the user_coupons table when a coupon is redeemed
-    INSERT INTO user_coupon (user_id, coupon_id, location_id)
-    VALUES (NEW.redeemed_by, NEW.coupon_id, NEW.location_id);
-    -- Update the redeemed column to true in the coupon_redemption table
+    -- Update the redeemed column to true
+    -- Check if location_id is NULL or matches the given location_id
     UPDATE user_coupon
     SET redeemed = true
-    WHERE user_id = NEW.redeemed_by AND coupon_id = NEW.coupon_id;
-    
+    WHERE user_id = NEW.redeemed_by
+      AND coupon_id = NEW.coupon_id
+      AND (location_id IS NULL OR location_id = NEW.location_id);
+
     RETURN NEW;
 END;
 $$
@@ -629,6 +649,28 @@ AFTER INSERT ON coupon_redemption
 FOR EACH ROW
 EXECUTE FUNCTION redeem_coupon_trigger_function();
 
+----------------------------------------------------
+----- For removing a coupon from the user list when is_deleted is true in the COUPON table -----
+
+CREATE OR REPLACE FUNCTION delete_user_coupons_on_coupon_delete()
+RETURNS TRIGGER AS
+$$
+BEGIN
+    -- Delete from user_coupon where coupon_id matches the deleted coupon
+    DELETE FROM user_coupon
+    WHERE coupon_id = OLD.id;
+
+    RETURN OLD;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE TRIGGER delete_user_coupons_trigger
+AFTER UPDATE OF is_deleted ON coupon
+FOR EACH ROW
+WHEN (OLD.is_deleted = false AND NEW.is_deleted = true)
+EXECUTE FUNCTION delete_user_coupons_on_coupon_delete();
 ----------------------------------------------------
 
 ----------------------------------------------------

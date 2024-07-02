@@ -58,7 +58,11 @@ function* setActiveYearSaga(action) {
 
   try {
     yield axios.put(`/api/couponbook/id/${yearId}`);
-    yield put({ type: "FETCH_YEAR_BY_ID", reducerType: "SET_APP_YEAR", payload: yearId });
+    yield put({
+      type: "FETCH_YEAR_BY_ID",
+      reducerType: "SET_APP_YEAR",
+      payload: yearId,
+    });
   } catch (err) {
     console.log("Error in setting active year", err);
   }

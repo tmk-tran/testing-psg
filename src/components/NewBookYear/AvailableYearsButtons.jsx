@@ -28,7 +28,6 @@ const AvailableYearsButtons = ({ activeYear }) => {
     dispatch(dispatchAction);
   }, []);
   const years = allYears();
-  console.log(years);
   // const bookY = bookYear();
   // console.log(bookY);
 

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { put, takeEvery, call } from "redux-saga/effects";
-import { setCouponFiles, fetchCouponFilesFailure } from "./actions";
+import { put, takeEvery } from "redux-saga/effects";
+import { fetchCouponFilesFailure } from "./actions";
 
 const fetchPdfRequest = (couponId) => ({
   type: "FETCH_PDF_FILE",
@@ -8,15 +8,14 @@ const fetchPdfRequest = (couponId) => ({
 });
 
 function* couponFiles(action) {
-  const userId = action.payload.id;
+  const userId = action.payload.userId;
   const yearId = action.payload.yearId;
 
   try {
-    // const response = yield axios.get(`/api/coupon`);
     const response = yield axios.get(
       `/api/userCoupon/${userId}?yearId=${yearId}`
     );
-    console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
+    // console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store
     const files = response.data;
@@ -67,7 +66,7 @@ function* couponFiles(action) {
       return formattedFile;
     });
 
-    console.log("FORMATTED FILES = ", formattedFiles);
+    // console.log("FORMATTED FILES = ", formattedFiles);
 
     // Dispatch the formatted data to the Redux store
     yield put({ type: "SET_COUPON_FILES", payload: formattedFiles });
@@ -78,18 +77,15 @@ function* couponFiles(action) {
 }
 
 function* pdfFile(action) {
-  console.log(action);
   const merchantId = action.payload;
-  console.log(merchantId);
 
   try {
-    // const response = yield axios.get(`/api/coupon/${merchantId}`);
     const response = yield axios.get(
       merchantId.couponId
         ? `/api/coupon/details/${merchantId.couponId}`
         : `/api/coupon/${merchantId}`
     );
-    console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
+    // console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store
     const files = response.data;
@@ -141,7 +137,7 @@ function* pdfFile(action) {
       return formattedFile;
     });
 
-    console.log("FORMATTED FILES = ", formattedFiles);
+    // console.log("FORMATTED FILES = ", formattedFiles);
 
     yield put({ type: "SET_COUPON_FILES", payload: formattedFiles });
   } catch (error) {
@@ -151,9 +147,7 @@ function* pdfFile(action) {
 
 function* addCoupon(action) {
   const coupon = action.payload;
-  console.log(coupon);
   const merchantId = coupon.merchant_id;
-  console.log(merchantId);
 
   try {
     yield axios.post(`/api/coupon/`, action.payload);
@@ -165,22 +159,16 @@ function* addCoupon(action) {
 }
 
 function* frontViewUpload(action) {
-  console.log(action.payload);
   const selectedFile = action.payload.frontViewFile;
-  console.log(selectedFile);
   const selectedFileName = action.payload.frontViewFileName;
-  console.log(selectedFileName);
   const couponId = action.payload.id;
-  console.log(couponId);
 
   try {
     const formData = new FormData();
     formData.append("pdf", selectedFile);
-    console.log("formData = ", formData);
-
+    // console.log("formData = ", formData);
     const response = yield axios.put(`/api/coupon/front/${couponId}`, formData);
-    console.log("RESPONSE from uploadPdf = ", response.data);
-
+    // console.log("RESPONSE from uploadPdf = ", response.data);
     const uploadedPdfInfo = response.data;
 
     // Dispatch a success action if needed
@@ -191,22 +179,16 @@ function* frontViewUpload(action) {
 }
 
 function* backViewUpload(action) {
-  console.log(action.payload);
   const selectedFile = action.payload.backViewFile;
-  console.log(selectedFile);
   const selectedFileName = action.payload.backViewFileName;
-  console.log(selectedFileName);
   const couponId = action.payload.id;
-  console.log(couponId);
 
   try {
     const formData = new FormData();
     formData.append("pdf", selectedFile);
-    console.log("formData = ", formData);
-
+    // console.log("formData = ", formData);
     const response = yield axios.put(`/api/coupon/back/${couponId}`, formData);
-    console.log("RESPONSE from uploadPdf = ", response.data);
-
+    // console.log("RESPONSE from uploadPdf = ", response.data);
     const uploadedPdfInfo = response.data;
 
     // Dispatch a success action if needed
@@ -218,9 +200,7 @@ function* backViewUpload(action) {
 
 function* updateCoupon(action) {
   const coupon = action.payload;
-  console.log(coupon);
   const couponId = coupon.couponId;
-  console.log(couponId);
   const merchantId = coupon.merchantId;
 
   try {
@@ -259,7 +239,6 @@ function* deleteFileBack(action) {
 }
 
 export default function* couponSaga() {
-  // yield takeEvery("FETCH_COUPON_FILES", couponFiles); // this call will come from Coupon component
   yield takeEvery("FETCH_CONSUMER_COUPONS", couponFiles);
   yield takeEvery("FETCH_PDF_FILE", pdfFile); // place this call in the component that is viewed after clicking on the file (with its id)
   yield takeEvery("ADD_COUPON", addCoupon);

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Typography, MenuItem, Select } from "@mui/material";
 import "./TaskList.css";
 import TaskCard from "../TaskCard/TaskCard";
-import { mTasks, oTasks } from "../../hooks/reduxStore" // Assuming you have organization tasks in your redux store
+import { mTasks, oTasks } from "../../hooks/reduxStore"; // Assuming you have organization tasks in your redux store
 import { dispatchHook } from "../../hooks/useDispatch";
 
 export default function TaskList({ taskType }) {
-  console.log(taskType);
   const dispatch = dispatchHook();
   const [selectedTasks, setSelectedTasks] = useState({
     newTask: "",
@@ -16,7 +15,6 @@ export default function TaskList({ taskType }) {
 
   // Choose the appropriate task array based on the taskType prop
   const tasks = taskType === "organization" ? oTasks() || [] : mTasks() || [];
-  console.log(tasks);
 
   const tasksByStatus = Array.isArray(tasks)
     ? tasks.reduce((acc, task) => {
@@ -59,7 +57,7 @@ export default function TaskList({ taskType }) {
         {sortedNewTasks.map((task, i) => (
           <MenuItem key={task.id} value={i + 1} disableRipple>
             <Typography variant="h6">{`#${i + 1} - `}&nbsp;</Typography>
-            <TaskCard task={task}  />
+            <TaskCard task={task} />
           </MenuItem>
         ))}
       </Select>

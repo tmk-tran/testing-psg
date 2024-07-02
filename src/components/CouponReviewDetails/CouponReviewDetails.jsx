@@ -47,32 +47,20 @@ export default function CouponReviewDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   // ~~~~~~~~~~ Task Status State ~~~~~~~~~~ //
   const [isTaskUpdate, setIsTaskUpdate] = useState(false);
-  console.log(isTaskUpdate);
   const [completedCoupon, setCompletedCoupon] = useState(false);
-  console.log(completedCoupon);
   const [taskId, setTaskId] = useState("");
-  console.log(taskId);
   const [taskStatus, setTaskStatus] = useState("");
-  console.log(taskStatus);
   const [newTaskStatus, setNewTaskStatus] = useState("");
-  console.log(newTaskStatus);
   // ~~~~~~~~~~ Comments State ~~~~~~~~~~ //
   const [commentAdded, setCommentAdded] = useState(false);
-  console.log(commentAdded);
   const [changesRequested, setChangesRequested] = useState(false);
-  console.log(changesRequested);
   // ~~~~~~~~~~ Uploaded Files State ~~~~~~~~~~ //
   const [uploadedFiles, setUploadedFiles] = useState(false);
-  console.log(uploadedFiles);
   const [frontViewFile, setFrontViewFile] = useState(null);
   const [frontViewFilename, setFrontViewFilename] = useState("");
-  console.log(frontViewFile);
-  console.log(frontViewFilename);
   const [backViewFile, setBackViewFile] = useState(null);
-  console.log(backViewFile);
   const [backViewFilename, setBackViewFilename] = useState("");
   const [isUploaded, setIsUploaded] = useState(false);
-  console.log(isUploaded);
   // ~~~~~~~~~~ View Locations State ~~~~~~~~~~ //
   const [showLocations, setShowLocations] = useState(false);
   // ~~~~~~~~~~ Book Year State ~~~~~~~~~~ //
@@ -84,11 +72,9 @@ export default function CouponReviewDetails() {
     file && file.expiration ? formatDate(file.expiration) : null;
   const tasks = mTasks() || [];
   const year = bookYear();
-  console.log(year);
   // Get active year value to send as props to EditCouponModal
   const active = year[0];
   const assignedYear = active ? active.year : null;
-  console.log(assignedYear);
 
   const couponTask = Array.isArray(tasks)
     ? tasks.find((task) => task.coupon_id === Number(couponId))
@@ -150,9 +136,6 @@ export default function CouponReviewDetails() {
   };
 
   const handleUpdateTask = (taskId, choice, taskStatus) => {
-    console.log(taskId);
-    console.log(choice);
-    console.log(taskStatus);
     setTaskId(taskId);
     setNewTaskStatus(choice);
     setTaskStatus(taskStatus);
@@ -160,7 +143,6 @@ export default function CouponReviewDetails() {
   };
 
   const updateTaskState = (newValue) => {
-    console.log(newValue);
     setIsTaskUpdate(newValue);
   };
 
@@ -170,13 +152,11 @@ export default function CouponReviewDetails() {
 
   const handleChangeRequest = (boolean) => {
     setChangesRequested(boolean);
-    console.log("Changes requested? ", changesRequested);
     setTaskStatus("In Progress");
   };
 
   const handleCompletedCoupon = (boolean) => {
     setCompletedCoupon(boolean);
-    console.log("Completed coupon? ", completedCoupon);
     setTaskStatus("Complete");
   };
 
@@ -186,12 +166,9 @@ export default function CouponReviewDetails() {
 
   // ~~~~~~~~~~ FRONT VIEW UPLOAD FUNCTIONS ~~~~~~~~~~ //
   const handleFrontViewUpload = (selectedFile, addedFileName) => {
-    console.log(selectedFile, addedFileName);
-
+    // console.log(selectedFile, addedFileName);
     setFrontViewFile(selectedFile);
     setFrontViewFilename(addedFileName);
-    console.log(frontViewFile);
-    console.log(frontViewFilename);
   };
 
   const handleFrontUpload = () => {
@@ -199,8 +176,6 @@ export default function CouponReviewDetails() {
       // Check if the selected file is a PDF
       if (frontViewFile.type === "application/pdf") {
         // Dispatch the action for uploading PDF
-        console.log(frontViewFile);
-        console.log(frontViewFilename);
         const frontViewAction = {
           type: "UPLOAD_FRONT_VIEW_PDF",
           payload: {
@@ -209,7 +184,6 @@ export default function CouponReviewDetails() {
             id: couponId,
           },
         };
-        console.log(frontViewAction);
         dispatch(frontViewAction);
         setIsUploaded(true);
         // onUploadFile();
@@ -226,8 +200,6 @@ export default function CouponReviewDetails() {
 
   // ~~~~~~~~~~ BACK VIEW UPLOAD FUNCTIONS ~~~~~~~~~~ //
   const handleBackViewUpload = (selectedFile, addedFileName) => {
-    console.log(selectedFile, addedFileName);
-
     setBackViewFile(selectedFile);
     setBackViewFilename(addedFileName);
   };
@@ -237,8 +209,6 @@ export default function CouponReviewDetails() {
       // Check if the selected file is a PDF
       if (backViewFile.type === "application/pdf") {
         // Dispatch the action for uploading PDF
-        console.log(backViewFile);
-        console.log(backViewFilename);
         const backViewAction = {
           type: "UPLOAD_BACK_VIEW_PDF",
           payload: {
@@ -247,7 +217,6 @@ export default function CouponReviewDetails() {
             id: couponId,
           },
         };
-        console.log(backViewAction);
         dispatch(backViewAction);
         setIsUploaded(true); // Set isUploaded to true after successful upload
         // onUploadFile();
@@ -271,7 +240,6 @@ export default function CouponReviewDetails() {
 
   const handleToggleLocations = () => {
     setShowLocations(!showLocations);
-    console.log(showLocations);
   };
 
   const deleteFrontFile = (fileId) => {

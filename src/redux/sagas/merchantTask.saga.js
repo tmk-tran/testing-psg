@@ -2,10 +2,9 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* merchantTask(action) {
-  console.log(action.payload);
   try {
     const items = yield axios.get(`/api/merchantTask/${action.payload}`);
-    console.log("FETCH request from merchantTask.saga, ITEMS = ", items.data);
+    // console.log("FETCH request from merchantTask.saga, ITEMS = ", items.data);
     yield put({ type: "SET_MERCHANT_TASKS", payload: items.data });
   } catch (error) {
     console.log("error in merchantTasks Saga", error);
@@ -16,7 +15,7 @@ function* merchantTask(action) {
 function* fetchAllMerchantTasks() {
   try {
     const items = yield axios.get("/api/tasks/merchants");
-    console.log("FETCH all merchant tasks, ITEMS = ", items.data);
+    // console.log("FETCH all merchant tasks, ITEMS = ", items.data);
     yield put({ type: "SET_MERCHANT_TASKS", payload: items.data });
   } catch (error) {
     console.log("error in fetchAllMerchantTasks Saga", error);
@@ -25,14 +24,8 @@ function* fetchAllMerchantTasks() {
 }
 
 function* addMerchantTask(action) {
-  console.log(action.payload);
   try {
-    const items = yield axios.post("/api/tasks/merchants", action.payload);
-    console.log(
-      "FETCH request from merchantTask.saga, ITEMS FOR add = ",
-      items.data
-    );
-    console.log("merchantTask action.payload = ", action.payload);
+    yield axios.post("/api/tasks/merchants", action.payload);
 
     const fetchType =
       action.payload.fetchType === "FETCH_MERCHANT_TASKS"
@@ -55,7 +48,6 @@ function* editMerchantTask(action) {
       `/api/tasks/merchants/${action.payload.id}`,
       action.payload
     );
-    console.log("merchantTask action.payload = ", action.payload);
     yield put({
       type: "FETCH_MERCHANT_TASKS",
       payload: action.payload.merchantId,
@@ -66,13 +58,11 @@ function* editMerchantTask(action) {
 }
 
 function* changeTaskStatus(action) {
-  console.log(action.payload);
   try {
     yield axios.put(
       `/api/tasks/merchants/status/${action.payload.id}`,
       action.payload
     );
-    console.log("update task list action.payload = ", action.payload);
     yield put({
       type: "FETCH_ALL_MERCHANT_TASKS",
     });
@@ -84,11 +74,9 @@ function* changeTaskStatus(action) {
 function* changeAssignedTo(action) {
   const taskId = action.payload.id;
   const merchantId = action.payload.merchantId;
-  console.log(action.payload);
 
   try {
     yield axios.put(`/api/merchantTask/${taskId}`, action.payload);
-    console.log("merchantTask action.payload = ", action.payload);
     yield put({
       type: "FETCH_ALL_MERCHANT_TASKS",
       payload: merchantId,
@@ -99,13 +87,11 @@ function* changeAssignedTo(action) {
 }
 
 function* changeDueDate(action) {
-  console.log(action.payload);
   const taskId = action.payload.id;
   const merchantId = action.payload.accountId;
 
   try {
     yield axios.put(`/api/merchantTask/duedate/${taskId}`, action.payload);
-    console.log("merchantTask dueDate PUT action.payload = ", action.payload);
     yield put({
       type: "FETCH_ALL_MERCHANT_TASKS",
       payload: merchantId,
@@ -120,12 +106,10 @@ function* deleteMerchantTask(action) {
     const items = yield axios.delete(
       `/api/tasks/merchants/${action.payload.id}`
     );
-    console.log(
-      "FETCH request from merchantTask.saga, ITEMS FOR delete = ",
-      items
-    );
-    console.log("merchantTask action.payload = ", action.payload);
-
+    // console.log(
+    //   "FETCH request from merchantTask.saga, ITEMS FOR delete = ",
+    //   items
+    // );
     yield put({
       type: "FETCH_ALL_MERCHANT_TASKS",
       payload: action.payload.id,

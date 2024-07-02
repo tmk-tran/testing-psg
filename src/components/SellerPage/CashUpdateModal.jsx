@@ -32,7 +32,6 @@ export default function CashUpdateModal({
   updateSellerInfo,
   handleCaseTypeChange,
 }) {
-  console.log(caseType);
   const [open, setOpen] = useState(false);
   const [cashAmount, setCashAmount] = useState(0);
   const [checksAmount, setChecksAmount] = useState(0);
@@ -71,14 +70,6 @@ export default function CashUpdateModal({
   };
 
   const handleSubmit = () => {
-    console.log(
-      "Amounts submitted:",
-      cashAmount,
-      checksAmount,
-      donationsAmount
-    );
-    console.log(caseType);
-
     switch (caseType) {
       case "Cash":
         updateSellerInfo(caseType, cashAmount);

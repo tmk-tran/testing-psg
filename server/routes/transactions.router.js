@@ -7,7 +7,6 @@ const {
 
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const refId = req.params.id;
-  console.log("refId = ", refId);
 
   const queryText = `
         SELECT

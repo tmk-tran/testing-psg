@@ -15,24 +15,18 @@ import { capitalizeWords, formatDate } from "../Utils/helpers";
 import { disabledColor, dueDateHighlight } from "../Utils/colors";
 
 export default function TableTaskDetails({ mId, caseType }) {
-  console.log(mId);
-  console.log(caseType);
   const dispatch = dispatchHook();
   const merchantTasks = mTasks() || [];
-  console.log(merchantTasks);
   const comments = mComments();
   const orgTasks = oTasks();
-  console.log(orgTasks);
 
   const toDoTasks = merchantTasks.filter(
     (task) => task.task_status !== "Complete"
   );
-  console.log(toDoTasks);
 
   const toDoTasksOrg = orgTasks.filter(
     (task) => task.task_status !== "Complete"
   );
-  console.log(toDoTasksOrg);
 
   const fullWidth = {
     width: "100%",

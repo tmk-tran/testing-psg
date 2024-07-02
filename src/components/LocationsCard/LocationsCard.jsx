@@ -21,19 +21,13 @@ export default function LocationsCard({
   handleCaseTypeChange,
   handleAddLocation,
 }) {
-  console.log(locations);
   const dispatch = dispatchHook();
   const [isEditing, setIsEditing] = useState(false);
-  console.log(isEditing);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log(isModalOpen);
   const [editId, setEditId] = useState(null);
-  console.log(editId);
   const [locationToEdit, setLocationToEdit] = useState(null);
-  console.log(locationToEdit);
 
   const handleEditToggle = (locationFromSpeedDial) => {
-    console.log(locationFromSpeedDial);
     setIsEditing(!isEditing);
     if (locationFromSpeedDial !== null) {
       setLocationToEdit(locationFromSpeedDial); // Set the location being edited
@@ -41,9 +35,6 @@ export default function LocationsCard({
   };
 
   const handleDelete = (locationId, merchantId) => {
-    console.log(locationId);
-    console.log(merchantId);
-
     dispatch({
       type: "DELETE_LOCATION",
       payload: {
@@ -62,8 +53,6 @@ export default function LocationsCard({
   };
 
   const handleEdit = (locationId, merchantId) => {
-    console.log(locationId);
-    console.log(merchantId);
     setEditId(locationId);
   };
 
@@ -115,7 +104,7 @@ export default function LocationsCard({
                 <Divider sx={{ ...lineDivider, mb: 1 }} />
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 {/* ~~~~~~~~~~ LOCATION DATA ~~~~~~~~~~ */}
-                <LocationsCardTable data={location} isEditing={isEditing} />
+                <LocationsCardTable data={location} />
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 {/* <ActionsSpeedDial handleDelete={handleDelete} location={location} /> */}
               </CardContent>

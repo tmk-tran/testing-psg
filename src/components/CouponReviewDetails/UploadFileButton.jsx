@@ -7,7 +7,6 @@ export default function UploadFileButton({ title, onFileSelect }) {
   const { selectedFile, addedFileName, handleFileChange } = useFileInput();
 
   const fileInputRef = useRef(null); // Add useRef here
-  console.log(fileInputRef);
 
   const handleFileUploadClick = () => {
     // Trigger the file input click event to open the file selection screen

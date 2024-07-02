@@ -16,10 +16,8 @@ const typographyStyle = {
 
 export default function NewBookYear() {
   const years = appActiveYear();
-  console.log(years);
   const activeYear = years ? years[0].year : "";
   const bookYearSee = bookYear();
-  console.log(bookYearSee);
 
   return (
     <Grid container spacing={2}>

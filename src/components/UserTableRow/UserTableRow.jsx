@@ -31,7 +31,6 @@ function UserTableRow({ user }) {
       })),
     };
     dispatch({ type: "EDIT_ADMIN_STATUS", payload: newData });
-    console.log(newData);
   };
 
   return (

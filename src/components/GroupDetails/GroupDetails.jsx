@@ -59,9 +59,6 @@ export default function GroupDetails() {
   useEffect(() => {
     dispatch({ type: "FETCH_FUNDRAISERS", payload: id });
   }, [groupDetails]);
-  //Console logs for testing
-  console.log(groupDetails);
-  console.log(fundraisers);
 
   //Elements used in component. Displays data based on the components that are called and has the headers for both open fundraisers and closed fundarisers tables
   return (

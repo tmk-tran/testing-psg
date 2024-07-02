@@ -114,7 +114,6 @@ const TopDrawer = ({ sellers }) => {
     setTimeout(() => {
       // history.push(`/fargo/orgDetails/${orgId}`);
       history.push(`/fargo/orgDetails/${orgId}?isSellerSearched=true`);
-      console.log(history);
       setLoading(false); // Set loading to false after navigation
     }, 0); // Use setTimeout to ensure the setLoading(false) runs after the state is updated
     resetSearchField();

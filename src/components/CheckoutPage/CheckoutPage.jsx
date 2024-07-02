@@ -111,7 +111,7 @@ export default function CheckoutPage({ caseType }) {
       bookType: selectedProducts[0].bookType,
       type: caseType,
     };
-    console.log("Contact Data from acInfo", contactData);
+    // console.log("Contact Data from acInfo", contactData);
     dispatch({ type: "ADD_CONTACT", payload: contactData });
   };
 
@@ -168,7 +168,6 @@ export default function CheckoutPage({ caseType }) {
 
   const handleStateChange = (state, value) => {
     // Handle the state change in the parent component
-    console.log(state, value);
     !state
       ? alert("Please select a state.")
       : console.log("READY FOR SUBMIT LOGIC HERE");
@@ -305,10 +304,7 @@ export default function CheckoutPage({ caseType }) {
 
   const runHandleNext = () => {
     if (Object.keys(errors).length === 0 && !errorStore) {
-      console.log("running handleNext");
       handleNext();
-    } else {
-      console.log("not running handleNext");
     }
   };
 
@@ -421,7 +417,6 @@ export default function CheckoutPage({ caseType }) {
           yearId: activeYearId,
         },
       };
-      console.log("Dispatching donation action: ", donationAction);
       updateActions.push(donationAction);
     }
   
@@ -437,18 +432,15 @@ export default function CheckoutPage({ caseType }) {
           yearId: activeYearId,
         },
       };
-      console.log("Dispatching payment action: ", paymentAction);
       updateActions.push(paymentAction);
     }
   
     updateActions.forEach((action) => {
-      console.log("Dispatching action: ", action);
       dispatch(action);
     });
   };
 
   const handleOrderInfo = (orderData) => {
-    console.log(orderData);
     setOrderInfo(orderData);
     handleNext();
   };

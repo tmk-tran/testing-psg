@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import {
+  Box,
   Button,
   Paper,
   Pagination,
@@ -164,19 +165,12 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~ TOGGLE VIEWS ~~~~~~~~~~ */}
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-          {!isOrgAdmin && !isGraphicDesigner && (
-            <ToggleButton
-              sxButton={{ margin: 2 }}
-              sxIcon={{ mr: 1 }}
-              title="Toggle List View"
-              onClick={handleToggle}
-              label1="Merchants"
-              label2="Organizations"
-              toggleState={isMerchantList}
-            />
+          {/* ~~~~~ User who is orgAdmin ~~~~~ */}
+          {isOrgAdmin && !isGraphicDesigner && !user.is_admin && (
+            <Box sx={{ flexGrow: 1 }}></Box>
           )}
           {/* ~~~~~ User who is both orgAdmin and Graphic Designer ~~~~~ */}
-          {isOrgAdmin && isGraphicDesigner && (
+          {isOrgAdmin && isGraphicDesigner && !user.is_admin && (
             <ToggleButton
               sxButton={{ margin: 2 }}
               sxIcon={{ mr: 1 }}
@@ -187,6 +181,18 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
               toggleState={isMerchantList}
             />
           )}
+          {user.is_admin && (
+            <ToggleButton
+              sxButton={{ margin: 2 }}
+              sxIcon={{ mr: 1 }}
+              title="Toggle List View"
+              onClick={handleToggle}
+              label1="Merchants"
+              label2="Organizations"
+              toggleState={isMerchantList}
+            />
+          )}
+
           {/* ~~~~~ Seller Search Drawer ~~~~~ */}
           <SellerSearch sellers={sellerResults} />
         </div>

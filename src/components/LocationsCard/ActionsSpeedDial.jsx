@@ -42,9 +42,7 @@ export default function ActionsSpeedDial({
   location,
   toggleEdit,
 }) {
-  console.log(location);
   const [direction, setDirection] = React.useState("left");
-  console.log(direction);
   const [hidden, setHidden] = React.useState(false);
 
   const deleteClick = () => {

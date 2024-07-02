@@ -6,16 +6,11 @@ import CopySnackBar from "../OrgSellers/CopySnackbar";
 import { transactionsUrl, orderUrl } from "./sellerUrl";
 
 export default function UrlDisplay({ sellerRefId }) {
-  console.log(sellerRefId);
-  const [sellerUrl, setSellerUrl] = useState("");
-  console.log(sellerUrl);
   const [urlForOrder, setUrlForOrder] = useState("");
-  console.log(urlForOrder);
 
   // Set the url for the order
   useEffect(() => {
     if (sellerRefId) {
-      setSellerUrl(transactionsUrl(sellerRefId));
       setUrlForOrder(orderUrl(sellerRefId));
     }
   }, [sellerRefId]);

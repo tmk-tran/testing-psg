@@ -27,9 +27,6 @@ function* addCustomer(action) {
     // Clear any existing error messages
     yield put({ type: "CLEAR_ERROR_MESSAGE" });
     const response = yield axios.post(`/api/customers/`, action.payload);
-    
-    // ADDED THIS LOG FOR TESTING ~~~~~~~~~~~~~~~~~~~~~~~ //
-    console.log(response.data);
 
     // Email does not exist, proceed with other actions
     const newCustomerId = response.data[0].id; // Assuming response.data is an object with an 'id' property

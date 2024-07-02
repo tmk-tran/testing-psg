@@ -77,7 +77,6 @@ function ListView({ data, isMerchantList, onChange, isOrgAdmin, numCoupons }) {
         }).then((reasonResult) => {
           if (reasonResult.isConfirmed) {
             const archiveReason = reasonResult.value;
-            console.log(archiveReason);
 
             dispatch({
               type: `DELETE_${isMerchantList ? "MERCHANT" : "ORGANIZATION"}`,

@@ -25,7 +25,6 @@ function* fetchByName(action) {
 }
 
 function* fetchByRefId(action) {
-  console.log(action.payload);
   try {
     const items = yield axios.get(`/api/sellers/byrefid`, {
       params: action.payload,
@@ -37,7 +36,6 @@ function* fetchByRefId(action) {
 }
 
 function* fetchSellers(action) {
-  console.log(action.payload);
   const orgId = action.payload.orgId;
   const yearId = action.payload.yearId;
 
@@ -82,11 +80,7 @@ function* archiveSeller(action) {
   const orgId = action.payload.orgId;
 
   try {
-    const response = yield axios.delete(`/api/sellers/${sellerId}`);
-    console.log(
-      "DELETE request from sellers.saga, response FOR DELETE = ",
-      response
-    );
+    yield axios.delete(`/api/sellers/${sellerId}`);
     yield put({ type: "FETCH_SELLERS", payload: orgId });
   } catch (error) {
     console.log("error with deleteSeller request", error);

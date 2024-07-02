@@ -16,7 +16,7 @@ export default function ({
 }) {
   return (
     <>
-      <Typography variant="h6" sx={pageHeaderStyle}>
+      <Typography variant="h5" sx={pageHeaderStyle}>
         User Administration
       </Typography>
       <Box sx={{ ...flexRowSpace, mb: 1 }}>

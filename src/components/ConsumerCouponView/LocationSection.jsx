@@ -14,7 +14,6 @@ import {
 } from "../Utils/helpers";
 
 export default function LocationSection({ coupon }) {
-  console.log(coupon);
   if (
     !coupon ||
     !coupon.locationId ||

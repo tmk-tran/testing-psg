@@ -38,6 +38,7 @@ const pageBoxStyle = {
 };
 
 const pageHeaderStyle = {
+  fontWeight: "bold",
   textAlign: "center",
   mb: 2,
 };
@@ -122,7 +123,6 @@ export default function UserAdmin() {
 
   const tableData = userTableData() || [];
   const orgAdmins = UserOrgAdmins() || [];
-  // console.log(orgAdmins);
   const allOrgs = allOrganizations() || [];
   // console.log(allOrgs);
   const userBooks = userBooksData() || [];
@@ -134,8 +134,6 @@ export default function UserAdmin() {
   });
 
   const handleSwitch = (id, type, newValue) => {
-    console.log(id, type, newValue);
-
     if (type === "graphic_designer" || type === "org_admin") {
       const action = {
         type: "CHANGE_USER_ROLE",
@@ -145,7 +143,6 @@ export default function UserAdmin() {
             newValue,
         },
       };
-      console.log(action);
       dispatch(action);
       showSaveSweetAlert({ label: "User Role Updated" });
     }
@@ -158,7 +155,6 @@ export default function UserAdmin() {
           show_book: newValue,
         },
       };
-      console.log(action2);
       dispatch(action2);
       showSaveSweetAlert({ label: "Book Access Updated" });
     }
@@ -174,7 +170,6 @@ export default function UserAdmin() {
           org_id: newId,
         },
       };
-      // console.log(dispatchAction);
       dispatch(dispatchAction);
       showSaveSweetAlert({ label: "Organization Admin Set" });
       setAddNewOrg(false);
@@ -188,7 +183,6 @@ export default function UserAdmin() {
           org_id: newId,
         },
       };
-      // console.log(addAction);
       dispatch(addAction);
     }
   };
@@ -260,7 +254,6 @@ export default function UserAdmin() {
         username: newUserName,
       },
     };
-    // console.log(editAction);
     dispatch(editAction);
     resetEditUser();
 
@@ -368,7 +361,12 @@ export default function UserAdmin() {
                   sx={{
                     ...shortCellSx,
                     ...centerMe,
-                    ...(row.id === 3 || row.id === 4 ? disabledCellSx : {}),
+                    ...(row.id === 3 ||
+                    row.id === 4 ||
+                    row.id === 23 ||
+                    row.id === 24
+                      ? disabledCellSx
+                      : {}),
                   }}
                 >
                   {row.graphic_designer ? (
@@ -388,7 +386,10 @@ export default function UserAdmin() {
                       No
                     </Typography>
                   )}
-                  {row.id === 3 || row.id === 4 ? (
+                  {row.id === 3 ||
+                  row.id === 4 ||
+                  row.id === 23 ||
+                  row.id === 24 ? (
                     <ActionSwitch
                       disabled={true}
                       isChecked={row.graphic_designer}
@@ -405,14 +406,19 @@ export default function UserAdmin() {
                     />
                   )}
                 </TableCell>
+                {/* ~~~~~~~~~ Org Admin Column ~~~~~~~~~~ */}
                 <TableCell
                   sx={{
                     ...shortCellSx,
                     ...centerMe,
-                    ...(row.id === 3 || row.id === 4 ? disabledCellSx : {}),
+                    ...(row.id === 3 ||
+                    row.id === 4 ||
+                    row.id === 23 ||
+                    row.id === 24
+                      ? disabledCellSx
+                      : {}),
                   }}
                 >
-                  {/* ~~~~~~~~~ Org Admin Column ~~~~~~~~~~ */}
                   <Box sx={{ ...flexRowSpace, position: "relative" }}>
                     <Box>
                       {row.org_admin ? (
@@ -432,7 +438,10 @@ export default function UserAdmin() {
                           No
                         </Typography>
                       )}
-                      {row.id === 3 || row.id === 4 ? (
+                      {row.id === 3 ||
+                      row.id === 4 ||
+                      row.id === 23 ||
+                      row.id === 24 ? (
                         <ActionSwitch
                           disabled={true}
                           isChecked={row.org_admin}

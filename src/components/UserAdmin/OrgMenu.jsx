@@ -18,7 +18,6 @@ const OrgMenu = ({
 
   const handleChange = (event) => {
     const newValue = event.target.value;
-    console.log(newValue);
     setValue(newValue);
     setItemSelected(true);
     onChange(userId, defaultValue, newValue);

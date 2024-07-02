@@ -11,21 +11,15 @@ export default function SearchableSelect({
   merchants,
   organizations,
 }) {
-  console.log(thirdMenuChoice);
-  console.log(merchantTab);
-  console.log(merchants);
-  console.log(organizations);
   return (
     <Autocomplete
       value={thirdMenuChoice !== "" ? thirdMenuChoice : null}
       onChange={(event, value) => {
         if (value) {
-          console.log(value);
           const accountName = merchantTab
             ? value.merchant_name
             : value.organization_name;
           if (accountName) {
-            console.log(accountName);
             handleAccountChange(event, accountName);
           } else {
             // Handle the case where accountName is null or undefined
@@ -37,20 +31,7 @@ export default function SearchableSelect({
         }
       }}
       options={merchantTab ? merchants : organizations}
-      getOptionLabel={(option) => {
-        // console.log(
-        //   "Option Label:",
-        //   merchantTab ? option.merchant_name : option.organization_name
-        // );
-        console.log(option);
-        console.log(merchantTab);
-        console.log(option);
-        // return merchantTab ? option.merchant_name : option.organization_name;
-        return option;
-      }}
       renderInput={(params) => {
-        console.log("Input Value:", params.inputProps.value);
-        // const selectedAccount = params.inputProps.value;
 
         return (
           <TextField

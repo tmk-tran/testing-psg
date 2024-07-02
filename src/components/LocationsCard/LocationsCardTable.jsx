@@ -27,9 +27,7 @@ const tableCellStyle = {
   fontSize: "1rem", // Adjust the font size
 };
 
-export default function MyTable({ data, isEditing }) {
-  console.log(data);
-  console.log(isEditing);
+export default function MyTable({ data }) {
 
   return (
     <Table>

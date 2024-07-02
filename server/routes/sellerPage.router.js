@@ -3,7 +3,6 @@ const pool = require("../modules/pool");
 const router = express.Router();
 
 router.get("/:refId", (req, res) => {
-  console.log("from GET /id seller.router: ", req.params.refId);
   const refId = req.params.refId;
 
   const queryText = `
@@ -24,7 +23,6 @@ router.get("/:refId", (req, res) => {
   pool
     .query(queryText, [refId])
     .then((result) => {
-      console.log("from GET /id sellerPage.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -36,7 +34,6 @@ router.get("/:refId", (req, res) => {
 router.put("/:id", (req, res) => {
   const sellerId = req.params.id;
   const sellerInfo = req.body;
-  console.log("FROM SELLERPAGE....SELLER INFO = ", sellerInfo);
   const updateType = sellerInfo.updateType;
   const refId = sellerInfo.refId;
 

@@ -129,7 +129,6 @@ router.post("/", rejectUnauthenticated, (req, res) => {
 });
 
 router.put("/:id", rejectUnauthenticated, (req, res) => {
-  console.log("From PUT for user_coupon show book: ", req.body);
   const userId = req.params.id;
 
   const queryText = `

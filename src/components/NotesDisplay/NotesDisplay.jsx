@@ -43,20 +43,6 @@ export default function NotesDisplay({
   const [noteDate, setNoteDate] = useState(new Date());
   const [noteAdded, setNoteAdded] = useState(false);
 
-  // Access merchant_id directly from details if isMerchantTaskPage is true
-  const merchantId = isMerchantTaskPage ? details.id : null;
-
-  // useEffect(() => {
-  //   // Fetch org notes whenever noteAdded changes
-  //   dispatch({
-  //     type: "FETCH_ORG_NOTES",
-  //     payload: paramsObject.id,
-  //   });
-
-  //   // Reset noteAdded after fetching data
-  //   setNoteAdded(false);
-  // }, [dispatch, paramsObject.id, noteAdded]);
-
   useEffect(() => {
     // Define the action type based on isMerchantTaskPage
     const fetchNotesActionType = !isMerchantTaskPage
@@ -83,11 +69,6 @@ export default function NotesDisplay({
       note_date: formattedDate,
       note_content: inputValue,
     };
-
-    // const saveCall = () => {
-    //   dispatch({ type: "ADD_ORG_NOTES", payload: sendNote });
-    //   setNoteAdded(true);
-    // };
 
     const saveCall = () => {
       const actionType = isMerchantTaskPage
@@ -185,23 +166,11 @@ export default function NotesDisplay({
                             className="notes-delete-btn"
                             onClick={() => {
                               if (isMerchantTaskPage) {
-                                console.log(
-                                  "Merchant Task Page - Note ID:",
-                                  note.id,
-                                  "Merchant ID:",
-                                  note.merchant_id
-                                );
                                 showDeleteConfirmation(
                                   note.id,
                                   note.merchant_id
                                 );
                               } else {
-                                console.log(
-                                  "Organization Task Page - Note ID:",
-                                  note.id,
-                                  "Organization ID:",
-                                  note.organization_id
-                                );
                                 showDeleteConfirmation(
                                   note.id,
                                   note.organization_id

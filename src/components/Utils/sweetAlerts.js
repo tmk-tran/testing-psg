@@ -2,7 +2,6 @@ import Swal from "sweetalert2";
 import { primaryColor, successColor } from "./colors";
 
 export const showDeleteSweetAlert = (deleteCall, caseType) => {
-  console.log(caseType);
   let title = "";
   let confirmButtonText = "";
   switch (caseType) {
@@ -74,7 +73,6 @@ export const showDeleteSweetAlert = (deleteCall, caseType) => {
 //   });
 // };
 export const showSaveSweetAlert = ({ label }) => {
-  // console.log(label);
   const title = label !== null ? `${label}!` : "Saved!";
   Swal.fire({
     title: title,
@@ -108,7 +106,6 @@ export const submitPaymentSweetAlert = (saveCall) => {
 
 // Sweet Alert for CouponCard.jsx
 export const redeemCouponSweetAlert = (saveCall) => {
-  console.log(saveCall);
   Swal.fire({
     title: "Are you sure?",
     text: "This action cannot be undone!",

@@ -2,6 +2,8 @@
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
+# add NODE_ENV = "production" to env
+
 
 app = 'testpsg'
 primary_region = 'ord'

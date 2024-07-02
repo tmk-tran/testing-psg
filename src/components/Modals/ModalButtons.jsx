@@ -11,8 +11,6 @@ export default function ModalButtons({
   width,
   caseType,
 }) {
-  console.log(editedAccount);
-  console.log(caseType);
   const buttonSx = {
     width: width === "50%" ? "50%" : "auto",
     ...sx,

@@ -12,19 +12,12 @@ export default function CommentInput({
   onChange,
   file,
 }) {
-  console.log(merchantId);
-  console.log(taskId);
-  console.log(file);
+  const dispatch = dispatchHook();
+
   const [comment, setComment] = useState("");
   const [commentAdded, setCommentAdded] = useState(false);
-  console.log(comment);
-  console.log(commentAdded);
   const user = User() || [];
-  console.log(user.username);
   const currentUsername = user.username;
-  console.log(currentUsername);
-
-  const dispatch = dispatchHook();
 
   const newComment = {
     merchant_id: merchantId,
@@ -36,7 +29,6 @@ export default function CommentInput({
 
   const handleSubmit = () => {
     // Handle comment submission logic
-    console.log("Comment submitted:", newComment);
     dispatch({ type: "ADD_MERCHANT_COMMENT", payload: newComment });
     setCommentAdded(true);
     setComment("");

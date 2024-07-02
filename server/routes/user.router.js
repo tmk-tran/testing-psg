@@ -105,7 +105,7 @@ router.post("/register", (req, res, next) => {
   pool
     .query(queryText, [username, password, firstName, lastName])
     .then((response) => {
-      console.log(response.rows);
+      // console.log(response.rows);
       res.send(response.rows);
     })
     .catch((err) => {

@@ -1,79 +1,3 @@
-// const express = require("express");
-// const bodyParser = require("body-parser");
-// require("dotenv").config();
-
-// const app = express();
-
-// const sessionMiddleware = require("./modules/session-middleware");
-// const passport = require("./strategies/user.strategy");
-
-// // Route includes
-// const userRouter = require("./routes/user.router");
-// const groupRouter = require("./routes/group.details.router");
-// const orgDetailsRouter = require("./routes/orgDetails.router");
-// const organizationsRouter = require("./routes/organizations.router");
-// const fundraisersRouter = require("./routes/fundraisers.router");
-// const archivedOrganizationsRouter = require("./routes/archivedOrganizations.router");
-// const allGroupsRouter = require("./routes/allGroups.router");
-// const couponBookRouter = require("./routes/couponbook.router");
-// const groupAdminRouter = require("./routes/groupAdmin.router");
-// const orgNotesRouter = require("./routes/orgNotes.router");
-// const allUsersRouter = require("./routes/allUsers.router");
-// const couponRouter = require("./routes/coupon.router");
-// const merchantsRouter = require("./routes/merchants.router");
-// const organizationTaskRouter = require("./routes/organizationTask.router");
-// const merchantNotesRouter = require("./routes/merchantNotes.router");
-// const merchantTaskRouter = require("./routes/merchantTask.router");
-// const allTasksMRouter = require("./routes/allTasksM.router");
-// const allTasksORouter = require("./routes/allTasksO.router");
-// const merchantCommentsRouter = require("./routes/merchantComments.router");
-// const locationsRouter = require("./routes/locations.router");
-
-// // Body parser middleware
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
-
-// // Passport Session Configuration //
-// app.use(sessionMiddleware);
-
-// // start up passport sessions
-// app.use(passport.initialize());
-// app.use(passport.session());
-
-// /* Routes */
-// app.use("/api/user", userRouter);
-// app.use("/api/group", groupRouter);
-// app.use("/api/orgnotes", orgNotesRouter);
-// app.use("/api/orgdetails", orgDetailsRouter);
-// app.use("/api/organizations", organizationsRouter);
-// app.use("/api/fundraisers", fundraisersRouter);
-// app.use("/api/archivedOrganizations", archivedOrganizationsRouter);
-// app.use("/api/allGroups", allGroupsRouter);
-// app.use("/api/archivedOrganizations", archivedOrganizationsRouter);
-// app.use("/api/couponbook", couponBookRouter);
-// app.use("/api/groupAdmin", groupAdminRouter);
-// app.use("/api/allUsers", allUsersRouter);
-// app.use("/api/coupon", couponRouter);
-// app.use("/api/merchants", merchantsRouter);
-// app.use("/api/merchantNotes", merchantNotesRouter);
-// app.use("/api/merchantTask", merchantTaskRouter);
-// app.use("/api/organizationTask", organizationTaskRouter);
-// app.use("/api/tasks/merchants", allTasksMRouter);
-// app.use("/api/tasks/organizations", allTasksORouter);
-// app.use("/api/merchantComments", merchantCommentsRouter);
-// app.use("/api/locations", locationsRouter);
-
-// // Serve static files
-// app.use(express.static("build"));
-
-// // App Set //
-// const PORT = process.env.PORT || 5000;
-
-// /** Listen * */
-// app.listen(PORT, () => {
-//   console.log(`Listening on port: ${PORT}`);
-// });
-
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -116,20 +40,6 @@ const transactionsRouter = require("./routes/transactions.router");
 const redemptionRouter = require("./routes/couponRedemption.router");
 const paypalRouter = require("./routes/paypal.router");
 const userCouponRouter = require("./routes/userCoupon.router");
-
-// // Add this middleware to set the CORS headers
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader(
-//     'Access-Control-Allow-Methods',
-//     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-//   );
-//   res.setHeader(
-//     'Access-Control-Allow-Headers',
-//     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-//   );
-//   next();
-// });
 
 app.use(
   cors({
@@ -254,7 +164,7 @@ const createOrder = async (cart) => {
     },
   });
 
-  console.log("RESPONSE FROM SERVER, createOrder: ", response.data);
+  // console.log("RESPONSE FROM SERVER, createOrder: ", response.data);
   return response.data;
 };
 
@@ -277,7 +187,7 @@ const captureOrder = async (orderID) => {
 app.post("/api/orders", async (req, res) => {
   try {
     const { cart } = req.body;
-    console.log("From server, request from CART: ", cart);
+    // console.log("From server, request from CART: ", cart);
     const order = await createOrder(cart);
     res.json(order);
   } catch (error) {
@@ -319,7 +229,6 @@ app.post(`/api/contact`, async (req, res) => {
     req.body.firstName,
     req.body.lastName
   );
-  console.log(randomPassword);
 
   try {
     const email = req.body.email;
@@ -333,15 +242,15 @@ app.post(`/api/contact`, async (req, res) => {
         },
       }
     );
-    console.log(
-      "Active campaign returner check",
-      checkedResponse.data.contacts
-    );
+    // console.log(
+    //   "Active campaign returner check",
+    //   checkedResponse.data.contacts
+    // );
     const returnerId =
       checkedResponse.data.contacts && checkedResponse.data.contacts.length > 0
         ? checkedResponse.data.contacts[0].id
         : null;
-    console.log(returnerId);
+    // console.log(returnerId);
 
     if (
       checkedResponse.data.message ===
@@ -411,14 +320,13 @@ app.post(`/api/contact`, async (req, res) => {
           },
         }
       );
-      console.log("Response from ActiveCampaign:", response1.data.contact);
-      const contactEmail = response1.data.contact.email;
+      // console.log("Response from ActiveCampaign:", response1.data.contact);
       const contactId = response1.data.contact.id;
-      console.log(contactId);
+      // console.log(contactId);
 
       let list = 10;
 
-      //ADD THIS BACK IN WHTN REGION FILTERING IS ADDED
+      //ADD THIS BACK IN WHEN REGION FILTERING IS ADDED
       //Can add more regions as needed
 
       // switch (req.body.region) {
@@ -547,7 +455,6 @@ app.post(`/api/contact`, async (req, res) => {
         }
       );
       console.log("Response from ActiveCampaign:", response1.data);
-      // const contactId = response1.data.contact.id;
 
       var list = 10;
 
@@ -578,12 +485,12 @@ app.post(`/api/contact`, async (req, res) => {
         }
       );
       const lists = returnerLists.data.contactLists;
-      console.log("The lists variable", lists);
+      // console.log("The lists variable", lists);
 
       for (let i = 0; i < lists.length; i++) {
         const returnList = lists[i];
-        console.log("list in loop", returnList.list);
-        console.log("list to be added too", list);
+        // console.log("list in loop", returnList.list);
+        // console.log("list to be added too", list);
         if (Number(returnList.list) === list) {
           const response2 = await axios.post(
             `https://northpointeinsure57220.api-us1.com/api/3/contactAutomations`,
@@ -641,8 +548,8 @@ app.post(`/api/contact`, async (req, res) => {
           },
         }
       );
-      console.log("Response from adding contact to list:", response2.data);
-      console.log("returning book type is:", req.body.bookType);
+      // console.log("Response from adding contact to list:", response2.data);
+      // console.log("returning book type is:", req.body.bookType);
       let tag = 0;
 
       if (
@@ -692,7 +599,6 @@ app.post(`/api/contact`, async (req, res) => {
 app.post("/api/recoverPassword", async (req, res) => {
   try {
     const email = req.body.email;
-    console.log(email);
     const apiKey = process.env.AC_API_KEY;
     // const emailChecked = await axios.get(`https://${process.env.ac_address}/api/${process.env.version}/contacts?filters[email]=${email}`,
     const emailChecked = await axios.get(
@@ -704,13 +610,13 @@ app.post("/api/recoverPassword", async (req, res) => {
         },
       }
     );
-    console.log("emailChecked from server: ", emailChecked); // getting a 200 here
-    console.log(emailChecked.data); // this value is undefined, null
+    // console.log("emailChecked from server: ", emailChecked);
+    // console.log(emailChecked.data);
     const id =
       emailChecked.data.contacts.length > 0
         ? emailChecked.data.contacts[0].id
         : null;
-    console.log(id); // coming through null
+    // console.log(id);
     const resetAcc = await axios.post(
       // `https://${process.env.ac_address}/api/${process.env.version}/contactTags`,
       `https://northpointeinsure57220.api-us1.com/api/3/contactTags`,

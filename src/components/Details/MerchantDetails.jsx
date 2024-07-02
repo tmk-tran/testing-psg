@@ -26,7 +26,6 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
   const paramsObject = useParams();
   // ~~~~~~~~~~ State ~~~~~~~~~~ //
   const [locationAdded, setLocationAdded] = useState(false);
-  console.log(locationAdded);
   const { caseType, handleCaseTypeChange } = useCaseType("default");
 
   useEffect(() => {
@@ -47,7 +46,6 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
       payload: paramsObject.id,
     };
     isMerchantTaskPage && dispatch(action3);
-    console.log(action3);
 
     const action4 = {
       type: "FETCH_MERCHANT_TASKS",
@@ -59,9 +57,7 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
   }, [paramsObject.id, locationAdded]);
 
   const merchantDetails = mDetails() || [];
-  console.log(merchantDetails);
   const notes = mNotes() || [];
-  console.log(notes);
   const locations = mLocations() || [];
 
   const handleAddLocation = () => {
@@ -69,7 +65,6 @@ export default function MerchantDetails({ isMerchantTaskPage }) {
   };
 
   const handleContactMethod = (newValue) => {
-    console.log(newValue);
     const dispatchAction = {
       type: "UPDATE_CONTACT_METHOD",
       payload: {

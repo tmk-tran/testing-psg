@@ -37,18 +37,9 @@ function ValidLocationsRadio({
   selectAllLocations,
   onLocationChange,
 }) {
-  console.log(acceptedAt);
-  console.log(isDropdownSelected);
-  console.log(selectAllLocations);
-  console.log(isDropdownSelected);
-  console.log(selectedLocations);
-  console.log(participatingLocs);
-  console.log(selectAllLocations);
   // need to set this when a value is selected from the dropdown in Location
   const [selectedValue, setSelectedValue] = useState("");
-  console.log(selectedValue);
   const [showLocationSelect, setShowLocationSelect] = useState(false);
-  console.log(showLocationSelect);
 
   useEffect(() => {
     if (acceptedAt && acceptedAt.length > 1) {
@@ -74,7 +65,6 @@ function ValidLocationsRadio({
   }, [selectedValue]);
 
   const handleChange = (event) => {
-    console.log(event.target.value);
     setSelectedValue(event.target.value);
   };
 

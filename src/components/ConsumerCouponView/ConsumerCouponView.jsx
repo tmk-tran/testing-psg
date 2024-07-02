@@ -12,11 +12,7 @@ import {
 } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import {
-  User,
-  couponsData,
-  appActiveYear,
-} from "../../hooks/reduxStore";
+import { User, couponsData, appActiveYear } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import Typography from "../Typography/Typography";
 import CouponCard from "./CouponCard";
@@ -47,7 +43,7 @@ export default function ConsumerCouponView() {
     const dispatchAction = {
       type: "FETCH_CONSUMER_COUPONS",
       payload: {
-        id: user.id,
+        userId: user.id,
         yearId: activeYearId,
       },
     };

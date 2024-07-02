@@ -2,13 +2,12 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* organizationTask(action) {
-  console.log(action.payload);
   try {
     const items = yield axios.get(`/api/organizationTask/${action.payload}`);
-    console.log(
-      "FETCH request from organizationTask.saga, ITEMS = ",
-      items.data
-    );
+    // console.log(
+    //   "FETCH request from organizationTask.saga, ITEMS = ",
+    //   items.data
+    // );
     yield put({ type: "SET_ORG_TASKS", payload: items.data });
   } catch (error) {
     console.log("error in organizationTasks Saga", error);
@@ -19,7 +18,7 @@ function* organizationTask(action) {
 function* fetchAllOrganizationTasks() {
   try {
     const items = yield axios.get("/api/tasks/organizations");
-    console.log("FETCH all organization tasks, ITEMS = ", items.data);
+    // console.log("FETCH all organization tasks, ITEMS = ", items.data);
     yield put({ type: "SET_ORG_TASKS", payload: items.data });
   } catch (error) {
     console.log("error in fetchAllOrganizationTasks Saga", error);
@@ -30,12 +29,10 @@ function* fetchAllOrganizationTasks() {
 function* addOrganizationTask(action) {
   try {
     const items = yield axios.post("/api/tasks/organizations", action.payload);
-    console.log(
-      "FETCH request from organizationTask.saga, ITEMS FOR add = ",
-      items
-    );
-    console.log("organizationTask action.payload = ", action.payload);
-
+    // console.log(
+    //   "FETCH request from organizationTask.saga, ITEMS FOR add = ",
+    //   items
+    // );
     yield put({
       type: "FETCH_ALL_ORGANIZATION_TASKS",
       payload: action.payload.id,
@@ -51,12 +48,10 @@ function* editOrganizationTask(action) {
       `/api/tasks/organizations/${action.payload.id}`,
       action.payload
     );
-    console.log(
-      "FETCH request from organizationTask.saga, ITEMS FOR edit = ",
-      items
-    );
-    console.log("organizationTask action.payload = ", action.payload);
-
+    // console.log(
+    //   "FETCH request from organizationTask.saga, ITEMS FOR edit = ",
+    //   items
+    // );
     yield put({
       type: "FETCH_ALL_ORGANIZATION_TASKS",
       payload: action.payload.id,
@@ -69,11 +64,9 @@ function* editOrganizationTask(action) {
 function* changeAssignedOrg(action) {
   const taskId = action.payload.id;
   const orgId = action.payload.organizationId;
-  console.log(action.payload);
 
   try {
     yield axios.put(`/api/organizationTask/${taskId}`, action.payload);
-    console.log("orgTask action.payload = ", action.payload);
     yield put({
       type: "FETCH_ALL_ORGANIZATION_TASKS",
       payload: orgId,
@@ -84,16 +77,15 @@ function* changeAssignedOrg(action) {
 }
 
 function* changeDueDate(action) {
-  console.log(action.payload);
   const taskId = action.payload.id;
   const orgId = action.payload.accountId;
 
   try {
     yield axios.put(`/api/organizationTask/duedate/${taskId}`, action.payload);
-    console.log(
-      "organizationTask dueDate PUT action.payload = ",
-      action.payload
-    );
+    // console.log(
+    //   "organizationTask dueDate PUT action.payload = ",
+    //   action.payload
+    // );
     yield put({
       type: "FETCH_ALL_ORGANIZATION_TASKS",
       payload: orgId,
@@ -108,12 +100,10 @@ function* deleteOrganizationTask(action) {
     const items = yield axios.delete(
       `/api/tasks/organizations/${action.payload.id}`
     );
-    console.log(
-      "FETCH request from organizationsTask.saga, ITEMS FOR delete = ",
-      items
-    );
-    console.log("organizationsTask action.payload = ", action.payload);
-
+    // console.log(
+    //   "FETCH request from organizationsTask.saga, ITEMS FOR delete = ",
+    //   items
+    // );
     yield put({
       type: "FETCH_ALL_ORGANIZATION_TASKS",
       payload: action.payload.id,

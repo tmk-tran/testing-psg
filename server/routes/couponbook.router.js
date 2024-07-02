@@ -24,12 +24,6 @@ router.get("/", (req, res) => {
 router.get("/id/:id", (req, res) => {
   const bookId = req.params.id;
 
-  // const queryText = `
-  //           SELECT *
-  //           FROM coupon_book
-  //           WHERE id = $1
-  //           AND active = TRUE;
-  //         `;
   const queryText = `
           SELECT *
           FROM coupon_book
@@ -49,7 +43,6 @@ router.get("/id/:id", (req, res) => {
 
 router.get("/season/:season", (req, res) => {
   const season = req.params.season;
-  console.log("season", season);
 
   const queryText = `
           SELECT *

@@ -75,6 +75,8 @@ export default function BasicTabs() {
   useEffect(() => {
     if (merchantTasks.length > 0) {
       setIsLoading(false);
+    } else if (merchantTasks.length === 0) {
+      setIsLoading(false);
     }
   }, [merchantTasks]);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,7 +92,6 @@ export default function BasicTabs() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    console.log(newValue);
     setMerchantTab(false);
   };
 

@@ -23,25 +23,11 @@ export default function CouponStatusDropdown({
   complete,
   task,
 }) {
-  console.log(task);
-
-  const [taskStatus, setTaskStatus] = useState(task ? task.task_status : "");
-  console.log(taskStatus);
   // Change name to: task description
   const [status, setStatus] = useState(task ? task.task : "");
-  console.log(status);
-
   const [taskId, setTaskId] = useState(task ? task.id : "");
-  console.log(taskId);
-  const [assignedCouponId, setAssignedCouonId] = useState(
-    task ? task.coupon_id : ""
-  );
-  console.log(assignedCouponId);
-
-  console.log(couponId);
 
   const handleMenuChange = (event) => {
-    console.log(event.target);
     const choice = event.target.value;
     setStatus(choice);
     console.log(choice);

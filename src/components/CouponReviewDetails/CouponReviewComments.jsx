@@ -17,13 +17,8 @@ export default function CouponReviewComments({
   file,
   handleUploadFile,
 }) {
-  console.log(file);
   const [taskId, setTaskId] = useState("");
-  console.log(taskId);
-  console.log(merchantId);
   const merchantComments = mComments() || [];
-  console.log(merchantComments);
-
   // ~~~~~~~~~~ Alert ~~~~~~~~~~
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
 

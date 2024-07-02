@@ -27,7 +27,7 @@ function* fetchUser() {
 function* forUserAdmin() {
   try {
     const response = yield axios.get("/api/user/table");
-    console.log("From user saga: ", response.data);
+    // console.log("From user saga: ", response.data);
     yield put({ type: "SET_USER_TABLE", payload: response.data });
   } catch (error) {
     console.log("User table get request failed", error);
@@ -35,13 +35,8 @@ function* forUserAdmin() {
 }
 
 function* changeUserRole(action) {
-  console.log(action.payload);
   try {
-    const response = yield axios.put(
-      `/api/user/${action.payload.id}`,
-      action.payload
-    );
-    console.log("From user saga: ", response.data);
+    yield axios.put(`/api/user/${action.payload.id}`, action.payload);
     yield put({ type: "FETCH_USER_TABLE" });
   } catch (error) {
     console.log("User table get request failed", error);
@@ -49,13 +44,26 @@ function* changeUserRole(action) {
 }
 
 function* setOrgAdmin(action) {
-  console.log(action.payload);
   try {
-    const response = yield axios.put(
-      `/api/user/org/${action.payload.id}`,
-      action.payload
-    );
-    console.log("From user saga: ", response.data);
+    yield axios.put(`/api/user/org/${action.payload.id}`, action.payload);
+    yield put({ type: "FETCH_USER_TABLE" });
+  } catch (error) {
+    console.log("User table get request failed", error);
+  }
+}
+
+function* editUserName(action) {
+  try {
+    yield axios.put(`/api/user/name/${action.payload.id}`, action.payload);
+    yield put({ type: "FETCH_USER_TABLE" });
+  } catch (error) {
+    console.log("User table get request failed", error);
+  }
+}
+
+function* deleteUser(action) {
+  try {
+    yield axios.delete(`/api/user/${action.payload.id}`);
     yield put({ type: "FETCH_USER_TABLE" });
   } catch (error) {
     console.log("User table get request failed", error);

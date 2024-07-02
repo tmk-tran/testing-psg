@@ -27,16 +27,9 @@ function* addContactSaga(action) {
 }
 
 function* recoverPassword(action) {
-  console.log(action.payload);
   const email = action.payload;
   try {
-    // yield axios({
-    //   method: "POST",
-    //   url: `/api/recoverPassword`,
-    //   data: { email: email },
-    // });
-    const response = yield axios.post('/api/recoverPassword', { email: email });
-    console.log(response.data);
+    yield axios.post("/api/recoverPassword", { email: email });
   } catch (error) {
     console.log("error in recoverPassword saga", error);
   }

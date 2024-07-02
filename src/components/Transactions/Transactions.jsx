@@ -14,7 +14,6 @@ export default function Transactions() {
   }, []);
 
   const transactionList = paypalTransactions() || [];
-  console.log(transactionList);
 
   return (
     <Box>
@@ -29,7 +28,7 @@ export default function Transactions() {
           <TransactionsTable transactions={transactionList} />
         ) : (
           <Typography variant="body2" sx={{ textAlign: "center" }}>
-            Error loading transactions
+            Transactions unavailable
           </Typography>
         )}
       </Box>

@@ -73,7 +73,7 @@ router.get("/byrefid", rejectUnauthenticated, (req, res) => {
 });
 
 router.get("/:orgId/:yearId", rejectUnauthenticated, (req, res) => {
-  console.log("From sellers router: ", req.params);
+  // console.log("From sellers router: ", req.params);
   const orgId = req.params.orgId;
   const yearId = req.params.yearId;
 
@@ -121,7 +121,6 @@ router.get("/:orgId/:yearId", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText, [orgId, yearId])
     .then((result) => {
-      console.log("Successful GET /id from sellers.router: ");
       res.send(result.rows);
     })
     .catch((err) => {

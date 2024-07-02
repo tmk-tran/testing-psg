@@ -8,7 +8,6 @@ function RegisterModal({ open, onClose }) {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  console.log(firstName, lastName);
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
 

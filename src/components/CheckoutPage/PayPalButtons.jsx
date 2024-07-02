@@ -15,16 +15,13 @@ function PayPalButton({
   customDonation,
   orderSuccess,
 }) {
-  // comes through undefined in test environment
-  console.log(process.env.REACT_APP_PAYPAL_CLIENT_ID);
   const dispatch = dispatchHook();
+  const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
+  // console.log(clientId);
 
   // Removed 'venmo' from "enable-funding"
   const initialOptions = {
-    "client-id":
-      // "AXW1Fk6t36VzplCt2ev6VRwygaNynFd4tz4KBWicOhfvFrPLenoFFcwIbgih38FpabvP9I6RXFfyZ_Nx",
-      "AXw4KZ31SkyY5t_62QfDp4x7pQYm5t1-UfGpGDOOJVXo7Xb0UEdlRPkXW8mhOtVxDJhAY4PSofVyDaFu",
-    // process.env.REACT_APP_PAYPAL_CLIENT_ID,
+    "client-id": clientId,
     "enable-funding": "paylater,card",
     "disable-funding": "",
     "data-sdk-integration-source": "integrationbuilder_sc",
