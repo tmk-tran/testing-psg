@@ -10,7 +10,7 @@ import { sellerPageInfo } from "../../hooks/reduxStore";
 import CustomButton from "../CustomButton/CustomButton";
 import Typography from "../Typography/Typography";
 import OrderTable from "./OrderTable";
-import CustomerNameInfo from "../SellerPage/CustomerNameInfo";
+import CustomerNameInfo from "../SellerPage/CustomerNameInfo"; // Disabled on July 2, 2024 (client request)
 import RefIdDisplay from "../SellerPage/RefIdDisplay";
 
 export default function OrderPage({ caseType }) {
