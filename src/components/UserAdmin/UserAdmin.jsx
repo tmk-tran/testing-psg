@@ -439,8 +439,8 @@ export default function UserAdmin() {
                       )}
                       {row.id === 3 ||
                       row.id === 4 ||
-                      row.id === 23 ||
-                      row.id === 24 ? (
+                      row.id === 23 || // will be different in PROD
+                      row.id === 24 ? ( // will be different in PROD
                         <ActionSwitch
                           disabled={true}
                           isChecked={row.org_admin}
