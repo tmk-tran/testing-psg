@@ -128,6 +128,10 @@ function App() {
     dispatch(dispatchAction);
   }, []);
 
+  // useEffect(() => {
+  //   if (region.active)
+  // }, []);
+
   useEffect(() => {
     if (user.org_admin) {
       setOrgAdminId(user.org_id);
