@@ -91,19 +91,19 @@ router.post("/", rejectUnauthenticated, (req, res) => {
             AND uc.coupon_id = c.id
           );
       `;
-  const updateQueryText = `
-        UPDATE user_coupon uc
-        SET show_book = true
-      WHERE EXISTS (
-        SELECT 1
-        FROM user_coupon
-        WHERE user_id = uc.user_id
-        AND show_book = true
-        GROUP BY user_id
-      HAVING COUNT(*) > 1
-        )
-        AND coupon_id = $1;
-      `;
+  // const updateQueryText = `
+  //       UPDATE user_coupon uc
+  //       SET show_book = true
+  //     WHERE EXISTS (
+  //       SELECT 1
+  //       FROM user_coupon
+  //       WHERE user_id = uc.user_id
+  //       AND show_book = true
+  //       GROUP BY user_id
+  //     HAVING COUNT(*) > 1
+  //       )
+  //       AND coupon_id = $1;
+  //     `;
 
   // Execute the insert query
   pool.query(insertQueryText, [couponId], (err, result) => {
@@ -116,15 +116,15 @@ router.post("/", rejectUnauthenticated, (req, res) => {
     console.log("Insert query executed successfully:", result);
 
     // Execute the update query
-    pool.query(updateQueryText, [couponId], (updateErr, updateResult) => {
-      if (updateErr) {
-        // Handle update error
-        console.error("Error executing update query:", updateErr);
-        return;
-      }
-      // Update query successful
-      console.log("Update query executed successfully:", updateResult);
-    });
+    // pool.query(updateQueryText, [couponId], (updateErr, updateResult) => {
+    //   if (updateErr) {
+    //     // Handle update error
+    //     console.error("Error executing update query:", updateErr);
+    //     return;
+    //   }
+    //   // Update query successful
+    //   console.log("Update query executed successfully:", updateResult);
+    // });
   });
 });
 
