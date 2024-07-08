@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
-import { Typography, MenuItem, Select, Box } from "@mui/material";
+import {
+  CircularProgress,
+  Typography,
+  MenuItem,
+  Select,
+  Box,
+} from "@mui/material";
 import "./TaskList.css";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import TaskCard from "../TaskCard/TaskCard";
@@ -8,8 +14,9 @@ import SuccessAlert from "../SuccessAlert/SuccessAlert";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { oTasks } from "../../hooks/reduxStore";
 import { useAlert } from "../SuccessAlert/useAlert";
+import { spinnerSx } from "../TaskTabs/TaskTabs";
 
-export default function TaskListOrg() {
+export default function TaskListOrg({ isLoading, loadComplete }) {
   const [selectedTasks, setSelectedTasks] = useState({
     newTask: "",
     inProgressTask: "",
@@ -68,6 +75,7 @@ export default function TaskListOrg() {
           <Typography>
             {"New"}&nbsp;
             {`(${sortedNewTasks.length})`}
+            {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
           </Typography>
         )}
         // renderValue={() => (
@@ -106,6 +114,7 @@ export default function TaskListOrg() {
           <Typography>
             {"In Progress"}&nbsp;
             {`(${sortedInProgressTasks.length})`}
+            {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
           </Typography>
         )}
       >
@@ -138,6 +147,7 @@ export default function TaskListOrg() {
             <Typography>
               {"Complete"}&nbsp;
               {`(${nonDeletedTasks.length})`}
+              {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
             </Typography>
           );
         }}
