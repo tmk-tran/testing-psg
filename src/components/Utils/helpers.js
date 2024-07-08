@@ -178,7 +178,7 @@ export const validateEmail = (email) => {
 export const validateWebsiteFormat = (website) => {
   // Regex to match a URL with optional http/https, optional www, domain, TLD, and optional path
   const websiteRegex =
-    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[^\s]*)?$/;
+    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?(\/.*)$/;
   return websiteRegex.test(website);
 };
 
