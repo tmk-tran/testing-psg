@@ -3,6 +3,7 @@ import loginSaga from "./login.saga";
 import registrationSaga from "./registration.saga";
 import userSaga from "./user.saga";
 import userOrgAdminSaga from "./userOrgAdmin.saga";
+
 import orgDetailsSaga from "./orgDetails.saga";
 import organizationsSaga from "./organizations.saga";
 import groupSaga from "./group.saga";
@@ -36,7 +37,6 @@ export default function* rootSaga() {
     registrationSaga(),
     userSaga(),
     userOrgAdminSaga(),
-    regionSaga(),
     orgDetailsSaga(),
     organizationsSaga(),
     groupSaga(),
