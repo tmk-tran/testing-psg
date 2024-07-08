@@ -30,6 +30,7 @@ export default function CouponStatusDropdown({
   const handleMenuChange = (event) => {
     const choice = event.target.value;
     setStatus(choice);
+    console.log(choice);
 
     let newTaskStatus;
     if (choice === "Changes Requested") {

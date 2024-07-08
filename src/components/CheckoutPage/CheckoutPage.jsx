@@ -387,6 +387,10 @@ export default function CheckoutPage({ caseType }) {
   // };
 
   const updateTransactions = () => {
+    console.log("refId: ", refId);
+    console.log("orgId: ", orgId);
+    console.log("yearId: ", activeYearId);
+  
     const updateAction = {
       type: "UPDATE_BOOKS_SOLD",
       payload: {

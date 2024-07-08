@@ -28,6 +28,7 @@ function* updateCash(action) {
 }
 
 function* updateChecks(action) {
+  console.log(action.payload);
   const sellerId = action.payload.id;
   const orgId = action.payload.orgId;
   const yearId = action.payload.yearId;

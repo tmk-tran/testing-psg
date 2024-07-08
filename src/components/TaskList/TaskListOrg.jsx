@@ -35,6 +35,13 @@ export default function TaskListOrg({ isLoading, loadComplete }) {
     }
   }, [orgTasks]);
 
+  // Set isLoading to false when the tasks are loaded
+  useEffect(() => {
+    if (orgTasks.length > 0) {
+      loadComplete();
+    }
+  }, [orgTasks]);
+
   // Group tasks by task_status (case-insensitive)
   // Check if orgTasks is an array before using reduce
   const tasksByStatus = Array.isArray(orgTasks)

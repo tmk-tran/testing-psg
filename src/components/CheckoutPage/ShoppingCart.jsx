@@ -63,7 +63,7 @@ export default function ShoppingCart() {
       state: { selectedProducts, orderTotal, customDonation },
     });
   };
-
+ 
   const submitOrder = (caseType) => {
     const saveCall = () => {
       const updateAction = {
@@ -77,6 +77,7 @@ export default function ShoppingCart() {
           updateType: caseType.toLowerCase(),
         },
       };
+      console.log(updateAction);
       const updateTransactionsAction = {
         type: `UPDATE_BOOKS_SOLD`,
         payload: {

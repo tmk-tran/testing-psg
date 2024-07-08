@@ -175,6 +175,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", upload.single("organization_logo"), (req, res) => {
+  console.log("BODY FROM ORG ROUTER", req.body);
   const organization = req.body;
   const organizationLogo = req.file ? req.file.buffer : null; // Get the file buffer from multer
 

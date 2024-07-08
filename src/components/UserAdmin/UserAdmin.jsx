@@ -124,6 +124,7 @@ export default function UserAdmin() {
   const tableData = userTableData() || [];
   const orgAdmins = UserOrgAdmins() || [];
   const allOrgs = allOrganizations() || [];
+  // console.log(allOrgs);
   const userBooks = userBooksData() || [];
 
   const fuse = new Fuse(tableData, {

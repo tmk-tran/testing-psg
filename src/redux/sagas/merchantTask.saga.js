@@ -42,6 +42,7 @@ function* addMerchantTask(action) {
 }
 
 function* editMerchantTask(action) {
+  console.log(action.payload);
   try {
     yield axios.put(
       `/api/tasks/merchants/${action.payload.id}`,

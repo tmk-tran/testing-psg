@@ -291,6 +291,7 @@ router.put(
   rejectUnauthenticated,
   async (req, res) => {
     const coupon = req.body;
+    console.log("from coupon router: ", coupon);
     const couponId = req.params.couponId;
 
     const offer = coupon.offer;

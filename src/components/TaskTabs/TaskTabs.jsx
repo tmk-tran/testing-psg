@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { Tab, Tabs, Box, Typography } from "@mui/material";
+import { Tab, Tabs, Box, Typography } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 // ~~~~~~~~~~ Components ~~~~~~~~~~
 import TaskListOrg from "../TaskList/TaskListOrg";

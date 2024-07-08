@@ -19,6 +19,7 @@ export default function ContactDetailsList({
   contactPhone,
   isMerchantTaskPage,
 }) {
+  console.log(info.website);
   return (
     <List style={{ padding: "15px", marginTop: "5px" }}>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}

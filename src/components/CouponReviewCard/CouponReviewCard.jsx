@@ -29,6 +29,7 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
 
   const [taskId, setTaskId] = useState("");
   const [couponId, setCouponId] = useState("");
+  console.log(couponId);
   const [taskStatus, setTaskStatus] = useState("");
   const [newTaskStatus, setNewTaskStatus] = useState("");
   const [isTaskUpdate, setIsTaskUpdate] = useState(false);
@@ -100,6 +101,7 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   const handleChangeRequest = (boolean) => {
     setChangesRequested(boolean);
   };
+  console.log("Changes requested: ", changesRequested);
 
   const handleCompletedCoupon = (boolean) => {
     setCompletedCoupon(boolean);

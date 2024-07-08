@@ -181,7 +181,8 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
               toggleState={isMerchantList}
             />
           )}
-          {user.is_admin && (
+          {/* ~~~~~ User who is both orgAdmin and Graphic Designer ~~~~~ */}
+          {isOrgAdmin && isGraphicDesigner && (
             <ToggleButton
               sxButton={{ margin: 2 }}
               sxIcon={{ mr: 1 }}
@@ -192,7 +193,6 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
               toggleState={isMerchantList}
             />
           )}
-
           {/* ~~~~~ Seller Search Drawer ~~~~~ */}
           <SellerSearch sellers={sellerResults} />
         </div>

@@ -19,6 +19,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
     .query(queryText)
     .then((result) => {
       // console.log("from GET ALL customers.router: ", result.rows);
+      // console.log("from GET ALL customers.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
