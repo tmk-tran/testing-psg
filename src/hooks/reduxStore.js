@@ -108,10 +108,6 @@ export const UserOrgAdmins = () => {
   return useSelector((store) => store.userOrgAdmins);
 };
 
-export const Region = () => {
-  return useSelector((store) => store.region);
-};
-
 export const Errors = () => {
   return useSelector((store) => store.errors);
 };
