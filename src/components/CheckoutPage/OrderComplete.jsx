@@ -5,15 +5,15 @@ import { centeredStyle } from "../Utils/pageStyles";
 // ~~~~~~~~~ Components ~~~~~~~~~ //
 import NewOrderButton from "./NewOrderButton";
 import Typography from "../Typography/Typography";
-import { customerList, digitalBookSold } from "../../hooks/reduxStore";
+import { customerList, digitalBookTypeSold } from "../../hooks/reduxStore";
 
 export default function OrderComplete() {
   const seller = useParams();
   const refId = seller.refId;
   const customerEmail = customerList() || [];
   console.log(customerEmail);
-  const digitalBook = digitalBookSold() || [];
-  console.log(digitalBook);
+  const digitalBookType = digitalBookTypeSold() || [];
+  
   // Typography here is a custom component //
   // MuiTypography is MUI component //
   return (

@@ -18,8 +18,15 @@ import AddAccountModal from "../AddAccountModal/AddAccountModal.jsx";
 import ListView from "../ListView/ListView.jsx";
 import SearchBar from "../SearchBar/SearchBar.jsx";
 import ToggleButton from "../ToggleButton/ToggleButton.jsx";
+import SellerSearch from "./SellerSearch.jsx";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
-import { allMerchants, mCoupons } from "../../hooks/reduxStore.js";
+import {
+  User,
+  allOrganizations,
+  allMerchants,
+  mCoupons,
+  searchedSeller,
+} from "../../hooks/reduxStore.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 import { dispatchHook } from "../../hooks/useDispatch.js";
 
@@ -98,20 +105,21 @@ function HomePage({ isOrgAdmin, isGraphicDesigner, activeRegion }) {
   //   }
   // }, [editComplete]);
   function fetchAction(isMerchantList, dispatch, activeRegionId) {
-    const fetchDataAction = isMerchantList ? "FETCH_MERCHANTS" : "FETCH_ORGANIZATIONS";
+    const fetchDataAction = isMerchantList
+      ? "FETCH_MERCHANTS"
+      : "FETCH_ORGANIZATIONS";
     dispatch({ type: fetchDataAction, payload: activeRegionId });
   }
-  
+
   useEffect(() => {
     if (activeRegion.id) {
       fetchAction(isMerchantList, dispatch, activeRegion.id);
     }
-  
+
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
     dispatch({ type: dispatchAction });
-  
   }, [isMerchantList]);
-  
+
   useEffect(() => {
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
@@ -318,7 +326,6 @@ function HomePage({ isOrgAdmin, isGraphicDesigner, activeRegion }) {
                   activeRegion={activeRegion}
                 />
               ))
-
             : currentItems
                 .filter(
                   (organization) =>

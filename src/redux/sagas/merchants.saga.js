@@ -12,10 +12,12 @@ function* merchantDetails(action) {
   }
 }
 
-function* allMerchants() {
+function* allMerchants(action) {
+  console.log(action.payload);
+  const regionId = action.payload;
   try {
-    const items = yield axios.get("/api/merchants");
-    // console.log("FETCH request from merchants.saga, ITEMS = ", items);
+    const items = yield axios.get(`/api/merchants/sector/${regionId}`);
+    console.log("FETCH request from merchants.saga, ITEMS = ", items);
     yield put({ type: "SET_MERCHANTS", payload: items.data });
   } catch (error) {
     console.log("Error in merchantsSaga", error);
@@ -113,7 +115,9 @@ function* editMerchant(action) {
     if (action.payload.uploadedFile) {
       formData.append("merchant_logo", action.payload.uploadedFile);
       formData.append("filename", action.payload.uploadedFile.name);
-    } else if (action.payload.merchant_logo_base64) {
+    }
+
+    if (action.payload.merchant_logo_base64) {
       formData.append("merchant_logo", action.payload.merchant_logo_base64);
       formData.append("filename", action.payload.filename);
     }
