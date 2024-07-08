@@ -13,10 +13,6 @@ function* fetchOrganizationsSaga() {
 
 function* addOrganizationSaga(action) {
   try {
-<<<<<<< HEAD
-=======
-    // console.log(action.payload);
->>>>>>> a39eaa2 (updating branch feature-region)
     // Create a FormData object to send the file data
     const formData = new FormData();
     formData.append("organization_name", action.payload.organization_name);
@@ -54,11 +50,6 @@ function* addOrganizationSaga(action) {
       },
     });
 
-<<<<<<< HEAD
-=======
-    console.log("RESPONSE IS", response);
-
->>>>>>> a39eaa2 (updating branch feature-region)
     yield put({ type: "FETCH_ORGANIZATIONS" });
   } catch (error) {
     console.log("error in addOrganizationSaga", error);
@@ -78,11 +69,6 @@ function* deleteOrganizationSaga(action) {
 function* editOrganizationSaga(action) {
   try {
     const orgId = action.payload.id;
-<<<<<<< HEAD
-=======
-    console.log(orgId);
-    console.log(action.payload);
->>>>>>> a39eaa2 (updating branch feature-region)
 
     // Create a FormData object to send the file data
     const formData = new FormData();
@@ -131,11 +117,6 @@ function* editOrganizationSaga(action) {
       },
     });
 
-<<<<<<< HEAD
-=======
-    console.log("RESPONSE IS", response);
-
->>>>>>> a39eaa2 (updating branch feature-region)
     yield put({ type: "FETCH_ORGANIZATIONS" });
   } catch (error) {
     console.log("error in edit invoice", error);
