@@ -94,6 +94,15 @@ function App() {
   }, [user.id]);
 
   useEffect(() => {
+    // Get the Regions available to the user
+    const dispatchAction = {
+      type: "FETCH_REGIONS",
+    };
+    console.log(dispatchAction);
+    dispatch(dispatchAction);
+  }, []);
+
+  useEffect(() => {
     if (user.org_admin) {
       setOrgAdminId(user.org_id);
     }
