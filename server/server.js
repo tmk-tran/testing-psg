@@ -14,6 +14,7 @@ const passport = require("./strategies/user.strategy");
 // Route includes //
 const userRouter = require("./routes/user.router");
 const userOrgAdminRouter = require("./routes/userOrgAdmin.router");
+const regionRouter = require("./routes/region.router");
 const groupRouter = require("./routes/group.details.router");
 const orgDetailsRouter = require("./routes/orgDetails.router");
 const organizationsRouter = require("./routes/organizations.router");
@@ -63,6 +64,7 @@ app.use(passport.session());
 // Routes //
 app.use("/api/user", userRouter);
 app.use("/api/orgadmin", userOrgAdminRouter);
+app.use("/api/region", regionRouter);
 app.use("/api/group", groupRouter);
 app.use("/api/orgnotes", orgNotesRouter);
 app.use("/api/orgdetails", orgDetailsRouter);

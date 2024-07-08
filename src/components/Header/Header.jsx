@@ -54,6 +54,7 @@ export default function Header({ user }) {
               location="Fargo"
             />
           ) : null}
+          
           <Box
             sx={{
               display: "flex",
