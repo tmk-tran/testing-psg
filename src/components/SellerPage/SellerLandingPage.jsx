@@ -22,18 +22,26 @@ export default function SellerLandingPage() {
   const paramsObject = useParams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  console.log(paramsObject);
   const [showGoButton, setShowGoButton] = useState(false);
+  console.log(showGoButton);
   const [paymentType, setPaymentType] = useState("");
+  console.log(paymentType);
 
   useEffect(() => {
     dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: paramsObject.refId });
   }, []);
 
   const sellerData = sellerPageInfo() || [];
+  console.log(sellerData);
+  // Extract the seller ID //
+  const [firstSeller] = sellerData;
+  const sellerId = firstSeller ? firstSeller.id : null;
 
   // Props to PaymentMenu //
   const handlePaymentSelect = (paymentType) => {
     setShowGoButton(true);
+    console.log(paymentType);
     setPaymentType(paymentType);
   };
 

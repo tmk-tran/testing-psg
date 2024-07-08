@@ -83,7 +83,6 @@ function* addMerchantSaga(action) {
 }
 
 function* editMerchant(action) {
-  console.log(action.payload);
   try {
     const merchantId = action.payload.id;
 

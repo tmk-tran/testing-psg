@@ -60,20 +60,12 @@ export const sellerPageInfo = () => {
   return useSelector((store) => store.sellerPage);
 };
 
-export const searchedSeller = () => {
-  return useSelector((store) => store.sellerSearch);
-};
-
 export const couponsData = () => {
   return useSelector((store) => store.coupons);
 };
 
 export const bookYear = () => {
   return useSelector((store) => store.bookYear);
-};
-
-export const appActiveYear = () => {
-  return useSelector((store) => store.activeYear);
 };
 
 export const allYears = () => {
@@ -88,8 +80,8 @@ export const paypalTransactions = () => {
   return useSelector((store) => store.paypal);
 };
 
-export const digitalBookTypeSold = () => {
-  return useSelector((store) => store.digitalBookType);
+export const digitalBookSold = () => {
+  return useSelector((store) => store.digitalBook);
 };
 
 export const userTableData = () => {
@@ -104,18 +96,10 @@ export const User = () => {
   return useSelector((store) => store.user);
 };
 
-export const UserOrgAdmins = () => {
-  return useSelector((store) => store.userOrgAdmins);
-};
-
 export const Region = () => {
   return useSelector((store) => store.region);
 };
 
 export const Errors = () => {
   return useSelector((store) => store.errors);
-};
-
-export const CustomerAdded = () => {
-  return useSelector((store) => store.customerAddSuccess);
 };

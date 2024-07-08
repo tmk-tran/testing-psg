@@ -9,13 +9,12 @@ import {
 } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import { allYears, bookYear } from "../../hooks/reduxStore";
+import { allYears } from "../../hooks/reduxStore";
 import { centeredStyle } from "../Utils/pageStyles";
 import ConfirmNewYearModal from "./ConfirmNewYearModal";
 import { highlightColor } from "../Utils/colors";
 
 const AvailableYearsButtons = ({ activeYear }) => {
-  console.log(activeYear);
   const dispatch = dispatchHook();
   const [yearSelected, setYearSelected] = useState(null);
   const [selectedYearId, setSelectedYearId] = useState(null);
@@ -28,8 +27,6 @@ const AvailableYearsButtons = ({ activeYear }) => {
     dispatch(dispatchAction);
   }, []);
   const years = allYears();
-  // const bookY = bookYear();
-  // console.log(bookY);
 
   const handleChange = (event, year) => {
     setSelectedYearId(year.id);

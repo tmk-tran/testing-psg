@@ -1,33 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-const OrgMenu = ({
-  userId,
-  organizations,
-  defaultValue,
-  onChange,
-  setAddNewOrg,
-}) => {
+const OrgMenu = ({ userId, organizations, defaultValue, onChange }) => {
   const [value, setValue] = useState(defaultValue);
+  console.log(value);
   const [itemSelected, setItemSelected] = useState(false);
 
   useEffect(() => {
     setValue(defaultValue);
-    setItemSelected(false);
   }, [defaultValue]);
 
   const handleChange = (event) => {
     const newValue = event.target.value;
     setValue(newValue);
     setItemSelected(true);
-    onChange(userId, defaultValue, newValue);
-    setValue(null);
-    setAddNewOrg(false);
+    onChange(userId, newValue);
+    setItemSelected(false);
   };
 
   return (
     <FormControl fullWidth sx={{ position: "relative" }}>
-      {(!value || value === null) && itemSelected === false && (
+      {(!defaultValue || defaultValue === null) && itemSelected === false && (
         <InputLabel
           shrink={false}
           sx={{

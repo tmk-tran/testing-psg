@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
-import {
-  CircularProgress,
-  Typography,
-  MenuItem,
-  Select,
-  Box,
-} from "@mui/material";
+import { Typography, MenuItem, Select, Box } from "@mui/material";
 import "./TaskList.css";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import TaskCard from "../TaskCard/TaskCard";
@@ -14,9 +8,8 @@ import SuccessAlert from "../SuccessAlert/SuccessAlert";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { oTasks } from "../../hooks/reduxStore";
 import { useAlert } from "../SuccessAlert/useAlert";
-import { spinnerSx } from "../TaskTabs/TaskTabs";
 
-export default function TaskListOrg({ isLoading, loadComplete }) {
+export default function TaskListOrg() {
   const [selectedTasks, setSelectedTasks] = useState({
     newTask: "",
     inProgressTask: "",
@@ -32,13 +25,6 @@ export default function TaskListOrg({ isLoading, loadComplete }) {
   useEffect(() => {
     if (orgTasks.length > 0 || orgTasks.length === 0) {
       loadComplete(); // Indicate that loading is complete even if there are no tasks
-    }
-  }, [orgTasks]);
-
-  // Set isLoading to false when the tasks are loaded
-  useEffect(() => {
-    if (orgTasks.length > 0) {
-      loadComplete();
     }
   }, [orgTasks]);
 
@@ -82,7 +68,6 @@ export default function TaskListOrg({ isLoading, loadComplete }) {
           <Typography>
             {"New"}&nbsp;
             {`(${sortedNewTasks.length})`}
-            {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
           </Typography>
         )}
         // renderValue={() => (
@@ -121,7 +106,6 @@ export default function TaskListOrg({ isLoading, loadComplete }) {
           <Typography>
             {"In Progress"}&nbsp;
             {`(${sortedInProgressTasks.length})`}
-            {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
           </Typography>
         )}
       >
@@ -154,7 +138,6 @@ export default function TaskListOrg({ isLoading, loadComplete }) {
             <Typography>
               {"Complete"}&nbsp;
               {`(${nonDeletedTasks.length})`}
-              {isLoading && <CircularProgress sx={spinnerSx} size={16} />}
             </Typography>
           );
         }}

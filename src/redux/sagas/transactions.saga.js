@@ -2,6 +2,7 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* updateTransaction(action) {
+  console.log(action.payload);
   const refId = action.payload.refId;
   const orgId = action.payload.orgId;
   const yearId = action.payload.yearId;

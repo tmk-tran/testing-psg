@@ -34,7 +34,7 @@ export default function ActionIcons({ seller, onEdit, handleArchive, disabled })
         disabled={disabled}
       />
 
-      {/* <ActionButton
+      <ActionButton
         title="Archive Seller"
         Icon={ArchiveIcon}
         iconSx={archiveIconStyle}
@@ -42,7 +42,7 @@ export default function ActionIcons({ seller, onEdit, handleArchive, disabled })
         onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
         onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
         disabled={disabled}
-      /> */}
+      />
     </>
   );
 }

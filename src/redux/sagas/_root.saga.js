@@ -29,7 +29,6 @@ import transactionsSaga from "./transactions.saga";
 import redeemSaga from "./couponRedeem.saga";
 import paypalSaga from "./paypal.saga";
 import userCouponSaga from "./userCoupon.saga";
-import activeCampaignSaga from "./active_campaign.saga";
 
 export default function* rootSaga() {
   yield all([
@@ -62,6 +61,5 @@ export default function* rootSaga() {
     redeemSaga(),
     paypalSaga(),
     userCouponSaga(),
-    activeCampaignSaga(),
   ]);
 }

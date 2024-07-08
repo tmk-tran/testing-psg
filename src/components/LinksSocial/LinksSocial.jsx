@@ -15,7 +15,7 @@ export default function LinksSocial({ colors = [] }) {
       >
         <FacebookIcon id="fb-icon" style={{ color: colors[0] || "#1877f2" }} />
       </a>
-      {/* <a
+      <a
         href="https://www.instagram.com/thepreferredsavingsguide/"
         target="_blank"
         rel="noopener noreferrer"
@@ -35,7 +35,7 @@ export default function LinksSocial({ colors = [] }) {
         rel="noopener noreferrer"
       >
         <TwitterIcon id="x-icon" style={{ color: colors[3] || "#1DA1F2" }} />
-      </a> */}
+      </a>
     </div>
   );
 }

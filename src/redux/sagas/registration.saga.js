@@ -1,5 +1,5 @@
-import { put, takeLatest } from "redux-saga/effects";
-import axios from "axios";
+import { put, takeLatest } from 'redux-saga/effects';
+import axios from 'axios';
 
 // worker Saga: will be fired on "REGISTER" actions
 // function* registerUser(action) {
@@ -25,25 +25,21 @@ import axios from "axios";
 function* registerUser(action) {
   try {
     // clear any existing error on the registration page
-    yield put({ type: "CLEAR_REGISTRATION_ERROR" });
+    yield put({ type: 'CLEAR_REGISTRATION_ERROR' });
 
     // passes the username and password from the payload to the server
-    const response = yield axios.post("/api/user/register", action.payload);
-    const userId = response.data[0].id;
+    yield axios.post('/api/user/register', action.payload);
 
-    yield put({ type: "FETCH_USER" });
-    yield put({
-      type: "RELEASE_COUPON_BOOK",
-      payload: { id: userId, show_book: true },
-    });
+    yield put({ type: 'FETCH_USER' });
+
   } catch (error) {
-    console.log("Error with user registration:", error);
-    yield put({ type: "REGISTRATION_FAILED" });
+    console.log('Error with user registration:', error);
+    yield put({ type: 'REGISTRATION_FAILED' });
   }
 }
 
 function* registrationSaga() {
-  yield takeLatest("REGISTER", registerUser);
+  yield takeLatest('REGISTER', registerUser);
 }
 
 export default registrationSaga;

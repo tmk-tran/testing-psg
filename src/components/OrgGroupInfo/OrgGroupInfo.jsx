@@ -11,6 +11,7 @@ import { User } from "../../hooks/reduxStore";
 export default function OrgGroupInfoCard({ groupInfo }) {
   const history = useHistory();
   const user = User();
+  console.log(user);
 
   return (
     <Card
@@ -48,8 +49,10 @@ export default function OrgGroupInfoCard({ groupInfo }) {
             <hr />
           </Typography>
         </div>
-        {/* ~~~~~ Photo Section ~~~~~ */}
-        {/* <div style={{ position: "relative" }}>
+        <div style={{ position: "relative" }}>
+          {/* <div style={{ position: "absolute", top: 0, right: 0 }}>
+            <Button>Edit</Button>
+          </div> */}
           {groupInfo.group_photo ? (
             <center>
               <img
@@ -63,11 +66,11 @@ export default function OrgGroupInfoCard({ groupInfo }) {
               <Typography>No Photo</Typography>
             </div>
           )}
-        </div> */}
+        </div>
         <br />
         {groupInfo.group_nickname ? (
-          <Typography variant="h6" sx={{ ...centerStyle, fontSize: 23 }}>
-            Group: "{capitalizeWords(groupInfo.group_nickname)}"
+          <Typography variant="h6" style={centerStyle}>
+            {capitalizeWords(groupInfo.group_nickname)}
           </Typography>
         ) : (
           <>
@@ -96,7 +99,7 @@ export default function OrgGroupInfoCard({ groupInfo }) {
           </Typography>
           <div
             className="group-description-container"
-            style={{ maxHeight: 75, overflowY: "auto" }}
+            style={{ maxHeight: "150px", overflowY: "auto" }}
           >
             <Typography sx={{ overflowWrap: "break-word" }}>
               {groupInfo.group_description

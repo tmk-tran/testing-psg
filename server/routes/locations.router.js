@@ -18,7 +18,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
   pool
     .query(queryText)
     .then((result) => {
-      console.log("Successful GET in locations.router");
+      console.log("FROM locations.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -44,7 +44,7 @@ router.get("/:id", (req, res) => {
   pool
     .query(queryText, [merchantId])
     .then((result) => {
-      console.log("Successful GET by ID in locations.router");
+      console.log("FROM locationsGET by ID.router: ", result.rows);
       res.send(result.rows);
     })
     .catch((err) => {
@@ -55,6 +55,7 @@ router.get("/:id", (req, res) => {
 
 router.post("/", rejectUnauthenticated, (req, res) => {
   const location = req.body;
+  console.log("LOCATION IS: ", location);
   const locationName = location.location_name;
   const phoneNumber = location.phone_number;
   const address = location.address;
@@ -66,21 +67,8 @@ router.post("/", rejectUnauthenticated, (req, res) => {
   const merchantId = location.merchant_id;
   const additionalDetails = location.additional_details;
 
-  const queryText = `
-          INSERT INTO "location" (
-            "location_name", 
-            "phone_number", 
-            "address", 
-            "city", 
-            "state", 
-            "zip", 
-            "coordinates", 
-            "region_id", 
-            "merchant_id", 
-            "additional_details"
-          )
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
-        `;
+  const queryText = `INSERT INTO "location" ("location_name", "phone_number", "address", "city", "state", "zip", "coordinates", "region_id", "merchant_id", "additional_details")
+                                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`;
 
   pool
     .query(queryText, [
@@ -96,7 +84,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       additionalDetails,
     ])
     .then((response) => {
-      console.log("Successful POST in locations.router");
+      console.log("response from locations.router: ", response.rows);
       res.sendStatus(201);
     })
     .catch((err) => {
@@ -107,6 +95,7 @@ router.post("/", rejectUnauthenticated, (req, res) => {
 
 router.put("/:id", rejectUnauthenticated, (req, res) => {
   const location = req.body;
+  console.log("LOCATION IS: ", location);
   const locationId = req.params.id;
 
   const locationName = location.location_name;
@@ -146,7 +135,7 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
       locationId,
     ])
     .then((response) => {
-      console.log("Successful PUT in locations.router");
+      console.log(response.rows);
       res.sendStatus(200);
     })
     .catch((error) => {
@@ -166,7 +155,7 @@ router.delete("/:id", (req, res) => {
       [locationId]
     )
     .then((response) => {
-      console.log("Successful DELETE in locations.router");
+      console.log(response.rows);
       res.sendStatus(200);
     })
     .catch((error) => {

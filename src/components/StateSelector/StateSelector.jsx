@@ -9,7 +9,6 @@ import {
 import { states } from "./states";
 
 export default function StateSelector({
-  inputLabel,
   onChange,
   stateSelected,
   isSubmitted,
@@ -47,9 +46,7 @@ export default function StateSelector({
 
   return (
     <FormControl fullWidth error={error}>
-      <InputLabel id="state-label">
-        {inputLabel ? inputLabel : "State"}
-      </InputLabel>
+      <InputLabel id="state-label">State</InputLabel>
       <Select
         labelId="state-label"
         id="state"

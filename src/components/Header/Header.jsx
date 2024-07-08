@@ -2,18 +2,32 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
 import "./Header.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+import { border } from "../Utils/colors";
 import { historyHook } from "../../hooks/useHistory";
 import { flexCenter } from "../Utils/pageStyles";
+import { Region } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Component ~~~~~~~~~~ //
 import AccountMenu from "../AccountMenu/AccountMenu";
 import NavLinks from "../NavLinks/NavLinks";
 import RegionText from "./RegionText";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import RegionSelect from "./RegionSelect";
 
-export default function Header({ user }) {
+export default function Header({ user, activeRegionName }) {
   const history = historyHook();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const regions = Region() || [];
+
+  const handleRegionSwitch = (regionId) => {
+    console.log(regionId);
+    const switchAction = {
+      type: "SWITCH_REGION",
+      payload: regionId,
+    };
+    console.log("Dispatching action:", switchAction);
+    dispatch(switchAction);
+  };
 
   return (
     <>
@@ -41,19 +55,27 @@ export default function Header({ user }) {
             className="main-logo"
             src="../images/main-logo.jpg"
             alt="Preferred Saving Guide logo in colors blue and gold"
-            onClick={() => history.push("/fargo/home")}
+            onClick={() => history.push("/home")}
             style={{ cursor: "pointer" }}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ Region Text ~~~~~~~~~~ */}
           {user.id ? (
-            <RegionText
-              isMobile={isMobile}
-              sx={flexCenter}
-              color="ghostwhite"
-              location="Fargo"
-            />
+            // <RegionText
+            //   isMobile={isMobile}
+            //   sx={flexCenter}
+            //   color="ghostwhite"
+            //   location="Fargo"
+            // />
+            <Box sx={{ ...flexCenter, width: isMobile ? 100 : 190 }}>
+              <RegionSelect
+                isMobile={isMobile}
+                regions={regions}
+                onChange={handleRegionSwitch}
+              />
+            </Box>
           ) : null}
+          <Box sx={{ flexGrow: 1 }}></Box>
           <Box
             sx={{
               display: "flex",
@@ -77,7 +99,7 @@ export default function Header({ user }) {
         </Box>
       </Box>
       <Box className="NavLinks-container">
-        <NavLinks />
+        <NavLinks activeRegionName={activeRegionName} />
       </Box>
     </>
   );

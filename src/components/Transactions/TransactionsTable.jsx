@@ -9,7 +9,7 @@ import {
   TableFooter,
   Typography,
 } from "@mui/material";
-import { capitalizeWords, formatDateTime } from "../Utils/helpers";
+import { formatDateTime } from "../Utils/helpers";
 
 const headerStyle = {
   border: "1px solid #f0f0f0",
@@ -22,11 +22,6 @@ const headerCellStyle = {
 
 const cellBorder = {
   border: "1px solid #ddd",
-};
-
-const noWrapBorder = {
-  whiteSpace: "nowrap",
-  ...cellBorder,
 };
 
 const footerCellBorder = {
@@ -47,7 +42,6 @@ const footerCellStyle = {
 };
 
 export default function TransactionsTable({ transactions }) {
-  console.log(transactions);
   // Calculate totals
   const totals = transactions.reduce(
     (acc, transaction) => {
@@ -81,8 +75,6 @@ export default function TransactionsTable({ transactions }) {
             <TableRow>
               <TableCell sx={headerStyle}>ID</TableCell>
               <TableCell sx={headerStyle}>Created</TableCell>
-              <TableCell sx={headerStyle}>Seller Name</TableCell>
-              <TableCell sx={headerStyle}>Organization</TableCell>
               <TableCell sx={headerStyle}>Status</TableCell>
               <TableCell sx={headerStyle}>Payment Capture ID</TableCell>
               <TableCell sx={{ ...headerCellStyle, ...headerStyle }}>
@@ -121,73 +113,46 @@ export default function TransactionsTable({ transactions }) {
                 }}
               >
                 <TableCell sx={cellBorder}>{transaction.id}</TableCell>
-                {/* ~~~~~ Created ~~~~~ */}
-                <TableCell sx={noWrapBorder}>
+                <TableCell sx={{ whiteSpace: "nowrap", ...cellBorder }}>
                   {formatDateTime(
                     transaction.purchase_units_payments_captures_create_time
                   )}
                 </TableCell>
-                {/* ~~~~~ Seller Name ~~~~~ */}
-                <TableCell sx={noWrapBorder}>
-                  {transaction.seller_first_name} {transaction.seller_last_name}
-                </TableCell>
-                {/* ~~~~~ Organization ~~~~~ */}
-                <TableCell sx={noWrapBorder}>
-                  {transaction.organization_name}
-                </TableCell>
-                {/* ~~~~~ Status ~~~~~ */}
                 <TableCell sx={cellBorder}>{transaction.status}</TableCell>
-                {/* ~~~~~ Capture ID ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   {transaction.purchase_units_payments_captures_id}
                 </TableCell>
-                {/* ~~~~~ Payment Amount ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   ${transaction.purchase_units_payments_captures_amount_value}
                 </TableCell>
-                {/* ~~~~~ Email ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   {transaction.payment_source_email}
                 </TableCell>
-                {/* ~~~~~ Shipping Name ~~~~~ */}
-                <TableCell sx={noWrapBorder}>
-                  {capitalizeWords(
-                    transaction.purchase_units_shipping_name_full_name
-                  )}
+                <TableCell sx={{ whiteSpace: "nowrap", ...cellBorder }}>
+                  {transaction.purchase_units_shipping_name_full_name}
                 </TableCell>
-                {/* ~~~~~ Address ~~~~~ */}
-                <TableCell sx={noWrapBorder}>
-                  {capitalizeWords(
-                    transaction.purchase_units_shipping_address_address_line_1
-                  )}{" "}
-                  {capitalizeWords(
-                    transaction.purchase_units_shipping_address_admin_area_2
-                  )}
-                  , {transaction.purchase_units_shipping_address_admin_area_1}{" "}
+                <TableCell sx={{ whiteSpace: "nowrap", ...cellBorder }}>
+                  {transaction.purchase_units_shipping_address_address_line_1}{" "}
+                  {transaction.purchase_units_shipping_address_admin_area_2},{" "}
+                  {transaction.purchase_units_shipping_address_admin_area_1}{" "}
                   {transaction.purchase_units_shipping_address_postal_code}
                 </TableCell>
-                {/* ~~~~~ Payer ID ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   {transaction.payment_source_account_id}
                 </TableCell>
-                {/* ~~~~~ Payer Name ~~~~~ */}
-                <TableCell sx={noWrapBorder}>
-                  {capitalizeWords(transaction.payer_name_given_name)}{" "}
-                  {capitalizeWords(transaction.payer_name_surname)}
+                <TableCell sx={{ whiteSpace: "nowrap", ...cellBorder }}>
+                  {transaction.payer_name_given_name}{" "}
+                  {transaction.payer_name_surname}
                 </TableCell>
-                {/* ~~~~~ Received Gross Value ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   ${transaction.seller_receivable_gross_amount_value}
                 </TableCell>
-                {/* ~~~~~ PayPal Fee ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   ${transaction.seller_receivable_paypal_fee_value}
                 </TableCell>
-                {/* ~~~~~ Received Net Amount ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   ${transaction.seller_receivable_net_amount_value}
                 </TableCell>
-                {/* ~~~~~ Account Status ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   {transaction.payment_source_account_status}
                 </TableCell>
@@ -200,7 +165,7 @@ export default function TransactionsTable({ transactions }) {
           >
             <TableRow>
               <TableCell sx={footerCellStyle}>Totals:</TableCell>
-              <TableCell sx={footerCellStyle} colSpan={5}></TableCell>
+              <TableCell sx={footerCellStyle} colSpan={3}></TableCell>
               <TableCell sx={{ ...footerCellStyle, ...footerCellBorder }}>
                 ${totals.paymentAmount.toFixed(2)}
               </TableCell>

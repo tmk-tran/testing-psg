@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { highlightColor } from "../Utils/colors";
-import { appActiveYear, bookYear } from "../../hooks/reduxStore";
+import { bookYear } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import NewYearForm from "./NewYearForm";
 import AvailableYearsButtons from "./AvailableYearsButtons";

@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const OrgMenu = ({ methods, defaultValue, onChange }) => {
+const ContactMethodMenu = ({ methods, defaultValue, onChange }) => {
   const [value, setValue] = useState(defaultValue);
 
   const handleChange = (event) => {
@@ -44,4 +44,4 @@ const OrgMenu = ({ methods, defaultValue, onChange }) => {
   );
 };
 
-export default OrgMenu;
+export default ContactMethodMenu;

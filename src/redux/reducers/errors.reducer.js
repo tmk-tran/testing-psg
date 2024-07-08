@@ -32,32 +32,10 @@ const registrationMessage = (state = '', action) => {
   }
 };
 
-const initialState = {
-  errorMessage: null,
-};
-
-const errorReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "SET_ERROR_MESSAGE":
-      return {
-        ...state,
-        errorMessage: action.payload,
-      };
-    case "CLEAR_ERROR_MESSAGE":
-      return {
-        ...state,
-        errorMessage: null,
-      };
-    default:
-      return state;
-  }
-};
-
 // make one object that has keys loginMessage, registrationMessage
 // these will be on the redux state at:
 // state.errors.loginMessage and state.errors.registrationMessage
 export default combineReducers({
   loginMessage,
   registrationMessage,
-  errorReducer,
 });

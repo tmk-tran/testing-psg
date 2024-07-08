@@ -32,14 +32,12 @@ import OrderComplete from "../CheckoutPage/OrderComplete";
 import Transactions from "../Transactions/Transactions";
 import MerchantDetails from "../Details/MerchantDetails";
 import UserAdmin from "../UserAdmin/UserAdmin";
-import RecoverPasswordForm from "../RecoverPasswordForm/RecoverPasswordForm";
-import HelpPage from "../UserDocs/HelpPage";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User } from "../../hooks/reduxStore";
+import { Region, User } from "../../hooks/reduxStore";
 import { getCurrentSeason } from "../Utils/helpers";
 
 // ~~~~~ Theme establishing global color for MUI ~~~~~
@@ -63,7 +61,16 @@ const theme = createTheme({
 function App() {
   const dispatch = dispatchHook();
   const user = User();
+  const allRegions = Region() || [];
+  console.log(allRegions);
+  const activeRegion = allRegions
+    ? allRegions.find((region) => region.active)
+    : null;
+  console.log(activeRegion);
+
   const [orgAdminId, setOrgAdminId] = useState(null);
+  const [activeRegionName, setActiveRegionName] = useState(null);
+  console.log(activeRegionName);
 
   useEffect(() => {
     const userCookie = Cookies.get('user');
@@ -90,8 +97,27 @@ function App() {
       type: "FETCH_BOOK_YEAR",
       payload: currentSeason,
     };
+    console.log(dispatchAction2);
     dispatch(dispatchAction2);
-  }, [user.id]);
+  }, []);
+
+  useEffect(() => {
+    // Get the Regions available to the user
+    const dispatchAction = {
+      type: "FETCH_REGIONS",
+    };
+    dispatch(dispatchAction);
+  }, []);
+
+  useEffect(() => {
+    // Set the active region name, convert to lowercase, and remove spaces
+    setActiveRegionName(
+      activeRegion
+        ? activeRegion.region_name.toLowerCase().replace(/\s+/g, "")
+        : null
+    );
+  }, [activeRegion]);
+  console.log(activeRegionName);
 
   useEffect(() => {
     // Get the Regions available to the user
@@ -127,53 +153,67 @@ function App() {
           }}
         >
           {/* ~~~~~ Header ~~~~~ */}
-          <Header user={user} />
+          <Header user={user} activeRegionName={activeRegionName} />
           <div style={{ flex: "1 0 auto", padding: "20px" }}>
             {user.is_admin || user.org_admin || user.graphic_designer ? (
               <MenuLinks />
             ) : null}
             <Switch>
               {/* ~~~~~ Fargo Home Route ~~~~~ */}
-              <Redirect exact from="/" to="/fargo/home" />
+              {/* <Redirect exact from="/" to={`/${activeRegionName}/home`} /> */}
+              {activeRegionName && (
+  <Redirect exact from="/" to={`/${activeRegionName}/home`} />
+)}
 
-              <ProtectedRoute exact path="/fargo/home">
-                {user.is_admin && <HomePage />}
+              {/* <ProtectedRoute exact path="/fargo/home"> */}
+              {activeRegionName && (
+              <ProtectedRoute exact path={`/${activeRegionName}/home`}>
+                {user.is_admin && <HomePage activeRegion={activeRegion} />}
                 {/* {user.org_admin && <HomePage isOrgAdmin={true} />} */}
                 {user.org_admin && user.graphic_designer && (
                   <HomePage
                     isOrgAdmin={true}
                     orgAdminId={orgAdminId}
                     isGraphicDesigner={true}
+                    activeRegion={activeRegion}
                   />
                 )}
                 {/* {!user.org_admin && !user.graphic_designer && (
                   <HomePage isOrgAdmin={false} />
                 )} */}
                 {user.org_admin && !user.graphic_designer && (
-                  <HomePage isOrgAdmin={true} orgAdminId={orgAdminId} />
+                  <HomePage
+                    isOrgAdmin={true}
+                    orgAdminId={orgAdminId}
+                    activeRegion={activeRegion}
+                  />
                 )}
                 {/* {user.graphic_designer && <HomePage isGraphicDesigner={true} />} */}
                 {!user.org_admin && user.graphic_designer && (
-                  <HomePage isGraphicDesigner={true} />
+                  <HomePage
+                    isGraphicDesigner={true}
+                    activeRegion={activeRegion}
+                  />
                 )}
                 {!user.is_admin &&
                   !user.org_admin &&
-                  !user.graphic_designer && <Redirect to="/fargo/coupon" />}
+                  !user.graphic_designer && <Redirect to={`/${activeRegionName}/coupon`} />}
               </ProtectedRoute>
+              )}
 
               <ProtectedRoute exact path="/userProfile/:id">
                 <UserProfile />
               </ProtectedRoute>
 
               {user.is_admin && (
-                <ProtectedRoute exact path="/fargo/newFundraiser">
-                  <GlobalFundraiserInput />
+                <ProtectedRoute exact path={`/${activeRegionName}/newFundraiser`}>
+                  <GlobalFundraiserInput activeRegion={activeRegion} />
                 </ProtectedRoute>
               )}
 
               {user.is_admin && (
-                <ProtectedRoute exact path="/fargo/archivedOrganizations">
-                  <ArchivedOrganizations />
+                <ProtectedRoute exact path={`/${activeRegionName}/archivedOrganizations`}>
+                  <ArchivedOrganizations activeRegion={activeRegion} />
                 </ProtectedRoute>
               )}
 
@@ -181,13 +221,13 @@ function App() {
                 <GroupDetails user={user} />
               </ProtectedRoute>
 
-              <ProtectedRoute exact path="/fargo/coupon">
+              <ProtectedRoute exact path={`/${activeRegionName}/coupon`}>
                 <ConsumerCouponView />
               </ProtectedRoute>
 
               {(user.is_admin || user.graphic_designer) && (
-                <ProtectedRoute exact path="/fargo/tasks">
-                  <TaskTabs />
+                <ProtectedRoute exact path={`/fargo/tasks`}>
+                  <TaskTabs activeRegion={activeRegion} />
                 </ProtectedRoute>
               )}
 
@@ -205,12 +245,14 @@ function App() {
                   <Details
                     isMerchantTaskPage={false}
                     isTaskPage={false}
+                    isMerchantDetails={false}
                     isOrgAdminPage={false}
                   />
                 ) : (
                   <Details
                     isMerchantTaskPage={false}
                     isTaskPage={false}
+                    isMerchantDetails={false}
                     isOrgAdminPage={true}
                   />
                 )}
@@ -308,10 +350,6 @@ function App() {
                 )}
               </Route>
 
-              <Route exact path="/recover">
-                <RecoverPasswordForm />
-              </Route>
-
               <Route exact path="/registration">
                 {user.id ? (
                   // If the user is already logged in,
@@ -326,10 +364,6 @@ function App() {
               <Route exact path="/fargo/home">
                 {user.id ? <Redirect to="/fargo/home" /> : <LoginPage />}
                 {/* {!user.is_admin && !user.org_admin && <Redirect to="/coupon" />} */}
-              </Route>
-
-              <Route exact path="/help">
-                <HelpPage />
               </Route>
 
               {/* If none of the other routes matched, we will show a 404. */}
