@@ -149,7 +149,7 @@ export default function ConsumerCouponView() {
             {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
             {/* ~~~~~ Valid through ~~~~~~ */}
             <Typography
-              label={`Valid through September 1, ${expirationYear}`}
+              label={`Valid through September 1st, ${expirationYear}`}
               variant={isMobile ? "caption" : "body2"}
               sx={{ mt: 2, textAlign: "center" }}
             />
