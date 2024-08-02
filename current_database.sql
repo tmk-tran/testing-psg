@@ -714,3 +714,29 @@ CREATE TABLE coupon_book (
 );
 ----------------------------------------------------
 ----------------------------------------------------
+
+----------------------------------------------------------
+-- Function to auto set activeYear for consumer coupons --
+CREATE OR REPLACE FUNCTION update_coupon_active() RETURNS void AS $$
+DECLARE
+    current_year TEXT;
+    next_year TEXT;
+BEGIN
+    -- Determine the current year in the format 'YYYY-YYYY'
+    current_year := to_char(current_date - interval '1 year', 'YYYY') || '-' || to_char(current_date, 'YYYY');
+
+    -- Determine the next year in the format 'YYYY-YYYY'
+    next_year := to_char(current_date, 'YYYY') || '-' || to_char(current_date + interval '1 year', 'YYYY');
+
+    -- Update the current year's record to inactive
+    UPDATE coupon_book
+    SET active = false
+    WHERE year = current_year;
+
+    -- Set the next year's record to active
+    UPDATE coupon_book
+    SET active = true
+    WHERE year = next_year;
+END;
+$$ LANGUAGE plpgsql;
+----------------------------------------------------------
