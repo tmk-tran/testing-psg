@@ -621,6 +621,38 @@ AFTER INSERT ON "user"
 FOR EACH ROW
 EXECUTE FUNCTION insert_user_coupons();
 
+---------- Function to update show_book in user_coupon table ----------------------------------
+CREATE OR REPLACE FUNCTION update_show_book_for_user(new_user_id INTEGER, new_coupon_id INTEGER)
+RETURNS VOID AS $$
+BEGIN
+    -- Update show_book for users with multiple coupons including the new one
+    UPDATE user_coupon uc
+    SET show_book = true
+    WHERE uc.user_id = new_user_id
+    AND EXISTS (
+        SELECT 1
+        FROM user_coupon uc2
+        WHERE uc2.user_id = new_user_id
+        AND uc2.show_book = true
+        AND uc2.coupon_id <> new_coupon_id -- Exclude the newly added coupon
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION update_show_book_trigger_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM update_show_book_for_user(NEW.user_id, NEW.coupon_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+---------- Trigger to update show_book in user_coupon table ----------------------------------
+CREATE TRIGGER update_show_book_trigger
+AFTER INSERT ON user_coupon
+FOR EACH ROW
+EXECUTE FUNCTION update_show_book_trigger_function();
 
 ----------------------------------------------------------------------
 
