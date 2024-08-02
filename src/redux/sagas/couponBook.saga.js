@@ -22,9 +22,7 @@ function* fetchByIdSaga(action) {
 // Reducer is bookYear.reducer here
 function* fetchByYearSaga(action) {
   try {
-    const response = yield axios.get(
-      `/api/couponbook/season/${action.payload}`
-    );
+    const response = yield axios.get(`/api/couponbook/season`);
     yield put({ type: "SET_APP_YEAR", payload: response.data });
   } catch (err) {
     console.log("Error fetching book year", err);
