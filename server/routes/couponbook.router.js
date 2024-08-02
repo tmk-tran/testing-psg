@@ -24,6 +24,14 @@ router.get("/", (req, res) => {
 router.get("/id/:id", (req, res) => {
   const bookId = req.params.id;
 
+  // Made a change to queryText on Aug 2, '24
+  // -----------------------------------------------------------
+  // To enable fetching of coupons determined by the app year set
+  //  to 'active' in the 'coupon_book' DB table. The active year
+  //  can be set by the admin users in the UserAdmin component.
+  // ------------------------------------------------------------
+  // Adding a function to the table in the DB to automatically change
+  //  the activeYear based on the end of season (i.e. September 1st, 2024 12:00AM)
   const queryText = `
             SELECT *
             FROM coupon_book
@@ -42,16 +50,14 @@ router.get("/id/:id", (req, res) => {
     });
 });
 
-router.get("/season/:season", (req, res) => {
-  const season = req.params.season;
-
+router.get("/season", (req, res) => {
   const queryText = `
-          SELECT *
-          FROM coupon_book
-          WHERE year = $1;
-      `;
+    SELECT *
+    FROM coupon_book
+    WHERE active = true;
+`;
   pool
-    .query(queryText, [season])
+    .query(queryText)
     .then((result) => {
       res.send(result.rows);
     })
