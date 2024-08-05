@@ -309,7 +309,7 @@ export default function CheckoutPage({ caseType }) {
   };
 
   const returnToStore = () => {
-    history.push(`/fargo/seller/${refId}/${caseType}`);
+    history.push(`/seller/${refId}/${caseType}`);
   };
 
   const setDigitalBook = (value) => ({
@@ -336,7 +336,7 @@ export default function CheckoutPage({ caseType }) {
       // Send payload to Active Campaign
       acInfo();
       // Redirect the user to a confirmation page
-      history.push(`/fargo/seller/${refId}/complete`);
+      history.push(`/seller/${refId}/complete`);
     } else {
       // This is not the last step, move to the next step
       handleNext();
