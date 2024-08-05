@@ -174,6 +174,16 @@ function HomePage({ isOrgAdmin, isGraphicDesigner, activeRegion }) {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
+  const orgIdsArray = user.org_ids
+    ? user.org_ids.split(",").map((id) => parseInt(id.trim(), 10))
+    : [];
+
+  const userOrgs = organizationsList.filter(
+    (organization) =>
+      !isOrgAdmin ||
+      (orgIdsArray.length > 0 && orgIdsArray.includes(organization.id))
+  );
+
   const currentItems =
     searchResult.length > 0
       ? searchResult.slice(indexOfFirstItem, indexOfLastItem)
