@@ -286,48 +286,48 @@ function App() {
                 <OrgSellers />
               </ProtectedRoute>
 
-              <Route exact path="/fargo/seller/:refId/">
+              <Route exact path="/seller/:refId/">
                 {/* <OrderPage /> */}
                 <SellerLandingPage />
               </Route>
               {/* ~~~~~~~~~~ CASH PAGE ~~~~~~~~~~ */}
-              <Route exact path="/fargo/seller/:refId/cash">
+              <Route exact path="/seller/:refId/cash">
                 <OrderPage caseType="cash" />
                 {/* <SellerLandingPage /> */}
               </Route>
 
-              <Route exact path="/fargo/seller/:refId/cash/cart">
+              <Route exact path="/seller/:refId/cash/cart">
                 <ShoppingCart caseType="cash" />
               </Route>
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~~ PAYPAL PAGE ~~~~~~~~ */}
-              <Route exact path="/fargo/seller/:refId/paypal">
+              <Route exact path="/seller/:refId/paypal">
                 <OrderPage caseType="paypal" />
               </Route>
 
-              <Route exact path="/fargo/seller/:refId/paypal/cart">
+              <Route exact path="/seller/:refId/paypal/cart">
                 <ShoppingCart />
               </Route>
               {/* ~~~~~~~~~~ CHECKOUT PAGE ~~~~~~~~~ */}
-              <Route exact path="/fargo/seller/:refId/paypal/checkout">
+              <Route exact path="/seller/:refId/paypal/checkout">
                 <CheckoutPage caseType="credit" />
               </Route>
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~ CREDIT PAGE ~~~~~~~~~~~ */}
-              <Route exact path="/fargo/seller/:refId/credit">
+              <Route exact path="/seller/:refId/credit">
                 <OrderPage caseType="credit" />
               </Route>
 
-              <Route exact path="/fargo/seller/:refId/credit/cart">
+              <Route exact path="/seller/:refId/credit/cart">
                 <ShoppingCart />
               </Route>
               {/* ~~~~~~~~~~ CHECKOUT PAGE ~~~~~~~~~ */}
-              <Route exact path="/fargo/seller/:refId/credit/checkout">
+              <Route exact path="/seller/:refId/credit/checkout">
                 <CheckoutPage caseType="credit" />
               </Route>
               {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
               {/* ~~~~~~~~~ ORDER COMPLETE PAGE ~~~~~~~~~ */}
-              <Route exact path="/fargo/seller/:refId/complete">
+              <Route exact path="/seller/:refId/complete">
                 <OrderComplete />
               </Route>
 
