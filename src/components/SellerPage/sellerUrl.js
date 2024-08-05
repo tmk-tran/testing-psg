@@ -17,9 +17,9 @@
 
 // FOR LIVE PROD USE ~~~~~~~~~~~~~~~~~~~~~~~ //
 export const transactionsUrl = (refId) => {
-  return `digitalcoupon.app/#/fargo/seller/${refId}/cash`;
+  return `digitalcoupon.app/#/seller/${refId}/cash`;
 };
 
 export const orderUrl = (refId) => {
-  return `digitalcoupon.app/#/fargo/seller/${refId}`;
+  return `digitalcoupon.app/#/seller/${refId}`;
 };
