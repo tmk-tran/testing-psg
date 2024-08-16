@@ -40,8 +40,7 @@ function HomePage({ isOrgAdmin, isGraphicDesigner, activeRegion }) {
   console.log(isMerchantList);
 
   // state for the search and modal and pagination
-  const [query, setQuery] = useState(" ");
-  console.log(query);
+  const [query, setQuery] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
