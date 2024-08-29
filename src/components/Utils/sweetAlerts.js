@@ -21,6 +21,22 @@ export const showDeleteSweetAlert = (deleteCall, caseType) => {
       title = "Remove location?";
       confirmButtonText = "Confirm";
       break;
+    case "removeOrgAdmin":
+      title = "Remove Organization?";
+      confirmButtonText = "Confirm";
+      break;
+    case "deleteUser":
+      title = "Delete User?";
+      confirmButtonText = "Confirm";
+      break;
+    case "removePdf":
+      title = "Delete PDF?";
+      confirmButtonText = "Confirm";
+      break;
+    case "removeCoupon":
+      title = "Delete coupon?";
+      confirmButtonText = "Confirm";
+      break;
     default:
       title = "Are you sure?";
       confirmButtonText = "Yes, confirm it!";

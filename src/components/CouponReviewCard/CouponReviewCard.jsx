@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
-import { borderPrimaryColor } from "../Utils/colors";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { borderPrimaryColor, grayBorderColor } from "../Utils/colors";
+import DeletePdfIcon from "../CouponReviewDetails/DeletePdfIcon";
 // ~~~~~~~~~~ Component ~~~~~~~~~~ //
 import CommentDisplay from "../CommentDisplay/CommentDisplay";
 import FilePreview from "../CouponReviewDetails/FilePreview";
@@ -16,7 +24,7 @@ import { flexCenter, textCenter } from "../Utils/pageStyles";
 import { grayBackground } from "../Utils/colors";
 import { thumbnailSize } from "../CouponReviewDetails/FilePreview";
 import { capitalizeWords } from "../Utils/helpers";
-import { showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
 
 const thumbnailHeaderStyle = {
   ...grayBackground,
@@ -130,6 +138,19 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
     });
   };
 
+  const handleRemoveCoupon = (couponId) => {
+    const action = {
+      type: "REMOVE_COUPON",
+      payload: {
+        couponId: couponId,
+        merchantId: merchantId,
+      },
+    };
+    showDeleteSweetAlert(() => {
+      dispatch(action);
+    }, "removeCoupon");
+  };
+
   return (
     <>
       {couponFiles.length > 0 ? (
@@ -170,9 +191,26 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                   {/* ~~~~~~~~~~ Status Menu ~~~~~~~~~~ */}
                   {file.taskId ? (
                     <>
-                      <Box sx={flexCenter}>
-                        <Typography sx={{ mr: 2 }}>#{file.id}</Typography>
-                      </Box>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                        sx={{
+                          mr: 1,
+                          px: 1,
+                          border: `1px solid ${grayBorderColor}`,
+                        }}
+                      >
+                        {/* Button to remove coupon */}
+                        <DeletePdfIcon
+                          size={20}
+                          deleteTitle="Remove this coupon"
+                          onDelete={handleRemoveCoupon}
+                          fileId={file.id}
+                        />
+                        {/* Displays the coupon number */}
+                        <Typography>#{file.id}</Typography>
+                      </Stack>
                       <CouponStatusDropdown
                         couponId={file.id}
                         task={couponTask}
@@ -180,9 +218,9 @@ export default function CouponReviewCard({ merchant, onTaskUpdate }) {
                         onChange={handleChangeRequest}
                         complete={handleCompletedCoupon}
                       />
-
                       <Button
-                        sx={{ marginLeft: "10px" }}
+                        variant="outlined"
+                        sx={{ ml: 1 }}
                         onClick={handleUpdateClick}
                       >
                         Update

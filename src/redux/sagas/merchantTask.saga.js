@@ -2,6 +2,7 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 
 function* merchantTask(action) {
+  console.log(action.payload);
   try {
     const items = yield axios.get(`/api/merchantTask/${action.payload}`);
     // console.log("FETCH request from merchantTask.saga, ITEMS = ", items.data);
