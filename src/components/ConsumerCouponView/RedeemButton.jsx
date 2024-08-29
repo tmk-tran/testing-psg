@@ -7,17 +7,19 @@ export default function RedeemButton({ isMobile, coupon, user, handleRedeem }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        justifyContent: "center",
         width: isMobile ? "100%" : "undefined",
       }}
     >
       {/* ~~~~~ Value ~~~~~ */}
-      <Box sx={{ mb: isMobile ? 0 : 1 }}>
-        {coupon.value ? (
+      {/* ~ Removed, at client request. PSG-203 ~ */}
+      {/* <Box sx={{ mb: isMobile ? 0 : 1 }}>
+      {coupon.value ? (
           <Typography variant="body2">Value: ${coupon.value}</Typography>
         ) : (
           <>{!isMobile ? <Box sx={{ minHeight: "1.1rem" }}></Box> : null}</>
         )}
-      </Box>
+      </Box> */}
       {/* ~~~~~ Redeem Button ~~~~~ */}
       <Button
         variant="contained"
@@ -25,7 +27,6 @@ export default function RedeemButton({ isMobile, coupon, user, handleRedeem }) {
         onClick={() =>
           handleRedeem(coupon.id, coupon.locationId, user.id, coupon.bookId)
         }
-        sx={{ mt: isMobile ? 3 : 5, mb: isMobile ? 3 : 0 }}
       >
         Redeem
       </Button>

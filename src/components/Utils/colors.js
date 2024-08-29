@@ -14,6 +14,8 @@ export const borderPrimaryColor = { border: "1px solid #19338E" };
 
 export const disabledColor = { color: "#F5F5F5" };
 
+export const grayBorderColor = "rgba(0, 0, 0, 0.23)";
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // For Buttons in Coupon Review components
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

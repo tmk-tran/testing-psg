@@ -58,12 +58,12 @@ router.get("/number", rejectUnauthenticated, (req, res) => {
     FROM
         merchant m
     LEFT JOIN
-        coupon c ON m.id = c.merchant_id
+        coupon c ON m.id = c.merchant_id AND c.is_deleted = false
     GROUP BY
         m.id
     ORDER BY
         m.id;
-    `;
+  `;
 
   pool
     .query(queryText)
