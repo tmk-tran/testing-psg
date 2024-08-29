@@ -2,6 +2,7 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 import { fetchCouponFilesFailure } from "./actions";
 
+// Should be changed to merchantId
 const fetchPdfRequest = (couponId) => ({
   type: "FETCH_PDF_FILE",
   payload: couponId,
@@ -158,6 +159,36 @@ function* addCoupon(action) {
   }
 }
 
+function* updateCoupon(action) {
+  const coupon = action.payload;
+  const couponId = coupon.couponId;
+  const merchantId = coupon.merchantId;
+
+  try {
+    yield axios.put(`/api/coupon/${merchantId}/${couponId}`, action.payload);
+    yield put({ type: "FETCH_PDF_FILE", payload: { merchantId, couponId } });
+    yield put({
+      type: "FETCH_YEAR_BY_ID",
+      reducerType: "SET_BOOK_YEAR",
+      payload: coupon.book_id,
+    });
+  } catch (error) {
+    console.log("error in updateCoupon Saga", error);
+  }
+}
+
+function* removeCoupon(action) {
+  const couponId = action.payload.couponId;
+  const merchantId = action.payload.merchantId;
+
+  try {
+    yield axios.put(`/api/coupon/${couponId}`);
+    yield put({ type: "FETCH_PDF_FILE", payload: merchantId });
+  } catch (error) {
+    console.log("error in removeCoupon Saga", error);
+  }
+}
+
 function* frontViewUpload(action) {
   const selectedFile = action.payload.frontViewFile;
   const selectedFileName = action.payload.frontViewFileName;
@@ -198,24 +229,6 @@ function* backViewUpload(action) {
   }
 }
 
-function* updateCoupon(action) {
-  const coupon = action.payload;
-  const couponId = coupon.couponId;
-  const merchantId = coupon.merchantId;
-
-  try {
-    yield axios.put(`/api/coupon/${merchantId}/${couponId}`, action.payload);
-    yield put({ type: "FETCH_PDF_FILE", payload: { merchantId, couponId } });
-    yield put({
-      type: "FETCH_YEAR_BY_ID",
-      reducerType: "SET_BOOK_YEAR",
-      payload: coupon.book_id,
-    });
-  } catch (error) {
-    console.log("error in updateCoupon Saga", error);
-  }
-}
-
 function* deleteFileFront(action) {
   const couponId = action.payload;
 
@@ -242,9 +255,10 @@ export default function* couponSaga() {
   yield takeEvery("FETCH_CONSUMER_COUPONS", couponFiles);
   yield takeEvery("FETCH_PDF_FILE", pdfFile); // place this call in the component that is viewed after clicking on the file (with its id)
   yield takeEvery("ADD_COUPON", addCoupon);
+  yield takeEvery("UPDATE_COUPON", updateCoupon);
+  yield takeEvery("REMOVE_COUPON", removeCoupon);
   yield takeEvery("UPLOAD_FRONT_VIEW_PDF", frontViewUpload);
   yield takeEvery("UPLOAD_BACK_VIEW_PDF", backViewUpload);
-  yield takeEvery("UPDATE_COUPON", updateCoupon);
   yield takeEvery("DELETE_FILE_FRONT", deleteFileFront);
   yield takeEvery("DELETE_FILE_BACK", deleteFileBack);
 }

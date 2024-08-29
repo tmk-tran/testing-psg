@@ -112,8 +112,8 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       console.error("Error executing insert query:", err);
       return;
     }
-    // Insert query successful
-    console.log("Insert query executed successfully:", result);
+    // Insert query successful?
+    console.log("Insert query executed successfully");
 
     // Execute the update query
     // pool.query(updateQueryText, [couponId], (updateErr, updateResult) => {

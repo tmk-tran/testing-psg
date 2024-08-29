@@ -59,6 +59,7 @@ export default function CouponDetails({
             </div>
           </Box>
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* Value was located inside of Redeem Button */}
           {/* ~~~~~~~~~~ Redeem Button ~~~~~~~~~~ */}
           <RedeemButton
             isMobile={isMobile}

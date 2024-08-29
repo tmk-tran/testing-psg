@@ -61,7 +61,9 @@ router.get("/:id", (req, res) => {
           FROM coupon c 
           JOIN coupon_book cb 
           ON c.book_id = cb.id 
-          WHERE c.merchant_id = $1`;
+          WHERE c.merchant_id = $1
+          AND c.is_deleted = false;        
+  `;
 
   pool
     .query(queryText, [merchantId])
@@ -335,21 +337,20 @@ router.put(
       `;
         await pool.query(deleteLocationsQuery, [couponId]);
       } else {
-
-      // Delete existing locations for the coupon
-      const deleteLocationsQuery = `
+        // Delete existing locations for the coupon
+        const deleteLocationsQuery = `
       DELETE FROM coupon_location
       WHERE coupon_id = $1;
     `;
-      await pool.query(deleteLocationsQuery, [couponId]);
+        await pool.query(deleteLocationsQuery, [couponId]);
 
-      // Insert updated locations into coupon_location table
-      const locationInsertQuery = `
+        // Insert updated locations into coupon_location table
+        const locationInsertQuery = `
       INSERT INTO coupon_location (coupon_id, location_id)
       SELECT $1, location_id
       FROM unnest($2::integer[]) AS location_id;
     `;
-      await pool.query(locationInsertQuery, [couponId, locationIds]);
+        await pool.query(locationInsertQuery, [couponId, locationIds]);
       }
 
       // Commit the transaction
@@ -364,6 +365,28 @@ router.put(
     }
   }
 );
+
+// Removes a coupon (soft delete)
+router.put("/:id", rejectUnauthenticated, (req, res) => {
+  const couponId = req.params.id;
+
+  const queryText = `
+    UPDATE coupon
+    SET is_deleted = true
+    WHERE id = $1;
+  `;
+
+  pool
+    .query(queryText, [couponId])
+    .then((response) => {
+      console.log("Coupon removed");
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.error("Error removing coupon:", error);
+      res.sendStatus(500);
+    });
+});
 
 router.delete("/:id/front", (req, res) => {
   const couponId = req.params.id;

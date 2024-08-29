@@ -7,6 +7,9 @@ const deletePdfSx = {
 };
 export default function DeletePdfIcon({ size, deleteTitle, onDelete, fileId }) {
   const handleDelete = () => {
+    // Returns an id to the parent component
+    //  Initially set up for pdf display in coupons, but using in
+    //  CouponReviewCard, for removing coupons using a soft delete
     onDelete(fileId);
   };
 
