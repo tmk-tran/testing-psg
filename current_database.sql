@@ -605,8 +605,8 @@ RETURNS TRIGGER AS
 $$
 BEGIN
     -- Insert coupon IDs for the new user into user_coupon table
-    INSERT INTO user_coupon (user_id, coupon_id)
-	SELECT NEW.id, id
+    INSERT INTO user_coupon (user_id, coupon_id, show_book)
+	SELECT NEW.id, id, true
 	FROM coupon;
 
 
