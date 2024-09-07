@@ -25,7 +25,38 @@ router.get("/", rejectUnauthenticated, (req, res) => {
 
 router.post("/", rejectUnauthenticated, (req, res) => {
   const data = req.body;
-  console.log(data);
+
+  const values = [
+    data.status,
+    data.payment_source_email,
+    data.payment_source_account_id,
+    data.payment_source_account_status,
+    data.payment_source_name_given_name,
+    data.payment_source_name_surname,
+    data.purchase_units_reference_id,
+    data.purchase_units_shipping_name_full_name,
+    data.purchase_units_shipping_address_address_line_1,
+    data.purchase_units_shipping_address_admin_area_2,
+    data.purchase_units_shipping_address_admin_area_1,
+    data.purchase_units_shipping_address_postal_code,
+    data.purchase_units_payments_captures_id,
+    data.purchase_units_payments_captures_status,
+    data.purchase_units_payments_captures_amount_value,
+    data.purchase_units_payments_captures_create_time,
+    data.purchase_units_payments_captures_update_time,
+    data.payer_name_given_name,
+    data.payer_name_surname,
+    data.payer_email_address,
+    data.payer_payer_id,
+    data.links_href,
+    data.links_rel,
+    data.links_method,
+    data.seller_receivable_gross_amount_value,
+    data.seller_receivable_paypal_fee_value,
+    data.seller_receivable_net_amount_value,
+    data.seller_ref_id,
+    data.book_type_sold,
+  ];
 
   const queryText = `
     INSERT INTO paypal_transactions (
@@ -55,38 +86,11 @@ router.post("/", rejectUnauthenticated, (req, res) => {
       links_method,
       seller_receivable_gross_amount_value,
       seller_receivable_paypal_fee_value,
-      seller_receivable_net_amount_value
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
+      seller_receivable_net_amount_value,
+      seller_ref_id,
+      book_type_sold
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29)
   `;
-  const values = [
-    data.status,
-    data.payment_source_email,
-    data.payment_source_account_id,
-    data.payment_source_account_status,
-    data.payment_source_name_given_name,
-    data.payment_source_name_surname,
-    data.purchase_units_reference_id,
-    data.purchase_units_shipping_name_full_name,
-    data.purchase_units_shipping_address_address_line_1,
-    data.purchase_units_shipping_address_admin_area_2,
-    data.purchase_units_shipping_address_admin_area_1,
-    data.purchase_units_shipping_address_postal_code,
-    data.purchase_units_payments_captures_id,
-    data.purchase_units_payments_captures_status,
-    data.purchase_units_payments_captures_amount_value,
-    data.purchase_units_payments_captures_create_time,
-    data.purchase_units_payments_captures_update_time,
-    data.payer_name_given_name,
-    data.payer_name_surname,
-    data.payer_email_address,
-    data.payer_payer_id,
-    data.links_href,
-    data.links_rel,
-    data.links_method,
-    data.seller_receivable_gross_amount_value,
-    data.seller_receivable_paypal_fee_value,
-    data.seller_receivable_net_amount_value,
-  ];
 
   pool
     .query(queryText, values)
