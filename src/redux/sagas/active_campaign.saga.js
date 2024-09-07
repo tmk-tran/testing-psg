@@ -53,26 +53,27 @@ function* addContactSaga(action) {
     // } else {
     //   console.log("No account creation necessary for physical book.");
     // }
-    // if (response.data === "OK") {
-      if (bookType === "Digital") {
-        console.log("Contact created successfully (no password returned), for a digital book.");
+
+    if (response.data === "OK") {
+      // No account creation necessary for physical books
+      console.log("Contact created successfully (no account creation necessary)");
+    } else if (
+      bookType === "Fargo - Moorhead (Digital Coupon Book)" &&
+      typeof response.data === "string" &&
+      response.data.length > 0
+    ) {
+      // Create an account for digital books if valid data exists
+      const { email, firstName, lastName } = action.payload;
     
-        // Only create an account for digital books
-        const user = {
-          username: action.payload.email,
-          password: response.data,
-          first_name: action.payload.firstName,
-          last_name: action.payload.lastName,
-        };
+      const user = {
+        username: email,
+        password: response.data,
+        first_name: firstName,
+        last_name: lastName,
+      };
     
-        yield put({ type: "REGISTER", payload: user });
-      } else {
-        // If it's a physical book, no account creation is necessary
-        console.log("No account creation necessary for physical book."); // Latest test purchase confirms this log, yet still get email about digital book
-      }
-    // } else {
-    //   console.log("No OK response, nor digital bookType");
-    // }
+      yield put({ type: "REGISTER", payload: user });
+    }
     
   } catch (error) {
     console.log("error in addContact saga", error);
