@@ -71,6 +71,8 @@ export default function TransactionsTable({ transactions }) {
       receivedNetAmount: 0,
     }
   );
+
+  // ADD THE BOOK TYPE SOLD TO THIS TABLE FROM THE ROUTER QUERY
   return (
     <Paper>
       <TableContainer sx={{ maxHeight: 600, overflowX: "auto", width: "100%" }}>
@@ -79,6 +81,7 @@ export default function TransactionsTable({ transactions }) {
           <TableHead>
             <TableRow>
               <TableCell sx={headerStyle}>ID</TableCell>
+              <TableCell sx={headerStyle}>Book Sold</TableCell>
               <TableCell sx={headerStyle}>Created</TableCell>
               <TableCell sx={headerStyle}>Seller Name</TableCell>
               <TableCell sx={headerStyle}>Organization</TableCell>
@@ -120,6 +123,12 @@ export default function TransactionsTable({ transactions }) {
                 }}
               >
                 <TableCell sx={cellBorder}>{transaction.id}</TableCell>
+                <TableCell sx={noWrapBorder}>
+                  {transaction.book_type_sold
+                    ? transaction.book_type_sold.join(", ")
+                    : ""}
+                </TableCell>
+
                 {/* ~~~~~ Created ~~~~~ */}
                 <TableCell sx={noWrapBorder}>
                   {formatDateTime(

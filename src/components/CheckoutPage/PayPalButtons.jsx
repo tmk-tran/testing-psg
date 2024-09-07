@@ -15,13 +15,27 @@ function PayPalButton({
   customDonation,
   orderSuccess,
 }) {
+  // Extract bookType values and set them as a variable
+  const bookTypes = selectedProducts.map((book) => {
+    switch (book.bookType) {
+      case "Physical Coupon Book":
+        return "Physical";
+      case "Fargo - Moorhead (Digital Coupon Book)":
+        return "Digital";
+      default:
+        return book.bookType; // In case other book types are included, they remain unchanged
+    }
+  });
+
   const dispatch = dispatchHook();
   const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
   // console.log(clientId);
 
   // Removed 'venmo' from "enable-funding"
   const initialOptions = {
-    "client-id": clientId,
+    // "client-id": clientId,
+    "client-id":
+      "AXw4KZ31SkyY5t_62QfDp4x7pQYm5t1-UfGpGDOOJVXo7Xb0UEdlRPkXW8mhOtVxDJhAY4PSofVyDaFu",
     "enable-funding": "paylater,card",
     "disable-funding": "",
     "data-sdk-integration-source": "integrationbuilder_sc",
@@ -95,6 +109,7 @@ function PayPalButton({
                   id: product.id,
                   quantity: product.quantity,
                   price: product.price,
+                  type: product.bookType,
                 })),
               };
 
@@ -287,6 +302,7 @@ function PayPalButton({
                     orderData.purchase_units[0].payments.captures[0]
                       .seller_receivable_breakdown.net_amount.value,
                   seller_ref_id: refId,
+                  book_type_sold: bookTypes,
                 };
 
                 const dispatchAction = {

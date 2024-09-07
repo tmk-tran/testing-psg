@@ -62,6 +62,7 @@ router.post("/", (req, res) => {
     data.seller_receivable_paypal_fee_value,
     data.seller_receivable_net_amount_value,
     data.seller_ref_id,
+    data.book_type_sold,
   ];
 
   const queryText = `
@@ -93,8 +94,9 @@ router.post("/", (req, res) => {
       seller_receivable_gross_amount_value,
       seller_receivable_paypal_fee_value,
       seller_receivable_net_amount_value,
-      seller_ref_id
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
+      seller_ref_id,
+      book_type_sold
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29)
   `;
 
   pool
