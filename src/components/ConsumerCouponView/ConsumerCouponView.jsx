@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { lazy, Suspense, useState, useEffect } from "react";
 import Fuse from "fuse.js";
 import { Box, useMediaQuery, Pagination } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -15,10 +15,12 @@ import { dispatchHook } from "../../hooks/useDispatch";
 import { User, couponsData, appActiveYear } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import Typography from "../Typography/Typography";
-import CouponCard from "./CouponCard";
+// import CouponCard from "./CouponCard";
 import SearchBar from "../SearchBar/SearchBar";
 import ToggleButton from "../ToggleButton/ToggleButton";
 import LoadingSpinner from "../HomePage/LoadingSpinner";
+
+const CouponCard = lazy(() => import("./CouponCard"));
 
 export default function ConsumerCouponView() {
   const dispatch = dispatchHook();
@@ -32,6 +34,9 @@ export default function ConsumerCouponView() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const coupons = couponsData() || [];
+  console.log(coupons);
+  // For PDF solution
+  // const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
   // For Coupon Book Year
   const activeYear = appActiveYear();
   const expirationYear =
@@ -48,7 +53,7 @@ export default function ConsumerCouponView() {
       },
     };
     dispatch(dispatchAction);
-  }, [activeYear]);
+  }, [activeYear]); // Removed currentPage from the dependency array
 
   useEffect(() => {
     if (coupons.length > 0) {
@@ -89,7 +94,7 @@ export default function ConsumerCouponView() {
     // setCurrentPage(1); // Reset to the first page when clearing the search
   };
 
-  const couponsPerPage = 10;
+  const couponsPerPage = isMobile ? 5 : 10;
   const indexOfLastCoupon = currentPage * couponsPerPage;
   const indexOfFirstCoupon = indexOfLastCoupon - couponsPerPage;
   const currentCoupons = filteredMerchants.slice(
@@ -102,6 +107,15 @@ export default function ConsumerCouponView() {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  // Prepare coupons with complete URLs - in PROD
+  // const preparedCoupons = currentCoupons.map((coupon) => ({
+  //   ...coupon,
+  //   backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
+  //   frontViewUrl: coupon.frontViewUrl
+  //     ? `${baseURL}${coupon.frontViewUrl}`
+  //     : null,
+  // }));
 
   return (
     <Box
@@ -161,16 +175,36 @@ export default function ConsumerCouponView() {
           </Box>
           {/* ~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~ List ~~~~~ */}
-          {isLoading && (
+          {/* {isLoading && (
             <LoadingSpinner
               text="Loading from database..."
+              waitingText="Please wait while we load image files..."
               finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
+              timeout={15000}
             />
           )}
-          {!isLoading &&
-            currentCoupons.map((coupon, index) => (
-              <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
-            ))}
+          {!isLoading && (
+            <Suspense fallback={<LoadingSpinner text="Loading Coupons..." />}>
+              {currentCoupons.map((coupon, index) => (
+              {preparedCoupons.map((coupon, index) => (
+                <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
+              ))}
+            </Suspense>
+          )} */}
+          <Suspense fallback={<LoadingSpinner text="Loading Coupons..." />}>
+            {isLoading ? (
+              <LoadingSpinner
+                text="Loading..."
+                waitingText="Please wait while we load image files..."
+                finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
+                timeout={15000}
+              />
+            ) : (
+              currentCoupons.map((coupon, index) => (
+                <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
+              ))
+            )}
+          </Suspense>
         </>
       ) : (
         <Typography label="Coupons Redeemed" />
@@ -178,10 +212,19 @@ export default function ConsumerCouponView() {
       {/* ~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~ Pagination ~~~~~ */}
       <Pagination
-        count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
+        // count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
+        count={100}
         page={currentPage}
         onChange={(event, page) => paginate(page)}
         color="primary"
+        sx={{
+          "& .MuiPagination-ul": {
+            flexWrap: "nowrap", // Prevent wrapping of pagination items
+          },
+          "& .MuiPaginationItem-previousNext svg": {
+            fontSize: { xs: "3rem", sm: "3.5rem" }, // Increase icon size for arrows
+          },
+        }}
       />
     </Box>
   );
