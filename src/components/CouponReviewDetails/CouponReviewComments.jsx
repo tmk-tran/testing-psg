@@ -13,29 +13,30 @@ import { useAlert } from "../SuccessAlert/useAlert";
 
 export default function CouponReviewComments({
   merchantId,
+  taskId,
   onSubmit,
   file,
   handleUploadFile,
 }) {
-  const [taskId, setTaskId] = useState("");
+  // const [taskId, setTaskId] = useState("");
   const merchantComments = mComments() || [];
   // ~~~~~~~~~~ Alert ~~~~~~~~~~
   const { isAlertOpen, handleAlertClose, handleTaskUpdate } = useAlert();
 
   // useEffect to handle the extraction when merchantComments changes
-  useEffect(() => {
-    const taskIds = [
-      ...new Set(merchantComments.map((comment) => comment.task_id)),
-    ];
+  // useEffect(() => {
+  //   const taskIds = [
+  //     ...new Set(merchantComments.map((comment) => comment.task_id)),
+  //   ];
 
-    // Check if the array is not empty and the first element is not null
-    if (taskIds.length > 0 && taskIds[0] !== null) {
-      const extractedTaskId = taskIds[0];
-      setTaskId(extractedTaskId); // Set the taskId state variable
-    } else {
-      console.log("No valid task ID found");
-    }
-  }, [merchantComments]);
+  //   // Check if the array is not empty and the first element is not null
+  //   if (taskIds.length > 0 && taskIds[0] !== null) {
+  //     const extractedTaskId = taskIds[0];
+  //     setTaskId(extractedTaskId); // Set the taskId state variable
+  //   } else {
+  //     console.log("No valid task ID found");
+  //   }
+  // }, [merchantComments]);
 
   return (
     <div

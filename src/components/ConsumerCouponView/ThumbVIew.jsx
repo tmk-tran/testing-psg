@@ -14,6 +14,7 @@ export default function ThumbView({
 }) {
   return (
     <>
+      {/* ~~~~~ MOBILE VIEW ~~~~~ */}
       {isMobile ? (
         <Box sx={flexRowSpace}>
           {/* ~~~~~ Front View ~~~~~ */}
@@ -21,19 +22,18 @@ export default function ThumbView({
             <Typography variant="caption" sx={{ lineHeight: 1 }}>
               {isMobile ? null : "Front"}
             </Typography>
-            {coupon.frontViewBlob !== null ? (
+            {coupon.frontViewBlob !== null ? ( // in PROD, this is frontViewUrl
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.frontViewBlob}
+                pdf={coupon.frontViewBlob} // in PROD, this is frontViewUrl
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 150 : 200}
                 caseType="consumer"
               />
-            ) : // <NoFile label="No file available" sx={{ mt: 3 }} />
-            null}
+            ) : null}
           </Box>
           {/* ~~~~~ Back View ~~~~~ */}
-          <Box
+          {/* <Box
             sx={{
               ...(isMobile
                 ? { ...mobilePreviewBox, ml: 0.25 }
@@ -41,17 +41,16 @@ export default function ThumbView({
             }}
           >
             {isMobile ? null : "Back"}
-            {coupon.backViewBlob !== null ? (
+            {coupon.backViewBlob !== null ? ( // in PROD, this is backViewUrl
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.backViewBlob}
+                pdf={coupon.backViewBlob} // in PROD, this is backViewUrl
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 150 : 200}
                 caseType="consumer"
               />
-            ) : // <NoFile label="No file available" sx={{ mt: 3 }} />
-            null}
-          </Box>
+            ) : null}
+          </Box> */}
         </Box>
       ) : (
         <>
@@ -60,31 +59,37 @@ export default function ThumbView({
             <Typography variant="caption" sx={{ lineHeight: 1 }}>
               {isMobile ? null : "Front"}
             </Typography>
-            {coupon.frontViewBlob !== null ? (
+            {coupon.frontViewBlob !== null ? ( // in PROD, this is frontViewUrl
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.frontViewBlob}
+                pdf={coupon.frontViewBlob} // in PROD, this is frontViewUrl
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 170 : 200}
                 caseType="consumer"
               />
             ) : (
-              <NoFile label="No file available" sx={couponPreviewStyle} />
+              <NoFile
+                label="Image temporarily unavailable"
+                sx={couponPreviewStyle}
+              />
             )}
           </Box>
           {/* ~~~~~ Back View ~~~~~ */}
           <Box sx={isMobile ? mobilePreviewBox : previewBoxStyle}>
             {isMobile ? null : "Back"}
-            {coupon.backViewBlob !== null ? (
+            {coupon.backViewBlob !== null ? ( // in PROD, this is backViewUrl
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.backViewBlob}
+                pdf={coupon.backViewBlob} // in PROD, this is backViewUrl
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 170 : 200}
                 caseType="consumer"
               />
             ) : (
-              <NoFile label="No file available" sx={couponPreviewStyle} />
+              <NoFile
+                label="Image temporarily unavailable"
+                sx={couponPreviewStyle}
+              />
             )}
           </Box>
         </>

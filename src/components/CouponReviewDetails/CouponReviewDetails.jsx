@@ -99,7 +99,7 @@ export default function CouponReviewDetails() {
         type: "FETCH_COUPON_COMMENTS",
         payload: file?.taskId,
       };
-      console.log(action2);
+      setTaskId(file?.taskId); // Set the taskId for this component to pass as props
       dispatch(action2);
       setBookId(file?.bookId);
     }
@@ -503,6 +503,7 @@ export default function CouponReviewDetails() {
                 {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
                 <CouponReviewComments
                   merchantId={merchantId}
+                  taskId={taskId}
                   onSubmit={updateComments}
                   file={file}
                   handleUploadFile={handleUploadFile}
