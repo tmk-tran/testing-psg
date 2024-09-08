@@ -22,6 +22,7 @@ import Typography from "../Typography/Typography";
 // import CouponCard from "./CouponCard";
 import SearchBar from "../SearchBar/SearchBar";
 import ToggleButton from "../ToggleButton/ToggleButton";
+import LoadingSpinner from "../HomePage/LoadingSpinner";
 
 const CouponCard = lazy(() => import("./CouponCard"));
 
@@ -30,6 +31,7 @@ export default function ConsumerCouponView() {
   const user = User();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [isLoading, setIsLoading] = useState(true);
   const [toggleView, setToggleView] = useState(false);
   console.log(toggleView);
   const [query, setQuery] = useState("");
@@ -41,7 +43,7 @@ export default function ConsumerCouponView() {
   // For PDF solution
   // const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
   // For Coupon Book Year
-  const activeYear = bookYear();
+  const activeYear = appActiveYear();
   const expirationYear =
     activeYear && activeYear[0] ? activeYear[0].year.split("-")[1] : "";
   // Year ID //
