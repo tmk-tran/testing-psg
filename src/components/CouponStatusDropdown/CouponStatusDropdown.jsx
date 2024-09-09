@@ -51,7 +51,11 @@ export default function CouponStatusDropdown({
     }
 
     // Pass the updated taskStatus to the parent
-    handleUpdateTask(taskId, couponId, choice, newTaskStatus);
+    {
+      couponId
+        ? handleUpdateTask(taskId, couponId, choice, newTaskStatus)
+        : handleUpdateTask(taskId, choice, newTaskStatus);
+    }
   };
 
   return (
