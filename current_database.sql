@@ -90,24 +90,28 @@ FOR EACH ROW
 EXECUTE FUNCTION log_seller_changes();
 
 ------------ Function for logging updates from transactions table ---------------------
-CREATE OR REPLACE FUNCTION log_transaction_changes()
+CREATE OR REPLACE FUNCTION log_transaction_changes() 
 RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         INSERT INTO audit_log (ref_id, action, details)
-        VALUES (NEW."refId", 'UPDATE Transactions', 'Physical Book Cash changed to: ' || NEW.physical_book_cash);
+        VALUES (NEW."refId", 
+                'UPDATE Transactions', 
+                'Physical Book Cash changed to: ' || NEW.physical_book_cash || 
+                ', Physical Book Digital changed to: ' || NEW.physical_book_digital || 
+                ', Digital Book Credit changed to: ' || NEW.digital_book_credit);
     ELSIF TG_OP = 'INSERT' THEN
         INSERT INTO audit_log (ref_id, action, details)
         VALUES (NEW."refId", 'INSERT Transactions', 'New record inserted');    
     END IF;
 
     RETURN NEW;
-END;
+END
 $$ LANGUAGE plpgsql;
 
 -------------- Trigger for transactions table ----------------------------
 CREATE TRIGGER transactions_update_trigger
-AFTER INSERT OR UPDATE OF physical_book_cash
+AFTER INSERT OR UPDATE OF physical_book_cash, physical_book_digital, digital_book_credit
 ON transactions
 FOR EACH ROW
 EXECUTE FUNCTION log_transaction_changes();
