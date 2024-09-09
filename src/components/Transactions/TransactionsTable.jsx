@@ -82,14 +82,14 @@ export default function TransactionsTable({ transactions }) {
             <TableRow>
               <TableCell sx={headerStyle}>ID</TableCell>
               <TableCell sx={headerStyle}>Book Sold</TableCell>
+              <TableCell sx={{ ...headerCellStyle, ...headerStyle }}>
+                Payment Amount
+              </TableCell>
               <TableCell sx={headerStyle}>Created</TableCell>
               <TableCell sx={headerStyle}>Seller Name</TableCell>
               <TableCell sx={headerStyle}>Organization</TableCell>
               <TableCell sx={headerStyle}>Status</TableCell>
               <TableCell sx={headerStyle}>Payment Capture ID</TableCell>
-              <TableCell sx={{ ...headerCellStyle, ...headerStyle }}>
-                Payment Amount
-              </TableCell>
               <TableCell sx={headerStyle}>Email</TableCell>
               <TableCell sx={{ ...headerCellStyle, ...headerStyle }}>
                 Shipping Name
@@ -128,7 +128,10 @@ export default function TransactionsTable({ transactions }) {
                     ? transaction.book_type_sold.join(", ")
                     : ""}
                 </TableCell>
-
+                {/* ~~~~~ Payment Amount ~~~~~ */}
+                <TableCell sx={cellBorder}>
+                  ${transaction.purchase_units_payments_captures_amount_value}
+                </TableCell>
                 {/* ~~~~~ Created ~~~~~ */}
                 <TableCell sx={noWrapBorder}>
                   {formatDateTime(
@@ -148,10 +151,6 @@ export default function TransactionsTable({ transactions }) {
                 {/* ~~~~~ Capture ID ~~~~~ */}
                 <TableCell sx={cellBorder}>
                   {transaction.purchase_units_payments_captures_id}
-                </TableCell>
-                {/* ~~~~~ Payment Amount ~~~~~ */}
-                <TableCell sx={cellBorder}>
-                  ${transaction.purchase_units_payments_captures_amount_value}
                 </TableCell>
                 {/* ~~~~~ Email ~~~~~ */}
                 <TableCell sx={cellBorder}>
