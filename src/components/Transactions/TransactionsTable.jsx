@@ -211,7 +211,7 @@ export default function TransactionsTable({ transactions }) {
               <TableCell sx={{ ...footerCellStyle, ...footerCellBorder }}>
                 ${totals.paymentAmount.toFixed(2)}
               </TableCell>
-              <TableCell sx={footerCellStyle} colSpan={9}></TableCell>
+              <TableCell sx={footerCellStyle} colSpan={10}></TableCell>
               <TableCell sx={{ ...footerCellStyle, ...footerCellBorder }}>
                 ${totals.receivedGrossValue.toFixed(2)}
               </TableCell>
@@ -221,7 +221,7 @@ export default function TransactionsTable({ transactions }) {
               <TableCell sx={{ ...footerCellStyle, ...footerCellBorder }}>
                 ${totals.receivedNetAmount.toFixed(2)}
               </TableCell>
-              <TableCell sx={footerCellStyle} colSpan={3}></TableCell>
+              <TableCell sx={footerCellStyle} colSpan={1}></TableCell>
             </TableRow>
           </TableFooter>
         </Table>
