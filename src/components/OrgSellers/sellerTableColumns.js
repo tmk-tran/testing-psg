@@ -64,8 +64,13 @@ export const columns = [
     align: "right",
     // width: 75,
   },
+  // {
+  //   id: "seller_earnings",
+  //   label: "Seller Earnings",
+  //   align: "right",
+  // },
   {
-    id: "seller_earnings",
+    id: "total_seller_earnings",
     label: "Seller Earnings",
     align: "right",
   },

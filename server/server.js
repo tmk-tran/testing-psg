@@ -97,7 +97,8 @@ app.use(express.static("build"));
 // App Set //
 const PORT = process.env.PORT || 5000;
 
-// PayPal integration //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~ PayPal Section ~~~~~ //
 const { REACT_APP_PAYPAL_CLIENT_ID, REACT_APP_PAYPAL_CLIENT_SECRET } =
   process.env;
 
@@ -205,432 +206,344 @@ app.post("/api/orders/:orderID/capture", async (req, res) => {
     res.status(500).json({ error: "Failed to capture order." });
   }
 });
+// End PayPal Section
+// ~~~~~~~~~~~~~~~ //
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 // ~~~~~~ Active Campaign Section ~~~~~~ //
-app.post(`/api/contact`, async (req, res) => {
-  function generatePassword(lastName, firstName) {
-    if (!lastName || !firstName) {
-      throw new Error("Missing required arguments: lastName and firstName");
+// Helper to make API requests
+async function makeApiRequest(endpoint, method, data = null, apiKey) {
+  console.log(
+    ` <<< Coming from makeApiRequest in server >>> - making ${method.toUpperCase()} request to endpoint ---> '${endpoint}' --- Data package ---> ${data}`
+  );
+  // Prepare the config for the axios request
+  const config = {
+    method,
+    url: `https://northpointeinsure57220.api-us1.com/api/3/${endpoint}`,
+    headers: {
+      "Content-Type": "application/json",
+      "Api-Token": apiKey,
+    },
+  };
+  // Handle GET requests (use query parameters)
+  if (method.toUpperCase() === "GET" && data) {
+    config.params = data; // For GET, pass `data` as query parameters
+  } else if (["POST", "PUT", "PATCH"].includes(method.toUpperCase()) && data) {
+    config.data = JSON.stringify(data); // For POST, PUT, PATCH, send `data` in the body
+  }
+
+  // Make the API request
+  try {
+    const response = await axios(config);
+    console.log(
+      ` <<< Response in makeApiRequest >>> from endpoint ---> '${endpoint}'`
+    );
+    console.log(" ----- Status >>> ", response.status);
+    // console.log(" ----- Data >>> ", response.data);
+    return response;
+  } catch (error) {
+    console.error(`Error making request to '${endpoint}':`, error);
+    throw error;
+  }
+}
+
+// Helper to create the contact data form for Active Campaign
+const createContactData = (firstName, lastName, phone, email, fieldValues) => ({
+  contact: {
+    firstName,
+    lastName,
+    phone,
+    email,
+    fieldValues,
+  },
+});
+
+// Helper to generate field values
+function generateFieldValues(reqBody, randomPassword) {
+  // console.log("Generating field values for", reqBody);
+  const fieldValues = [
+    { field: "1", value: reqBody.address },
+    { field: "2", value: reqBody.city },
+    { field: "3", value: reqBody.state },
+    { field: "4", value: reqBody.zip },
+    { field: "59", value: reqBody.organization },
+    { field: "60", value: reqBody.url },
+    { field: "63", value: reqBody.year },
+    { field: "64", value: reqBody.email },
+    { field: "66", value: reqBody.donation },
+  ];
+  if (randomPassword) {
+    fieldValues.push({ field: "65", value: randomPassword }); // Only for digital books
+  }
+  return fieldValues;
+}
+
+// Handle tag logic
+function determineTag(bookType, paymentType) {
+  let tag = 0;
+
+  // Check if bookType is an array and handle accordingly
+  if (Array.isArray(bookType)) {
+    if (
+      bookType.includes("Fargo - Moorhead (Digital Coupon Book)") &&
+      paymentType === "credit"
+    ) {
+      tag = 56; // Assign tag 56 ---> for PSG: CC Digital- Any Group
+    } else if (
+      bookType.includes("Physical Coupon Book") &&
+      (paymentType === "cash" || paymentType === "credit")
+    ) {
+      tag = 58; // Assign tag 58 ---> for PSG: CC Physical Book- Group (Cash & Carry)
+    } else if (bookType.includes("Donate") && paymentType === "credit") {
+      tag = 59; // Assign tag 59 ---> for PSG: CC Donation
     }
-
-    const sanitizedLastName = lastName.toLowerCase().replace(/\W/g, "");
-
-    const firstInitial = firstName[0].toLowerCase();
-
-    const randomNumber1 = Math.floor(Math.random() * 10);
-    const randomNumber2 = Math.floor(Math.random() * 10);
-
-    return `${sanitizedLastName}${firstInitial}${randomNumber1}${randomNumber2}`;
   }
 
-  // const randomPassword = generatePassword(
-  //   req.body.firstName,
-  //   req.body.lastName
-  // );
-  // Declare randomPassword with an initial value of null or an empty string
-  let randomPassword = null;
-  if (req.body.bookType === "Fargo - Moorhead (Digital Coupon Book)") {
-    // Generate the random password only for digital books
-    randomPassword = generatePassword(req.body.firstName, req.body.lastName);
+  return tag;
+}
+
+function generatePassword(lastName, firstName) {
+  if (!lastName || !firstName) {
+    throw new Error("Missing required arguments: lastName and firstName");
   }
+
+  const sanitizedLastName = lastName.toLowerCase().replace(/\W/g, "");
+
+  const firstInitial = firstName[0].toLowerCase();
+
+  const randomNumber1 = Math.floor(Math.random() * 10);
+  const randomNumber2 = Math.floor(Math.random() * 10);
+
+  return `${sanitizedLastName}${firstInitial}${randomNumber1}${randomNumber2}`;
+}
+
+app.post(`/api/contact`, async (req, res) => {
+  console.log(
+    " <<<<< Received contact request in server for Active Campaign >>>>> req.body = ",
+    req.body
+  );
+  const apiKey = process.env.AC_API_KEY;
+  const { email, firstName, lastName, bookType, type } = req.body;
 
   try {
-    const email = req.body.email;
-    const apiKey = process.env.AC_API_KEY;
-    const checkedResponse = await axios.get(
-      `https://northpointeinsure57220.api-us1.com/api/3/contacts?filters[email]=${email}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Api-Token": apiKey,
-        },
-      }
+    // Check if contact already exists in Active Campaign --> GET
+    const contactCheckResponse = await makeApiRequest(
+      `contacts?filters[email]=${email}`,
+      "get",
+      null,
+      apiKey
+    );
+    // True if contact already exists
+    const contactExists =
+      contactCheckResponse.data.contacts &&
+      contactCheckResponse.data.contacts.length > 0;
+    // Package the response from Active Campaign
+    const contactInfoFromActiveCampaign = contactExists
+      ? contactCheckResponse.data.contacts[0]
+      : null;
+    // Assign the ID if contact already exists
+    const contactId = contactExists
+      ? contactCheckResponse.data.contacts[0].id
+      : null;
+    console.log(
+      " -----> Contact exists:",
+      contactExists,
+      " -----> Contact ID:",
+      contactId
     );
     console.log(
-      "Active campaign returner check",
-      checkedResponse.data.contacts
+      "Contact info from Active Campaign:",
+      contactInfoFromActiveCampaign
     );
-    const returnerId =
-      checkedResponse.data.contacts && checkedResponse.data.contacts.length > 0
-        ? checkedResponse.data.contacts[0].id
-        : null;
-    console.log(returnerId);
 
-    if (
-      checkedResponse.data.message ===
-        "No Result found for Subscriber with id 0" ||
-      returnerId === null
-    ) {
-      // code block runs to add a a new contact if there is no contact response from active campaign
-      const apiKey = process.env.AC_API_KEY;
-      const data = {
-        contact: {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          phone: req.body.phone,
-          email: req.body.email,
-          fieldValues: [
-            {
-              field: "1",
-              value: req.body.address,
-            },
-            {
-              field: "2",
-              value: req.body.city,
-            },
-            {
-              field: "3",
-              value: req.body.state,
-            },
-            {
-              field: "4",
-              value: req.body.zip,
-            },
-            {
-              field: "59",
-              value: req.body.organization,
-            },
-            {
-              field: "60",
-              value: req.body.url,
-            },
-            {
-              field: "63",
-              value: req.body.year,
-            },
-            {
-              field: "64",
-              value: req.body.email,
-            },
-            {
-              field: "66",
-              value: req.body.donation,
-            },
-            {
-              field: "65",
-              value: randomPassword,
-            },
-          ],
-        },
-      };
-
-      const response1 = await axios.post(
-        `https://northpointeinsure57220.api-us1.com/api/3/contacts`,
-        JSON.stringify(data),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Api-Token": apiKey,
-          },
-        }
+    if (contactExists) {
+      // ---------------------------
+      // UPDATE THE EXISTING CONTACT
+      // ---------------------------
+      console.log(
+        " ----- Contact exists -----> Response from Active Campaign: ",
+        contactInfoFromActiveCampaign
       );
-      console.log("Response from ActiveCampaign:", response1.data.contact);
-      const contactId = response1.data.contact.id;
-      console.log(contactId);
-
-      let list = 10;
-
-      //ADD THIS BACK IN WHEN REGION FILTERING IS ADDED
-      //Can add more regions as needed
-
-      // switch (req.body.region) {
-      //   case 1:
-      //     list = 10;
-      //     break;
-      //   case 2:
-      //     list = 11;
-      //     break;
-      //   default:
-      //     list = 0;
-      //     break;
-      // }
-
-      const response2 = await axios.post(
-        `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
-        JSON.stringify({
-          contactList: {
-            list: list,
-            contact: contactId,
-            status: 1,
-          },
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Api-Token": apiKey,
-          },
-        }
+      // Generate field values based on the req.body
+      const fieldValues = generateFieldValues(req.body);
+      console.log(
+        "Field values coming from contactData --- if a contact exists in Active Campaign ---> ",
+        fieldValues
       );
-      console.log("Response from adding contact to list:", response2.data);
-
-      let tag = 0;
-
-      // if (
-      //   req.body.bookType === "Physical Coupon Book" &&
-      //   req.body.type === "cash"
-      // ) {
-      //   tag = 58;
-      // } else if (
-      //   req.body.bookType === "Physical Coupon Book" ||
-      //   ("Fargo - Moorhead (Digital Coupon Book)" && req.body.type === "credit")
-      // ) {
-      //   tag = 56;
-      // } else if (req.body.bookType === "Donate") {
-      //   tag = 59;
-      // } else {
-      //   tag = 0;
-      // }
-      if (
-        req.body.bookType === "Physical Coupon Book" &&
-        (req.body.type === "cash" || req.body.type === "credit")
-      ) {
-        tag = 58; // 58 is for PSG: CC Physical Book- Group (Cash & Carry)
-      } else if (
-        req.body.bookType === "Fargo - Moorhead (Digital Coupon Book)" &&
-        req.body.type === "credit"
-      ) {
-        tag = 56; // 56 is for PSG: CC Digital- Any Group
-      } else if (req.body.bookType === "Donate") {
-        tag = 59; // 59 is for PSG: CC Donation
-      } else {
-        tag = 0;
-      }
-
-      const response3 = await axios.post(
-        `https://northpointeinsure57220.api-us1.com/api/3/contactTags`,
-        JSON.stringify({
-          contactTag: {
-            contact: contactId,
-            tag: tag,
-          },
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Api-Token": apiKey,
-          },
-        }
-      );
-      console.log("Response from adding tag to contact:", response3.data);
-      res.send(randomPassword);
-    } else {
-      // Code block to run if there is already a user in the active campaign database, updates existing information and updates the list a user is added to
-      const apiKey = process.env.AC_API_KEY;
-      const data = {
-        contact: {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          phone: req.body.phone,
-          email: req.body.email,
-          fieldValues: [
-            {
-              field: "1",
-              value: req.body.address,
-            },
-            {
-              field: "2",
-              value: req.body.city,
-            },
-            {
-              field: "3",
-              value: req.body.state,
-            },
-            {
-              field: "4",
-              value: req.body.zip,
-            },
-            {
-              field: "59",
-              value: req.body.organization,
-            },
-            {
-              field: "60",
-              value: req.body.url,
-            },
-            {
-              field: "63",
-              value: req.body.year,
-            },
-            {
-              field: "64",
-              value: req.body.email,
-            },
-            {
-              field: "66",
-              value: req.body.donation,
-            },
-          ],
-        },
-      };
-      res.send(randomPassword); // Send the password as a response, to register user to the table (if previously missed)
-
-      //Updates current active campaign data
-      const response1 = await axios.put(
-        `https://northpointeinsure57220.api-us1.com/api/3/contacts/${returnerId}`,
-        JSON.stringify(data),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Api-Token": apiKey,
-          },
-        }
-      );
-      console.log("Response from ActiveCampaign:", response1.data);
-
-      var list = 10;
-
-      //ADD THIS BACK IN WHEN REGION FILTERING IS ADDED
-      //Can add more regions as needed
-
-      // switch (req.body.region) {
-      //   case 1:
-      //     list = 10;
-      //     break;
-      //   case 2:
-      //     list = 11;
-      //     break;
-      //   default:
-      //     list = 0;
-      //     break;
-      // }
-      // console.log("returning list type is:", list)
-
-      //Retrieves returning contacts list's and then compairs an lists they are currently subscribed too to either add them to a new list or trigger the automation for the list
-      const returnerLists = await axios.get(
-        `https://northpointeinsure57220.api-us1.com/api/3/contacts/${returnerId}/contactLists`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Api-Token": apiKey,
-          },
-        }
-      );
-      const lists = returnerLists.data.contactLists;
-      console.log("The lists variable", lists);
-
-      for (let i = 0; i < lists.length; i++) {
-        const returnList = lists[i];
-        console.log("list in loop", returnList.list);
-        console.log("list to be added too", list);
-        if (Number(returnList.list) === list) {
-          const response2 = await axios.post(
-            `https://northpointeinsure57220.api-us1.com/api/3/contactAutomations`,
-            JSON.stringify({
-              contactAutomation: {
-                contact: returnerId,
-                automation: "46",
-              },
-            }),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Api-Token": apiKey,
-              },
-            }
-          );
-          console.log(
-            "response from adding contact to automation",
-            response2.data
-          );
-        } else {
-          const response2 = await axios.post(
-            `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
-            JSON.stringify({
-              contactList: {
-                list: list,
-                contact: returnerId,
-                status: 1,
-              },
-            }),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Api-Token": apiKey,
-              },
-            }
-          );
-          console.log("Response from adding contact to list:", response2.data);
-        }
-      }
-
-      const response2 = await axios.post(
-        `https://northpointeinsure57220.api-us1.com/api/3/contactLists`,
-        JSON.stringify({
-          contactList: {
-            list: list,
-            contact: returnerId,
-            status: 1,
-          },
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Api-Token": apiKey,
-          },
-        }
-      );
-      console.log("Response from adding contact to list:", response2.data);
-      console.log("returning book type is:", req.body.bookType);
-      console.log("type is:", req.body.type);
-      let tag = 0;
-
-      // if (
-      //   req.body.bookType === "Physical Coupon Book" &&
-      //   (req.body.type === "cash" || req.body.type === "credit")
-      // ) {
-      //   tag = 58;
-      // } else if (
-      //   // req.body.bookType === "Physical Coupon Book" ||
-      //   ("Fargo - Moorhead (Digital Coupon Book)" && req.body.type === "credit")
-      // ) {
-      //   tag = 56;
-      // } else if (req.body.bookType === "Donate") {
-      //   tag = 59;
-      // } else {
-      //   tag = 0;
-      // }
-      if (
-        req.body.bookType === "Physical Coupon Book" &&
-        (req.body.type === "cash" || req.body.type === "credit")
-      ) {
-        tag = 58;
-      } else if (
-        req.body.bookType === "Fargo - Moorhead (Digital Coupon Book)" &&
-        req.body.type === "credit"
-      ) {
-        tag = 56;
-      } else if (req.body.bookType === "Donate") {
-        tag = 59;
-      } else {
-        tag = 0;
-      }
-
-      const response3 = await axios.post(
-        `https://northpointeinsure57220.api-us1.com/api/3/contactTags`,
-        JSON.stringify({
-          contactTag: {
-            contact: returnerId,
-            tag: tag,
-          },
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Api-Token": apiKey,
-          },
-        }
+      // Create the data package to send to Active Campaign
+      const contactData = createContactData(
+        firstName,
+        lastName,
+        req.body.phone,
+        email,
+        fieldValues
       );
       console.log(
-        "Response from adding tag to a returning contact:",
-        response3.data
+        " contactData --- if a contact exists in Active Campaign ---> ",
+        contactData
+      );
+      // If there is already a user in the Active Campaign database, update existing information and update the list a user is added to
+      const updateActiveCampaignContact = await makeApiRequest(
+        `contacts/${contactId}`,
+        "put",
+        contactData,
+        apiKey
+      );
+      console.log(
+        " <<< Response from ActiveCampaign (updating existing contact) >>>: ",
+        updateActiveCampaignContact.status
+      );
+      // Send a response back to the client
+      return res.status(200).json({
+        message: "Contact updated successfully",
+      });
+    } else {
+      // -------------------------------------
+      // ADDING NEW CONTACT TO ACTIVE CAMPAIGN
+      // -------------------------------------
+      console.log(
+        " ----- No contact found, proceeding to create a new contact -----> "
+      );
+      console.log("bookType:", bookType);
+      console.log("Is bookType an array?:", Array.isArray(bookType));
+      console.log(
+        "Does bookType include 'Fargo - Moorhead (Digital Coupon Book)'?:",
+        bookType.includes("Fargo - Moorhead (Digital Coupon Book)")
       );
 
-      res.sendStatus(200);
+      // Check if bookType is an array and contains the specified value
+      if (
+        Array.isArray(bookType) &&
+        bookType.includes("Fargo - Moorhead (Digital Coupon Book)")
+      ) {
+        // Generate a random password for the contact if bookType is 'Fargo - Moorhead (Digital Coupon Book)'
+        const randomPassword = generatePassword(firstName, lastName);
+        // console.log(
+        //   "Generated randomPassword for digital book:",
+        //   randomPassword
+        // );
+
+        // Add the password to the fieldValues array, to send to Active Campaign
+        const fieldValuesForNewContact = generateFieldValues(
+          req.body,
+          randomPassword
+        );
+        // console.log(
+        //   " -----> Adding a new contact -----> fieldValuesForNewContact -----> ",
+        //   fieldValuesForNewContact
+        // );
+
+        // Create the new contact package to send to Active Campaign
+        const newContactData = createContactData(
+          firstName,
+          lastName,
+          req.body.phone,
+          email,
+          fieldValuesForNewContact
+        );
+        // console.log(
+        //   " -----> Sending package to Active Campaign -----> newContactData -----> ",
+        //   newContactData
+        // );
+
+        // Create the new contact in Active Campaign
+        const createResponse = await makeApiRequest(
+          `contacts`,
+          "post",
+          newContactData,
+          apiKey
+        );
+        // console.log(
+        //   " -----> Response from ActiveCampaign (creating new contact): ",
+        //   createResponse.data.contact
+        // );
+
+        // ------------------------------------------------------------------------------------
+        // Determine the tag to be added to the contact based on the book type and payment type
+        // ------------------------------------------------------------------------------------
+        const tag = determineTag(bookType, type);
+        // console.log(" <<< Tag to be added to the contact >>> -----> ", tag);
+
+        // Package to send Active Campaign
+        const tagPackage = {
+          contactTag: {
+            contact: Number(createResponse.data.contact.id),
+            tag: tag,
+          },
+        };
+
+        // Add the tag to the contact in Active Campaign
+        const assignTag = await makeApiRequest(
+          `contactTags`,
+          "post",
+          tagPackage,
+          apiKey
+        );
+        console.log(
+          " <<< Response from adding tag to contact >>>:",
+          assignTag.status,
+          " -----> ",
+          assignTag.statusText
+        );
+        // console.log(
+        //   " ----- Tag data added to Active Campaign: ",
+        //   assignTag.data
+        // );
+
+        // -------------------------------------------------------
+        // Add the contact to the relevant list in Active Campaign
+        // -------------------------------------------------------
+        // The variable 'list' will have to be set depending on the book year
+        //  - As of September 2024, list = 10 is for 2024-2025 book year
+        let list = 10;
+        // Package to send to Active Campaign
+        const contactList = {
+          contactList: {
+            list: list,
+            contact: Number(createResponse.data.contact.id),
+            status: 1,
+          },
+        };
+        // console.log(
+        //   " -----> Adding contact to list --- contactList contains: ",
+        //   contactList
+        // );
+
+        // Send the package, add the contact to the relevant list in Active Campaign
+        const addContactToList = await makeApiRequest(
+          `contactLists`,
+          "post",
+          contactList,
+          apiKey
+        );
+        // console.log(
+        //   " <<< Response from adding contact to list >>>:",
+        //   addContactToList.data
+        // );
+        console.log(
+          ` <<< Response from adding contact to list >>>: ${addContactToList.status} -----> ${addContactToList.statusText}`
+        );
+
+        // ----------------------------
+        // Send response back to client
+        // ----------------------------
+        return res.status(201).json({
+          message: "Contact created successfully",
+          password: randomPassword,
+        });
+      } else {
+        // If bookType does not meet the condition, respond with a message
+        console.log(
+          " ----- bookType is NOT digital, no new contact created ----- "
+        );
+        return res.status(400).json({
+          message: "No relevant bookType found, no new contact created.",
+        });
+      }
     }
   } catch (error) {
-    console.error("Error sending contact to Active Campaign", error);
-    res.sendStatus(500);
+    console.log("Error sending contact to ActiveCampaign:", error);
+    res.status(500).json({ message: "Error checking or updating contact" });
   }
 });
 
@@ -679,8 +592,8 @@ app.post("/api/recoverPassword", async (req, res) => {
   }
 });
 
-// End Active Campaign ~~~~~~~~~~ //
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// End Active Campaign
+// ~~~~~~~~~~~~~~~~ //
 
 // Serve index.html
 app.get("/", (req, res) => {

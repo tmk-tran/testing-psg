@@ -72,50 +72,63 @@ router.get("/byrefid", rejectUnauthenticated, (req, res) => {
     });
 });
 
+// From sellers saga
 router.get("/:orgId/:yearId", rejectUnauthenticated, (req, res) => {
   // console.log("From sellers router: ", req.params);
   const orgId = req.params.orgId;
   const yearId = req.params.yearId;
 
   const queryText = `
-  SELECT
-      s.id,
-      s."refId",
-      s.lastname,
-      s.firstname,
-      s.level,
-      s.teacher,
-      s.initial_books,
-      s.additional_books,
-      s.books_returned,
-      ROUND(s.cash::numeric, 2) AS cash,
-      ROUND(s.checks::numeric, 2) AS checks,
-      ROUND(s.digital::numeric, 2) AS digital,
-      ROUND(s.donations::numeric, 2) AS donations,
-      ROUND(s.digital_donations::numeric, 2) AS digital_donations,
-      s.notes,
-      s.organization_id,
-      s.is_deleted,
-      s.books_due,
-      o.organization_name,
-      o.address,
-      o.city,
-      o.state,
-      o.zip,
-      t.physical_book_cash,
-      t.physical_book_digital,
-      t.digital_book_credit,
-      ROUND(t.seller_earnings::numeric, 2) AS seller_earnings
-  FROM
-      sellers s
-  INNER JOIN
-      organization o ON s.organization_id = o.id
-  INNER JOIN
-      transactions t ON s."refId" = t."refId"
-  WHERE
-      s.organization_id = $1
-      AND s.coupon_book_id = $2
-  ORDER BY s.lastname ASC;    
+      SELECT
+          s.id,
+          s."refId",
+          s.lastname,
+          s.firstname,
+          s.level,
+          s.teacher,
+          s.initial_books,
+          s.additional_books,
+          s.books_returned,
+          ROUND(s.cash::numeric, 2) AS cash,
+          ROUND(s.checks::numeric, 2) AS checks,
+          ROUND(s.digital::numeric, 2) AS digital,
+          ROUND(s.donations::numeric, 2) AS donations,
+          ROUND(s.digital_donations::numeric, 2) AS digital_donations,
+          s.notes,
+          s.organization_id,
+          s.is_deleted,
+          s.books_due,
+          o.organization_name,
+          o.address,
+          o.city,
+          o.state,
+          o.zip,
+          COALESCE(t.physical_book_cash, 0) AS physical_book_cash,
+          COALESCE(t.physical_book_digital, 0) AS physical_book_digital,
+          COALESCE(t.digital_book_credit, 0) AS digital_book_credit,
+          ROUND(COALESCE(t.seller_earnings, 0), 2) AS seller_earnings,
+          -- Calculate the total donations
+          ROUND(
+              COALESCE(s.donations, 0) + COALESCE(s.digital_donations, 0), 
+              2
+          ) AS total_donations,
+          -- Calculate the sum of seller_earnings and total_donations
+          ROUND(
+              COALESCE(t.seller_earnings, 0) + 
+              COALESCE(s.donations, 0) + 
+              COALESCE(s.digital_donations, 0),
+              2
+          ) AS total_seller_earnings
+      FROM
+          sellers s
+      INNER JOIN
+          organization o ON s.organization_id = o.id
+      INNER JOIN
+          transactions t ON s."refId" = t."refId"
+      WHERE
+          s.organization_id = $1
+          AND s.coupon_book_id = $2
+      ORDER BY s.lastname ASC;  
   `;
 
   pool

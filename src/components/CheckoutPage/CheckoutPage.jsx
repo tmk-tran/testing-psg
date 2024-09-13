@@ -50,6 +50,9 @@ export default function CheckoutPage({ caseType }) {
   const refId = paramsObject.refId;
   // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
+  console.log("selectedProducts in CheckoutPage: ", selectedProducts);
+  const bookTypeArray = selectedProducts.map((product) => product.bookType)
+  console.log("bookTypeArray: ", bookTypeArray);
   const orderTotal = location.state?.orderTotal ?? 0;
   const customDonation = location.state?.customDonation ?? 0;
   // Access digital payment amount //
@@ -108,7 +111,7 @@ export default function CheckoutPage({ caseType }) {
       url: "testpsg.fly.dev/fargo/coupon",
       year: currentYear[0].year,
       donation: customDonation,
-      bookType: selectedProducts[0].bookType,
+      bookType: bookTypeArray,
       type: caseType,
     };
     // console.log("Contact Data from acInfo", contactData);

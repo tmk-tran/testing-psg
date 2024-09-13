@@ -400,13 +400,14 @@ export default function SellersTable({ forwardedRef }) {
                                 />
                               </div>
                             )}
-                            {/* ~~~~~ Cash Cell ~~~~~ */}
+                            {/* ~~~~~ Money Data Cells ~~~~~ */}
                             {column.id === "donations" && <>$</>}
                             {column.id === "digital_donations" && <>$</>}
                             {column.id === "digital" && <>$</>}
                             {column.id === "checks" && <>$</>}
                             {column.id === "cash" && <>$</>}
                             {column.id === "seller_earnings" && <>$</>}
+                            {column.id === "total_seller_earnings" && <>$</>}
                             {/* ~~~~~ Action Icons ~~~~~ */}
                             {column.id !== "refId" &&
                               (column.id === "actions" ? (
@@ -499,7 +500,8 @@ export default function SellersTable({ forwardedRef }) {
                               column.id === "donations" ||
                               column.id === "digital_donations" ||
                               column.id === "digital" ||
-                              column.id === "seller_earnings"
+                              column.id === "seller_earnings" ||
+                              column.id === "total_seller_earnings"
                               ? "$" + parseFloat(sum).toFixed(2)
                               : column.id === "refId"
                               ? `Sellers: ${Number(sellers.length)}`
