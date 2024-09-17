@@ -532,12 +532,79 @@ app.post(`/api/contact`, async (req, res) => {
           password: randomPassword,
         });
       } else {
-        // If bookType does not meet the condition, respond with a message
-        console.log(
-          " ----- bookType is NOT digital, no new contact created ----- "
+        // -----------------------------------------------------------
+        // ADD NEW CONTACT TO ACTIVE CAMPAIGN (no digital book)
+        // -----------------------------------------------------------
+        // Generate field values based on the req.body
+        const fieldValuesForNewContact = generateFieldValues(req.body);
+        // Create the new contact package to send to Active Campaign
+        const newContactData = createContactData(
+          firstName,
+          lastName,
+          req.body.phone,
+          email,
+          fieldValuesForNewContact
         );
-        return res.status(400).json({
-          message: "No relevant bookType found, no new contact created.",
+        // Create the new contact in Active Campaign
+        const createResponse = await makeApiRequest(
+          `contacts`,
+          "post",
+          newContactData,
+          apiKey
+        );
+        // ------------------------------------------------------------------------------------
+        // Determine the tag to be added to the contact based on the book type and payment type
+        // ------------------------------------------------------------------------------------
+        const tag = determineTag(bookType, type);
+        // Package to send Active Campaign
+        const tagPackage = {
+          contactTag: {
+            contact: Number(createResponse.data.contact.id),
+            tag: tag,
+          },
+        };
+        // Add the tag to the contact in Active Campaign
+        const assignTag = await makeApiRequest(
+          `contactTags`,
+          "post",
+          tagPackage,
+          apiKey
+        );
+        console.log(
+          " <<< Response from adding tag to contact >>>:",
+          assignTag.status,
+          " -----> ",
+          assignTag.statusText
+        );
+        // -------------------------------------------------------
+        // Add the contact to the relevant list in Active Campaign
+        // -------------------------------------------------------
+        // The variable 'list' will have to be set depending on the book year
+        //  - As of September 2024, list = 10 is for 2024-2025 book year
+        let list = 10;
+        // Package to send to Active Campaign
+        const contactList = {
+          contactList: {
+            list: list,
+            contact: Number(createResponse.data.contact.id),
+            status: 1,
+          },
+        };
+        // Send the package, add the contact to the relevant list in Active Campaign
+        const addContactToList = await makeApiRequest(
+          `contactLists`,
+          "post",
+          contactList,
+          apiKey
+        );
+        console.log(
+          ` <<< Response from adding contact to list >>>: ${addContactToList.status} -----> ${addContactToList.statusText}`
+        );
+        // ----------------------------
+        // Send response back to client
+        // ----------------------------
+        return res.status(201).json({
+          message: "Contact created successfully",
         });
       }
     }
@@ -591,7 +658,6 @@ app.post("/api/recoverPassword", async (req, res) => {
     res.sendStatus(500);
   }
 });
-
 // End Active Campaign
 // ~~~~~~~~~~~~~~~~ //
 

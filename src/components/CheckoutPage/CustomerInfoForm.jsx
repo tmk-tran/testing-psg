@@ -33,9 +33,8 @@ export default function CustomerInfoForm({
   setZip,
   setFormSubmitted,
 }) {
-
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+    setEmail(e.target.value.toLowerCase()); // Convert email to lowercase
     // Clear any existing email format error when user types in the email field
     setErrors({ ...errors, email: "" });
     setFormSubmitted(false);
