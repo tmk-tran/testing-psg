@@ -27,7 +27,22 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 
   const queryText = `
           SELECT
-            c.*,
+            c.id,
+            c.merchant_id,
+            c.is_deleted,
+            c.filename_front,
+            c.front_view_url,
+            REPLACE(c.filename_back, ' ', '_') AS filename_back, -- Replace spaces with underscores
+            REPLACE(c.filename_front, ' ', '_') AS filename_front, -- Replace spaces with underscores
+            c.back_view_url,
+            c.offer,
+            c.value,
+            c.exclusions,
+            c.expiration,
+            c.additional_info,
+            c.task_id,
+            c.book_id,
+            c.is_auto_generated,
             cl.coupon_id AS coupon_id,
             ARRAY_AGG(l.id) AS location_id,
             ARRAY_AGG(l.location_name) AS location_name,

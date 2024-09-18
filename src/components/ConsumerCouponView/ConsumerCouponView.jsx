@@ -27,6 +27,7 @@ export default function ConsumerCouponView() {
   const user = User();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  console.log(isMobile);
   const [isLoading, setIsLoading] = useState(true);
   const [toggleView, setToggleView] = useState(false);
   const [query, setQuery] = useState("");
@@ -36,7 +37,7 @@ export default function ConsumerCouponView() {
   const coupons = couponsData() || [];
   console.log(coupons);
   // For PDF solution
-  // const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
+  const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
   // For Coupon Book Year
   const activeYear = appActiveYear();
   const expirationYear =
@@ -109,13 +110,14 @@ export default function ConsumerCouponView() {
   };
 
   // Prepare coupons with complete URLs - in PROD
-  // const preparedCoupons = currentCoupons.map((coupon) => ({
-  //   ...coupon,
-  //   backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
-  //   frontViewUrl: coupon.frontViewUrl
-  //     ? `${baseURL}${coupon.frontViewUrl}`
-  //     : null,
-  // }));
+  const preparedCoupons = currentCoupons.map((coupon) => ({
+    ...coupon,
+    backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
+    frontViewUrl: coupon.frontViewUrl
+      ? `${baseURL}${coupon.frontViewUrl}`
+      : null,
+  }));
+  console.log(preparedCoupons);
 
   return (
     <Box
@@ -200,7 +202,8 @@ export default function ConsumerCouponView() {
                 timeout={15000}
               />
             ) : (
-              currentCoupons.map((coupon, index) => (
+              // currentCoupons.map((coupon, index) => (
+              preparedCoupons.map((coupon, index) => (
                 <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
               ))
             )}
@@ -213,7 +216,7 @@ export default function ConsumerCouponView() {
       {/* ~~~~~ Pagination ~~~~~ */}
       <Pagination
         // count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
-        count={100}
+        count={100} // Simulating lots of coupons
         page={currentPage}
         onChange={(event, page) => paginate(page)}
         color="primary"

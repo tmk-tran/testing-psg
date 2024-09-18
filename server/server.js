@@ -316,6 +316,60 @@ function generatePassword(lastName, firstName) {
 
   return `${sanitizedLastName}${firstInitial}${randomNumber1}${randomNumber2}`;
 }
+// If there is already a user in the Active Campaign database, update existing information and update the list a user is added to
+async function updateActiveCampaignContact(contactId, contactData, apiKey) {
+  const updateResponse = await makeApiRequest(
+    `contacts/${contactId}`,
+    "put",
+    createContactData(contactData),
+    apiKey
+  );
+  console.log(
+    "<<< Updated existing contact in Active Campaign >>>:",
+    updateResponse.status
+  );
+}
+
+// Create new contact
+async function createNewContact(contactData, apiKey) {
+  const createResponse = await makeApiRequest(
+    `contacts`,
+    "post",
+    createContactData(contactData),
+    apiKey
+  );
+  console.log(
+    "<<< Created new contact in Active Campaign >>>:",
+    createResponse.status
+  );
+  return createResponse.data.contact.id; // Return the contact ID
+}
+
+// Assign a tag to a contact
+async function assignTagToContact(contactId, tag, apiKey) {
+  const tagPackage = { contactTag: { contact: Number(contactId), tag } };
+  const assignTagResponse = await makeApiRequest(
+    `contactTags`,
+    "post",
+    tagPackage,
+    apiKey
+  );
+  console.log("<<< Added tag to contact >>>:", assignTagResponse.status);
+}
+
+// Add contact to a list
+async function addContactToList(contactId, listId, apiKey) {
+  const contactList = {
+    contactList: { list: listId, contact: Number(contactId), status: 1 },
+  };
+  const addToListResponse = await makeApiRequest(
+    `contactLists`,
+    "post",
+    contactList,
+    apiKey
+  );
+  console.log("<<< Added contact to list >>>:", addToListResponse.status);
+}
 
 app.post(`/api/contact`, async (req, res) => {
   console.log(
@@ -323,7 +377,7 @@ app.post(`/api/contact`, async (req, res) => {
     req.body
   );
   const apiKey = process.env.AC_API_KEY;
-  const { email, firstName, lastName, bookType, type } = req.body;
+  const { email, firstName, lastName, phone, bookType, type } = req.body;
 
   try {
     // Check if contact already exists in Active Campaign --> GET
@@ -356,42 +410,58 @@ app.post(`/api/contact`, async (req, res) => {
       contactInfoFromActiveCampaign
     );
 
+    // Generate field values based on the req.body
+    let fieldValues = generateFieldValues(req.body);
+    console.log(
+      "Common field values coming from app.post for Active Campaign ---> ",
+      fieldValues
+    );
+
     if (contactExists) {
       // ---------------------------
       // UPDATE THE EXISTING CONTACT
       // ---------------------------
-      console.log(
-        " ----- Contact exists -----> Response from Active Campaign: ",
-        contactInfoFromActiveCampaign
-      );
-      // Generate field values based on the req.body
-      const fieldValues = generateFieldValues(req.body);
-      console.log(
-        "Field values coming from contactData --- if a contact exists in Active Campaign ---> ",
-        fieldValues
-      );
-      // Create the data package to send to Active Campaign
-      const contactData = createContactData(
-        firstName,
-        lastName,
-        req.body.phone,
-        email,
-        fieldValues
-      );
-      console.log(
-        " contactData --- if a contact exists in Active Campaign ---> ",
-        contactData
-      );
+      // console.log(
+      //   " ----- Contact exists -----> Response from Active Campaign: ",
+      //   contactInfoFromActiveCampaign
+      // );
+      // // Generate field values based on the req.body
+      // const fieldValues = generateFieldValues(req.body);
+      // console.log(
+      //   "Field values coming from contactData --- if a contact exists in Active Campaign ---> ",
+      //   fieldValues
+      // );
+      // // Create the data package to send to Active Campaign
+      // const contactData = createContactData(
+      //   firstName,
+      //   lastName,
+      //   phone,
+      //   email,
+      //   fieldValues
+      // );
+      // console.log(
+      //   " contactData --- if a contact exists in Active Campaign ---> ",
+      //   contactData
+      // );
       // If there is already a user in the Active Campaign database, update existing information and update the list a user is added to
-      const updateActiveCampaignContact = await makeApiRequest(
-        `contacts/${contactId}`,
-        "put",
-        contactData,
+      // const updateActiveCampaignContact = await makeApiRequest(
+      //   `contacts/${contactId}`,
+      //   "put",
+      //   contactData,
+      //   apiKey
+      // );
+      // console.log(
+      //   " <<< Response from ActiveCampaign (updating existing contact) >>>: ",
+      //   updateActiveCampaignContact.status
+      // );
+      const updateResponse = await updateActiveCampaignContact(
+        contactId,
+        { firstName, lastName, phone, email, fieldValues },
         apiKey
       );
       console.log(
         " <<< Response from ActiveCampaign (updating existing contact) >>>: ",
-        updateActiveCampaignContact.status
+        updateResponse.status
       );
       // Send a response back to the client
       return res.status(200).json({

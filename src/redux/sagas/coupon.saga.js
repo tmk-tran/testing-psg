@@ -48,6 +48,8 @@ function* couponFiles(action) {
         locationMerchantId: coupon.location_merchant_id,
         additionalDetails: coupon.location_additional_details,
         merchantName: coupon.merchant_name,
+        frontViewUrl: coupon.filename_front,
+        backViewUrl: coupon.filename_back,
       };
 
       if (coupon.front_view_pdf && coupon.front_view_pdf.data) {
