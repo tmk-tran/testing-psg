@@ -15,7 +15,7 @@ import {
 import CustomerInfoForm from "./CustomerInfoForm";
 import OrderSummaryDisplay from "./OrderSummaryDisplay";
 import PayPalButtons from "./PayPalButtons";
-import Typography from "../Typography/Typography";
+import CustomTypography from "../Typography/Typography";
 import CustomButton from "../CustomButton/CustomButton";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import { historyHook } from "../../hooks/useHistory";
@@ -27,6 +27,7 @@ import {
   CustomerAdded,
 } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
+import { backgroundColor, primaryColor, secondaryColor } from "../Utils/colors";
 
 export const containerStyle = {
   width: "50vw",
@@ -50,9 +51,7 @@ export default function CheckoutPage({ caseType }) {
   const refId = paramsObject.refId;
   // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
-  console.log("selectedProducts in CheckoutPage: ", selectedProducts);
-  const bookTypeArray = selectedProducts.map((product) => product.bookType)
-  console.log("bookTypeArray: ", bookTypeArray);
+  const bookTypeArray = selectedProducts.map((product) => product.bookType);
   const orderTotal = location.state?.orderTotal ?? 0;
   const customDonation = location.state?.customDonation ?? 0;
   // Access digital payment amount //
@@ -234,7 +233,31 @@ export default function CheckoutPage({ caseType }) {
       case 2:
         return (
           <div>
-            <Typography
+            <Box
+              sx={{
+                textAlign: "center",
+                py: 3,
+                mb: 2,
+                color: "ghostwhite",
+                backgroundColor: backgroundColor.color,
+              }}
+            >
+              <CustomTypography
+                label="Almost there! Please click 'Complete Order' to finalize your purchase"
+                variant="body1"
+                sx={{ fontWeight: "bold" }}
+              />
+              <CustomTypography
+                label="*If you do not click the 'Complete Order' button, your purchase will not be completed, and you will not receive your order"
+                variant="caption"
+                sx={{
+                  textAlign: "center",
+                  mb: 3,
+                  color: "lightgray",
+                }}
+              />
+            </Box>
+            <CustomTypography
               label="Order Confirmation"
               variant="h6"
               sx={{ ml: 6, pt: 4 }}
@@ -401,9 +424,9 @@ export default function CheckoutPage({ caseType }) {
         digital_book_credit: digitalBookCredit,
       },
     };
-  
+
     let updateActions = [updateAction];
-  
+
     if (customDonation > 0) {
       const donationAction = {
         type: "UPDATE_DONATIONS",
@@ -418,7 +441,7 @@ export default function CheckoutPage({ caseType }) {
       };
       updateActions.push(donationAction);
     }
-  
+
     if (orderTotal > 0) {
       const paymentAction = {
         type: "UPDATE_DIGITAL_PAYMENTS",
@@ -433,7 +456,7 @@ export default function CheckoutPage({ caseType }) {
       };
       updateActions.push(paymentAction);
     }
-  
+
     updateActions.forEach((action) => {
       dispatch(action);
     });
@@ -498,25 +521,27 @@ export default function CheckoutPage({ caseType }) {
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~ CHECKOUT NAV BUTTONS ~~~~~~~~~~ */}
         <Box sx={navButtonStyle}>
-          <CustomButton label="Return to Store" onClick={returnToStore} disabled={ activeStep === 1 ? true : false } />
+          <CustomButton
+            label="Return to Store"
+            onClick={returnToStore}
+            disabled={activeStep === 1 || activeStep === 2 ? true : false}
+          />
           <CustomButton
             label={
-              activeStep === steps.length - 1
-                ? "Complete Order"
-                : "Continue"
+              activeStep === steps.length - 1 ? "Complete Order" : "Continue"
             }
             onClick={
               activeStep === 0
                 ? handleForm // First step, check form info
-                // ~~~ HAD THIS, BUT IT WAS CAUSING AN EXTRA BOOK TO GET ADDED ~~~ //
+                : // ~~~ HAD THIS, BUT IT WAS CAUSING AN EXTRA BOOK TO GET ADDED ~~~ //
                 // : activeStep === 1
                 // ? updateTransactions // If it's the second step, update transactions
-                : activeStep === 2
+                activeStep === 2
                 ? handleSubmit // If it's the last step, handle form submission
                 : handleNext // Otherwise, move to the next step
             }
             variant="contained"
-            disabled={ activeStep === 1 ? true : false }
+            disabled={activeStep === 1 ? true : false}
           />
         </Box>
       </div>
