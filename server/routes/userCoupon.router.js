@@ -24,6 +24,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const userId = req.params.id;
   const yearId = req.query.yearId;
+  const redeemed = req.query.redeemed === "true"; // pass ?redeemed=true or false
 
   const queryText = `
           SELECT
@@ -68,7 +69,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
             coupon_book cb ON c.book_id = cb.id
           WHERE
             uc.user_id = $1
-            AND uc.redeemed = false
+            AND uc.redeemed = $3
             AND uc.show_book = true
             AND cb.id = $2
             AND c.is_deleted = false
@@ -79,7 +80,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
         `;
 
   pool
-    .query(queryText, [userId, yearId])
+    .query(queryText, [userId, yearId, redeemed])
     .then((result) => {
       res.send(result.rows);
     })

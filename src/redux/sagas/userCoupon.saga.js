@@ -14,6 +14,18 @@ function* fetchUserBooksSaga() {
   }
 }
 
+function* fetchRedeemedCouponsSaga(action) {
+  try {
+    const { userId, yearId } = action.payload; // Pass both from the dispatch
+    const response = yield axios.get(
+      `/api/userCoupon/${userId}?yearId=${yearId}&redeemed=true`
+    );
+    yield put({ type: "SET_REDEEMED_COUPONS", payload: response.data });
+  } catch (error) {
+    console.log("error in fetchRedeemedCouponsSaga", error);
+  }
+}
+
 function* addCoupon(action) {
   try {
     yield axios.post(`/api/userCoupon/`, action.payload);
@@ -41,6 +53,7 @@ function* releaseBook(action) {
 
 export default function* userCouponSaga() {
   yield takeEvery("FETCH_CONSUMER_BOOKS", fetchUserBooksSaga);
+  yield takeEvery("FETCH_REDEEMED_COUPONS", fetchRedeemedCouponsSaga);
   yield takeEvery("ADD_TO_CONSUMER_LIST", addCoupon);
   yield takeEvery("RELEASE_COUPON_BOOK", releaseBook);
 }

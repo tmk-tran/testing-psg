@@ -1,27 +1,22 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { User } from "../../hooks/reduxStore";
-import { border, borderPrimaryColor } from "../Utils/colors";
+import { borderPrimaryColor } from "../Utils/colors";
 import { redeemCouponSweetAlert } from "../Utils/sweetAlerts";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { centeredStyle, flexRowSpace } from "../Utils/pageStyles";
-import { capitalizeWords } from "../Utils/helpers";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import BottomSection from "./BottomSection";
-import RedeemButton from "./RedeemButton";
-import PdfThumbnail from "../PdfThumbnail/PdfThumbnail";
-import NoFile from "./NoFile";
 import ThumbView from "./ThumbVIew";
 import CouponDetails from "./CouponDetails";
 
-export default function CouponCard({ isMobile, coupon, i }) {
+export default function CouponCard({ coupon, i, isMobile, redeemed }) {
   const dispatch = dispatchHook();
 
   const user = User() || {};
 
   const cardStyle = {
     mb: 4,
-    width: isMobile ? "100%" : "75%",
     backgroundColor: "#F0F0F0",
   };
 
@@ -90,6 +85,7 @@ export default function CouponCard({ isMobile, coupon, i }) {
             coupon={coupon}
             user={user}
             handleRedeem={handleRedeem}
+            redeemed={redeemed}
           />
         </Box>
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}

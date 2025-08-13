@@ -10,6 +10,7 @@ export default function CouponDetails({
   coupon,
   user,
   handleRedeem,
+  redeemed,
 }) {
   return (
     <>
@@ -66,6 +67,7 @@ export default function CouponDetails({
             coupon={coupon}
             user={user}
             handleRedeem={handleRedeem}
+            redeemed={redeemed}
           />
         </Box>
       ) : (
@@ -98,12 +100,21 @@ export default function CouponDetails({
           </Box>
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ Redeem Button ~~~~~~~~~~ */}
-          <RedeemButton
-            isMobile={isMobile}
-            coupon={coupon}
-            user={user}
-            handleRedeem={handleRedeem}
-          />
+          {redeemed ? (
+            <RedeemButton 
+              isMobile={isMobile}
+              coupon={coupon}
+              user={user}
+              disabled
+            />
+          ) : (
+            <RedeemButton
+              isMobile={isMobile}
+              coupon={coupon}
+              user={user}
+              handleRedeem={handleRedeem}
+            />
+          )}
         </>
       )}
     </>
