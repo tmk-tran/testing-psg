@@ -1,5 +1,7 @@
 import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
+import { formatCoupons } from "../../components/Utils/couponHelpers";
+import { fetchCouponFilesFailure } from "./actions";
 
 function* fetchUserBooksSaga() {
   try {
@@ -20,9 +22,39 @@ function* fetchRedeemedCouponsSaga(action) {
     const response = yield axios.get(
       `/api/userCoupon/${userId}?yearId=${yearId}&redeemed=true`
     );
-    yield put({ type: "SET_REDEEMED_COUPONS", payload: response.data });
+    console.log("Incoming response from fetchRedeemedCouponsSaga: ", response);
+
+    // Ensure data exists
+    const data = response.data || [];
+
+    // Format base coupon fields
+    let formattedFiles = formatCoupons(data);
+
+    // Add blob conversion logic
+    formattedFiles = formattedFiles.map((file, idx) => {
+      const coupon = response.data[idx]; // get original coupon to access PDFs
+
+      if (coupon.front_view_pdf?.data) {
+        file.frontViewBlob = new Blob(
+          [Uint8Array.from(coupon.front_view_pdf.data)],
+          { type: "application/pdf" }
+        );
+      }
+
+      if (coupon.back_view_pdf?.data) {
+        file.backViewBlob = new Blob(
+          [Uint8Array.from(coupon.back_view_pdf.data)],
+          { type: "application/pdf" }
+        );
+      }
+
+      return file;
+    });
+
+    yield put({ type: "SET_REDEEMED_COUPONS", payload: formattedFiles });
   } catch (error) {
-    console.log("error in fetchRedeemedCouponsSaga", error);
+    console.error("error in fetchRedeemedCouponsSaga", error);
+    // yield put(fetchCouponFilesFailure(error.message)); Not wired yet
   }
 }
 

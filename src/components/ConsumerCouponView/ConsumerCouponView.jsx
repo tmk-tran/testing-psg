@@ -37,7 +37,7 @@ export default function ConsumerCouponView() {
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const coupons = couponsData() || [];
+  const coupons = couponsData() || []; // Returning URLs, not Pdfs
   // For PDF solution
   const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
   // For Coupon Book Year
@@ -85,6 +85,7 @@ export default function ConsumerCouponView() {
     // setCurrentPage(1); // Reset to the first page when clearing the search
   };
 
+  // TODO: Fix pagination count logic for redeemed list
   const couponsPerPage = isMobile ? 5 : 10;
   const indexOfLastCoupon = currentPage * couponsPerPage;
   const indexOfFirstCoupon = indexOfLastCoupon - couponsPerPage;
@@ -92,6 +93,7 @@ export default function ConsumerCouponView() {
     indexOfFirstCoupon,
     indexOfLastCoupon
   );
+
   const totalFilteredMerchants =
     query.trim() === "" ? coupons.length : filteredMerchants.length;
 
@@ -107,7 +109,6 @@ export default function ConsumerCouponView() {
       ? `${baseURL}${coupon.frontViewUrl}`
       : null,
   }));
-  console.log(preparedCoupons);
 
   return (
     <Box
@@ -141,7 +142,7 @@ export default function ConsumerCouponView() {
       <Box
         sx={{
           mb: 2,
-          width: isMobile ? "100%" : "75%",
+          width: isMobile ? "100%" : "75%", //set fixed width here
           ...(isMobile ? flexColumn : flexRowSpace),
           // border: "1px solid red",
         }}
@@ -150,6 +151,7 @@ export default function ConsumerCouponView() {
           gap={1}
           direction={isMobile ? "column" : "row"}
           justifyContent="space-between"
+          // marginX={4}
           sx={{ width: "100%" }}
         >
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -171,7 +173,6 @@ export default function ConsumerCouponView() {
             label1="View Redeemed"
             label2="View Active"
             toggleState={toggleView}
-            
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~ Valid through ~~~~~~ */}

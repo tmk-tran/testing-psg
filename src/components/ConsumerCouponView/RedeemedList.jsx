@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import CouponCard from "./CouponCard";
+import { useDispatch } from "react-redux";
 import { appActiveYear, User, userBooksData } from "../../hooks/reduxStore";
 import { useMediaQuery, useTheme } from "@mui/material";
+
+import CouponCard from "./CouponCard";
 
 const RedeemedList = () => {
   const dispatch = useDispatch();
@@ -12,9 +13,7 @@ const RedeemedList = () => {
   // Select redeemed coupons from reducer
   const user = User();
   const userCoupons = userBooksData();
-  console.log("Incoming coupons:", userCoupons);
   const redeemedCoupons = userCoupons?.redeemed;
-  console.log("Redeemed coupons:", redeemedCoupons);
   // For Coupon Book Year
   const activeYear = appActiveYear();
   // Year ID
@@ -29,10 +28,20 @@ const RedeemedList = () => {
     dispatch(dispatchAction);
   }, [activeYear]);
 
+  // Prepare coupons with complete URLs
+  const baseURL = "https://fly.storage.tigris.dev/coupons/";
+  const preparedRedeemedCoupons = redeemedCoupons?.map((coupon) => ({
+    ...coupon,
+    backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
+    frontViewUrl: coupon.frontViewUrl
+      ? `${baseURL}${coupon.frontViewUrl}`
+      : null,
+  }));
+
   return (
     <div>
-      {redeemedCoupons ? (
-        redeemedCoupons.map((coupon, index) => (
+      {preparedRedeemedCoupons && preparedRedeemedCoupons.length > 0 ? (
+        preparedRedeemedCoupons.map((coupon, index) => (
           <CouponCard
             key={index}
             coupon={coupon}

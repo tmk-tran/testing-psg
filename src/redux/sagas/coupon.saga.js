@@ -1,6 +1,7 @@
 import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 import { fetchCouponFilesFailure } from "./actions";
+import { formatCoupons } from "../../components/Utils/couponHelpers";
 
 // Should be changed to merchantId
 const fetchPdfRequest = (couponId) => ({
@@ -19,54 +20,31 @@ function* couponFiles(action) {
     // console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store
-    const files = response.data;
+    // Ensure data exists
+    const data = response.data || [];
 
-    // Map the data received from the server
-    const formattedFiles = files.map((coupon) => {
-      const formattedFile = {
-        id: coupon.id,
-        merchantId: coupon.merchant_id,
-        is_deleted: coupon.is_deleted,
-        frontViewBlob: null,
-        backViewBlob: null,
-        offer: coupon.offer,
-        value: coupon.value,
-        exclusions: coupon.exclusions,
-        expiration: coupon.expiration,
-        additionalInfo: coupon.additional_info,
-        taskId: coupon.task_id,
-        bookId: coupon.book_id,
-        locationId: coupon.location_id,
-        locationName: coupon.location_name,
-        phoneNumber: coupon.phone_number,
-        address: coupon.address,
-        city: coupon.city,
-        state: coupon.state,
-        zip: coupon.zip,
-        // coordinates: coupon.coordinates,
-        // regionId: coupon.region_id,
-        locationMerchantId: coupon.location_merchant_id,
-        additionalDetails: coupon.location_additional_details,
-        merchantName: coupon.merchant_name,
-        frontViewUrl: coupon.filename_front,
-        backViewUrl: coupon.filename_back,
-      };
+    // Format base coupon fields
+    let formattedFiles = formatCoupons(data);
 
-      if (coupon.front_view_pdf && coupon.front_view_pdf.data) {
-        formattedFile.frontViewBlob = new Blob(
+    // Add blob conversion logic
+    formattedFiles = formattedFiles.map((file, idx) => {
+      const coupon = response.data[idx]; // get original coupon to access PDFs
+
+      if (coupon.front_view_pdf?.data) {
+        file.frontViewBlob = new Blob(
           [Uint8Array.from(coupon.front_view_pdf.data)],
           { type: "application/pdf" }
         );
       }
 
-      if (coupon.back_view_pdf && coupon.back_view_pdf.data) {
-        formattedFile.backViewBlob = new Blob(
+      if (coupon.back_view_pdf?.data) {
+        file.backViewBlob = new Blob(
           [Uint8Array.from(coupon.back_view_pdf.data)],
           { type: "application/pdf" }
         );
       }
 
-      return formattedFile;
+      return file;
     });
 
     // console.log("FORMATTED FILES = ", formattedFiles);
@@ -74,8 +52,8 @@ function* couponFiles(action) {
     // Dispatch the formatted data to the Redux store
     yield put({ type: "SET_COUPON_FILES", payload: formattedFiles });
   } catch (error) {
-    console.log("Error in coupon.saga: ", error);
-    yield put(fetchCouponFilesFailure(error.message));
+    console.error("Error in coupon.saga: ", error);
+    // yield put(fetchCouponFilesFailure(error.message)); // Not wired yet
   }
 }
 
