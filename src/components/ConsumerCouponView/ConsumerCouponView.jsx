@@ -17,7 +17,12 @@ import {
 } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User, couponsData, appActiveYear } from "../../hooks/reduxStore";
+import {
+  User,
+  couponsData,
+  appActiveYear,
+  userBooksData,
+} from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import CustomTypography from "../Typography/Typography";
 import SearchBar from "../SearchBar/SearchBar";
@@ -37,7 +42,9 @@ export default function ConsumerCouponView() {
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // May switch the store for coupons, as userCoupons is returning unredeemed, and redeemed states
   const coupons = couponsData() || []; // Returning URLs, not Pdfs
+  const userCoupons = userBooksData() || []; // Returning URLs, not Pdfs
   // For PDF solution
   const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
   // For Coupon Book Year
@@ -66,23 +73,36 @@ export default function ConsumerCouponView() {
 
   const handleToggle = () => {
     setToggleView(!toggleView);
+    setCurrentPage(1); // Reset to the first page when toggling view
   };
 
   const handleSearch = (value) => {
     setQuery(value);
   };
 
-  // // Filter coupons by merchant name
-  const filteredMerchants = coupons.filter(
+  // Decide which list to paginate based on toggle
+  const activeList = toggleView
+    ? userCoupons?.redeemed || [] // redeemed coupons from store
+    : coupons || []; // normal coupons
+
+  // Filter coupons by merchant name
+  const filteredMerchants = activeList.filter(
     (coupon) =>
       typeof coupon.merchantName === "string" &&
       coupon.merchantName.toLowerCase().includes(query.toLowerCase())
   );
 
+  const totalFilteredMerchants =
+    query.trim() === ""
+      ? toggleView
+        ? filteredMerchants.length
+        : coupons.length // pick based on view
+      : filteredMerchants.length;
+
   const clearInput = () => {
     setQuery("");
     // setShowInput(false);
-    // setCurrentPage(1); // Reset to the first page when clearing the search
+    setCurrentPage(1); // Reset to the first page when clearing the search
   };
 
   // TODO: Fix pagination count logic for redeemed list
@@ -93,9 +113,6 @@ export default function ConsumerCouponView() {
     indexOfFirstCoupon,
     indexOfLastCoupon
   );
-
-  const totalFilteredMerchants =
-    query.trim() === "" ? coupons.length : filteredMerchants.length;
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -224,7 +241,6 @@ export default function ConsumerCouponView() {
       {preparedCoupons.length > 0 && (
         <Pagination
           count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
-          // count={100}
           page={currentPage}
           onChange={(event, page) => paginate(page)}
           color="primary"
