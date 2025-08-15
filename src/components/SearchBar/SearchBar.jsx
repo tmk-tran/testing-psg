@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import { Search, Clear } from "@mui/icons-material";
 
@@ -10,6 +10,7 @@ const SearchBar = ({
   query,
   onChange,
   clearInput,
+  disabled,
 }) => {
   const [isSticky, setIsSticky] = useState(false);
 
@@ -117,7 +118,7 @@ const SearchBar = ({
               InputProps={{
                 startAdornment: (
                   <Search
-                    color="primary"
+                    color={!disabled ? "primary" : "disabled"}
                     fontSize="small"
                     style={{ marginRight: 16 }}
                   />
@@ -131,6 +132,7 @@ const SearchBar = ({
                   />
                 ),
               }}
+              disabled={disabled}
             />
           )}
         </>

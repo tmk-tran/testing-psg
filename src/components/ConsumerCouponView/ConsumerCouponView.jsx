@@ -1,6 +1,11 @@
-import React, { lazy, Suspense, useState, useEffect } from "react";
-import Fuse from "fuse.js";
-import { Box, useMediaQuery, Pagination } from "@mui/material";
+import { lazy, Suspense, useState, useEffect } from "react";
+import {
+  Box,
+  useMediaQuery,
+  Pagination,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import {
@@ -12,13 +17,18 @@ import {
 } from "../Utils/pageStyles";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import { User, couponsData, appActiveYear } from "../../hooks/reduxStore";
+import {
+  User,
+  couponsData,
+  appActiveYear,
+  userBooksData,
+} from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
-import Typography from "../Typography/Typography";
-// import CouponCard from "./CouponCard";
+import CustomTypography from "../Typography/Typography";
 import SearchBar from "../SearchBar/SearchBar";
 import ToggleButton from "../ToggleButton/ToggleButton";
 import LoadingSpinner from "../HomePage/LoadingSpinner";
+import RedeemedList from "./RedeemedList";
 
 const CouponCard = lazy(() => import("./CouponCard"));
 
@@ -26,17 +36,17 @@ export default function ConsumerCouponView() {
   const dispatch = dispatchHook();
   const user = User();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setIsLoading] = useState(true);
   const [toggleView, setToggleView] = useState(false);
   const [query, setQuery] = useState("");
-  const [filteredCoupons, setFilteredCoupons] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const coupons = couponsData() || [];
-  console.log(coupons);
+  // May switch the store for coupons, as userCoupons is returning unredeemed, and redeemed states
+  const coupons = couponsData() || []; // Returning URLs, not Pdfs
+  const userCoupons = userBooksData() || []; // Returning URLs, not Pdfs
   // For PDF solution
-  // const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
+  const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
   // For Coupon Book Year
   const activeYear = appActiveYear();
   const expirationYear =
@@ -61,39 +71,41 @@ export default function ConsumerCouponView() {
     }
   }, [coupons]);
 
-  const fuse = new Fuse(coupons, {
-    keys: ["merchant_name"], // The 'merchant' field is used for searching
-    includeScore: true,
-    threshold: 0.3, // Adjust the threshold for fuzzy search accuracy
-  });
-
   const handleToggle = () => {
     setToggleView(!toggleView);
+    setCurrentPage(1); // Reset to the first page when toggling view
   };
 
   const handleSearch = (value) => {
     setQuery(value);
-    if (value.trim() === "") {
-      setFilteredCoupons([]);
-    } else {
-      const results = fuse.search(value);
-      setFilteredCoupons(results.map((result) => result.item));
-    }
   };
 
-  // // Filter coupons by merchant name
-  const filteredMerchants = coupons.filter(
+  // Decide which list to paginate based on toggle
+  const activeList = toggleView
+    ? userCoupons?.redeemed || [] // redeemed coupons from store
+    : coupons || []; // normal coupons
+
+  // Filter coupons by merchant name
+  const filteredMerchants = activeList.filter(
     (coupon) =>
       typeof coupon.merchantName === "string" &&
       coupon.merchantName.toLowerCase().includes(query.toLowerCase())
   );
 
+  const totalFilteredMerchants =
+    query.trim() === ""
+      ? toggleView
+        ? filteredMerchants.length
+        : coupons.length // pick based on view
+      : filteredMerchants.length;
+
   const clearInput = () => {
     setQuery("");
     // setShowInput(false);
-    // setCurrentPage(1); // Reset to the first page when clearing the search
+    setCurrentPage(1); // Reset to the first page when clearing the search
   };
 
+  // TODO: Fix pagination count logic for redeemed list
   const couponsPerPage = isMobile ? 5 : 10;
   const indexOfLastCoupon = currentPage * couponsPerPage;
   const indexOfFirstCoupon = indexOfLastCoupon - couponsPerPage;
@@ -101,131 +113,147 @@ export default function ConsumerCouponView() {
     indexOfFirstCoupon,
     indexOfLastCoupon
   );
-  const totalFilteredMerchants =
-    query.trim() === "" ? coupons.length : filteredMerchants.length;
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   // Prepare coupons with complete URLs - in PROD
-  // const preparedCoupons = currentCoupons.map((coupon) => ({
-  //   ...coupon,
-  //   backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
-  //   frontViewUrl: coupon.frontViewUrl
-  //     ? `${baseURL}${coupon.frontViewUrl}`
-  //     : null,
-  // }));
+  const preparedCoupons = currentCoupons.map((coupon) => ({
+    ...coupon,
+    backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
+    frontViewUrl: coupon.frontViewUrl
+      ? `${baseURL}${coupon.frontViewUrl}`
+      : null,
+  }));
 
   return (
     <Box
       sx={{
         ...centeredStyle,
-        // ...containerStyle,
         ...(isMobile ? {} : containerStyle),
         position: "relative",
       }}
     >
-      {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-      {/* ~~~~~~~~~ Toggle ~~~~~~~~~~ */}
-      <Box sx={{ position: "absolute", top: 0, left: 0 }}>
-        {/* <ToggleButton
-          sxButton={{ margin: 2 }}
-          sxIcon={{ mr: 1 }}
-          onClick={() => handleToggle(!toggleView)}
-          label1="View Redeemed"
-          label2="View Active"
-          toggleState={toggleView}
-        /> */}
-      </Box>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Header ~~~~~~~~~~ */}
-      <Typography
-        label={toggleView ? "Redeemed Coupons" : "My Coupons"}
-        variant="h5"
-        sx={{ mt: isMobile ? 0 : 2, fontWeight: "bold", ...centerMe }}
-      />
-      <br />
-      {!toggleView ? (
+      {!isMobile && (
         <>
-          <Box
-            sx={{
-              mb: 2,
-              width: isMobile ? "100%" : "75%",
-              ...(isMobile ? flexColumn : flexRowSpace),
-            }}
-          >
-            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            {/* ~~~~~~~~~~ Search Bar ~~~~~~~~~~ */}
-            <SearchBar
-              isMobile={isMobile}
-              isCoupon
-              isOrganization={false}
-              query={query}
-              onChange={handleSearch}
-              clearInput={clearInput}
-            />
-            {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
-            {/* ~~~~~ Valid through ~~~~~~ */}
-            <Typography
+          <CustomTypography
+            label={toggleView ? "Redeemed Coupons" : "My Coupons"}
+            variant="h5"
+            sx={{ mt: 2, fontWeight: "bold", ...centerMe }}
+          />
+          {!toggleView && (
+            <CustomTypography
               label={`Valid through September 1st, ${expirationYear}`}
-              variant={isMobile ? "caption" : "body2"}
-              sx={{ mt: 2, textAlign: "center" }}
-            />
-          </Box>
-          {/* ~~~~~~~~~~~~~~~~ */}
-          {/* ~~~~~ List ~~~~~ */}
-          {/* {isLoading && (
-            <LoadingSpinner
-              text="Loading from database..."
-              waitingText="Please wait while we load image files..."
-              finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
-              timeout={15000}
+              variant="subtitle2"
+              sx={{ textAlign: "center" }}
             />
           )}
-          {!isLoading && (
-            <Suspense fallback={<LoadingSpinner text="Loading Coupons..." />}>
-              {currentCoupons.map((coupon, index) => (
-              {preparedCoupons.map((coupon, index) => (
-                <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
-              ))}
-            </Suspense>
-          )} */}
-          <Suspense fallback={<LoadingSpinner text="Loading Coupons..." />}>
-            {isLoading ? (
-              <LoadingSpinner
-                text="Loading..."
-                waitingText="Please wait while we load image files..."
-                finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
-                timeout={15000}
-              />
-            ) : (
-              currentCoupons.map((coupon, index) => (
-                <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
-              ))
-            )}
-          </Suspense>
         </>
-      ) : (
-        <Typography label="Coupons Redeemed" />
       )}
+
+      {/* Content */}
+      {/* Always show search + toggle */}
+      <Box
+        sx={{
+          mb: 2,
+          width: isMobile ? "100%" : "75%", //set fixed width here
+          ...(isMobile ? flexColumn : flexRowSpace),
+          // border: "1px solid red",
+        }}
+      >
+        <Stack
+          gap={1}
+          direction={isMobile ? "column" : "row"}
+          justifyContent="space-between"
+          // marginX={4}
+          sx={{ width: "100%" }}
+        >
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~~~~~~ Search Bar ~~~~~~~~~~ */}
+          <SearchBar
+            isMobile={isMobile}
+            isCoupon
+            isOrganization={false}
+            query={query}
+            onChange={handleSearch}
+            clearInput={clearInput}
+            disabled={toggleView}
+          />
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~~~~~ Toggle ~~~~~~~~~~ */}
+          <ToggleButton
+            sxButton={{ margin: 0, whiteSpace: "nowrap" }}
+            onClick={() => handleToggle(!toggleView)}
+            label1="View Redeemed"
+            label2="View Active"
+            toggleState={toggleView}
+          />
+          {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
+          {/* ~~~~~ Valid through ~~~~~~ */}
+          {isMobile && (
+            <Typography
+              label={`Valid through September 1st, ${expirationYear}`}
+              variant={"caption"}
+              sx={{ textAlign: "center" }}
+            />
+          )}
+        </Stack>
+      </Box>
+
+      {/* Render list based on toggle */}
+      <Suspense fallback={<LoadingSpinner text="Loading Coupons..." />}>
+        {isLoading ? (
+          <LoadingSpinner
+            text="Loading..."
+            waitingText="Please wait while we load image files..."
+            finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
+            timeout={15000}
+          />
+        ) : toggleView ? (
+          <RedeemedList />
+        ) : preparedCoupons.length === 0 ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+              // border: "1px solid red",
+              height: "50vh",
+              width: "50vw",
+            }}
+          >
+            <Typography variant="subtitle1" color="text.secondary">
+              No coupons found
+            </Typography>
+          </Box>
+        ) : (
+          preparedCoupons.map((coupon, index) => (
+            <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
+          ))
+        )}
+      </Suspense>
+
       {/* ~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~ Pagination ~~~~~ */}
-      <Pagination
-        // count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
-        count={100}
-        page={currentPage}
-        onChange={(event, page) => paginate(page)}
-        color="primary"
-        sx={{
-          "& .MuiPagination-ul": {
-            flexWrap: "nowrap", // Prevent wrapping of pagination items
-          },
-          "& .MuiPaginationItem-previousNext svg": {
-            fontSize: { xs: "3rem", sm: "3.5rem" }, // Increase icon size for arrows
-          },
-        }}
-      />
+      {preparedCoupons.length > 0 && (
+        <Pagination
+          count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
+          page={currentPage}
+          onChange={(event, page) => paginate(page)}
+          color="primary"
+          sx={{
+            "& .MuiPagination-ul": {
+              flexWrap: "nowrap",
+            },
+            "& .MuiPaginationItem-previousNext svg": {
+              fontSize: { xs: "3rem", sm: "3.5rem" },
+            },
+          }}
+        />
+      )}
     </Box>
   );
 }

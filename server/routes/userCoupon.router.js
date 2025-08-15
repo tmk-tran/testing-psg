@@ -24,10 +24,26 @@ router.get("/", rejectUnauthenticated, (req, res) => {
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const userId = req.params.id;
   const yearId = req.query.yearId;
+  const redeemed = req.query.redeemed === "true"; // pass ?redeemed=true or false
 
   const queryText = `
           SELECT
-            c.*,
+            c.id,
+            c.merchant_id,
+            c.is_deleted,
+            c.filename_front,
+            c.front_view_url,
+            REPLACE(c.filename_back, ' ', '_') AS filename_back, -- Replace spaces with underscores
+            REPLACE(c.filename_front, ' ', '_') AS filename_front, -- Replace spaces with underscores
+            c.back_view_url,
+            c.offer,
+            c.value,
+            c.exclusions,
+            c.expiration,
+            c.additional_info,
+            c.task_id,
+            c.book_id,
+            c.is_auto_generated,
             cl.coupon_id AS coupon_id,
             ARRAY_AGG(l.id) AS location_id,
             ARRAY_AGG(l.location_name) AS location_name,
@@ -53,7 +69,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
             coupon_book cb ON c.book_id = cb.id
           WHERE
             uc.user_id = $1
-            AND uc.redeemed = false
+            AND uc.redeemed = $3
             AND uc.show_book = true
             AND cb.id = $2
             AND c.is_deleted = false
@@ -64,7 +80,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
         `;
 
   pool
-    .query(queryText, [userId, yearId])
+    .query(queryText, [userId, yearId, redeemed])
     .then((result) => {
       res.send(result.rows);
     })

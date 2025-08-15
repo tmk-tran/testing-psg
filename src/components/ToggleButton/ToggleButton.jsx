@@ -11,6 +11,7 @@ export default function ToggleButton({
   label2,
   sxButton,
   sxIcon,
+  sxIcon2
 }) {
   return (
     <Tooltip title={title} placement={placement}>
@@ -26,7 +27,7 @@ export default function ToggleButton({
           </>
         ) : (
           <>
-            <ToggleOffIcon sx={sxIcon} />
+            <ToggleOffIcon sx={sxIcon2} />
             {label2}
           </>
         )}

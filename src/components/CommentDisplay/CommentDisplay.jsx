@@ -46,7 +46,8 @@ export default function CommentDisplay({ comment, showAllComments, maxWidth }) {
         </div>
         <div>
           <Typography variant="caption" sx={{ ml: 2, mt: 0.4 }}>
-            {date} - {time}
+            {/* {date} - {time} */}
+            {date}
           </Typography>
         </div>
       </div>

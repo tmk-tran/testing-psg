@@ -43,7 +43,7 @@ const AccountMenu = ({ isMobile }) => {
           }}
         >
           <PersonIcon sx={{ mr: 1.5, fontSize: isMobile ? 24 : "undefined" }} />
-          {user.username}
+          {isMobile ? null : user.username}
         </Typography>
       )}
     >

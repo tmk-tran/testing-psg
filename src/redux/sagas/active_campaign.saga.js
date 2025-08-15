@@ -30,51 +30,31 @@ function* addContactSaga(action) {
   try {
     const response = yield axios.post("/api/contact", action.payload);
     console.log("Response from activeCampaign saga: ", response);
+    console.log(response.data);
 
-    // Assuming bookType is passed in action.payload
-    const { bookType } = action.payload;
-
-    // if (response.data === "OK") {
-    //   console.log("Contact created successfully (no password returned)");
-    // } else if (
-    //   bookType === "Digital" &&
-    //   typeof response.data === "string" &&
-    //   response.data.length > 0
-    // ) {
-    //   // Only create an account for digital books
-    //   const user = {
-    //     username: action.payload.email,
-    //     password: response.data,
-    //     first_name: action.payload.firstName,
-    //     last_name: action.payload.lastName,
-    //   };
-
-    //   yield put({ type: "REGISTER", payload: user });
-    // } else {
-    //   console.log("No account creation necessary for physical book.");
-    // }
-
-    if (response.data === "OK") {
-      // No account creation necessary for physical books
-      console.log("Contact created successfully (no account creation necessary)");
-    } else if (
-      bookType === "Fargo - Moorhead (Digital Coupon Book)" &&
-      typeof response.data === "string" &&
-      response.data.length > 0
+    if (
+      response.status === 201 && // Check if status is 201
+      response.data && // Ensure response.data exists
+      response.data.password // Check if password field exists in response.data
     ) {
       // Create an account for digital books if valid data exists
       const { email, firstName, lastName } = action.payload;
-    
+
       const user = {
-        username: email,
-        password: response.data,
         first_name: firstName,
         last_name: lastName,
+        username: email,
+        password: response.data.password,
       };
-    
-      yield put({ type: "REGISTER", payload: user });
+
+      console.log("Account created for digital book", user);
+      yield put({ type: "REGISTER", payload: user }); // Adds user to the application
+    } else {
+      // No account creation necessary for physical books
+      console.log(
+        "Contact created successfully - (no PSG account creation necessary)"
+      );
     }
-    
   } catch (error) {
     console.log("error in addContact saga", error);
   }

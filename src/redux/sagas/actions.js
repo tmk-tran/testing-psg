@@ -3,6 +3,7 @@ export const setCouponFiles = (files) => ({
   payload: files,
 });
 
+// Needs finish setting up - action not wired
 export const fetchCouponFilesFailure = (error) => ({
   type: "FETCH_COUPON_FILES_FAILURE",
   payload: error,

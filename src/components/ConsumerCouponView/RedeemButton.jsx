@@ -1,6 +1,12 @@
 import { Box, Button, Typography } from "@mui/material";
 
-export default function RedeemButton({ isMobile, coupon, user, handleRedeem }) {
+export default function RedeemButton({
+  isMobile,
+  coupon,
+  user,
+  handleRedeem,
+  disabled,
+}) {
   return (
     <Box
       sx={{
@@ -27,8 +33,9 @@ export default function RedeemButton({ isMobile, coupon, user, handleRedeem }) {
         onClick={() =>
           handleRedeem(coupon.id, coupon.locationId, user.id, coupon.bookId)
         }
+        disabled={disabled}
       >
-        Redeem
+        {disabled ? "Redeemed" : "Redeem"}
       </Button>
     </Box>
   );
