@@ -225,9 +225,12 @@ export default function UserAdmin() {
 
   const filteredResults = tableData
     .map((user) => {
+      // look inside userBooks.unredeemed array instead of userBooks itself
       const userShowBook =
-        userBooks.find((book) => book.user_id === user.id)?.show_book ?? false;
-      return { ...user, show_book: userShowBook };
+        userBooks.unredeemed.find((book) => book.user_id === user.id)
+          ?.show_book ?? false;
+
+      return { ...user, show_book: userShowBook }; // merge show_book into user
     })
     .filter(
       (user) =>
