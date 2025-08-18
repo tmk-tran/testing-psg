@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import {
   Box,
   useMediaQuery,
@@ -25,12 +25,11 @@ import {
 } from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import CustomTypography from "../Typography/Typography";
-import SearchBar from "../SearchBar/SearchBar";
-import ToggleButton from "../ToggleButton/ToggleButton";
+import ListWithSeasonLabel from "./ListWithSeasonLabel";
 import LoadingSpinner from "../HomePage/LoadingSpinner";
 import RedeemedList from "./RedeemedList";
-
-const CouponCard = lazy(() => import("./CouponCard"));
+import SearchBar from "../SearchBar/SearchBar";
+import ToggleButton from "../ToggleButton/ToggleButton";
 
 export default function ConsumerCouponView() {
   const dispatch = dispatchHook();
@@ -48,22 +47,35 @@ export default function ConsumerCouponView() {
   // For PDF solution
   const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
   // For Coupon Book Year
-  const activeYear = appActiveYear();
+  const activeYearObj = appActiveYear();
+  // Get year string
+  const nextSeasonYear =
+    activeYearObj.length > 1 ? activeYearObj[1].year.split("-")[1] : "";
+  // Exp year string
   const expirationYear =
-    activeYear && activeYear[0] ? activeYear[0].year.split("-")[1] : "";
-  // Year ID //
-  const activeYearId = activeYear && activeYear[0] ? activeYear[0].id : "";
+    activeYearObj && activeYearObj[0]
+      ? activeYearObj[0].year.split("-")[1]
+      : "";
+  // Active year ID(s) array
+  const activeYearIds = activeYearObj
+    ? activeYearObj.filter((y) => y.active).map((y) => y.id)
+    : [];
+  // Helper to get year from activeYearObj
+  const getCouponYear = (coupon) => {
+    const book = activeYearObj.find((y) => y.id === coupon.bookId);
+    return book ? book.year : null;
+  };
 
   useEffect(() => {
     const dispatchAction = {
       type: "FETCH_CONSUMER_COUPONS",
       payload: {
         userId: user.id,
-        yearId: activeYearId,
+        yearIds: activeYearIds,
       },
     };
     dispatch(dispatchAction);
-  }, [activeYear]); // Removed currentPage from the dependency array
+  }, [activeYearObj]); // Removed currentPage from the dependency array
 
   useEffect(() => {
     if (coupons.length > 0) {
@@ -161,7 +173,6 @@ export default function ConsumerCouponView() {
           mb: 2,
           width: isMobile ? "100%" : "75%", //set fixed width here
           ...(isMobile ? flexColumn : flexRowSpace),
-          // border: "1px solid red",
         }}
       >
         <Stack
@@ -220,7 +231,6 @@ export default function ConsumerCouponView() {
             justifyContent="center"
             alignItems="center"
             sx={{
-              // border: "1px solid red",
               height: "50vh",
               width: "50vw",
             }}
@@ -230,9 +240,14 @@ export default function ConsumerCouponView() {
             </Typography>
           </Box>
         ) : (
-          preparedCoupons.map((coupon, index) => (
-            <CouponCard isMobile={isMobile} key={index} coupon={coupon} />
-          ))
+          <ListWithSeasonLabel
+            coupons={preparedCoupons}
+            isMobile={isMobile}
+            nextSeasonYear={nextSeasonYear}
+            getCouponYear={getCouponYear}
+            page={currentPage}
+            itemsPerPage={couponsPerPage}
+          />
         )}
       </Suspense>
 

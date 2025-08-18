@@ -23,8 +23,12 @@ router.get("/", rejectUnauthenticated, (req, res) => {
 
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const userId = req.params.id;
-  const yearId = req.query.yearId;
+  let yearIds = req.query.yearId; // could be string or array
   const redeemed = req.query.redeemed === "true"; // pass ?redeemed=true or false
+
+  // Ensure yearIds is an array of integers
+  if (!Array.isArray(yearIds)) yearIds = [yearIds];
+  yearIds = yearIds.map((id) => parseInt(id));
 
   const queryText = `
           SELECT
@@ -71,7 +75,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
             uc.user_id = $1
             AND uc.redeemed = $3
             AND uc.show_book = true
-            AND cb.id = $2
+            AND cb.id = ANY($2::int[])
             AND c.is_deleted = false
           GROUP BY
             c.id, m.merchant_name, cl.coupon_id, uc.show_book
@@ -80,7 +84,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
         `;
 
   pool
-    .query(queryText, [userId, yearId, redeemed])
+    .query(queryText, [userId, yearIds, redeemed])
     .then((result) => {
       res.send(result.rows);
     })

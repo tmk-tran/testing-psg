@@ -16,8 +16,15 @@ const typographyStyle = {
 
 export default function NewBookYear() {
   const years = appActiveYear();
-  const activeYear = years ? years[0].year : "";
+  console.log("years:", years);
+  const activeYearObj = years?.find((y) => y.active) || {};
+  console.log("activeYearObj:", activeYearObj);
+  const activeYear = activeYearObj.year || "";
+  console.log("activeYear:", activeYear);
   const bookYearSee = bookYear();
+  const activeYears = years?.filter((y) => y.active) || [];
+const activeYearStrings = activeYears.map((y) => y.year);
+console.log("activeYears:", activeYearStrings);
 
   return (
     <Grid container spacing={2}>
@@ -33,7 +40,7 @@ export default function NewBookYear() {
       </Grid>
       {/* Right column */}
       <Grid item xs={6}>
-        <AvailableYearsButtons activeYear={activeYear} years={years} />
+        <AvailableYearsButtons activeYear={activeYearStrings} years={years} />
       </Grid>
     </Grid>
   );

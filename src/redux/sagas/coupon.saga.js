@@ -10,25 +10,31 @@ const fetchPdfRequest = (couponId) => ({
 });
 
 function* couponFiles(action) {
-  const userId = action.payload.userId;
-  const yearId = action.payload.yearId;
+  // const userId = action.payload.userId;
+  // const yearId = action.payload.yearId;
+  const { userId, yearIds } = action.payload; // pass an array
+  console.log("User ID = ", userId, "Year IDs = ", yearIds);
+
 
   try {
-    const response = yield axios.get(
-      `/api/userCoupon/${userId}?yearId=${yearId}`
-    );
+    const queryString = yearIds.map((id) => `yearId=${id}`).join("&");
+    const response = yield axios.get(`/api/userCoupon/${userId}?${queryString}`);
+    // const response = yield axios.get(
+    //   `/api/userCoupon/${userId}?yearId=${yearId}`
+    // );
     // console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store
     // Ensure data exists
     const data = response.data || [];
+    console.log("Coupon data = ", data);
 
     // Format base coupon fields
     let formattedFiles = formatCoupons(data);
 
     // Add blob conversion logic
     formattedFiles = formattedFiles.map((file, idx) => {
-      const coupon = response.data[idx]; // get original coupon to access PDFs
+      const coupon = data[idx]; // get original coupon to access PDFs
 
       if (coupon.front_view_pdf?.data) {
         file.frontViewBlob = new Blob(
