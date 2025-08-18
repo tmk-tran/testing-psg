@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   ToggleButton,
@@ -9,16 +9,22 @@ import {
 } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import { allYears, bookYear } from "../../hooks/reduxStore";
+import { allYears } from "../../hooks/reduxStore";
 import { centeredStyle } from "../Utils/pageStyles";
-import ConfirmNewYearModal from "./ConfirmNewYearModal";
 import { highlightColor } from "../Utils/colors";
+
+import ConfirmNewYearModal from "./ConfirmNewYearModal";
 
 const AvailableYearsButtons = ({ activeYear }) => {
   const dispatch = dispatchHook();
   const [yearSelected, setYearSelected] = useState(null);
   const [selectedYearId, setSelectedYearId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Ensure activeYear is always an array
+  const activeYearsArray = Array.isArray(activeYear)
+    ? activeYear
+    : [activeYear];
 
   useEffect(() => {
     const dispatchAction = {
@@ -27,8 +33,6 @@ const AvailableYearsButtons = ({ activeYear }) => {
     dispatch(dispatchAction);
   }, []);
   const years = allYears();
-  // const bookY = bookYear();
-  // console.log(bookY);
 
   const handleChange = (event, year) => {
     setSelectedYearId(year.id);
@@ -72,7 +76,7 @@ const AvailableYearsButtons = ({ activeYear }) => {
                 key={year.id}
                 value={year}
                 style={
-                  year.year === activeYear
+                  activeYearsArray.includes(year.year) // <-- check if current year is active
                     ? { ...highlightColor, color: "black" }
                     : null
                 }
