@@ -37,7 +37,7 @@ export default function ConsumerCouponView() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setIsLoading] = useState(true);
-  const [toggleView, setToggleView] = useState(false);
+  const [viewRedeemed, setViewRedeemed] = useState(false);
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -45,7 +45,7 @@ export default function ConsumerCouponView() {
   const coupons = couponsData() || []; // Returning URLs, not Pdfs
   const userCoupons = userBooksData() || []; // Returning URLs, not Pdfs
   // For PDF solution
-  const baseURL = "https://fly.storage.tigris.dev/coupons/"; // in PROD, for the preparedCoupons variable below
+  const baseURL = "https://fly.storage.tigris.dev/coupons/";
   // For Coupon Book Year
   const activeYearObj = appActiveYear();
   // Get year string
@@ -84,7 +84,7 @@ export default function ConsumerCouponView() {
   }, [coupons]);
 
   const handleToggle = () => {
-    setToggleView(!toggleView);
+    setViewRedeemed(!viewRedeemed);
     setCurrentPage(1); // Reset to the first page when toggling view
   };
 
@@ -93,7 +93,7 @@ export default function ConsumerCouponView() {
   };
 
   // Decide which list to paginate based on toggle
-  const activeList = toggleView
+  const activeList = viewRedeemed
     ? userCoupons?.redeemed || [] // redeemed coupons from store
     : coupons || []; // normal coupons
 
@@ -106,7 +106,7 @@ export default function ConsumerCouponView() {
 
   const totalFilteredMerchants =
     query.trim() === ""
-      ? toggleView
+      ? viewRedeemed
         ? filteredMerchants.length
         : coupons.length // pick based on view
       : filteredMerchants.length;
@@ -126,11 +126,13 @@ export default function ConsumerCouponView() {
     indexOfLastCoupon
   );
 
+  const startIdx = (currentPage - 1) * couponsPerPage;
+
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // Prepare coupons with complete URLs - in PROD
+  // Prepare coupons with complete URLs
   const preparedCoupons = currentCoupons.map((coupon) => ({
     ...coupon,
     backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
@@ -152,11 +154,11 @@ export default function ConsumerCouponView() {
       {!isMobile && (
         <>
           <CustomTypography
-            label={toggleView ? "Redeemed Coupons" : "My Coupons"}
+            label={viewRedeemed ? "Redeemed Coupons" : "My Coupons"}
             variant="h5"
             sx={{ mt: 2, fontWeight: "bold", ...centerMe }}
           />
-          {!toggleView && (
+          {!viewRedeemed && (
             <CustomTypography
               label={`Valid through September 1st, ${expirationYear}`}
               variant="subtitle2"
@@ -184,23 +186,25 @@ export default function ConsumerCouponView() {
         >
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~~ Search Bar ~~~~~~~~~~ */}
-          <SearchBar
-            isMobile={isMobile}
-            isCoupon
-            isOrganization={false}
-            query={query}
-            onChange={handleSearch}
-            clearInput={clearInput}
-            disabled={toggleView}
-          />
+          {viewRedeemed && isMobile ? null : (
+            <SearchBar
+              isMobile={isMobile}
+              isCoupon
+              isOrganization={false}
+              query={query}
+              onChange={handleSearch}
+              clearInput={clearInput}
+              disabled={viewRedeemed}
+            />
+          )}
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~~~~~ Toggle ~~~~~~~~~~ */}
           <ToggleButton
             sxButton={{ margin: 0, whiteSpace: "nowrap" }}
-            onClick={() => handleToggle(!toggleView)}
+            onClick={() => handleToggle(!viewRedeemed)}
             label1="View Redeemed"
             label2="View Active"
-            toggleState={toggleView}
+            toggleState={viewRedeemed}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~ Valid through ~~~~~~ */}
@@ -223,7 +227,7 @@ export default function ConsumerCouponView() {
             finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
             timeout={15000}
           />
-        ) : toggleView ? (
+        ) : viewRedeemed ? (
           <RedeemedList />
         ) : preparedCoupons.length === 0 ? (
           <Box
@@ -245,8 +249,7 @@ export default function ConsumerCouponView() {
             isMobile={isMobile}
             nextSeasonYear={nextSeasonYear}
             getCouponYear={getCouponYear}
-            page={currentPage}
-            itemsPerPage={couponsPerPage}
+            startIdx={startIdx}
           />
         )}
       </Suspense>

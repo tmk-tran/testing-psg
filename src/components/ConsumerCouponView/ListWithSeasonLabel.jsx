@@ -8,22 +8,16 @@ const ListWithSeasonLabel = ({
   isMobile,
   nextSeasonYear,
   getCouponYear,
-  page,
-  itemsPerPage,
+  startIdx,
 }) => {
-  // Slice only the current page
-  const startIdx = (page - 1) * itemsPerPage;
-  const endIdx = startIdx + itemsPerPage;
-  const pageCoupons = coupons.slice(startIdx, endIdx);
-
   // Check if at least one coupon on this page belongs to nextSeasonYear
-  const hasNextSeason = pageCoupons.some(
+  const hasNextSeason = coupons.some(
     (coupon) => getCouponYear(coupon)?.split("-")[1] === nextSeasonYear
   );
 
   let newSeasonLabelRendered = false;
 
-  return pageCoupons.map((coupon, index) => {
+  return coupons.map((coupon, index) => {
     const isNewSeason = getCouponYear(coupon)?.split("-")[1] === nextSeasonYear;
 
     return (
