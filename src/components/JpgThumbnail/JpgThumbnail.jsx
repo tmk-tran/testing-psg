@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Dialog, DialogContent, Box } from "@mui/material";
+import { useState } from "react";
+import { Box, Dialog, DialogContent } from "@mui/material";
 import { flexCenter } from "../Utils/pageStyles";
 
 const JpgThumbnail = ({ imageUrl, isMobile }) => {
@@ -18,7 +18,12 @@ const JpgThumbnail = ({ imageUrl, isMobile }) => {
         <img
           src={imageUrl}
           alt="thumbnail"
-          style={{ width: "100%", height: "auto" }} // Make the image responsive
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain", // maintain aspect ratio without overflow
+            display: "block", // remove inline gaps
+          }} // Make the image responsive
         />
       </Box>
       {/* Modal for Enlarged Image */}

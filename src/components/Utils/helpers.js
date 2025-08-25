@@ -236,3 +236,60 @@ export const handleDateChange = (date, setState) => {
 
   setState(formattedDate);
 };
+
+// ----- Image helpers ----------
+export const checkFileType = (file) => {
+  if (!file) return { isPdf: false, isJpg: false };
+
+  if (file instanceof Blob) {
+    return {
+      isPdf: file.type === "application/pdf",
+      isJpg: file.type.startsWith("image/"),
+    };
+  }
+
+  if (typeof file === "string") {
+    return {
+      isPdf: file.endsWith(".pdf"),
+      isJpg: file.endsWith(".jpg") || file.endsWith(".jpeg"),
+    };
+  }
+
+  return { isPdf: false, isJpg: false };
+};
+
+export const getImageSrc = (imageData) => {
+  if (!imageData) return "";
+
+  if (typeof imageData === "string") {
+    // prod URL
+    return imageData;
+  }
+
+  if (imageData instanceof Blob) {
+    // dev blob
+    return URL.createObjectURL(imageData);
+  }
+
+  return "";
+};
+
+export const getFileSrc = ({ url, blob }) => {
+  if (url) return url;          // Prefer URL
+  if (blob instanceof Blob) return URL.createObjectURL(blob); // Fallback to Blob
+  return "";
+};
+
+// helper to decide MIME type based on filename
+export const getMimeType = (filename) => {
+  if (!filename) return "application/pdf"; // default
+  const lower = filename.toLowerCase();
+
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  if (lower.endsWith(".pdf")) return "application/pdf";
+  // if (lower.endsWith(".png")) return "image/png"; // Future enhancement
+
+  return "application/octet-stream"; // fallback
+};
+
+// END: Image helpers ----------

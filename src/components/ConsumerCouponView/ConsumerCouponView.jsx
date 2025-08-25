@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+// ~~~~~~~~~~ Utils ~~~~~~~~~~ //
 import {
   containerStyle,
   centeredStyle,
@@ -33,7 +33,6 @@ import ToggleButton from "../ToggleButton/ToggleButton";
 
 export default function ConsumerCouponView() {
   const dispatch = dispatchHook();
-  const user = User();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setIsLoading] = useState(true);
@@ -41,13 +40,20 @@ export default function ConsumerCouponView() {
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Store - reducers
+  const user = User();
   // May switch the store for coupons, as userCoupons is returning unredeemed, and redeemed states
   const coupons = couponsData() || []; // Returning URLs, not Pdfs
   const userCoupons = userBooksData() || []; // Returning URLs, not Pdfs
-  // For PDF solution
-  const baseURL = "https://fly.storage.tigris.dev/coupons/";
+  // console.log("userCoupons", userCoupons);
+  // Select redeemed coupons from reducer
+  const redeemedCoupons = userCoupons?.redeemed;
+
   // For Coupon Book Year
   const activeYearObj = appActiveYear();
+  // Year ID
+  const activeYearId =
+    activeYearObj && activeYearObj[0] ? activeYearObj[0].id : "";
   // Get year string
   const nextSeasonYear =
     activeYearObj.length > 1 ? activeYearObj[1].year.split("-")[1] : "";
@@ -60,12 +66,8 @@ export default function ConsumerCouponView() {
   const activeYearIds = activeYearObj
     ? activeYearObj.filter((y) => y.active).map((y) => y.id)
     : [];
-  // Helper to get year from activeYearObj
-  const getCouponYear = (coupon) => {
-    const book = activeYearObj.find((y) => y.id === coupon.bookId);
-    return book ? book.year : null;
-  };
 
+  // Connects to userCoupon router
   useEffect(() => {
     const dispatchAction = {
       type: "FETCH_CONSUMER_COUPONS",
@@ -76,6 +78,15 @@ export default function ConsumerCouponView() {
     };
     dispatch(dispatchAction);
   }, [activeYearObj]); // Removed currentPage from the dependency array
+
+  // Fetch redeemed coupons when component mounts
+  useEffect(() => {
+    const dispatchAction = {
+      type: "FETCH_REDEEMED_COUPONS",
+      payload: { userId: user?.id, yearId: activeYearId }, // replace with real values
+    };
+    dispatch(dispatchAction);
+  }, [activeYearObj]);
 
   useEffect(() => {
     if (coupons.length > 0) {
@@ -94,7 +105,7 @@ export default function ConsumerCouponView() {
 
   // Decide which list to paginate based on toggle
   const activeList = viewRedeemed
-    ? userCoupons?.redeemed || [] // redeemed coupons from store
+    ? redeemedCoupons || [] // redeemed coupons --> in userCoupons
     : coupons || []; // normal coupons
 
   // Filter coupons by merchant name
@@ -117,7 +128,12 @@ export default function ConsumerCouponView() {
     setCurrentPage(1); // Reset to the first page when clearing the search
   };
 
-  // TODO: Fix pagination count logic for redeemed list
+  // Helper to get year from activeYearObj
+  const getCouponYear = (coupon) => {
+    const book = activeYearObj.find((y) => y.id === coupon.bookId);
+    return book ? book.year : null;
+  };
+
   const couponsPerPage = isMobile ? 5 : 10;
   const indexOfLastCoupon = currentPage * couponsPerPage;
   const indexOfFirstCoupon = indexOfLastCoupon - couponsPerPage;
@@ -132,14 +148,7 @@ export default function ConsumerCouponView() {
     setCurrentPage(pageNumber);
   };
 
-  // Prepare coupons with complete URLs
-  const preparedCoupons = currentCoupons.map((coupon) => ({
-    ...coupon,
-    backViewUrl: coupon.backViewUrl ? `${baseURL}${coupon.backViewUrl}` : null,
-    frontViewUrl: coupon.frontViewUrl
-      ? `${baseURL}${coupon.frontViewUrl}`
-      : null,
-  }));
+  // Removed prepare coupons with complete URLs - changed structure of formatCoupons() in helpers instead
 
   return (
     <Box
@@ -181,7 +190,6 @@ export default function ConsumerCouponView() {
           gap={1}
           direction={isMobile ? "column" : "row"}
           justifyContent="space-between"
-          // marginX={4}
           sx={{ width: "100%" }}
         >
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
@@ -228,8 +236,8 @@ export default function ConsumerCouponView() {
             timeout={15000}
           />
         ) : viewRedeemed ? (
-          <RedeemedList />
-        ) : preparedCoupons.length === 0 ? (
+          <RedeemedList redeemedCoupons={currentCoupons} />
+        ) : currentCoupons.length === 0 ? (
           <Box
             display="flex"
             justifyContent="center"
@@ -245,7 +253,7 @@ export default function ConsumerCouponView() {
           </Box>
         ) : (
           <ListWithSeasonLabel
-            coupons={preparedCoupons}
+            coupons={currentCoupons}
             isMobile={isMobile}
             nextSeasonYear={nextSeasonYear}
             getCouponYear={getCouponYear}
@@ -256,7 +264,7 @@ export default function ConsumerCouponView() {
 
       {/* ~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~ Pagination ~~~~~ */}
-      {preparedCoupons.length > 0 && (
+      {currentCoupons.length > 0 && (
         <Pagination
           count={Math.ceil(totalFilteredMerchants / couponsPerPage)}
           page={currentPage}

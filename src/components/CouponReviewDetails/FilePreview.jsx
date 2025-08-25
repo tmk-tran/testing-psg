@@ -1,12 +1,14 @@
-import React from "react";
 import { Box, Typography } from "@mui/material";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~
+// ~~~~~~~~~~ Utils ~~~~~~~~~~
 import { flexCenter } from "../Utils/pageStyles";
-import { border, primaryColor } from "../Utils/colors";
+import { primaryColor } from "../Utils/colors";
+// ~~~~~~~~~~ Hook ~~~~~~~~~~ //
+import { useFilePreview } from "../../hooks/useFilePreview";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
-import PdfThumbnail from "../PdfThumbnail/PdfThumbnail";
 import DeletePdfIcon from "./DeletePdfIcon";
+import JpgThumbnail from "../JpgThumbnail/JpgThumbnail";
 import PageViewButton from "./PageViewButton";
+import PdfThumbnail from "../PdfThumbnail/PdfThumbnail";
 
 export const thumbnailSize = {
   height: "150px",
@@ -34,6 +36,8 @@ export default function FilePreview({
   directFile,
   handleDeleteFile,
 }) {
+  const { frontSrc, backSrc, frontType, backType } = useFilePreview(directFile);
+
   const handleButtonClick = (file, type) => {
     let blob = null;
 
@@ -62,7 +66,8 @@ export default function FilePreview({
       <>
         {directFile && (
           <>
-            {showFrontViewFiles && directFile.frontViewBlob !== null ? (
+            {showFrontViewFiles &&
+            (directFile.frontViewBlob || directFile.frontViewUrl) ? (
               <>
                 {caseType !== "preview" && (
                   <Box sx={boxStyle}>
@@ -86,14 +91,19 @@ export default function FilePreview({
                   </Box>
                 )}
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <PdfThumbnail
-                    pdf={directFile.frontViewBlob}
-                    style={thumbnailSize}
-                  />
+                  {frontType.isPdf ? (
+                    <PdfThumbnail
+                      pdf={directFile.frontViewBlob}
+                      style={thumbnailSize}
+                    />
+                  ) : frontType.isJpg ? (
+                    <JpgThumbnail imageUrl={frontSrc} />
+                  ) : null}
                 </div>
               </>
             ) : null}
-            {showBackViewFiles && directFile.backViewBlob !== null ? (
+            {showBackViewFiles &&
+            (directFile.backViewBlob || directFile.backViewUrl) ? (
               <>
                 {caseType !== "preview" && (
                   <Box sx={boxStyle}>
@@ -117,22 +127,30 @@ export default function FilePreview({
                   </Box>
                 )}
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <PdfThumbnail
-                    pdf={directFile.backViewBlob}
-                    style={thumbnailSize}
-                  />
+                  {backType.isPdf ? (
+                    <PdfThumbnail
+                      pdf={directFile.backViewBlob}
+                      style={thumbnailSize}
+                    />
+                  ) : backType.isJpg ? (
+                    <JpgThumbnail imageUrl={backSrc} />
+                  ) : null}
                 </div>
               </>
             ) : null}
-            {(showFrontViewFiles && directFile.frontViewBlob === null) ||
-            (showBackViewFiles && directFile.backViewBlob === null) ? (
+            {((showFrontViewFiles &&
+              !directFile.frontViewBlob &&
+              !directFile.frontViewUrl) ||
+              (showBackViewFiles &&
+                !directFile.backViewBlob &&
+                !directFile.backViewUrl)) && (
               <Box>
                 <Box sx={{ height: 25 }}></Box>
                 <Box sx={{ ...thumbnailSize, ...flexCenter, margin: "0 auto" }}>
                   <Typography variant="caption">No file available</Typography>
                 </Box>
               </Box>
-            ) : null}
+            )}
           </>
         )}
       </>
