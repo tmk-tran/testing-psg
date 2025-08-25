@@ -2,6 +2,7 @@ import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 import { fetchCouponFilesFailure } from "./actions";
 import { formatCoupons } from "../../components/Utils/couponHelpers";
+import { getMimeType } from "../../components/Utils/helpers";
 
 // Should be changed to merchantId
 const fetchPdfRequest = (couponId) => ({
@@ -9,44 +10,44 @@ const fetchPdfRequest = (couponId) => ({
   payload: couponId,
 });
 
+// Used in ConsumerCouponView
 function* couponFiles(action) {
-  // const userId = action.payload.userId;
-  // const yearId = action.payload.yearId;
   const { userId, yearIds } = action.payload; // pass an array
-  console.log("User ID = ", userId, "Year IDs = ", yearIds);
-
 
   try {
     const queryString = yearIds.map((id) => `yearId=${id}`).join("&");
-    const response = yield axios.get(`/api/userCoupon/${userId}?${queryString}`);
-    // const response = yield axios.get(
-    //   `/api/userCoupon/${userId}?yearId=${yearId}`
-    // );
+    const response = yield axios.get(
+      `/api/userCoupon/${userId}?${queryString}`
+    );
     // console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
 
     // Dispatch the successful results to the Redux store
     // Ensure data exists
     const data = response.data || [];
-    console.log("Coupon data = ", data);
-
     // Format base coupon fields
     let formattedFiles = formatCoupons(data);
 
     // Add blob conversion logic
     formattedFiles = formattedFiles.map((file, idx) => {
-      const coupon = data[idx]; // get original coupon to access PDFs
+      const coupon = data[idx]; // original coupon
 
+      // Front view
       if (coupon.front_view_pdf?.data) {
+        const frontMime = getMimeType(coupon.filename_front);
+
         file.frontViewBlob = new Blob(
           [Uint8Array.from(coupon.front_view_pdf.data)],
-          { type: "application/pdf" }
+          { type: frontMime }
         );
       }
 
+      // Back view
       if (coupon.back_view_pdf?.data) {
+        const backMime = getMimeType(coupon.filename_back);
+
         file.backViewBlob = new Blob(
           [Uint8Array.from(coupon.back_view_pdf.data)],
-          { type: "application/pdf" }
+          { type: backMime }
         );
       }
 
@@ -63,6 +64,7 @@ function* couponFiles(action) {
   }
 }
 
+// Used in CouponReviewDetails and CouponReviewCard
 function* pdfFile(action) {
   const merchantId = action.payload;
 
@@ -76,52 +78,34 @@ function* pdfFile(action) {
 
     // Dispatch the successful results to the Redux store
     const files = response.data;
+    // Format base coupon fields
+    let formattedFiles = formatCoupons(files);
 
     // Map the data received from the server
-    const formattedFiles = files.map((coupon) => {
-      const formattedFile = {
-        id: coupon.id,
-        filename: coupon.filename,
-        frontViewBlob: null,
-        backViewBlob: null,
-        offer: coupon.offer,
-        value: coupon.value,
-        exclusions: coupon.exclusions,
-        details: coupon.details,
-        expiration: coupon.expiration,
-        additionalInfo: coupon.additional_info,
-        taskId: coupon.task_id,
-        bookId: coupon.book_id,
-        year: coupon.year,
-        location_id: coupon.location_id,
-        location_name: coupon.location_name,
-        phone_number: coupon.phone_number,
-        address: coupon.address,
-        city: coupon.city,
-        state: coupon.state,
-        zip: coupon.zip,
-        // coordinates: coupon.coordinates,
-        // region_id: coupon.region_id,
-        location_merchant_id: coupon.location_merchant_id,
-        location_additional_details: coupon.location_additional_details,
-        merchantName: coupon.merchant_name,
-      };
+    formattedFiles = formattedFiles.map((file, idx) => {
+      const coupon = files[idx]; // original coupon
 
-      if (coupon.front_view_pdf && coupon.front_view_pdf.data) {
-        formattedFile.frontViewBlob = new Blob(
+      // Front view
+      if (coupon.front_view_pdf?.data) {
+        const frontMime = getMimeType(coupon.filename_front);
+
+        file.frontViewBlob = new Blob(
           [Uint8Array.from(coupon.front_view_pdf.data)],
-          { type: "application/pdf" }
+          { type: frontMime }
         );
       }
 
-      if (coupon.back_view_pdf && coupon.back_view_pdf.data) {
-        formattedFile.backViewBlob = new Blob(
+      // Back view
+      if (coupon.back_view_pdf?.data) {
+        const backMime = getMimeType(coupon.filename_back);
+
+        file.backViewBlob = new Blob(
           [Uint8Array.from(coupon.back_view_pdf.data)],
-          { type: "application/pdf" }
+          { type: backMime }
         );
       }
 
-      return formattedFile;
+      return file;
     });
 
     // console.log("FORMATTED FILES = ", formattedFiles);
@@ -177,39 +161,47 @@ function* removeCoupon(action) {
 
 function* frontViewUpload(action) {
   const selectedFile = action.payload.frontViewFile;
-  const selectedFileName = action.payload.frontViewFileName;
   const couponId = action.payload.id;
 
   try {
     const formData = new FormData();
-    formData.append("pdf", selectedFile);
+    formData.append("file", selectedFile);
     // console.log("formData = ", formData);
-    const response = yield axios.put(`/api/coupon/front/${couponId}`, formData);
-    // console.log("RESPONSE from uploadPdf = ", response.data);
-    const uploadedPdfInfo = response.data;
+    const response = yield axios.put(
+      `/api/coupon/front/${couponId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    const frontViewInfo = response.data;
 
     // Dispatch a success action if needed
-    yield put({ type: "UPLOAD_SUCCESS", payload: uploadedPdfInfo });
+    // yield put({ type: "UPLOAD_SUCCESS", payload: frontViewInfo });
   } catch (error) {
-    console.log("Error uploading PDF:", error);
+    console.error("Error uploading file:", error);
   }
 }
 
 function* backViewUpload(action) {
   const selectedFile = action.payload.backViewFile;
-  const selectedFileName = action.payload.backViewFileName;
   const couponId = action.payload.id;
 
   try {
     const formData = new FormData();
-    formData.append("pdf", selectedFile);
+    formData.append("file", selectedFile);
     // console.log("formData = ", formData);
-    const response = yield axios.put(`/api/coupon/back/${couponId}`, formData);
-    // console.log("RESPONSE from uploadPdf = ", response.data);
-    const uploadedPdfInfo = response.data;
+    const response = yield axios.put(`/api/coupon/back/${couponId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    const backViewInfo = response.data;
 
     // Dispatch a success action if needed
-    yield put({ type: "UPLOAD_SUCCESS", payload: uploadedPdfInfo });
+    // yield put({ type: "UPLOAD_SUCCESS", payload: backViewInfo });
   } catch (error) {
     console.log("Error uploading PDF:", error);
   }
@@ -243,8 +235,8 @@ export default function* couponSaga() {
   yield takeEvery("ADD_COUPON", addCoupon);
   yield takeEvery("UPDATE_COUPON", updateCoupon);
   yield takeEvery("REMOVE_COUPON", removeCoupon);
-  yield takeEvery("UPLOAD_FRONT_VIEW_PDF", frontViewUpload);
-  yield takeEvery("UPLOAD_BACK_VIEW_PDF", backViewUpload);
+  yield takeEvery("UPLOAD_FRONT_VIEW_FILE", frontViewUpload);
+  yield takeEvery("UPLOAD_BACK_VIEW_FILE", backViewUpload);
   yield takeEvery("DELETE_FILE_FRONT", deleteFileFront);
   yield takeEvery("DELETE_FILE_BACK", deleteFileBack);
 }

@@ -5,6 +5,7 @@ const {
   rejectUnauthenticated,
 } = require("../modules/authentication-middleware");
 const { upload } = require("../modules/upload");
+const { uploadCoupon } = require("../utils/uploadCoupon");
 
 router.get("/", (req, res) => {
   // can add
@@ -197,97 +198,65 @@ router.put("/redeem/:id", (req, res) => {
     });
 });
 
-// PUT route for uploading front view PDF
-router.put("/front/:id", upload.single("pdf"), (req, res) => {
-  const frontViewPdf = req.file.buffer;
-  const filename = req.file.originalname;
-  // const merchantId = req.params.id;
+// PUT route for uploading front view file
+router.put("/front/:id", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  const filename = file.originalname;
   const couponId = req.params.id;
 
-  // Insert the filename and merchantId into the database
-  pool
-    .query(
-      "UPDATE coupon SET filename_front = $1, front_view_pdf = $2 WHERE id = $3",
-      [filename, frontViewPdf, couponId]
-    )
-    .then(() => {
-      res
-        .status(201)
-        .send({ message: "Front view PDF uploaded successfully!" });
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send("Error uploading front view PDF");
+  if (!file) {
+    return res.status(400).send({ error: "No file uploaded" });
+  }
+
+  try {
+    // Upload to Tigris bucket
+    const fileUrl = await uploadCoupon(file, filename);
+
+    // Save the filename and URL in Postgres
+    await pool.query(
+      "UPDATE coupon SET filename_front = $1, front_view_url = $2 WHERE id = $3",
+      [filename, fileUrl, couponId]
+    );
+
+    res.status(201).send({
+      message: "Front view image uploaded successfully!",
+      fileUrl,
+      filename,
     });
+  } catch (error) {
+    console.error("Error uploading to Tigris:", error);
+    res.status(500).send({ error: "Error uploading front view PDF" });
+  }
 });
 
-// PUT route for uploading back view PDF
-router.put("/back/:id", upload.single("pdf"), (req, res) => {
+// PUT route for uploading back view file
+router.put("/back/:id", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  const filename = file.originalname;
   const couponId = req.params.id;
-  const backViewPdf = req.file.buffer;
-  const filename = req.file.originalname;
 
-  // Insert the filename into the database
-  pool
-    .query(
-      "UPDATE coupon SET filename_back = $1, back_view_pdf = $2 WHERE id = $3",
-      [filename, backViewPdf, couponId]
-    )
-    .then(() => {
-      res.status(201).send({ message: "Back view PDF uploaded successfully!" });
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send("Error uploading back view PDF");
+  try {
+    // Upload to Tigris bucket
+    const fileUrl = await uploadCoupon(file, filename);
+
+    // Save the filename and URL in Postgres
+    await pool.query(
+      "UPDATE coupon SET filename_back = $1, back_view_url = $2 WHERE id = $3",
+      [filename, fileUrl, couponId]
+    );
+
+    res.status(201).send({
+      message: "Back view image uploaded successfully!",
+      fileUrl,
+      filename,
     });
+  } catch (error) {
+    console.error("Error uploading to Tigris:", error);
+    res.status(500).send({ error: "Error uploading front view PDF" });
+  }
 });
 
 // EDIT route for updating coupon details
-// router.put(
-//   "/:merchantId/:couponId",
-//   rejectUnauthenticated,
-//   async (req, res) => {
-//     const coupon = req.body;
-//     const couponId = req.params.couponId;
-
-//     const offer = coupon.offer;
-//     const value = coupon.value;
-//     const exclusions = coupon.exclusions;
-//     const expiration = coupon.expiration;
-//     const additionalInfo = coupon.additional_info;
-
-//     const queryText = `
-//       UPDATE
-//         coupon
-//       SET
-//         offer = $1,
-//         value = $2,
-//         exclusions = $3,
-//         expiration = $4,
-//         additional_info = $5
-//       WHERE id = $6;
-//   `;
-
-//     pool
-//       .query(queryText, [
-//         offer,
-//         value,
-//         exclusions,
-//         expiration,
-//         additionalInfo,
-//         couponId,
-//       ])
-//       .then((response) => {
-//         console.log("Successful PUT in coupon.router");
-//         res.sendStatus(200);
-//       })
-//       .catch((error) => {
-//         console.error("Error in EDIT coupon PUT route", error);
-//         res.sendStatus(500);
-//       });
-//   }
-// );
-
 router.put(
   "/:merchantId/:couponId",
   rejectUnauthenticated,

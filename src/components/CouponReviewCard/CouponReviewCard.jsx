@@ -31,6 +31,7 @@ const thumbnailHeaderStyle = {
   ...textCenter,
 };
 
+// Page for admin to design, review, and update coupons
 export default function CouponReviewCard({ merchant, onTaskUpdate }) {
   const mId = useParams();
   const merchantId = mId.id;

@@ -18,6 +18,9 @@ function LoginForm() {
   const dispatch = dispatchHook();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  // DEV only
+  const ezLoginEnabled =
+    process.env.REACT_APP_LOGIN && process.env.REACT_APP_PWD;
 
   const login = (event) => {
     event.preventDefault();
@@ -35,6 +38,11 @@ function LoginForm() {
     }
   }; // end login
 
+  const handleNinjaLogin = () => {
+    setUsername(process.env.REACT_APP_LOGIN);
+    setPassword(process.env.REACT_APP_PWD);
+  };
+
   return (
     <>
       <br />
@@ -48,7 +56,10 @@ function LoginForm() {
               component="h2"
               style={{ fontWeight: "bold" }}
             >
-              Account Sign In
+              Account Sign{" "}
+              <span onClick={ezLoginEnabled ? handleNinjaLogin : undefined}>
+                In
+              </span>
             </Typography>
             <br />
             <div style={{ display: "flex", flexDirection: "column" }}>

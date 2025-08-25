@@ -1,13 +1,13 @@
 import { Box, Card, CardContent } from "@mui/material";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+// ~~~~~~~~~~ Hooks/Utils ~~~~~~~~~~ //
 import { User } from "../../hooks/reduxStore";
-import { borderPrimaryColor } from "../Utils/colors";
-import { redeemCouponSweetAlert } from "../Utils/sweetAlerts";
 import { dispatchHook } from "../../hooks/useDispatch";
-import { centeredStyle, flexRowSpace } from "../Utils/pageStyles";
+import { borderPrimaryColor } from "../Utils/colors";
+import { centeredStyle } from "../Utils/pageStyles";
+import { redeemCouponSweetAlert } from "../Utils/sweetAlerts";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import BottomSection from "./BottomSection";
-import ThumbView from "./ThumbVIew";
+import ThumbView from "./ThumbView";
 import CouponDetails from "./CouponDetails";
 
 export default function CouponCard({ coupon, i, isMobile, redeemed }) {
