@@ -36,9 +36,12 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
             c.merchant_id,
             c.is_deleted,
             c.filename_front,
-            c.front_view_url,
-            REPLACE(c.filename_back, ' ', '_') AS filename_back, -- Replace spaces with underscores
+            c.filename_back,
             REPLACE(c.filename_front, ' ', '_') AS filename_front, -- Replace spaces with underscores
+            REPLACE(c.filename_back, ' ', '_') AS filename_back, -- Replace spaces with underscores
+            c.front_view_pdf,
+            c.back_view_pdf,
+            c.front_view_url,
             c.back_view_url,
             c.offer,
             c.value,
@@ -78,8 +81,16 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
             AND cb.id = ANY($2::int[])
             AND c.is_deleted = false
           GROUP BY
-            c.id, m.merchant_name, cl.coupon_id, uc.show_book
+            c.id, 
+            m.merchant_name, 
+            cl.coupon_id, 
+            uc.show_book, 
+            cb.year
           ORDER BY
+            CASE
+              WHEN CAST(SPLIT_PART(cb.year, '-', 1) AS INT) = EXTRACT(YEAR FROM CURRENT_DATE) THEN 0
+              ELSE 1
+            END DESC,
             m.merchant_name ASC;
         `;
 
@@ -111,19 +122,6 @@ router.post("/", rejectUnauthenticated, (req, res) => {
             AND uc.coupon_id = c.id
           );
       `;
-  // const updateQueryText = `
-  //       UPDATE user_coupon uc
-  //       SET show_book = true
-  //     WHERE EXISTS (
-  //       SELECT 1
-  //       FROM user_coupon
-  //       WHERE user_id = uc.user_id
-  //       AND show_book = true
-  //       GROUP BY user_id
-  //     HAVING COUNT(*) > 1
-  //       )
-  //       AND coupon_id = $1;
-  //     `;
 
   // Execute the insert query
   pool.query(insertQueryText, [couponId], (err, result) => {
@@ -134,17 +132,6 @@ router.post("/", rejectUnauthenticated, (req, res) => {
     }
     // Insert query successful?
     console.log("Insert query executed successfully");
-
-    // Execute the update query
-    // pool.query(updateQueryText, [couponId], (updateErr, updateResult) => {
-    //   if (updateErr) {
-    //     // Handle update error
-    //     console.error("Error executing update query:", updateErr);
-    //     return;
-    //   }
-    //   // Update query successful
-    //   console.log("Update query executed successfully:", updateResult);
-    // });
   });
 });
 

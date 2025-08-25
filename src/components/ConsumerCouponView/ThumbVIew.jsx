@@ -1,15 +1,12 @@
 import { Box, Typography } from "@mui/material";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~~ //
+// ~~~~~~~~~~ Utils ~~~~~~~~~~~ //
 import { flexRowSpace } from "../Utils/pageStyles";
+// ~~~~~~~~~~ Hook ~~~~~~~~~~ //
+import { useFilePreview } from "../../hooks/useFilePreview";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
-import PdfThumbnail from "../PdfThumbnail/PdfThumbnail";
-import NoFile from "./NoFile";
 import JpgThumbnail from "../JpgThumbnail/JpgThumbnail";
-
-const checkFileType = (url) => ({
-  isPdf: url && url.endsWith(".pdf"),
-  isJpg: url && url.endsWith(".jpg"),
-});
+import NoFile from "./NoFile";
+import PdfThumbnail from "../PdfThumbnail/PdfThumbnail";
 
 export default function ThumbView({
   isMobile,
@@ -18,9 +15,7 @@ export default function ThumbView({
   couponPreviewStyle,
   coupon,
 }) {
-  // Front and Back view checks
-  const frontViewType = checkFileType(coupon.frontViewUrl);
-  const backViewType = checkFileType(coupon.backViewUrl);
+  const { frontSrc, backSrc, frontType, backType } = useFilePreview(coupon);
 
   return (
     <>
@@ -32,20 +27,17 @@ export default function ThumbView({
             <Typography variant="caption" sx={{ lineHeight: 1 }}>
               {isMobile ? null : "Front"}
             </Typography>
-            {frontViewType.isPdf ? (
+            {frontType.isPdf ? (
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.frontViewUrl}
+                pdf={frontSrc}
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 170 : 200}
                 caseType="consumer"
               />
-            ) : frontViewType.isJpg ? (
+            ) : frontType.isJpg ? (
               // Render JPEG Thumbnail if URL is an image
-              <JpgThumbnail
-                imageUrl={coupon.frontViewUrl}
-                isMobile={isMobile}
-              />
+              <JpgThumbnail imageUrl={frontSrc} isMobile={isMobile} />
             ) : (
               <NoFile
                 label="Image temporarily unavailable"
@@ -83,17 +75,17 @@ export default function ThumbView({
               {isMobile ? null : "Front"}
             </Typography>
             {/* Render PDF Thumbnail if URL is a PDF */}
-            {frontViewType.isPdf ? (
+            {frontType.isPdf ? (
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.frontViewUrl}
+                pdf={frontSrc}
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 170 : 200}
                 caseType="consumer"
               />
-            ) : frontViewType.isJpg ? (
+            ) : frontType.isJpg ? (
               // Render JPEG Thumbnail if URL is an image
-              <JpgThumbnail imageUrl={coupon.frontViewUrl} />
+              <JpgThumbnail imageUrl={frontSrc} />
             ) : (
               <NoFile
                 label="Image temporarily unavailable"
@@ -105,17 +97,17 @@ export default function ThumbView({
           <Box sx={isMobile ? mobilePreviewBox : previewBoxStyle}>
             {isMobile ? null : "Back"}
             {/* Render PDF Thumbnail if URL is a PDF */}
-            {backViewType.isPdf ? (
+            {backType.isPdf ? (
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.backViewUrl}
+                pdf={backSrc}
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 170 : 200}
                 caseType="consumer"
               />
-            ) : backViewType.isJpg ? (
+            ) : backType.isJpg ? (
               // Render JPEG Thumbnail if URL is an image
-              <JpgThumbnail imageUrl={coupon.backViewUrl} />
+              <JpgThumbnail imageUrl={backSrc} />
             ) : (
               <NoFile
                 label="Image temporarily unavailable"

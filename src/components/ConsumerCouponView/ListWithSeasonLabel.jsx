@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy } from "react";
 import { Divider, Typography } from "@mui/material";
 
 const CouponCard = lazy(() => import("./CouponCard"));
@@ -39,9 +39,7 @@ const ListWithSeasonLabel = ({
             {(newSeasonLabelRendered = true)}
           </>
         )}
-        <Suspense fallback={<div>Loading coupon...</div>}>
-          <CouponCard isMobile={isMobile} coupon={coupon} />
-        </Suspense>
+        <CouponCard isMobile={isMobile} coupon={coupon} />
       </React.Fragment>
     );
   });

@@ -29,7 +29,9 @@ export const formatCoupons = (files = []) => {
     locationMerchantId: coupon.location_merchant_id ?? null,
     additionalDetails: coupon.location_additional_details ?? "",
     merchantName: coupon.merchant_name ?? "",
-    frontViewUrl: coupon.filename_front ?? "",
-    backViewUrl: coupon.filename_back ?? "",
+    filenameFront: coupon.filename_front ?? "",
+    filenameBack: coupon.filename_back ?? "",
+    frontViewUrl: coupon.front_view_url ?? "",
+    backViewUrl: coupon.back_view_url ?? "",
   }));
 };

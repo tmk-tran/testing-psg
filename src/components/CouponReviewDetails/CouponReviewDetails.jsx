@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~ //
 import { Typography, Card, CardContent, Box, Button } from "@mui/material";
@@ -17,15 +17,10 @@ import CouponLocations from "../CouponLocations/CouponLocations";
 import ToggleButton from "../ToggleButton/ToggleButton";
 import EditButton from "../Buttons/EditButton";
 import EditCouponModal from "./EditCouponModal";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+// ~~~~~~~~~~ Hooks/Utils ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
-import {
-  couponsData,
-  mTasks,
-  bookYear,
-  appActiveYear,
-} from "../../hooks/reduxStore";
-import { centeredStyle, flexCenter, flexRowSpace } from "../Utils/pageStyles";
+import { couponsData, mTasks, bookYear } from "../../hooks/reduxStore";
+import { flexCenter, flexRowSpace } from "../Utils/pageStyles";
 import { grayBackground } from "../Utils/colors";
 import { capitalizeFirstWord, formatDate } from "../Utils/helpers";
 import { showDeleteSweetAlert } from "../Utils/sweetAlerts";
@@ -174,11 +169,11 @@ export default function CouponReviewDetails() {
 
   const handleFrontUpload = () => {
     if (frontViewFile) {
-      // Check if the selected file is a PDF
-      if (frontViewFile.type === "application/pdf") {
-        // Dispatch the action for uploading PDF
+      const validTypes = ["application/pdf", "image/jpeg"]; // allowed types
+      if (validTypes.includes(frontViewFile.type)) {
+        // Dispatch the action for uploading image
         const frontViewAction = {
-          type: "UPLOAD_FRONT_VIEW_PDF",
+          type: "UPLOAD_FRONT_VIEW_FILE",
           payload: {
             frontViewFile: frontViewFile,
             frontViewFileName: frontViewFilename,
@@ -187,10 +182,10 @@ export default function CouponReviewDetails() {
         };
         dispatch(frontViewAction);
         setIsUploaded(true);
-        // onUploadFile();
+        // could add sweet alert here on success
       } else {
-        // Alert the user if the selected file is not a PDF
-        alert("Please select a PDF file");
+        // Alert the user if the selected file is not accepted
+        alert("Please select a PDF, or JPEG file");
       }
     } else {
       // Alert the user if no file is selected
@@ -207,11 +202,11 @@ export default function CouponReviewDetails() {
 
   const handleBackUpload = () => {
     if (backViewFile) {
-      // Check if the selected file is a PDF
-      if (backViewFile.type === "application/pdf") {
-        // Dispatch the action for uploading PDF
+      const validTypes = ["application/pdf", "image/jpeg"]; // allowed types
+      if (validTypes.includes(backViewFile.type)) {
+        // Dispatch the action for uploading image
         const backViewAction = {
-          type: "UPLOAD_BACK_VIEW_PDF",
+          type: "UPLOAD_BACK_VIEW_FILE",
           payload: {
             backViewFile: backViewFile,
             backViewFileName: backViewFilename,
@@ -220,10 +215,10 @@ export default function CouponReviewDetails() {
         };
         dispatch(backViewAction);
         setIsUploaded(true); // Set isUploaded to true after successful upload
-        // onUploadFile();
+        // could add sweet alert here on success
       } else {
-        // Alert the user if the selected file is not a PDF
-        alert("Please select a PDF file");
+        // Alert the user if the selected file is not accepted
+        alert("Please select a PDF, or JPEG file");
       }
     } else {
       // Alert the user if no file is selected

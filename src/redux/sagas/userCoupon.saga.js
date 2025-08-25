@@ -1,6 +1,7 @@
 import axios from "axios";
 import { put, takeEvery } from "redux-saga/effects";
 import { formatCoupons } from "../../components/Utils/couponHelpers";
+import { getMimeType } from "../../components/Utils/helpers";
 import { fetchCouponFilesFailure } from "./actions";
 
 function* fetchUserBooksSaga() {
@@ -22,7 +23,6 @@ function* fetchRedeemedCouponsSaga(action) {
     const response = yield axios.get(
       `/api/userCoupon/${userId}?yearId=${yearId}&redeemed=true`
     );
-    console.log("Incoming response from fetchRedeemedCouponsSaga: ", response);
 
     // Ensure data exists
     const data = response.data || [];
@@ -34,19 +34,28 @@ function* fetchRedeemedCouponsSaga(action) {
     formattedFiles = formattedFiles.map((file, idx) => {
       const coupon = response.data[idx]; // get original coupon to access PDFs
 
+      // Dev/local: create Blob if PDF data exists
       if (coupon.front_view_pdf?.data) {
+        const frontMime = getMimeType(coupon.filename_front);
+
         file.frontViewBlob = new Blob(
           [Uint8Array.from(coupon.front_view_pdf.data)],
-          { type: "application/pdf" }
+          { type: frontMime }
         );
       }
 
       if (coupon.back_view_pdf?.data) {
+        const backMime = getMimeType(coupon.filename_back);
+
         file.backViewBlob = new Blob(
           [Uint8Array.from(coupon.back_view_pdf.data)],
-          { type: "application/pdf" }
+          { type: backMime }
         );
       }
+
+      // Prod/Tigris: if URL is returned instead, just use it
+      if (coupon.front_view_url) file.frontViewUrl = coupon.front_view_url;
+      if (coupon.back_view_url) file.backViewUrl = coupon.back_view_url;
 
       return file;
     });
