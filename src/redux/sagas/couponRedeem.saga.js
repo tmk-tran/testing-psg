@@ -11,8 +11,9 @@ function* redeemCoupon(action) {
       type: "FETCH_CONSUMER_COUPONS",
       payload: { userId, yearIds: [yearId] },
     });
+    yield put({ type: "FETCH_REDEEMED_COUPONS", payload: { userId, yearId } });
   } catch (error) {
-    console.log("error in redeem coupon Saga", error);
+    console.error("error in redeem coupon Saga", error);
   }
 }
 
