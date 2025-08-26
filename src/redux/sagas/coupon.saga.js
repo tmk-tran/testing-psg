@@ -66,12 +66,16 @@ function* couponFiles(action) {
 
 // Used in CouponReviewDetails and CouponReviewCard
 function* pdfFile(action) {
-  const merchantId = action.payload;
+  const payload = action.payload;
+
+  // Distinguish between merchant ID vs coupon ID
+  const merchantId = payload; // if payload is just the merchant ID
+  const couponId = payload.couponId;
 
   try {
     const response = yield axios.get(
       merchantId.couponId
-        ? `/api/coupon/details/${merchantId.couponId}`
+        ? `/api/coupon/details/${couponId}`
         : `/api/coupon/${merchantId}`
     );
     // console.log("FETCH request from coupon.saga, RESPONSE = ", response.data);
@@ -160,13 +164,19 @@ function* removeCoupon(action) {
 }
 
 function* frontViewUpload(action) {
+  console.log("Action payload in frontViewUpload saga = ", action.payload);
   const selectedFile = action.payload.frontViewFile;
-  const couponId = action.payload.id;
+  const couponId = action.payload.couponId;
+  const merchantId = action.payload.merchantId;
 
   try {
     const formData = new FormData();
     formData.append("file", selectedFile);
-    // console.log("formData = ", formData);
+
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
+
     const response = yield axios.put(
       `/api/coupon/front/${couponId}`,
       formData,
@@ -176,9 +186,10 @@ function* frontViewUpload(action) {
         },
       }
     );
-    const frontViewInfo = response.data;
+    // const frontViewInfo = response.data;
 
     // Dispatch a success action if needed
+    yield put({ type: "FETCH_PDF_FILE", payload: merchantId, couponId });
     // yield put({ type: "UPLOAD_SUCCESS", payload: frontViewInfo });
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -187,7 +198,8 @@ function* frontViewUpload(action) {
 
 function* backViewUpload(action) {
   const selectedFile = action.payload.backViewFile;
-  const couponId = action.payload.id;
+  const couponId = action.payload.couponId;
+  const merchantId = action.payload.merchantId;
 
   try {
     const formData = new FormData();
@@ -201,9 +213,10 @@ function* backViewUpload(action) {
     const backViewInfo = response.data;
 
     // Dispatch a success action if needed
+    yield put({ type: "FETCH_PDF_FILE", payload: merchantId, couponId });
     // yield put({ type: "UPLOAD_SUCCESS", payload: backViewInfo });
   } catch (error) {
-    console.log("Error uploading PDF:", error);
+    console.error("Error uploading PDF:", error);
   }
 }
 

@@ -362,7 +362,7 @@ router.delete("/:id/front", (req, res) => {
 
   const queryText = `
     UPDATE coupon
-    SET filename_front = NULL, front_view_pdf = NULL
+    SET filename_front = NULL, front_view_url = NULL
     WHERE id = $1;
   `;
 
@@ -383,7 +383,7 @@ router.delete("/:id/back", (req, res) => {
 
   const queryText = `
     UPDATE coupon
-    SET filename_back = NULL, back_view_pdf = NULL
+    SET filename_back = NULL, back_view_url = NULL
     WHERE id = $1;
   `;
 

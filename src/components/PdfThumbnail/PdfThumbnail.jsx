@@ -72,7 +72,11 @@ const PdfThumbnail = ({ isMobile, pdf, style, width, caseType }) => {
             onMouseLeave={!isMobile ? handleMouseLeave : undefined}
             onClick={handleThumbnailClick}
           >
-            <Document file={pdf} onLoadSuccess={onDocumentLoadSuccess}>
+            <Document
+              file={pdf}
+              onLoadSuccess={onDocumentLoadSuccess}
+              loading={"Loading..."}
+            >
               <Page pageNumber={1} width={width ? width : 150} />
             </Document>
             {/* <img src={pdf} alt="Thumbnail" /> */}
