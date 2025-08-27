@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   InputLabel,
@@ -21,21 +21,23 @@ export default function YearSelect({
   assignedYearId,
 }) {
   const dispatch = dispatchHook();
-  const [yearSelected, setYearSelected] = useState(assignedYearId);
+  const [yearSelected, setYearSelected] = useState(assignedYearId ?? null);
 
   useEffect(() => {
-    // Set the initial selected year to the ID of the active year
+    if (!year || year.length === 0) return; // guard in case it's not loaded yet
 
-    if (Array.isArray(year) && year.length > 0) {
-      const activeYearId = year.find((y) => y.active)?.id || "";
-      setYearSelected(activeYearId);
+    // Find the active year object
+    const activeYear = year.find((y) => y.active);
+
+    if (activeYear) {
+      setYearSelected(activeYear.id); // MUI Select value
     }
 
     const dispatchAction = {
       type: "FETCH_COUPON_BOOKS",
     };
     dispatch(dispatchAction);
-  }, []);
+  }, [year]);
 
   const years = allYears();
 
@@ -75,7 +77,7 @@ export default function YearSelect({
         <FormControl fullWidth>
           <InputLabel>Book Year</InputLabel>
           <Select
-            value={yearSelected}
+            value={yearSelected ?? ""}
             label="Book Year"
             onChange={handleChange}
           >

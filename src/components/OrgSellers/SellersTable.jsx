@@ -66,10 +66,10 @@ export default function SellersTable({ forwardedRef }) {
 
   const user = User() || [];
   const sellers = oSellers() || [];
-  const year = appActiveYear() || [];
-  const yearId = year.length > 0 ? year[0].id : null;
+  const activeYearObj = appActiveYear() || [];
+  const yearId = activeYearObj.length > 0 ? activeYearObj[0].id : null;
   const availableYears = allYears();
-  const [viewYearId, setViewYearId] = useState(year ? yearId : null);
+  const [viewYearId, setViewYearId] = useState(activeYearObj ? yearId : null);
 
   // move this to Details parent component, and
   // send the store data as props to this component
@@ -111,8 +111,8 @@ export default function SellersTable({ forwardedRef }) {
 
   // Get only active year ID
   const activeYears = availableYears
-    .filter((year) => year.active)
-    .map((year) => year.id);
+    .filter((activeYearObj) => activeYearObj.active)
+    .map((activeYearObj) => activeYearObj.id);
 
   // Disable buttons if the selected year is not active
   const isYearActive = activeYears.includes(viewYearId);
@@ -245,7 +245,7 @@ export default function SellersTable({ forwardedRef }) {
         {/* ~~~~~ Year View ~~~~~ */}
         <YearSelect
           sx={{ minWidth: 150, p: 1 }}
-          year={year}
+          year={activeYearObj}
           setYear={setViewYearId}
         />
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
