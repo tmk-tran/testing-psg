@@ -93,7 +93,7 @@ export default function FilePreview({
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   {frontType.isPdf ? (
                     <PdfThumbnail
-                      pdf={directFile.frontViewBlob}
+                      pdf={directFile.frontViewBlob ?? directFile.frontViewUrl} // can update to use the useFilePreview hook, similar to ThumbView.jsx
                       style={thumbnailSize}
                     />
                   ) : frontType.isJpg ? (
@@ -129,7 +129,7 @@ export default function FilePreview({
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   {backType.isPdf ? (
                     <PdfThumbnail
-                      pdf={directFile.backViewBlob}
+                      pdf={directFile.backViewBlob ?? directFile.backViewUrl}
                       style={thumbnailSize}
                     />
                   ) : backType.isJpg ? (

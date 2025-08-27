@@ -349,6 +349,17 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
     .query(queryText, [couponId])
     .then((response) => {
       console.log("Coupon removed");
+
+      // Mark related merchant tasks as deleted
+      const updateTasks = `
+        UPDATE merchant_tasks
+        SET is_deleted = true
+        WHERE coupon_id = $1;
+      `;
+      return pool.query(updateTasks, [couponId]);
+    })
+    .then(() => {
+      console.log("Related merchant tasks removed");
       res.sendStatus(200);
     })
     .catch((error) => {

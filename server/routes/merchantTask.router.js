@@ -13,6 +13,7 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
           FROM merchant_tasks mt
           JOIN merchant m ON mt.merchant_id = m.id
           WHERE mt.merchant_id = $1
+            AND mt.is_deleted = false
           ORDER BY mt.due_date ASC;
         `;
 
