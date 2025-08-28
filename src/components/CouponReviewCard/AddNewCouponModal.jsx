@@ -194,7 +194,8 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
               <YearSelect
                 labelOutside
                 sx={{ mb: 2 }}
-                setYear={setSeasonIdSelected}
+                assignedYearId={seasonIdSelected}
+                setAssignedYearId={setSeasonIdSelected}
                 setActiveYearError={setActiveYearError}
                 error={activeYearError}
                 helpertext={activeYearError ? "Please select a book year" : ""}

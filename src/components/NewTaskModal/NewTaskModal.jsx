@@ -86,10 +86,10 @@ export default function NewTaskModal({
   useEffect(() => {
     // Conditional logic based on merchantTab
     merchantTab
-    ? /* Logic for merchantTab being true */
-      dispatch({ type: "FETCH_MERCHANTS" })
-    : /* Logic for merchantTab being false */
-      dispatch({ type: "FETCH_ORGANIZATIONS" });  
+      ? /* Logic for merchantTab being true */
+        dispatch({ type: "FETCH_MERCHANTS" })
+      : /* Logic for merchantTab being false */
+        dispatch({ type: "FETCH_ORGANIZATIONS" });
 
     // Cleanup function or dependencies for useEffect
   }, [merchantTab]);
@@ -297,7 +297,12 @@ export default function NewTaskModal({
             {/* ~~~~~~~~~~~~~~~~ END ~~~~~~~~~~~~~~~~~~~~ */}
 
             {/* ~~~~~ Year Select, Offer field ~~~~~ */}
-            {showDetailsInput && <YearSelect setYear={setBookYearId} />}
+            {showDetailsInput && (
+              <YearSelect
+                assignedYearId={bookYearId}
+                setAssignedYearId={setBookYearId}
+              />
+            )}
 
             {showDetailsInput && (
               <TextField

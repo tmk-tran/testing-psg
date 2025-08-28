@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import {
@@ -17,7 +17,7 @@ import AddIcon from "@mui/icons-material/Add";
 import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import EditAttributesIcon from "@mui/icons-material/EditAttributes";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+// ~~~~~~~~~~ Hooks/Utils ~~~~~~~~~~ //
 import { columns } from "./sellerTableColumns";
 import { dispatchHook } from "../../hooks/useDispatch";
 import {
@@ -28,6 +28,7 @@ import {
 } from "../../hooks/reduxStore";
 import { primaryColor } from "../Utils/colors";
 import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
+import { getCurrentSeason } from "../Utils/season";
 // ~~~~~~~~~~ Components ~~~~~~~~~~ //
 import SellerForm from "./SellerForm";
 import CustomButton from "../CustomButton/CustomButton";
@@ -51,6 +52,17 @@ export default function SellersTable({ forwardedRef }) {
   const dispatch = dispatchHook();
   const paramsObject = useParams();
   const orgId = paramsObject.id;
+
+  // Store
+  const user = User() || [];
+  const sellers = oSellers() || [];
+  const activeYearObj = appActiveYear() || [];
+  const allAppYears = allYears();
+  const currentSeasonObj = getCurrentSeason(activeYearObj);
+  const currentSeasonId = currentSeasonObj?.id;
+  const yearId = activeYearObj.length > 0 ? activeYearObj[0].id : null;
+
+  // State
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [open, setOpen] = useState(false);
@@ -60,16 +72,11 @@ export default function SellersTable({ forwardedRef }) {
   const [sellerRefId, setSellerRefId] = useState(null);
   const [viewUrlTable, setViewUrlTable] = useState(false);
   const [modeEditBooks, setModeEditBooks] = useState(false);
-  const [booksSold, setBooksSold] = useState(0);
   const [editingRefId, setEditingRefId] = useState(null);
   const [updateActions, setUpdateActions] = useState([]);
-
-  const user = User() || [];
-  const sellers = oSellers() || [];
-  const activeYearObj = appActiveYear() || [];
-  const yearId = activeYearObj.length > 0 ? activeYearObj[0].id : null;
-  const availableYears = allYears();
-  const [viewYearId, setViewYearId] = useState(activeYearObj ? yearId : null);
+  const [assignedYearId, setAssignedYearId] = useState(
+    currentSeasonObj ? currentSeasonObj.id : null
+  );
 
   // move this to Details parent component, and
   // send the store data as props to this component
@@ -85,19 +92,35 @@ export default function SellersTable({ forwardedRef }) {
     dispatch(dispatchAction);
   }, []);
 
+  // Grabs sellers when year view is changed through YearSelect.jsx
   useEffect(() => {
-    if (viewYearId !== null) {
+    if (assignedYearId !== null) {
       const dispatchAction2 = {
         type: "FETCH_SELLERS",
         payload: {
           orgId: paramsObject.id,
-          yearId: viewYearId,
+          yearId: assignedYearId,
         },
       };
       // console.log(dispatchAction2);
       dispatch(dispatchAction2);
     }
-  }, [viewYearId]);
+  }, [assignedYearId]);
+
+  const prevSellersRef = useRef([]);
+
+  // Resets YearSelect.jsx dropdown
+  useEffect(() => {
+    // Sellers updated via saga fetch, not initial mount
+    if (
+      prevSellersRef.current.length > 0 &&
+      sellers !== prevSellersRef.current
+    ) {
+      currentSeasonId != null && setAssignedYearId(currentSeasonId);
+    }
+
+    prevSellersRef.current = sellers; // update ref
+  }, [sellers]);
 
   useLayoutEffect(() => {
     if (forwardedRef && forwardedRef.current && sellers.length > 0) {
@@ -106,16 +129,23 @@ export default function SellersTable({ forwardedRef }) {
         forwardedRef.current.scrollIntoView({ behavior: "instant" });
       }, 100); // Adjust the delay as needed
     }
-    // No need to clear forwardedRef here
   }, [forwardedRef, sellers.length]);
 
   // Get only active year ID
-  const activeYears = availableYears
+  const activeYears = allAppYears
     .filter((activeYearObj) => activeYearObj.active)
     .map((activeYearObj) => activeYearObj.id);
 
   // Disable buttons if the selected year is not active
-  const isYearActive = activeYears.includes(viewYearId);
+  const isYearActive = activeYears.includes(assignedYearId);
+  // Disable button unless the selected year matches the current season
+  console.log("assignedYearId:", assignedYearId);
+  console.log("currentSeasonObj:", currentSeasonObj);
+  console.log("currentSeasonObj.id:", currentSeasonObj?.id);
+  const isUrlButtonDisabled =
+    assignedYearId != null &&
+    currentSeasonObj?.id != null &&
+    assignedYearId !== currentSeasonObj.id;
 
   // ~~~~~~ Open / Close Seller Form ~~~~~~ //
   const handleOpen = (mode) => {
@@ -212,13 +242,11 @@ export default function SellersTable({ forwardedRef }) {
   // ~~~~~~ Open / Close edit form for physical books sold ~~~~~~ //
   const openEditBooksSold = (refId, value) => {
     setModeEditBooks(true);
-    setBooksSold(value);
     setEditingRefId(refId);
   };
 
   const closeEditBooksSold = () => {
     setModeEditBooks(false);
-    setBooksSold(0);
   };
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -245,8 +273,8 @@ export default function SellersTable({ forwardedRef }) {
         {/* ~~~~~ Year View ~~~~~ */}
         <YearSelect
           sx={{ minWidth: 150, p: 1 }}
-          year={activeYearObj}
-          setYear={setViewYearId}
+          assignedYearId={assignedYearId} // selected value
+          setAssignedYearId={setAssignedYearId}
         />
         {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
         {/* ~~~~~~~~~~ Header ~~~~~~~~~~ */}
@@ -396,7 +424,7 @@ export default function SellersTable({ forwardedRef }) {
                                     (e.currentTarget.style.transform =
                                       "scale(1)")
                                   }
-                                  disabled={!isYearActive}
+                                  disabled={isUrlButtonDisabled} // disable until current season
                                 />
                               </div>
                             )}

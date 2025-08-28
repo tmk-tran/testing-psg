@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Box,
   InputLabel,
@@ -11,40 +11,24 @@ import { dispatchHook } from "../../hooks/useDispatch";
 import { allYears } from "../../hooks/reduxStore";
 
 export default function YearSelect({
-  year,
-  setYear,
   labelOutside,
   sx,
-  setActiveYearError,
-  error,
-  helpertext,
   assignedYearId,
+  setAssignedYearId,
+  error,
+  setActiveYearError,
+  helpertext,
 }) {
   const dispatch = dispatchHook();
-  const [yearSelected, setYearSelected] = useState(assignedYearId ?? null);
+  const years = allYears();
 
   useEffect(() => {
-    if (!year || year.length === 0) return; // guard in case it's not loaded yet
-
-    // Find the active year object
-    const activeYear = year.find((y) => y.active);
-
-    if (activeYear) {
-      setYearSelected(activeYear.id); // MUI Select value
-    }
-
-    const dispatchAction = {
-      type: "FETCH_COUPON_BOOKS",
-    };
-    dispatch(dispatchAction);
-  }, [year]);
-
-  const years = allYears();
+    dispatch({ type: "FETCH_COUPON_BOOKS" });
+  }, []);
 
   const handleChange = (event) => {
     labelOutside && setActiveYearError(false);
-    setYearSelected(event.target.value);
-    setYear(event.target.value);
+    setAssignedYearId(event.target.value);
   };
 
   return (
@@ -54,8 +38,7 @@ export default function YearSelect({
           <InputLabel>Book Year</InputLabel>
           <FormControl fullWidth>
             <Select
-              value={yearSelected}
-              label="Book Year"
+              value={assignedYearId}
               onChange={handleChange}
               error={error}
               helperText={error ? helpertext : ""}
@@ -77,7 +60,7 @@ export default function YearSelect({
         <FormControl fullWidth>
           <InputLabel>Book Year</InputLabel>
           <Select
-            value={yearSelected ?? ""}
+            value={assignedYearId}
             label="Book Year"
             onChange={handleChange}
           >
