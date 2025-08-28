@@ -77,6 +77,7 @@ export default function SellersTable({ forwardedRef }) {
   const [assignedYearId, setAssignedYearId] = useState(
     currentSeasonObj ? currentSeasonObj.id : null
   );
+  const [editedSellerFlag, setEditedSellerFlag] = useState(false);
 
   // move this to Details parent component, and
   // send the store data as props to this component
@@ -107,20 +108,14 @@ export default function SellersTable({ forwardedRef }) {
     }
   }, [assignedYearId]);
 
-  const prevSellersRef = useRef([]);
-
   // Resets YearSelect.jsx dropdown
   useEffect(() => {
     // Sellers updated via saga fetch, not initial mount
-    if (
-      prevSellersRef.current.length > 0 &&
-      sellers !== prevSellersRef.current
-    ) {
+    if (editedSellerFlag === true) {
       currentSeasonId != null && setAssignedYearId(currentSeasonId);
+      setEditedSellerFlag(false); // reset flag
     }
-
-    prevSellersRef.current = sellers; // update ref
-  }, [sellers]);
+  }, [editedSellerFlag]);
 
   useLayoutEffect(() => {
     if (forwardedRef && forwardedRef.current && sellers.length > 0) {
@@ -203,6 +198,7 @@ export default function SellersTable({ forwardedRef }) {
     // Reset updateActions state
     setUpdateActions([]);
     showSaveSweetAlert({ label: "Seller Updated" });
+    setEditedSellerFlag(true);
   };
 
   const handleArchive = (sellerId) => {
