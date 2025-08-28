@@ -231,7 +231,7 @@ export default function ConsumerCouponView() {
         {isLoading ? (
           <LoadingSpinner
             text="Loading..."
-            waitingText="Please wait while we load image files..."
+            waitingText="Please wait while we load your coupons..."
             finalText="Oops! ...unexpected error. Please refresh the page, or try again later"
             timeout={15000}
           />

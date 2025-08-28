@@ -17,9 +17,9 @@ import AddBox from "../AddBoxIcon/AddBoxIcon";
 import LocationSelect from "./LocationSelect";
 import ModalButtons from "../Modals/ModalButtons";
 import YearSelect from "../OrgSellers/YearSelect";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~~ //
-import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
+// ~~~~~~~~~~ Hooks/Utils ~~~~~~~~~~~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
+import { lineDivider, modalHeaderStyle } from "../Utils/modalStyles";
 import { capitalizeWords, validateWebsiteFormat } from "../Utils/helpers";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 
@@ -61,11 +61,6 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
   const [websiteError, setWebsiteError] = useState(false);
   const [activeYearError, setActiveYearError] = useState(false);
 
-  // useEffect(() => {
-  //   if (isDropdownSelected) {
-  //     setSelectAllLocations(false);
-  //   }
-  // }, [isDropdownSelected]);
   useEffect(() => {
     if (isDropdownSelected) {
       setSelectedValue(""); // Deselect radio button when dropdown is selected
@@ -199,7 +194,8 @@ export default function AddNewCouponModal({ handleCaseTypeChange, locations }) {
               <YearSelect
                 labelOutside
                 sx={{ mb: 2 }}
-                setYear={setSeasonIdSelected}
+                assignedYearId={seasonIdSelected}
+                setAssignedYearId={setSeasonIdSelected}
                 setActiveYearError={setActiveYearError}
                 error={activeYearError}
                 helpertext={activeYearError ? "Please select a book year" : ""}

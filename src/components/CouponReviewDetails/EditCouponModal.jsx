@@ -64,10 +64,6 @@ export default function EditCouponModal({ file }) {
 
   const locations = mLocations() || [];
   const couponLocations = couponsData() || [];
-
-  // Obtain the coupon book id for the year, use in edit
-  const coupon = couponLocations[0];
-  const couponBookId = coupon ? coupon.bookId : null;
   const validLocationId = couponLocations.map((coupon) => coupon.location_id);
 
   useEffect(() => {
@@ -226,8 +222,8 @@ export default function EditCouponModal({ file }) {
             {/* ~~~~~ Assigned Year Field ~~~~~ */}
             <Grid item xs={6}>
               <YearSelect
-                setYear={setValidYear}
-                assignedYearId={couponBookId}
+                assignedYearId={validYear}
+                setAssignedYearId={setValidYear}
               />
             </Grid>
             <Grid item xs={12}>

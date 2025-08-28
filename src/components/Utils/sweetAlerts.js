@@ -29,8 +29,8 @@ export const showDeleteSweetAlert = (deleteCall, caseType) => {
       title = "Delete User?";
       confirmButtonText = "Confirm";
       break;
-    case "removePdf":
-      title = "Delete PDF?";
+    case "removeImage":
+      title = "Delete Image?";
       confirmButtonText = "Confirm";
       break;
     case "removeCoupon":
@@ -58,7 +58,7 @@ export const showDeleteSweetAlert = (deleteCall, caseType) => {
         title:
           caseType === "removeOrgAdmin"
             ? "Removed!"
-            : caseType === "deleteUser" || caseType === "removePdf"
+            : caseType === "deleteUser" || caseType === "removeImage"
             ? "Deleted!"
             : "Archived!",
         icon: "success",

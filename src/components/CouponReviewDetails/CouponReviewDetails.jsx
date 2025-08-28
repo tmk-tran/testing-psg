@@ -177,7 +177,8 @@ export default function CouponReviewDetails() {
           payload: {
             frontViewFile: frontViewFile,
             frontViewFileName: frontViewFilename,
-            id: couponId,
+            couponId,
+            merchantId,
           },
         };
         dispatch(frontViewAction);
@@ -210,7 +211,8 @@ export default function CouponReviewDetails() {
           payload: {
             backViewFile: backViewFile,
             backViewFileName: backViewFilename,
-            id: couponId,
+            couponId,
+            merchantId,
           },
         };
         dispatch(backViewAction);
@@ -245,7 +247,7 @@ export default function CouponReviewDetails() {
     };
     showDeleteSweetAlert(() => {
       dispatch(frontAction);
-    }, "removePdf");
+    }, "removeImage");
   };
 
   const deleteBackFile = (fileId) => {
@@ -255,7 +257,7 @@ export default function CouponReviewDetails() {
     };
     showDeleteSweetAlert(() => {
       dispatch(backAction);
-    }, "removePdf");
+    }, "removeImage");
   };
 
   return (

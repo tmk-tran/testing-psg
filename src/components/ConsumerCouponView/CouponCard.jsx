@@ -10,36 +10,36 @@ import BottomSection from "./BottomSection";
 import ThumbView from "./ThumbView";
 import CouponDetails from "./CouponDetails";
 
+export const couponPreviewStyle = {
+  height: "150px",
+  width: "200px",
+};
+
+const cardStyle = {
+  mb: 4,
+  backgroundColor: "#F0F0F0",
+};
+
+const previewBoxStyle = {
+  ...borderPrimaryColor,
+  textAlign: "center",
+  mb: 1,
+  overflow: "hidden",
+};
+
+const mobilePreviewBox = {
+  // ...borderPrimaryColor,
+  textAlign: "center",
+  // height: 90,
+  overflow: "hidden",
+  position: "relative",
+  width: "100%",
+};
+
 export default function CouponCard({ coupon, i, isMobile, redeemed }) {
   const dispatch = dispatchHook();
 
   const user = User() || {};
-
-  const cardStyle = {
-    mb: 4,
-    backgroundColor: "#F0F0F0",
-  };
-
-  const couponPreviewStyle = {
-    height: "150px",
-    width: "200px",
-  };
-
-  const previewBoxStyle = {
-    ...borderPrimaryColor,
-    textAlign: "center",
-    mb: 1,
-    overflow: "hidden",
-  };
-
-  const mobilePreviewBox = {
-    // ...borderPrimaryColor,
-    textAlign: "center",
-    // height: 90,
-    overflow: "hidden",
-    position: "relative",
-    width: "100%",
-  };
 
   const handleRedeem = (couponId, locationId, userId, yearId) => {
     const saveCall = () => {

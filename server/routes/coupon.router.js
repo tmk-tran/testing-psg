@@ -349,6 +349,17 @@ router.put("/:id", rejectUnauthenticated, (req, res) => {
     .query(queryText, [couponId])
     .then((response) => {
       console.log("Coupon removed");
+
+      // Mark related merchant tasks as deleted
+      const updateTasks = `
+        UPDATE merchant_tasks
+        SET is_deleted = true
+        WHERE coupon_id = $1;
+      `;
+      return pool.query(updateTasks, [couponId]);
+    })
+    .then(() => {
+      console.log("Related merchant tasks removed");
       res.sendStatus(200);
     })
     .catch((error) => {
@@ -362,7 +373,7 @@ router.delete("/:id/front", (req, res) => {
 
   const queryText = `
     UPDATE coupon
-    SET filename_front = NULL, front_view_pdf = NULL
+    SET filename_front = NULL, front_view_url = NULL
     WHERE id = $1;
   `;
 
@@ -383,7 +394,7 @@ router.delete("/:id/back", (req, res) => {
 
   const queryText = `
     UPDATE coupon
-    SET filename_back = NULL, back_view_pdf = NULL
+    SET filename_back = NULL, back_view_url = NULL
     WHERE id = $1;
   `;
 
