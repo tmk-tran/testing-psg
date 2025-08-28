@@ -108,12 +108,19 @@ export default function SellersTable({ forwardedRef }) {
     }
   }, [assignedYearId]);
 
-  // Resets YearSelect.jsx dropdown
+  // For YearSelect.jsx dropdown
   useEffect(() => {
-    // Sellers updated via saga fetch, not initial mount
-    if (editedSellerFlag === true) {
-      currentSeasonId != null && setAssignedYearId(currentSeasonId);
-      setEditedSellerFlag(false); // reset flag
+    // Only run if we have a valid season
+    if (currentSeasonId != null) {
+      // If seller was edited → update & reset flag
+      if (editedSellerFlag) {
+        setAssignedYearId(currentSeasonId);
+        setEditedSellerFlag(false);
+      }
+      // Otherwise → only set on initial mount (no assigned yet)
+      else if (assignedYearId == null) {
+        setAssignedYearId(currentSeasonId);
+      }
     }
   }, [editedSellerFlag]);
 

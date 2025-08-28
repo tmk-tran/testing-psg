@@ -5,9 +5,16 @@ export function getCurrentSeason(activeYearObj) {
   const year = today.getFullYear();
   const month = today.getMonth() + 1; // JS months 0-11
 
-  // Season starts Sep 2, ends Sep 1 next year
+  // Calculate current and next season strings
   const currentSeasonStr =
     month >= 9 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+  const nextSeasonStr =
+    month >= 9 ? `${year + 1}-${year + 2}` : `${year}-${year + 1}`;
 
-  return activeYearObj.find((y) => y.year === currentSeasonStr) || null;
+  // Try current season first, then next
+  return (
+    activeYearObj.find((y) => y.year === currentSeasonStr) ||
+    activeYearObj.find((y) => y.year === nextSeasonStr) ||
+    null
+  );
 }
