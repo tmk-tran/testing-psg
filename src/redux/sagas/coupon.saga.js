@@ -123,10 +123,12 @@ function* pdfFile(action) {
 function* addCoupon(action) {
   const coupon = action.payload;
   const merchantId = coupon.merchant_id;
+  const bookId = coupon.book_id;
 
   try {
     yield axios.post(`/api/coupon/`, action.payload);
     yield put({ type: "FETCH_PDF_FILE", payload: merchantId });
+    yield put({ type: "FETCH_MERCHANT_TASKS", payload: merchantId});
   } catch (error) {
     console.log("error in addCoupon Saga", error);
     yield put({ type: "SET_ERROR", payload: error });

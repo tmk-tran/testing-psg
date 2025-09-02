@@ -24,8 +24,15 @@ export default function CouponStatusDropdown({
   task,
 }) {
   // Change name to: task description
-  const [status, setStatus] = useState(task ? task.task : "");
-  const [taskId, setTaskId] = useState(task ? task.id : "");
+  const [status, setStatus] = useState("");
+  const [taskId, setTaskId] = useState(task?.id || "");
+
+  useEffect(() => {
+    if (task?.task) {
+      setStatus(task.task);
+      setTaskId(task.id);
+    }
+  }, [task]);
 
   const handleMenuChange = (event) => {
     const choice = event.target.value;
