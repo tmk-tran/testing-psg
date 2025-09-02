@@ -58,7 +58,8 @@ router.get("/table", rejectUnauthenticated, (req, res) => {
               u.id, 
               u.username,
               u.first_name,
-              u.last_name, 
+              u.last_name,
+              u.is_admin,
               u.org_admin,
               u.graphic_designer,
               STRING_AGG(DISTINCT o.organization_name, ',') AS organization_names,
@@ -67,7 +68,15 @@ router.get("/table", rejectUnauthenticated, (req, res) => {
             LEFT JOIN user_coupon uc ON u.id = uc.user_id
             LEFT JOIN user_org_admin uoa ON u.id = uoa.user_id
             LEFT JOIN organization o ON uoa.org_id = o.id
-            GROUP BY u.id, u.username, u.first_name, u.last_name, u.org_admin, u.graphic_designer
+            WHERE u.is_deleted = false
+            GROUP BY 
+              u.id,
+              u.username,
+              u.first_name,
+              u.last_name,
+              u.is_admin,
+              u.org_admin,
+              u.graphic_designer
             ORDER BY u.last_name ASC;
         `;
 
