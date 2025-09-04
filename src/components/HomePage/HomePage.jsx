@@ -17,16 +17,18 @@ import ListView from "../ListView/ListView.jsx";
 import SearchBar from "../SearchBar/SearchBar.jsx";
 import ToggleButton from "../ToggleButton/ToggleButton.jsx";
 import SellerSearch from "./SellerSearch.jsx";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~
+// ~~~~~~~~~~ Hooks/Utils ~~~~~~~~~~
 import {
   User,
   allOrganizations,
   allMerchants,
   mCoupons,
   searchedSeller,
+  appActiveYear,
 } from "../../hooks/reduxStore.js";
 import { buttonIconSpacing } from "../Utils/helpers.js";
 import { dispatchHook } from "../../hooks/useDispatch.js";
+import { getCurrentSeason } from "../Utils/season.js";
 
 function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   const dispatch = dispatchHook();
@@ -48,6 +50,8 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   const merchants = allMerchants() || [];
   const couponNumbers = mCoupons() || [];
   const sellerResults = searchedSeller() || [];
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const itemsPerPage = 12;
@@ -65,18 +69,28 @@ function HomePage({ isOrgAdmin, isGraphicDesigner }) {
   }, []);
 
   useEffect(() => {
-    // Initial data fetch based on isMerchantList
-    const fetchDataAction = isMerchantList
-      ? "FETCH_MERCHANTS"
-      : "FETCH_ORGANIZATIONS";
-    dispatch({ type: fetchDataAction });
+    // Based on isMerchantList
+    const dispatchFetch = () => {
+      if (isMerchantList) {
+        dispatch({ type: "FETCH_MERCHANTS" });
+      } else {
+        dispatch({
+          type: "FETCH_ORGANIZATIONS",
+          payload: { bookId: activeYearId },
+        });
+      }
+    };
 
+    // Initial fetch
+    dispatchFetch();
+
+    // Coupon fetch only if merchant list
     const dispatchAction = isMerchantList && "FETCH_COUPON_NUMBER";
     dispatch({ type: dispatchAction });
 
     // If editComplete is true, trigger refresh and reset editComplete
     if (editComplete) {
-      dispatch({ type: fetchDataAction });
+      dispatchFetch();
       setEditComplete(false);
     }
   }, [isMerchantList, editComplete]);

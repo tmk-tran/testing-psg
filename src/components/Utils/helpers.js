@@ -203,7 +203,7 @@ export const getExpirationYear = (bookYearData) => {
   return expirationYear;
 };
 
-// Season function
+// Season function (used in App.jsx)
 export const getCurrentSeason = () => {
   // Fetch the current year
   const currentYear = new Date().getFullYear();
@@ -275,7 +275,7 @@ export const getImageSrc = (imageData) => {
 };
 
 export const getFileSrc = ({ url, blob }) => {
-  if (url) return url;          // Prefer URL
+  if (url) return url; // Prefer URL
   if (blob instanceof Blob) return URL.createObjectURL(blob); // Fallback to Blob
   return "";
 };
