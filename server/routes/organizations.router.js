@@ -9,7 +9,8 @@ const upload = multer({ storage: storage });
 router.get("/", (req, res) => {
   const bookId = req.query.bookId; // get bookId from query params
 
-  const queryText = `  SELECT
+  const queryText = `
+  SELECT
       o.id,
       o.organization_name,
       o.type,
@@ -165,7 +166,7 @@ router.get("/", (req, res) => {
       o.is_deleted = false
   ORDER BY
       o.organization_name ASC;`;
-      
+
   pool
     .query(queryText, [bookId])
     .then((response) => {
