@@ -1,3 +1,4 @@
+// Same name in helpers.js, consider changing
 export function getCurrentSeason(activeYearObj) {
   if (!Array.isArray(activeYearObj) || activeYearObj.length === 0) return null;
 
