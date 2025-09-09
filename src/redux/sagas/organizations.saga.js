@@ -2,10 +2,8 @@ import axios from "axios";
 import { takeEvery, put } from "redux-saga/effects";
 
 function* fetchOrganizationsSaga(action) {
-  const { bookId } = action.payload;
   try {
-    // send bookId as query param
-    const response = yield axios.get(`/api/organizations?bookId=${bookId}`);
+    const response = yield axios.get(`/api/organizations`);
     
     console.log("FETCH request fetchOrganizationsSaga successful");
     yield put({ type: "SET_ORGANIZATIONS", payload: response.data });
