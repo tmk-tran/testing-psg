@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { InputLabel } from "@mui/material";
 import { MenuItem, Box, Paper, Typography } from "@mui/material";
 import { Button, TextField, CardContent } from "@mui/material";
 import Swal from "sweetalert2";
+import { getCurrentSeason } from "../Utils/season";
+import { appActiveYear } from "../../hooks/reduxStore";
 
 export default function GlobalFundraiserInput() {
   const dispatch = useDispatch();
@@ -12,9 +13,15 @@ export default function GlobalFundraiserInput() {
   const organizations = useSelector((store) => store.organizations);
   const groupList = useSelector((store) => store.allGroups);
   const couponBooks = useSelector((store) => store.couponBooks);
+  // Active book year
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
 
   useEffect(() => {
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
+    dispatch({
+      type: "FETCH_ORGANIZATIONS",
+      payload: { bookId: activeYearId },
+    });
     dispatch({
       type: "FETCH_ALL_GROUPS",
     });

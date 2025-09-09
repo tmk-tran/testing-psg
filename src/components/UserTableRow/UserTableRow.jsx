@@ -9,7 +9,7 @@ function UserTableRow({ user }) {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch({ type: "FETCH_GROUP_ADMIN" });
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
+    // dispatch({ type: "FETCH_ORGANIZATIONS" });
     dispatch({ type: "FETCH_ALL_USERS" });
   }, []);
 

@@ -10,9 +10,11 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import InputAdornment from "@mui/material/InputAdornment";
-// ~~~~~~~~~~~ Hooks ~~~~~~~~~~~
-import { modalHeaderStyle, lineDivider } from "../Utils/modalStyles";
+// ~~~~~~~~~~~ Hooks/Utils ~~~~~~~~~~~
+import { appActiveYear } from "../../hooks/reduxStore";
 import { capitalize, capitalizeStateAbbr } from "../Utils/helpers";
+import { modalHeaderStyle, lineDivider } from "../Utils/modalStyles";
+import { getCurrentSeason } from "../Utils/season";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~
 import AddFileButton from "../AddFileButton/AddFileButton";
 import StateSelector from "../StateSelector/StateSelector";
@@ -20,6 +22,10 @@ import ModalButtons from "../Modals/ModalButtons";
 
 const EditAccountModal = ({ open, handleClose, data, isMerchantList }) => {
   const dispatch = useDispatch();
+
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
+
   const [editedAccount, setEditedAccount] = useState(data);
   const [selectedState, setSelectedState] = useState(data.state);
 

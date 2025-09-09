@@ -16,11 +16,12 @@ import SuccessAlert from "../SuccessAlert/SuccessAlert";
 import SellersTable from "../OrgSellers/SellersTable";
 import OrgAdminInfo from "./OrgAdminInfo";
 import LoadingSpinner from "../HomePage/LoadingSpinner";
-// ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
+// ~~~~~~~~~~ Hooks/Utils ~~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
 import { useAlert } from "../SuccessAlert/useAlert";
-import { oDetails, oNotes, mNotes, User } from "../../hooks/reduxStore";
+import { oDetails, oNotes, mNotes, User, appActiveYear } from "../../hooks/reduxStore";
 import { useCaseType } from "../Utils/useCaseType";
+import { getCurrentSeason } from "../Utils/season";
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 export default function Details({
@@ -51,6 +52,10 @@ export default function Details({
   const dispatch = dispatchHook();
   const user = User();
   const detailsOrg = oDetails();
+  // Active book year
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
+
   const organizationId =
     detailsOrg.length > 0 ? detailsOrg[0].organization_id : null;
   // Use organizationId, which will be null if detailsOrg is empty
@@ -92,7 +97,7 @@ export default function Details({
 
     dispatch({
       type: "FETCH_ORGANIZATIONS",
-      payload: paramsObject.id,
+      payload: { bookId: activeYearId },
     });
 
     setGroupAdded(false);
