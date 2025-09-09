@@ -7,7 +7,6 @@ const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage: storage });
 
 router.get("/", (req, res) => {
-  const bookId = req.query.bookId; // get bookId from query params
 
   const queryText = `
   SELECT
@@ -139,7 +138,6 @@ router.get("/", (req, res) => {
     SUM(books_due) AS total_books_due
     FROM
         sellers
-    WHERE coupon_book_id = $1
     GROUP BY
         organization_id
   ) AS total_books_due ON o.id = total_books_due.organization_id
@@ -168,7 +166,7 @@ router.get("/", (req, res) => {
       o.organization_name ASC;`;
 
   pool
-    .query(queryText, [bookId])
+    .query(queryText)
     .then((response) => {
       res.send(response.rows).status(200);
     })

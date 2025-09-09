@@ -20,13 +20,17 @@ export default function SellerLandingPage() {
   const dispatch = dispatchHook();
   const history = historyHook();
   const paramsObject = useParams();
+  const refId = paramsObject?.refId;
+  // normalize to uppercase
+  const normalizedRefId = refId?.toUpperCase();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [showGoButton, setShowGoButton] = useState(false);
   const [paymentType, setPaymentType] = useState("");
 
   useEffect(() => {
-    dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: paramsObject.refId });
+    dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: normalizedRefId });
   }, []);
 
   const sellerData = sellerPageInfo() || [];
