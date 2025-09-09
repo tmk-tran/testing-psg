@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { Card, CardContent, Typography, Button } from "@mui/material";
 import Swal from "sweetalert2";
 import "./ArchivedOrganizationCard.css";
 import { successColor } from "../Utils/colors";
 
 function ArchivedOrganizationCard({ organization }) {
-  const history = useHistory();
   const dispatch = useDispatch();
-  const user = useSelector((store) => store.user);
+  // Active book year
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
 
   // function to re activate organization and dispatch the data
   // sweet alert to confirm
@@ -24,7 +23,10 @@ function ArchivedOrganizationCard({ organization }) {
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch({ type: "RESET_ORGANIZATION", payload: organizationId });
-        dispatch({ type: "FETCH_ORGANIZATIONS" });
+        dispatch({
+          type: "FETCH_ORGANIZATIONS",
+          payload: { bookId: activeYearId },
+        });
         dispatch({ type: "FETCH_ARCHIVED_ORGANIZATIONS" });
         Swal.fire("Organization successfully restored!");
       }

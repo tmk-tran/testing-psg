@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Fuse from "fuse.js";
 import {
   Box,
@@ -11,17 +11,19 @@ import {
   Typography,
   Tooltip,
 } from "@mui/material";
-// ~~~~~~~~~ Hooks ~~~~~~~~~ //
+// ~~~~~~~~~ Hooks/Utils ~~~~~~~~~ //
 import { dispatchHook } from "../../hooks/useDispatch";
 import {
   userTableData,
   UserOrgAdmins,
   allOrganizations,
   userBooksData,
+  appActiveYear,
 } from "../../hooks/reduxStore";
 import { centerMe, containerStyle, flexRowSpace } from "../Utils/pageStyles";
 import { showDeleteSweetAlert, showSaveSweetAlert } from "../Utils/sweetAlerts";
 import { successColor } from "../Utils/colors";
+import { getCurrentSeason } from "../Utils/season";
 // ~~~~~~~~~ Components ~~~~~~~~~ //
 import ActionSwitch from "./ActionSwitch";
 import UserAdminHeader from "./UserAdminHeader";
@@ -95,6 +97,10 @@ export default function UserAdmin() {
   const [userToEdit, setUserToEdit] = useState(null);
   const [newUserName, setNewUserName] = useState(null);
 
+  // Active year
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
+
   isHovered
     ? (userNameCellSx.maxWidth = "none")
     : (userNameCellSx.maxWidth = 175);
@@ -107,7 +113,7 @@ export default function UserAdmin() {
     dispatch(action);
     const action2 = {
       type: "FETCH_ORGANIZATIONS",
-      // payload: auth,
+      payload: { bookId: activeYearId },
     };
     dispatch(action2);
     const action3 = {

@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-
-import "./UserTable.css";
-import UserTableRow from "../UserTableRow/UserTableRow.jsx";
 import {
   TableCell,
   TableRow,
@@ -12,19 +8,29 @@ import {
   TableHead,
   TableBody,
 } from "@mui/material";
+import "./UserTable.css";
+
+import { getCurrentSeason } from "../Utils/season.js";
+import { appActiveYear } from "../../hooks/reduxStore.js";
+
+import UserTableRow from "../UserTableRow/UserTableRow.jsx";
 
 function UserTable() {
   const dispatch = useDispatch();
+
+  const users = useSelector((store) => store.allUsers);
+  // Active year
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
+
   useEffect(() => {
     dispatch({ type: "FETCH_GROUP_ADMIN" });
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
+    // dispatch({
+    //   type: "FETCH_ORGANIZATIONS",
+    //   payload: { bookId: activeYearId },
+    // });
     dispatch({ type: "FETCH_ALL_USERS" });
   }, []);
-
-  const user = useSelector((store) => store.user);
-  const users = useSelector((store) => store.allUsers);
-  const groups = useSelector((store) => store.groupAdmin);
-  const organizations = useSelector((store) => store.organizations);
 
   // table for admin user page
   return (

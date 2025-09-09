@@ -1,24 +1,31 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography, Card, CardContent } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useHistory } from "react-router-dom";
 import { capitalizeWords } from "../Utils/helpers.js";
+import { getCurrentSeason } from "../Utils/season.js";
+import { appActiveYear } from "../../hooks/reduxStore.js";
 import UserTable from "../UserTable/UserTable.jsx";
 
 function UserProfile() {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch({ type: "FETCH_GROUP_ADMIN" });
-    dispatch({ type: "FETCH_ORGANIZATIONS" });
-    dispatch({ type: "FETCH_ALL_USERS" });
-  }, []);
 
   const user = useSelector((store) => store.user);
   const groups = useSelector((store) => store.groupAdmin);
   const organizations = useSelector((store) => store.organizations);
   const totalOrganizations = organizations.length;
-  const history = useHistory();
+  // Active year
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
+
+  useEffect(() => {
+    dispatch({ type: "FETCH_GROUP_ADMIN" });
+    dispatch({
+      type: "FETCH_ORGANIZATIONS",
+      payload: { bookId: activeYearId },
+    });
+    dispatch({ type: "FETCH_ALL_USERS" });
+  }, []);
 
   // format date to mm/dd/yy
   const formatDate = (dateString) => {
@@ -97,22 +104,30 @@ function UserProfile() {
                         <CardContent>
                           <Typography
                             variant="subtitle1"
-                            style={{ fontWeight: "bold", textDecoration: "underline", fontSize: "22px" }}
+                            style={{
+                              fontWeight: "bold",
+                              textDecoration: "underline",
+                              fontSize: "22px",
+                            }}
                           >
                             <b>PSG Details:</b>
                           </Typography>
                           <Typography variant="body2">
-                            <b>Total Active Organizations:</b> {totalOrganizations}
+                            <b>Total Active Organizations:</b>{" "}
+                            {totalOrganizations}
                           </Typography>
                           <Typography variant="body2">
-                            <b>Total Active Fundraisers:</b> {totalActiveFundraisers}
+                            <b>Total Active Fundraisers:</b>{" "}
+                            {totalActiveFundraisers}
                           </Typography>
                           <Typography variant="body2">
-                          <b>Total Books Sold:</b> {totalBooksSold.toLocaleString()} {totalBooksSold > 1000}
-
+                            <b>Total Books Sold:</b>{" "}
+                            {totalBooksSold.toLocaleString()}{" "}
+                            {totalBooksSold > 1000}
                           </Typography>
                           <Typography variant="body2">
-                            <b>Total Money Rasied:</b> ${formattedTotalMoneyRaised}
+                            <b>Total Money Rasied:</b> $
+                            {formattedTotalMoneyRaised}
                           </Typography>
                           <Typography variant="body2">
                             <b>PSG Earnings after Organization Fees:</b> $

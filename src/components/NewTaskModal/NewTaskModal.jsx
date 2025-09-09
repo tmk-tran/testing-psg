@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Backdrop, Divider, Tooltip } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~
 import { dispatchHook } from "../../hooks/useDispatch";
-import { allMerchants, allOrganizations } from "../../hooks/reduxStore";
+import {
+  allMerchants,
+  allOrganizations,
+  appActiveYear,
+} from "../../hooks/reduxStore";
 // ~~~~~~~~~~ Style ~~~~~~~~~~
 import {
   Box,
@@ -25,6 +29,7 @@ import SearchableSelect from "../NewTaskModal/SearchableSelect";
 import ModalButtons from "../Modals/ModalButtons";
 import { showSaveSweetAlert } from "../Utils/sweetAlerts";
 import YearSelect from "../OrgSellers/YearSelect";
+import { getCurrentSeason } from "../Utils/season";
 
 const style = {
   position: "absolute",
@@ -68,6 +73,9 @@ export default function NewTaskModal({
   const merchants = allMerchants();
   // ~~~~~~~~~~ All Organizations from store ~~~~~~~~~~
   const organizations = allOrganizations();
+  // Active year for book
+  const activeYearObj = getCurrentSeason(appActiveYear());
+  const activeYearId = activeYearObj?.id || "";
   // ~~~~~~~~~~ Modal State ~~~~~~~~~~
   const [open, setOpen] = useState(false);
   // ~~~~~~~~~~ Menu State ~~~~~~~~~~
@@ -89,7 +97,10 @@ export default function NewTaskModal({
       ? /* Logic for merchantTab being true */
         dispatch({ type: "FETCH_MERCHANTS" })
       : /* Logic for merchantTab being false */
-        dispatch({ type: "FETCH_ORGANIZATIONS" });
+        dispatch({
+          type: "FETCH_ORGANIZATIONS",
+          payload: { bookId: activeYearId },
+        });
 
     // Cleanup function or dependencies for useEffect
   }, [merchantTab]);
