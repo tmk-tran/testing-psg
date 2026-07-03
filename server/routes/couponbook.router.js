@@ -26,7 +26,7 @@ router.get("/id/:id", (req, res) => {
 
   // Made a change to queryText on Aug 2, '24
   // -----------------------------------------------------------
-  // To enable fetching of coupons determined by the app year set  
+  // To enable fetching of coupons determined by the app year set
   //  to 'active' in the 'coupon_book' DB table. The active year
   //  can be set by the admin users in the UserAdmin component.
   // ------------------------------------------------------------

@@ -15,7 +15,7 @@ function PayPalButton({
   customDonation,
   orderSuccess,
 }) {
-  // Extract bookType values and set them as a variable
+  // Extract bookType values and set them in an array. Sends to paypal_transactions table
   const bookTypes = selectedProducts.map((book) => {
     switch (book.bookType) {
       case "Physical Coupon Book":
@@ -116,7 +116,7 @@ function PayPalButton({
                 })),
               };
 
-              // console.log("Request Body:", requestBody);
+              console.log("Request Body:", requestBody);
 
               const response = await axios.post("/api/orders", requestBody, {
                 headers: {
@@ -124,10 +124,10 @@ function PayPalButton({
                 },
               });
 
-              // console.log(response);
+              console.log(response);
 
               const orderData = response.data;
-              // console.log(orderData);
+              console.log(orderData);
 
               if (orderData.id) {
                 return orderData.id;

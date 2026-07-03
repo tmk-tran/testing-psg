@@ -102,8 +102,8 @@ const PORT = process.env.PORT || 5000;
 const { REACT_APP_PAYPAL_CLIENT_ID, REACT_APP_PAYPAL_CLIENT_SECRET } =
   process.env;
 
-// const base = "https://api-m.sandbox.paypal.com";
-const base = "https://api-m.paypal.com";
+const base = "https://api-m.sandbox.paypal.com";
+// const base = "https://api-m.paypal.com"; // URL for PRODUCTION
 
 // Generate an OAuth 2.0 access token for authenticating with PayPal REST APIs
 const generateAccessToken = async () => {
@@ -164,7 +164,7 @@ const createOrder = async (cart) => {
     },
   });
 
-  // console.log("RESPONSE FROM SERVER, createOrder: ", response.data);
+  console.log("RESPONSE FROM SERVER, createOrder: ", response.data);
   return response.data;
 };
 
