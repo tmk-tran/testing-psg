@@ -26,17 +26,19 @@ function PayPalButton({
         return book.bookType; // In case other book types are included, they remain unchanged
     }
   });
-  console.log("Book Types:", bookTypes);
 
   const dispatch = dispatchHook();
-  const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
+  // Commented out to allow PROD to load the PayPal SDK. PSG-196
+  // -----------------------------------------------------------
+  // const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
   // console.log(clientId);
 
   // Removed 'venmo' from "enable-funding"
   const initialOptions = {
     // "client-id": clientId,
+    // client-id set, allowing buttons to load in PROD. PSG-196
     "client-id":
-      "AXw4KZ31SkyY5t_62QfDp4x7pQYm5t1-UfGpGDOOJVXo7Xb0UEdlRPkXW8mhOtVxDJhAY4PSofVyDaFu",
+      "ATtSyAhYrOFnWmMGTdJ17pmync8u8qNfrO4HiNd59A5Cmu-KwtRBRHeJGJIr8vC_H90JB-vYmDsg3qsv",
     "enable-funding": "paylater,card",
     "disable-funding": "",
     "data-sdk-integration-source": "integrationbuilder_sc",

@@ -29,7 +29,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
       res.send(result.rows);
     })
     .catch((err) => {
-      console.log("error in the GET / request for merchantComments", err);
+      console.log("error in the GET / request for authorized users", err);
       res.sendStatus(500);
     });
 });
@@ -96,6 +96,39 @@ router.get("/task/:id", rejectUnauthenticated, (req, res) => {
     })
     .catch((err) => {
       console.log("error in the GET / request for merchantComments", err);
+      res.sendStatus(500);
+    });
+});
+
+router.get("/task/:id", rejectUnauthenticated, (req, res) => {
+  const taskId = req.params.id;
+  const queryText = `
+          SELECT
+            id,
+            merchant_id,
+            TO_CHAR(created_at, 'MM/DD/YYYY') AS formatted_date,
+            TO_CHAR(created_at, 'HH12:MI:SS AM') AS formatted_time,
+            comment_content,
+            "user",
+            "task_id",
+            "coupon_id"
+          FROM
+            "merchant_comments"
+          WHERE
+            task_id = $1
+          ORDER BY
+            created_at DESC, id DESC;
+        `;
+
+  pool
+    .query(queryText, [taskId])
+    .then((result) => {
+      // console.log("merchantId = ", merchantId);
+      console.log("Successful GET by /task merchantComments.router");
+      res.send(result.rows);
+    })
+    .catch((err) => {
+      console.log("error in the GET / request for authorized users", err);
       res.sendStatus(500);
     });
 });

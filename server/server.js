@@ -579,8 +579,8 @@ app.post("/api/recoverPassword", async (req, res) => {
     res.sendStatus(500);
   }
 });
-// End Active Campaign
-// ~~~~~~~~~~~~~~~~ //
+// End Active Campaign ~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 // Serve index.html
 app.get("/", (req, res) => {

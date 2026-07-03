@@ -38,4 +38,26 @@ router.post("/", rejectUnauthenticated, (req, res) => {
     });
 });
 
+// PUT route for redeeming a coupon
+router.put("/:id", (req, res) => {
+  const couponId = req.params.id;
+
+  const queryText = `
+    UPDATE coupon
+    SET is_redeemed = true
+    WHERE id = $1;
+  `;
+
+  pool
+    .query(queryText, [couponId])
+    .then((response) => {
+      console.log("Coupon redeemed");
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.error("Error redeeming coupon:", error);
+      res.sendStatus(500);
+    });
+});
+
 module.exports = router;

@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Button, Divider, useTheme, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import QrCodeIcon from "@mui/icons-material/QrCode";
 // ~~~~~~~~~~~ Hooks ~~~~~~~~~~~~~~~~~~~ //
 import { centeredStyle, containerStyle, flexEnd } from "../Utils/pageStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
@@ -10,11 +19,6 @@ import { historyHook } from "../../hooks/useHistory";
 import OrgDetailsSection from "./OrgDetailsSection";
 import RefIdDisplay from "./RefIdDisplay";
 import PaymentMenu from "./PaymentMenu";
-
-const flexCenter = {
-  display: "flex",
-  justifyContent: "center",
-};
 
 export default function SellerLandingPage() {
   const dispatch = dispatchHook();
@@ -28,6 +32,7 @@ export default function SellerLandingPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [showGoButton, setShowGoButton] = useState(false);
   const [paymentType, setPaymentType] = useState("");
+  const [isQRcodeVisible, setIsQRcodeVisible] = useState(false); // Controls QR modal
 
   useEffect(() => {
     dispatch({ type: "FETCH_SELLER_PAGEINFO", payload: normalizedRefId });
@@ -53,15 +58,25 @@ export default function SellerLandingPage() {
           <OrgDetailsSection isMobile={isMobile} seller={seller} />
           <br />
           {/* ~~~~~ Referral ID ~~~~~ */}
-          <Box
-            sx={{
-              ...flexCenter,
-              width: isMobile ? "100%" : "40%",
-              borderRadius: "4px",
-            }}
+          <Stack
+            direction="row"
+            spacing={isMobile ? 0.5 : 2}
+            alignItems="center"
           >
-            <RefIdDisplay seller={seller} />
-          </Box>
+            <RefIdDisplay
+              seller={seller}
+              isQRcodeVisible={isQRcodeVisible}
+              onCloseQRCode={() => setIsQRcodeVisible(false)}
+            />
+            {/* ~~~~~ QR code icon ~~~~~ */}
+            <IconButton
+              size="large"
+              onClick={() => setIsQRcodeVisible(true)}
+              sx={{ color: "text.secondary" }}
+            >
+              <QrCodeIcon />
+            </IconButton>
+          </Stack>
           <Divider />
           <br />
           {/* ~~~~~ Payment Method ~~~~~ */}

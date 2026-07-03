@@ -9,9 +9,6 @@ function LoginPage() {
 
   return (
     <div>
-      <Typography variant="h5" sx={{ textAlign: "center", fontWeight: "bold" }}>
-        * Fargo Testing Environment *
-      </Typography>
       <br />
       <LoginForm />
 

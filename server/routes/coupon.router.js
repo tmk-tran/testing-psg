@@ -8,7 +8,7 @@ const { upload } = require("../modules/upload");
 const { uploadCoupon } = require("../utils/uploadCoupon");
 
 router.get("/", (req, res) => {
-  // can add
+  // Add when feature is implemented for locations
   // ARRAY_AGG(l.coordinates) AS coordinates,
   // ARRAY_AGG(l.region_id) AS region_id,
   const queryText = `
@@ -176,27 +176,27 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
   }
 });
 
-// PUT route for redeeming a coupon
-router.put("/redeem/:id", (req, res) => {
-  const couponId = req.params.id;
+// // PUT route for redeeming a coupon
+// router.put("/redeem/:id", (req, res) => {
+//   const couponId = req.params.id;
 
-  const queryText = `
-    UPDATE coupon
-    SET is_redeemed = true
-    WHERE id = $1;
-  `;
+//   const queryText = `
+//     UPDATE coupon
+//     SET is_redeemed = true
+//     WHERE id = $1;
+//   `;
 
-  pool
-    .query(queryText, [couponId])
-    .then((response) => {
-      console.log("Coupon redeemed");
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.error("Error redeeming coupon:", error);
-      res.sendStatus(500);
-    });
-});
+//   pool
+//     .query(queryText, [couponId])
+//     .then((response) => {
+//       console.log("Coupon redeemed");
+//       res.sendStatus(200);
+//     })
+//     .catch((error) => {
+//       console.error("Error redeeming coupon:", error);
+//       res.sendStatus(500);
+//     });
+// });
 
 // PUT route for uploading front view file
 router.put("/front/:id", upload.single("file"), async (req, res) => {

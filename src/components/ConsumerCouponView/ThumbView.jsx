@@ -56,10 +56,10 @@ export default function ThumbView({
             }}
           >
             {isMobile ? null : "Back"}
-            {coupon.backViewBlob !== null ? ( // in PROD, this is backViewUrl
+            {coupon.backViewUrl !== null ? (
               <PdfThumbnail
                 isMobile={isMobile}
-                pdf={coupon.backViewBlob} // in PROD, this is backViewUrl
+                pdf={coupon.backViewUrl}
                 style={isMobile ? {} : couponPreviewStyle}
                 width={isMobile ? 150 : 200}
                 caseType="consumer"

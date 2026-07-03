@@ -11,6 +11,7 @@ export default function LoadingSpinner({
   size,
 }) {
   const [displayedText, setDisplayedText] = useState(text);
+  const [showWaitingText, setShowWaitingText] = useState(false);
 
   useEffect(() => {
     if (!timeout) timeout = 6000; // default timeout if not provided
@@ -34,6 +35,9 @@ export default function LoadingSpinner({
   return (
     <Box sx={centeredStyle}>
       <CircularProgress size={size} />
+      {showWaitingText && (
+        <Typography variant="body2">{waitingText}</Typography>
+      )}
       {displayedText && (
         <Typography variant="body2">{displayedText}</Typography>
       )}

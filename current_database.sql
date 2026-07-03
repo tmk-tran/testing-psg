@@ -610,7 +610,7 @@ $$
 BEGIN
     -- Insert coupon IDs for the new user into user_coupon table
     INSERT INTO user_coupon (user_id, coupon_id, show_book)
-	SELECT NEW.id, id, true
+	SELECT NEW.id, id, true -- Set show_book to true for each inserted row
 	FROM coupon;
 
 
