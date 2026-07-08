@@ -14,7 +14,7 @@ export default function RefIdDisplay({
   isQRcodeVisible,
   onCloseQRCode,
 }) {
-  const sellerUrl = `${window.location.origin}/#/seller/${seller.refId}`; // Uses current environment
+  const sellerUrlQR = `${window.location.origin}/#/seller/${seller.refId}?source=qr`; // Uses current environment, marks QR traffic
 
   return (
     <Box sx={{ textAlign: "center" }}>
@@ -58,7 +58,7 @@ export default function RefIdDisplay({
           </IconButton>
 
           <QRCodeCanvas
-            value={sellerUrl} // URL encoded in QR code
+            value={sellerUrlQR} // URL encoded in QR code
             size={260} // Larger size for modal
             includeMargin // Adds quiet zone for scanning
           />

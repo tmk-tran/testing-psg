@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, useTheme, useMediaQuery } from "@mui/material";
 // ~~~~~~~~~~ Hooks ~~~~~~~~~~ //
@@ -6,6 +6,7 @@ import { historyHook } from "../../hooks/useHistory";
 import { containerStyle } from "../Utils/pageStyles";
 import { navButtonStyle } from "./checkoutStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
+import { useQrReferral } from "../../hooks/useQrReferral";
 // ~~~~~~~~~~ Components ~~~~~~~~~ //
 import CustomButton from "../CustomButton/CustomButton";
 import Typography from "../Typography/Typography";
@@ -14,20 +15,21 @@ import CustomerNameInfo from "../SellerPage/CustomerNameInfo"; // Disabled on Ju
 import RefIdDisplay from "../SellerPage/RefIdDisplay";
 
 export default function OrderPage({ caseType }) {
-  const seller = useParams();
+  const { refId } = useParams(); // Gets seller ref ID from route
   const history = historyHook();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isQrReferral = useQrReferral();
+
+  // Seller info from store
+  const sellerData = sellerPageInfo() || [];
+  // Extract the seller ID
+  const [firstSeller] = sellerData;
+  const sellerId = firstSeller ? firstSeller.id : null;
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [customDonation, setCustomDonation] = useState(0);
   const [orderTotal, setOrderTotal] = useState(0);
-
-  // Seller info from store //
-  const sellerData = sellerPageInfo() || [];
-  // Extract the seller ID //
-  const [firstSeller] = sellerData;
-  const sellerId = firstSeller ? firstSeller.id : null;
   const [showOrderTable, setShowOrderTable] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
 
@@ -49,22 +51,21 @@ export default function OrderPage({ caseType }) {
     { id: 4, bookType: "Donate", price: 0, quantity: 0 },
   ]);
 
+  // For QR code feature
   useEffect(() => {
-    const setRowsBasedOnCaseType = (caseType) => {
-      switch (caseType) {
-        case "cash":
-          setRows((prevRows) =>
-            prevRows.filter((row) => row.id === 1 || row.id === 4)
-          );
-          setShowOrderTable(true);
-          break;
-        // Add other case types if needed
-        default:
-          break;
-      }
-    };
+    if (isQrReferral && caseType === "cash") {
+      history.replace(`/seller/${refId}?source=qr`); // Redirect QR users away from cash page
+    }
+  }, [isQrReferral, caseType, history, refId]);
 
-    setRowsBasedOnCaseType(caseType);
+  useEffect(() => {
+    if (caseType === "cash") {
+      setRows((prevRows) =>
+        prevRows.filter((row) => row.id === 1 || row.id === 4),
+      ); // Cash allows physical book + donation only
+
+      setShowOrderTable(true); // Shows order table
+    }
   }, [caseType]);
 
   const handleRowSelect = (rowId) => {
@@ -77,14 +78,14 @@ export default function OrderPage({ caseType }) {
       newSelectedRows = newSelectedRows.filter((id) => id !== rowId);
       // Reset quantity to 0
       newRows = newRows.map((row) =>
-        row.id === rowId ? { ...row, quantity: 0 } : row
+        row.id === rowId ? { ...row, quantity: 0 } : row,
       );
     } else {
       // Select row
       newSelectedRows.push(rowId);
       // Reset quantity to 1
       newRows = newRows.map((row) =>
-        row.id === rowId ? { ...row, quantity: 1 } : row
+        row.id === rowId ? { ...row, quantity: 1 } : row,
       );
     }
 
@@ -116,9 +117,9 @@ export default function OrderPage({ caseType }) {
 
   const addToCart = () => {
     history.push({
-      pathname: `/seller/${seller.refId}/${caseType}/cart`,
+      pathname: `/seller/${refId}/${caseType}/cart`,
       state: {
-        seller,
+        refId,
         sellerId,
         caseType,
         rows,
@@ -146,10 +147,10 @@ export default function OrderPage({ caseType }) {
           caseType === "cash"
             ? "Cash / Check"
             : caseType === "paypal"
-            ? "PayPal"
-            : caseType === "credit"
-            ? "Credit / Debit Card"
-            : "Order Books"
+              ? "PayPal"
+              : caseType === "credit"
+                ? "Credit / Debit Card"
+                : "Order Books"
         }
         variant="h5"
         sx={{ textAlign: "center", fontWeight: "bold", py: 3 }}
@@ -157,7 +158,7 @@ export default function OrderPage({ caseType }) {
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Referral ID displayed here ~~~~~~~~~~ */}
       <Box sx={{ mb: pageLoad ? 3 : 1 }}>
-        <RefIdDisplay seller={seller} pageLoad={pageLoad} />
+        <RefIdDisplay seller={refId} pageLoad={pageLoad} />
       </Box>
       {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
       {/* ~~~~~~~~~~ Customer info fields ~~~~~~~~~~ */}
