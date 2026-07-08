@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   InputLabel,
@@ -8,7 +8,11 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function PaymentMenu({ isMobile, onPaymentSelect }) {
+export default function PaymentMenu({
+  isMobile,
+  onPaymentSelect,
+  hideCashCheck,
+}) {
   const [payment, setPayment] = useState("");
 
   const handleChange = (event) => {
@@ -30,9 +34,9 @@ export default function PaymentMenu({ isMobile, onPaymentSelect }) {
           label="Payment"
           onChange={handleChange}
         >
-          <MenuItem value="cash">Cash / Check</MenuItem>
-          <MenuItem value="payPal">PayPal</MenuItem>
           <MenuItem value="credit">Credit / Debit</MenuItem>
+          <MenuItem value="payPal">PayPal</MenuItem>
+          {!hideCashCheck && <MenuItem value="cash">Cash / Check</MenuItem>}
         </Select>
       </FormControl>
     </Box>

@@ -15,6 +15,7 @@ import { centeredStyle, containerStyle, flexEnd } from "../Utils/pageStyles";
 import { sellerPageInfo } from "../../hooks/reduxStore";
 import { dispatchHook } from "../../hooks/useDispatch";
 import { historyHook } from "../../hooks/useHistory";
+import { useQrReferral } from "../../hooks/useQrReferral";
 // ~~~~~~~~~~~ Components ~~~~~~~~~~~~~~ //
 import OrgDetailsSection from "./OrgDetailsSection";
 import RefIdDisplay from "./RefIdDisplay";
@@ -30,6 +31,10 @@ export default function SellerLandingPage() {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // For QR code feature
+  const isQrReferral = useQrReferral();
+
   const [showGoButton, setShowGoButton] = useState(false);
   const [paymentType, setPaymentType] = useState("");
   const [isQRcodeVisible, setIsQRcodeVisible] = useState(false); // Controls QR modal
@@ -42,12 +47,16 @@ export default function SellerLandingPage() {
 
   // Props to PaymentMenu //
   const handlePaymentSelect = (paymentType) => {
+    if (isQrReferral && paymentType === "cash") return; // Blocks cash/check from QR flow
+
     setShowGoButton(true);
     setPaymentType(paymentType);
   };
 
   const navigateTo = () => {
-    history.push(`/seller/${paramsObject.refId}/${paymentType}`);
+    const qrParam = isQrReferral ? "?source=qr" : ""; // Preserve QR source for backend/payment page
+
+    history.push(`/seller/${paramsObject.refId}/${paymentType}${qrParam}`); // Navigate with QR source
   };
 
   return (
@@ -83,6 +92,7 @@ export default function SellerLandingPage() {
           <PaymentMenu
             isMobile={isMobile}
             onPaymentSelect={handlePaymentSelect}
+            hideCashCheck={isQrReferral} // Hide cash/check for QR visitors
           />
           <br />
           {showGoButton && (
