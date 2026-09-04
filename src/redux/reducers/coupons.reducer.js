@@ -1,4 +1,4 @@
-const couponsReducer = (state = [], action) => {
+const couponsReducer = (state = null, action) => {
   switch (action.type) {
     case "GET_PDF":
       return action.payload;
