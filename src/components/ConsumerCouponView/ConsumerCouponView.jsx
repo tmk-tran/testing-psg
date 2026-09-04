@@ -89,7 +89,7 @@ export default function ConsumerCouponView() {
   }, [activeYearObj]);
 
   useEffect(() => {
-    if (coupons.length > 0) {
+    if (coupons !== null) {
       setIsLoading(false);
     }
   }, [coupons]);
@@ -112,14 +112,14 @@ export default function ConsumerCouponView() {
   const filteredMerchants = activeList.filter(
     (coupon) =>
       typeof coupon.merchantName === "string" &&
-      coupon.merchantName.toLowerCase().includes(query.toLowerCase())
+      coupon.merchantName.toLowerCase().includes(query.toLowerCase()),
   );
 
   const totalFilteredMerchants =
     query.trim() === ""
       ? viewRedeemed
         ? filteredMerchants.length
-        : coupons.length // pick based on view
+        : coupons?.length // pick based on view
       : filteredMerchants.length;
 
   const clearInput = () => {
@@ -139,7 +139,7 @@ export default function ConsumerCouponView() {
   const indexOfFirstCoupon = indexOfLastCoupon - couponsPerPage;
   const currentCoupons = filteredMerchants.slice(
     indexOfFirstCoupon,
-    indexOfLastCoupon
+    indexOfLastCoupon,
   );
 
   const startIdx = (currentPage - 1) * couponsPerPage;
@@ -167,13 +167,14 @@ export default function ConsumerCouponView() {
             variant="h5"
             sx={{ mt: 2, fontWeight: "bold", ...centerMe }}
           />
-          {!viewRedeemed && (
-            <CustomTypography
-              label={`Valid through September 1st, ${expirationYear}`}
-              variant="subtitle2"
-              sx={{ textAlign: "center" }}
-            />
-          )}
+          <CustomTypography
+            label={`Valid through September 1st, ${expirationYear}`}
+            variant="subtitle2"
+            sx={{
+              textAlign: "center",
+              visibility: viewRedeemed ? "hidden" : "visible",
+            }}
+          />
         </>
       )}
 
@@ -213,6 +214,10 @@ export default function ConsumerCouponView() {
             label1="View Redeemed"
             label2="View Active"
             toggleState={viewRedeemed}
+            sxIcon2={{
+              color: "grey.300",
+              stroke: "grey",
+            }}
           />
           {/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */}
           {/* ~~~~~ Valid through ~~~~~~ */}
@@ -238,15 +243,7 @@ export default function ConsumerCouponView() {
         ) : viewRedeemed ? (
           <RedeemedList redeemedCoupons={currentCoupons} />
         ) : currentCoupons.length === 0 ? (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            sx={{
-              height: "50vh",
-              width: "50vw",
-            }}
-          >
+          <Box display="flex" justifyContent="center" alignItems="center">
             <Typography variant="subtitle1" color="text.secondary">
               No coupons found
             </Typography>

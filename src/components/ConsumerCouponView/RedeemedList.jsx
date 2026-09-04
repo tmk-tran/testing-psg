@@ -1,4 +1,4 @@
-import { useMediaQuery, useTheme } from "@mui/material";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
 
 import CouponCard from "./CouponCard";
 
@@ -18,7 +18,9 @@ const RedeemedList = ({ redeemedCoupons }) => {
           />
         ))
       ) : (
-        <p>No redeemed coupons found</p>
+        <Typography variant="subtitle1" color="text.secondary">
+          No redeemed coupons found
+        </Typography>
       )}
     </div>
   );
