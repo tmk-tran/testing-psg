@@ -1,5 +1,5 @@
-import React, { lazy } from "react";
-import { Divider, Typography } from "@mui/material";
+import { lazy } from "react";
+import { Box, Divider, Typography } from "@mui/material";
 
 const CouponCard = lazy(() => import("./CouponCard"));
 
@@ -12,7 +12,7 @@ const ListWithSeasonLabel = ({
 }) => {
   // Check if at least one coupon on this page belongs to nextSeasonYear
   const hasNextSeason = coupons.some(
-    (coupon) => getCouponYear(coupon)?.split("-")[1] === nextSeasonYear
+    (coupon) => getCouponYear(coupon)?.split("-")[1] === nextSeasonYear,
   );
 
   let newSeasonLabelRendered = false;
@@ -21,7 +21,7 @@ const ListWithSeasonLabel = ({
     const isNewSeason = getCouponYear(coupon)?.split("-")[1] === nextSeasonYear;
 
     return (
-      <React.Fragment key={coupon.id || startIdx + index}>
+      <Box key={coupon.id || startIdx + index} sx={{ width: "100%" }}>
         {hasNextSeason && !newSeasonLabelRendered && isNewSeason && (
           <>
             <Divider
@@ -40,7 +40,7 @@ const ListWithSeasonLabel = ({
           </>
         )}
         <CouponCard isMobile={isMobile} coupon={coupon} />
-      </React.Fragment>
+      </Box>
     );
   });
 };
