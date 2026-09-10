@@ -1,6 +1,6 @@
 const { s3Client, PutObjectCommand } = require("../tigrisClient");
 
-async function uploadCoupon(file, filename, bucketName = "coupons-25-26") {
+async function uploadCoupon(file, filename, bucketName = "coupons-26-27") {
   if (!file || !filename) throw new Error("File and filename are required");
 
   const command = new PutObjectCommand({
