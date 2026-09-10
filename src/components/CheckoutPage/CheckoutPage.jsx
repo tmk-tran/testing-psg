@@ -48,7 +48,7 @@ export default function CheckoutPage({ caseType }) {
   const dispatch = dispatchHook();
 
   const paramsObject = useParams();
-  const refId = paramsObject.refId;
+  const refId = paramsObject.refId?.toUpperCase();
   // Access state from URL and use it in component //
   const selectedProducts = location.state?.selectedProducts ?? [];
   const bookTypeArray = selectedProducts.map((product) => product.bookType);

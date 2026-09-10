@@ -56,7 +56,7 @@ export default function SellerLandingPage() {
   const navigateTo = () => {
     const qrParam = isQrReferral ? "?source=qr" : ""; // Preserve QR source for backend/payment page
 
-    history.push(`/seller/${paramsObject.refId}/${paymentType}${qrParam}`); // Navigate with QR source
+    history.push(`/seller/${normalizedRefId}/${paymentType}${qrParam}`); // Navigate with QR source
   };
 
   return (
