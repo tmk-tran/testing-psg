@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { useTheme, useMediaQuery } from "@mui/material";
 // ~~~~~~~~~~ Components ~~~~~~~~~~~~~~~~~~~~~~~~~~
 import OrderSummaryTable from "./OrderSummaryTable";
@@ -12,7 +12,6 @@ import { dispatchHook } from "../../hooks/useDispatch";
 import { appActiveYear, sellerPageInfo } from "../../hooks/reduxStore";
 import { historyHook } from "../../hooks/useHistory";
 import { containerStyle } from "../Utils/pageStyles";
-import { border } from "../Utils/colors";
 import { submitPaymentSweetAlert } from "../Utils/sweetAlerts";
 
 export default function ShoppingCart() {
@@ -20,19 +19,18 @@ export default function ShoppingCart() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = dispatchHook();
   const location = useLocation();
+  const { refId } = useParams();
   const history = historyHook();
   // ~~~~~~~~~~ Location State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
-  const seller = location.state?.seller ?? [];
   const sellerId = location.state?.sellerId ?? "";
-  const refId = seller.refId ?? "";
-  const caseType = location.state?.caseType ?? [];
+  const caseType = location.state?.caseType ?? "";
   // ~~~~~~~~~~ State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
   const [selectedProducts, setSelectedProducts] = useState(
-    location.state?.selectedProducts ?? []
+    location.state?.selectedProducts ?? [],
   );
   const [orderTotal, setOrderTotal] = useState(0);
   const [customDonation, setCustomDonation] = useState(
-    location.state?.customDonation ?? 0
+    location.state?.customDonation ?? 0,
   );
   const [physicalBooks, setPhysicalBooks] = useState(0);
   const [paymentSelectorOpen, setPaymentSelectorOpen] = useState(false);
@@ -48,8 +46,8 @@ export default function ShoppingCart() {
       selectedProducts.map((product) =>
         updatedQuantities.hasOwnProperty(product.id)
           ? { ...product, quantity: updatedQuantities[product.id] }
-          : product
-      )
+          : product,
+      ),
     );
   };
 
